@@ -1,0 +1,30 @@
+define([
+    "backbone",
+    "config",
+    "text!modules/cosi/template.html",
+    "modules/cosi/model"
+], function (Backbone, Config, Template, CosiModel) {
+
+    var CosiView = Backbone.View.extend({
+        template: _.template(Template),
+        model: CosiModel,
+        className: "cosi",
+        initialize: function () {
+            this.render();
+<<<<<<< HEAD
+        },
+        render: function () {
+            var attr = this.model.toJSON();
+            $(".ol-viewport").append(this.$el.html(this.template(attr)));
+=======
+            // TODO: WORKAROUND - Geht so natürlich nicht
+            //$('#main-nav').remove();
+            // TODO: Das menü darf auch nicht versteckt sein, sondern sollte den Modus analog zu DIPAS einnehmen ...
+        },
+        render: function () {
+>>>>>>> cosi
+        }
+    });
+
+    return CosiView;
+});
