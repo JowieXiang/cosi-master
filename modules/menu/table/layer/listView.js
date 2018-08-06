@@ -32,6 +32,12 @@ define(function (require) {
         id: "table-layer-list",
         className: "table-layer-list table-nav",
         template: _.template(ListTemplate),
+        events: {
+            "click .icon-burgermenu_alt": 'showMenuWorkaround'
+        },
+        showMenuWorkaround: function (evt) {
+            $("#table-nav-layers-panel").show();
+        },
         hideMenu: function () {
             $("#table-nav-layers-panel").collapse("hide");
         },
