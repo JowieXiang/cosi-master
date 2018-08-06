@@ -33,6 +33,7 @@ require.config({
         config: configPath,
         d3: "../node_modules/d3/build/d3.min",
         geoapi: "GeoAPI",
+        highcharts: "../node_modules/highcharts/highcharts",
         jquery: "../node_modules/jquery/dist/jquery.min",
         jqueryui: "../node_modules/jquery-ui/ui",
         modules: "../modules",

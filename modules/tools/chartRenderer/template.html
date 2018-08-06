@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+
+<div class="data-topic-heading margin-left" data-toggle="collapse" href="#collapseDistrict">
+    <div class="row">
+        <div class="col-md-2">
+            <span class="glyphicon glyphicon-tasks"></span>
+        </div>
+        <div class="col-md-10">
+            <h4 class="panel-title legend-title">
+                Bezirke
+            </h4>
+        </div>
+    </div>
+</div>
+
+<div id="collapseDistrict" class="collapse margin-left">
+    <% _.each(bezirke, function (bezirk) { %>
+    <div class="data-topic-entry">
+        <div class="row">
+            <div class="col-md-1">
+                <span class="glyphicon glyphicon-th-large"></span>
+            </div>
+            <div class="col-md-10" data-toggle="collapse" href="#collapseDistrict<%=bezirk%>">
+                <%= bezirk %>
+            </div>
+        </div>
+        <div id="collapseDistrict<%=bezirk%>" class="row collapse">
+            <% _.each(dataMap, function (scale) { %>
+            <div class="checkbox sub-data-checkbox">
+                <label><input class="input-checkbox" type="checkbox" value="<%= scale %>-<%= bezirk %>">
+                    <span>
+                        <%= scale %>
+                    </span>
+                </label>
+            </div>
+            <% }); %>
+        </div>
+    </div>
+    <% }); %>
+</div>
+
+<div class="data-topic-heading margin-left" data-toggle="collapse" href="#collapseTopics">
+    <div class="row">
+        <div class="col-md-2">
+            <span class="glyphicon glyphicon-tasks"></span>
+        </div>
+        <div class="col-md-10">
+            <h4 class="panel-title legend-title">
+                Themen
+            </h4>
+        </div>
+    </div>
+</div>
+
+<div id="collapseTopics" class="collapse margin-left">
+    <% _.each(dataMap, function (scale) { %>
+    <div class="data-topic-entry">
+        <div class="row">
+            <div class="col-md-1">
+                <span class="glyphicon glyphicon-th-large"></span>
+            </div>
+            <div class="col-md-10" data-toggle="collapse" href="#collapseTopic<%=scale%>">
+                <%= scale %>
+            </div>
+        </div>
+        <div id="collapseTopic<%=scale%>" class="row collapse">
+            <% _.each(bezirke, function (bezirk) { %>
+            <div class="checkbox sub-data-checkbox">
+                <label><input class="input-checkbox" type="checkbox" value="<%= scale %>-<%= bezirk %>">
+                    <span>
+                        <%= bezirk %>
+                    </span>
+                </label>
+            </div>
+            <% }); %>
+        </div>
+    </div>
+    <% }); %>
+</div>
+
+<button class="btn btn-panel-submit btn-sm col-md-12 col-sm-12 clear-data">
+    <span class="glyphicon glyphicon-remove-sign"></span>
+    Daten entfernen
+</button>

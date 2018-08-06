@@ -118,6 +118,18 @@ define("app", function (require) {
         });
     }
 
+    require(["modules/dataMenu/view"], function (DataMenuView) {
+        new DataMenuView();
+    });
+
+    require(["modules/chartPanel/view"], function (ChartPanelView) {
+        new ChartPanelView();
+    });
+
+    require(["modules/tools/chartRenderer/pie/pieView"], function (ChartPanelView) {
+        new ChartPanelView();
+    });
+
     require(["modules/window/view"], function (WindowView) {
         new WindowView();
     });

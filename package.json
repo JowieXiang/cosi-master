@@ -23,6 +23,7 @@
     "bootstrap-toggle": "2.x.x",
     "browserify": "15.2.0",
     "d3": "4.9.x",
+    "highcharts": "^6.0.7",
     "jquery": "2.x",
     "jquery-ui": "1.x",
     "moment": "2.x",
