@@ -112,6 +112,12 @@ define("app", function (require) {
         });
     }
 
+    if (Config.cosiMode && Config.cosiMode) {
+        require(["modules/cosi/view"], function (CosiView) {
+            new CosiView();
+        });
+    }
+
     require(["modules/window/view"], function (WindowView) {
         new WindowView();
     });

@@ -1,0 +1,353 @@
+[
+  {
+    "id": "94",
+    "name": "Luftbilder DOP 20",
+    "url": "https://geodienste.hamburg.de/HH_WMS_DOP20",
+    "typ": "WMS",
+    "layers": "1",
+    "format": "image/jpeg",
+    "version": "1.3.0",
+    "singleTile": false,
+    "transparent": true,
+    "transparency": 0,
+    "tilesize": "512",
+    "gutter": "0",
+    "minScale": "0",
+    "maxScale": "2500000",
+    "gfiAttributes": "ignore",
+    "gfiTheme": "default",
+    "layerAttribution": "nicht vorhanden",
+    "legendURL": "http://daten-hamburg.de/zz_sonstiges/legenden/dop_belaubt_legende.png",
+    "cache": false,
+    "featureCount": "1",
+    "datasets": [{
+      "md_id": "DD10AFD3-5530-4FD4-933D-5FC71D14B8C7",
+      "rs_id": "https://registry.gdi-de.org/id/de.hh/de662af5-75af-4bb0-82b4-33c7e90d0c14",
+      "md_name": "Digitale Orthophotos 20cm Hamburg",
+      "bbox": "461468.97,5916367.23,587010.91,5980347.76",
+      "kategorie_opendata": [
+        "Geographie, Geologie und Geobasisdaten"
+      ],
+      "kategorie_inspire": [
+        "Orthofotografie"
+      ],
+      "kategorie_organisation": "Landesbetrieb Geoinformation und Vermessung"
+    }]
+  },
+  {
+    "id": "683",
+    "name": "Kindertagesstätten Details",
+    "url": "https://geodienste.hamburg.de/HH_WMS_KitaEinrichtung",
+    "typ": "WMS",
+    "layers": "KitaEinrichtungen_Details",
+    "format": "image/png",
+    "version": "1.3.0",
+    "singleTile": false,
+    "transparent": true,
+    "transparency": 0,
+    "tilesize": "512",
+    "gutter": "20",
+    "minScale": "0",
+    "maxScale": "2500000",
+    "gfiAttributes": "showAll",
+    "gfiTheme": "default",
+    "gfiComplex": true,
+    "layerAttribution": "nicht vorhanden",
+    "legendURL": "",
+    "cache": false,
+    "featureCount": "1",
+    "datasets": [{
+      "md_id": "C1AC42B2-C104-45B8-91F9-DA14C3C88A1F",
+      "rs_id": "https://registry.gdi-de.org/id/de.hh/6fdc7be8-520c-44ee-8e9a-855bac1b6a6b",
+      "md_name": "Kita Einrichtungen Hamburg",
+      "bbox": "461468.97,5916367.23,587010.91,5980347.76",
+      "kategorie_opendata": [
+        "Sonstiges"
+      ],
+      "kategorie_inspire": [
+        "Versorgungswirtschaft und staatliche Dienste"
+      ],
+      "kategorie_organisation": "Behörde für Arbeit, Soziales, Familie und Integration"
+    }]
+  },
+  {
+    "id": "1043",
+    "name": "Image",
+    "url": "https://geodienste.hamburg.de/HH_WMS_Kombi_DISK_GB",
+    "typ": "WMS",
+    "layers": "1",
+    "format": "image/png",
+    "version": "1.3.0",
+    "singleTile": false,
+    "transparent": false,
+    "transparency": 0,
+    "tilesize": "512",
+    "gutter": "0",
+    "minScale": "60009",
+    "maxScale": "2500000",
+    "gfiAttributes": "ignore",
+    "gfiTheme": "default",
+    "layerAttribution": "nicht vorhanden",
+    "legendURL": "ignore",
+    "cache": false,
+    "featureCount": "1",
+    "datasets": [{
+      "md_id": "B6A59A2B-2D40-4676-9094-0EB73039ED34",
+      "rs_id": "https://registry.gdi-de.org/id/de.hh/001719df-6619-40b7-aefe-32e8aaf49337",
+      "md_name": "Geobasiskarten Hamburg",
+      "bbox": "466251.43,5844577.89,661887.13,6042030.31",
+      "kategorie_opendata": [
+        "Sonstiges"
+      ],
+      "kategorie_inspire": [
+        "nicht INSPIRE-identifiziert"
+      ],
+      "kategorie_organisation": "Landesbetrieb Geoinformation und Vermessung"
+    }]
+  },
+  {
+    "id": "1044",
+    "name": "Image",
+    "url": "https://geodienste.hamburg.de/HH_WMS_Kombi_DISK_GB",
+    "typ": "WMS",
+    "layers": "5",
+    "format": "image/png",
+    "version": "1.3.0",
+    "singleTile": false,
+    "transparent": false,
+    "transparency": 0,
+    "tilesize": "512",
+    "gutter": "0",
+    "minScale": "20010",
+    "maxScale": "60009",
+    "gfiAttributes": "ignore",
+    "gfiTheme": "default",
+    "layerAttribution": "nicht vorhanden",
+    "legendURL": "ignore",
+    "cache": false,
+    "featureCount": "1",
+    "datasets": [{
+      "md_id": "B6A59A2B-2D40-4676-9094-0EB73039ED34",
+      "rs_id": "https://registry.gdi-de.org/id/de.hh/001719df-6619-40b7-aefe-32e8aaf49337",
+      "md_name": "Geobasiskarten Hamburg",
+      "bbox": "466251.43,5844577.89,661887.13,6042030.31",
+      "kategorie_opendata": [
+        "Sonstiges"
+      ],
+      "kategorie_inspire": [
+        "nicht INSPIRE-identifiziert"
+      ],
+      "kategorie_organisation": "Landesbetrieb Geoinformation und Vermessung"
+    }]
+  },
+  {
+    "id": "1045",
+    "name": "Image",
+    "url": "https://geodienste.hamburg.de/HH_WMS_Kombi_DISK_GB",
+    "typ": "WMS",
+    "layers": "9",
+    "format": "image/png",
+    "version": "1.3.0",
+    "singleTile": false,
+    "transparent": false,
+    "transparency": 0,
+    "tilesize": "512",
+    "gutter": "0",
+    "minScale": "5010",
+    "maxScale": "20010",
+    "gfiAttributes": "ignore",
+    "gfiTheme": "default",
+    "layerAttribution": "nicht vorhanden",
+    "legendURL": "ignore",
+    "cache": false,
+    "featureCount": "1",
+    "datasets": [{
+      "md_id": "B6A59A2B-2D40-4676-9094-0EB73039ED34",
+      "rs_id": "https://registry.gdi-de.org/id/de.hh/001719df-6619-40b7-aefe-32e8aaf49337",
+      "md_name": "Geobasiskarten Hamburg",
+      "bbox": "466251.43,5844577.89,661887.13,6042030.31",
+      "kategorie_opendata": [
+        "Sonstiges"
+      ],
+      "kategorie_inspire": [
+        "nicht INSPIRE-identifiziert"
+      ],
+      "kategorie_organisation": "Landesbetrieb Geoinformation und Vermessung"
+    }]
+  },
+  {
+    "id": "1046",
+    "name": "Image",
+    "url": "https://geodienste.hamburg.de/HH_WMS_Kombi_DISK_GB",
+    "typ": "WMS",
+    "layers": "13",
+    "format": "image/png",
+    "version": "1.3.0",
+    "singleTile": false,
+    "transparent": false,
+    "transparency": 0,
+    "tilesize": "512",
+    "gutter": "0",
+    "minScale": "499",
+    "maxScale": "5010",
+    "gfiAttributes": "ignore",
+    "gfiTheme": "default",
+    "layerAttribution": "nicht vorhanden",
+    "legendURL": "ignore",
+    "cache": false,
+    "featureCount": "1",
+    "datasets": [{
+      "md_id": "B6A59A2B-2D40-4676-9094-0EB73039ED34",
+      "rs_id": "https://registry.gdi-de.org/id/de.hh/001719df-6619-40b7-aefe-32e8aaf49337",
+      "md_name": "Geobasiskarten Hamburg",
+      "bbox": "466251.43,5844577.89,661887.13,6042030.31",
+      "kategorie_opendata": [
+        "Sonstiges"
+      ],
+      "kategorie_inspire": [
+        "nicht INSPIRE-identifiziert"
+      ],
+      "kategorie_organisation": "Landesbetrieb Geoinformation und Vermessung"
+    }]
+  },
+  {
+    "id": "2425",
+    "name": "Stadtteile",
+    "url": "https://geodienste.hamburg.de/HH_WMS_Verwaltungsgrenzen",
+    "typ": "WMS",
+    "layers": "stadtteile",
+    "format": "image/png",
+    "version": "1.3.0",
+    "singleTile": true,
+    "transparent": true,
+    "transparency": 0,
+    "tilesize": "512",
+    "gutter": "0",
+    "minScale": "0",
+    "maxScale": "2500000",
+    "gfiAttributes": "showAll",
+    "gfiTheme": "default",
+    "layerAttribution": "nicht vorhanden",
+    "legendURL": "",
+    "cache": false,
+    "featureCount": "1",
+    "datasets": [{
+      "md_id": "F35EAC11-C236-429F-B1BF-751C0C18E8B7",
+      "rs_id": "https://registry.gdi-de.org/id/de.hh/2e348904-17de-48fd-9376-8f6fd2750feb",
+      "md_name": "ALKIS Verwaltungsgrenzen Hamburg",
+      "bbox": "461468.97,5916367.23,587010.91,5980347.76",
+      "kategorie_opendata": [
+        "Geographie, Geologie und Geobasisdaten"
+      ],
+      "kategorie_inspire": [
+        "Verwaltungseinheiten"
+      ],
+      "kategorie_organisation": "Landesbetrieb Geoinformation und Vermessung"
+    }]
+  },
+  {
+    "id": "5722",
+    "name": "Gehzeit zum nächsten Supermarkt",
+    "url": "https://geodienste.hamburg.de/MRH_WMS_REA_Einzelhandel",
+    "typ": "WMS",
+    "layers": "2",
+    "format": "image/png",
+    "version": "1.3.0",
+    "singleTile": false,
+    "transparent": true,
+    "transparency": 0,
+    "tilesize": "512",
+    "gutter": "0",
+    "minScale": "0",
+    "maxScale": "2500000",
+    "gfiAttributes": "showAll",
+    "gfiTheme": "default",
+    "layerAttribution": "nicht vorhanden",
+    "legendURL": "",
+    "cache": false,
+    "featureCount": "1",
+    "datasets": [{
+      "md_id": "FB3DE5B4-ACB9-4D95-B937-78F2B1BF92FE",
+      "rs_id": "https://registry.gdi-de.org/id/de.hh/1565e35e-d4ba-4073-99f8-f20ce3d882ca",
+      "md_name": "MRH Erreichbarkeitsanalysen zu Einzelhandel",
+      "bbox": "461468.97,5916367.23,587010.91,5980347.76",
+      "kategorie_opendata": [
+        "Sonstiges"
+      ],
+      "kategorie_inspire": [
+        "nicht INSPIRE-identifiziert"
+      ],
+      "kategorie_organisation": "Landesbetrieb Geoinformation und Vermessung"
+    }]
+  },
+  {
+    "id": "7484",
+    "name": "Gehzeit zur nächsten Kita",
+    "url": "https://geodienste.hamburg.de/MRH_WMS_REA_Soziales",
+    "typ": "WMS",
+    "layers": "6",
+    "format": "image/png",
+    "version": "1.3.0",
+    "singleTile": false,
+    "transparent": true,
+    "transparency": 0,
+    "tilesize": "512",
+    "gutter": "0",
+    "minScale": "0",
+    "maxScale": "2500000",
+    "gfiAttributes": "showAll",
+    "gfiTheme": "default",
+    "layerAttribution": "nicht vorhanden",
+    "legendURL": "",
+    "cache": false,
+    "featureCount": "1",
+    "datasets": [{
+      "md_id": "3232F5B6-3FE6-40EC-89CD-56E8B833412F",
+      "rs_id": "https://registry.gdi-de.org/id/de.hh/24e818ea-d300-454b-8712-adbacc8feba3",
+      "md_name": "MRH Erreichbarkeitsanalysen zu Soziale Infrastruktur",
+      "bbox": "461468.97,5916367.23,587010.91,5980347.76",
+      "kategorie_opendata": [
+        "Sonstiges"
+      ],
+      "kategorie_inspire": [
+        "nicht INSPIRE-identifiziert"
+      ],
+      "kategorie_organisation": "Landesbetrieb Geoinformation und Vermessung"
+    }]
+  },
+  {
+    "id": "7567",
+    "name": "Gehzeit zur nächsten Apotheke",
+    "url": "https://geodienste.hamburg.de/MRH_WMS_REA_Gesundheit",
+    "typ": "WMS",
+    "layers": "2",
+    "format": "image/png",
+    "version": "1.3.0",
+    "singleTile": false,
+    "transparent": true,
+    "transparency": 0,
+    "tilesize": "512",
+    "gutter": "0",
+    "minScale": "0",
+    "maxScale": "2500000",
+    "gfiAttributes": "showAll",
+    "gfiTheme": "default",
+    "layerAttribution": "nicht vorhanden",
+    "legendURL": "",
+    "cache": false,
+    "featureCount": "1",
+    "datasets": [{
+      "md_id": "B6054CC5-25A4-4237-BDEB-974A0C25051E",
+      "rs_id": "https://registry.gdi-de.org/id/de.hh/317239cc-0994-407b-b8ed-762c0e97a294",
+      "md_name": "MRH Erreichbarkeitsanalysen zu Gesundheit",
+      "bbox": "461468.97,5916367.23,587010.91,5980347.76",
+      "kategorie_opendata": [
+        "Sonstiges"
+      ],
+      "kategorie_inspire": [
+        "nicht INSPIRE-identifiziert"
+      ],
+      "kategorie_organisation": "Landesbetrieb Geoinformation und Vermessung"
+    }]
+  }
+]
