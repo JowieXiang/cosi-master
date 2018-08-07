@@ -38,7 +38,7 @@
     "videojs-flash": "^2.1.0"
   },
   "devDependencies": {
-    "build-config": "git+https://bitbucket.org/lgv-g12/build-config.git",
+    "build-config": "git+https://bitbucket.org/janbehrens/cosi-master-build-config.git",
     "chai": "4.1.1",
     "deep-extend": "^0.3.2",
     "eslint": "^4.14.0",
