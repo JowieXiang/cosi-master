@@ -349,5 +349,15 @@
       ],
       "kategorie_organisation": "Landesbetrieb Geoinformation und Vermessung"
     }]
+  },
+  {
+    "id": "csl1",
+    "name": "Sozialmonitoring 2016",
+    "url": "http://csl.local.hcuhh.de:8080/geoserver/csl/wms",
+    "typ": "GeoJSON",
+    "featureType": "csl:sozialmonitoring2016",
+    "layerAttribution": "Quelle: BSW",
+    "legendURL": "assets/Gesamtindex2016_Legende.png",
+    "gfiAttributes" : "showAll"
   }
 ]

@@ -108,6 +108,10 @@
         {
           "id": "5722",
           "name": "Gehzeit zum nächsten Supermarkt"
+        },
+        {
+          "id": "csl1",
+          "name": "Sozialmonitoring 2016"
         }
       ]
     }

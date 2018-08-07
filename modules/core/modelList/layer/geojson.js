@@ -52,7 +52,7 @@ define(function (require) {
                 request: "GetFeature",
                 service: "WFS",
                 typeName: this.get("featureType"),
-                outputFormat: "application/geo+json",
+                outputFormat: "application/json",
                 version: this.get("version")
             };
 
@@ -61,7 +61,7 @@ define(function (require) {
             }
 
             $.ajax({
-                url: Radio.request("Util", "getProxyURL", this.get("url")),
+                url: this.get("url"),
                 data: params,
                 async: true,
                 type: "GET",

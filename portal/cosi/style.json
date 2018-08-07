@@ -1,1 +1,8 @@
-[]
+[
+  {
+    "layerId": "csl1",
+    "class": "POLYGON",
+    "subClass": "SIMPLE",
+    "polygonFillColor": [255, 255, 255, 1]
+  }
+]
