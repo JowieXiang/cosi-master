@@ -66,7 +66,32 @@ define(function () {
             ]
         },
         quickHelp: true,
-        cosiMode: true,
+        cosiMode: {
+            topics: [
+                {
+                    name: "gruenflaechen",
+                    displayName: "Grün­flä­chen"
+                },
+                {
+                    name: "nahversorgung",
+                    displayName: "Nah­ver­sor­gung"
+                },
+                {
+                    name: "kitas",
+                    displayName: "Ki­tas"
+                }
+            ],
+            stages: [
+                {
+                    name: "before",
+                    displayName: "Vor Bebauung"
+                },
+                {
+                    name: "after",
+                    displayName: "Nach Bebauung"
+                }
+            ]
+        },
         portalConf: "../cosi/config.json",
         layerConf: "../portal/cosi/services.json",
         restConf: "../portal/cosi/rest-services.json",

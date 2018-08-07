@@ -78,16 +78,19 @@
       "Layer": [
         {
           "id": "2425",
-          "name": "Stadtteile"
+          "name": "Stadtteile",
+          "topic": "basic"
         },
         {
           "id": ["1043", "1044", "1045", "1046"],
           "name": "Stadtkarte Hamburg",
-          "visibility": true
+          "visibility": true,
+          "topic": "basic"
         },
         {
           "id": "94",
-          "name": "Luftbilder DOP 20"
+          "name": "Luftbilder DOP 20",
+          "topic": "basic"
         }
       ]
     },
@@ -95,23 +98,28 @@
       "Layer": [
         {
           "id": "683",
-          "name": "Kitas"
+          "name": "Kitas",
+          "topic": "kitas"
         },
         {
           "id": "7484",
-          "name": "Gehzeit zur nächsten Kita"
+          "name": "Gehzeit zur nächsten Kita",
+          "topic": "kitas"
         },
         {
           "id": "7567",
-          "name": "Gehzeit zur nächsten Apotheke"
+          "name": "Gehzeit zur nächsten Apotheke",
+          "topic": "nahversorgung"
         },
         {
           "id": "5722",
-          "name": "Gehzeit zum nächsten Supermarkt"
+          "name": "Gehzeit zum nächsten Supermarkt",
+          "topic": "nahversorgung"
         },
         {
           "id": "csl1",
-          "name": "Sozialmonitoring 2016"
+          "name": "Sozialmonitoring 2016",
+          "topic": "basic"
         }
       ]
     }

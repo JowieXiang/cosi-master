@@ -9,17 +9,36 @@
 
 .cosi .panel {
     height: 100%;
-    width: 150px;
+    /*width: 150px;*/
     position: absolute;
     top: 0;
     padding: 10px;
-    background-color:rgba(0, 0, 0, 0.2);
+    background-color: rgba(255, 255, 255, 0.75);
+
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: space-around;
 }
 
-.cosi #left-panel {
+.cosi #topics-panel {
     left: 0;
 }
 
-.cosi #right-panel {
+.cosi #stages-panel {
     right: 0;
 }
+
+.cosi .panel .cosi-field {
+    background-color: rgba(128, 128, 128, 0.5);
+    margin: 15px;
+    width: 100px;
+    text-align: center;
+    cursor: pointer;
+    padding: 50% 0;
+    user-select: none;
+}
+
+.cosi .panel .cosi-field.selected {
+    background-color: rgba(0, 152, 152, 0.75);
+}
+

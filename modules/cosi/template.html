@@ -1,11 +1,19 @@
 <% if(isVisible === true){ %>
 
 <div class="cosi bg-primary container-fluid">
-    <div id="left-panel" class="panel">
-  left
+    <div id="topics-panel" class="panel">
+        <% _.each(topics, function (topic) { %>
+        <div class="topics cosi-field" name="<%= topic['name'] %>">
+            <%= topic["displayName"] %>
+        </div>
+        <% }); %>
     </div>
-    <div id="right-panel" class="panel">
-rigth
+    <div id="stages-panel" class="panel">
+        <% _.each(stages, function (stage) { %>
+        <div class="stages cosi-field" name="<%= stage['name'] %>">
+            <%= stage["displayName"] %>
+        </div>
+        <% }); %>
     </div>
 </div>
 

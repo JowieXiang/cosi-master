@@ -3,6 +3,7 @@ define(function (require) {
     var ListTemplate = require("text!modules/menu/table/layer/templates/template.html"),
         SingleLayerView = require("modules/menu/table/layer/singleLayerView"),
         $ = require("jquery"),
+        Config = require("config"),
         LayerView;
 
     LayerView = Backbone.View.extend({
@@ -28,10 +29,17 @@ define(function (require) {
             this.$el.on("show.bs.collapse", function () {
                 Radio.request("TableMenu", "setActiveElement", "Layer");
             });
+
+            if (Config.cosiMode) {
+                this.listenTo(Radio.channel("Cosi"), {
+                    "selectTopic": this.addCosiFilter
+                });
+            }
         },
         id: "table-layer-list",
         className: "table-layer-list table-nav",
         template: _.template(ListTemplate),
+        cosiLayerFiler: ["basic"],
         events: {
             "click .icon-burgermenu_alt": 'showMenuWorkaround'
         },
@@ -50,14 +58,25 @@ define(function (require) {
             return this.$el;
         },
         renderList: function () {
-            var models = this.collection.where({type: "layer"});
+            var models = {};
+            if (Config.cosiMode) {
+                for (var i = 0; i < this.cosiLayerFiler.length; i++) {
+                    var filter = this.cosiLayerFiler[i];
+                    if ($.isEmptyObject(models)) {
+                        models = this.collection.where({topic: filter});
+                    } else {
+                        models.push.apply(models, this.collection.where({topic: filter}));
+                    }
+                }
+            } else {
+                models = this.collection.where({type: "layer"});
+            }
 
             models = _.sortBy(models, function (model) {
                 return model.get("selectionIDX");
             });
             this.addViews(models);
         },
-
         addViews: function (models) {
             var childElement = {};
 
@@ -66,6 +85,15 @@ define(function (require) {
                 this.$el.find("ul.layers").prepend(childElement);
 
             }, this);
+        },
+        removeAllViews: function () {
+            $(this.$el.find("ul.layers")).empty();
+        },
+        addCosiFilter: function (filterValue) {
+            this.cosiLayerFiler = ["basic"];
+            this.cosiLayerFiler.push(filterValue);
+            this.removeAllViews();
+            this.renderList();
         }
     });
 
