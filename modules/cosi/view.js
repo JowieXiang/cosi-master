@@ -10,9 +10,17 @@ define([
         model: CosiModel,
         className: "cosi",
         events: {
-            "click .cosi-field": "fieldClicked"
+            "click .cosi-field": "fieldClicked",
+            "click .reset-button a": "recenterMap"
         },
         initialize: function () {
+            // To set the inactivity of stages, we need to listen to changes
+            this.listenTo(Radio.channel("Layer"), {
+                "layerVisibleChanged": function (layerId, visible) {
+                    this.setStageMenuVisibility();
+                }
+            }, this);
+            //TODO: Wenn Layer initial angezeigt werden, muss hier auch auf *Radio.trigger("Cosi", "selectTopic"* gehört werden
             this.render();
         },
         render: function () {
@@ -27,6 +35,27 @@ define([
                 });
                 clickTarget.addClass("selected");
                 Radio.trigger("Cosi", "selectTopic", clickTarget.attr('name').trim());
+            }
+        },
+        recenterMap: function () {
+            Radio.trigger("MapView", "setCenter", this.model.getCenter(), 3);
+        },
+        setStageMenuVisibility: function () {
+            var featureCollection = Radio.request("ModelList","getCollection");
+            var  isStagesVisible = false;
+            _.each(featureCollection["models"], function (feature) {
+                if (feature["attributes"]["type"] == "layer" &&
+                    feature["attributes"]["isVisibleInMap"] == true &&
+                    feature["attributes"]["stageLayerMap"]) {
+                    isStagesVisible = true;
+                     return true;
+                }
+            });
+            this.model.setIsStagesActive(isStagesVisible);
+            if (isStagesVisible) {
+                $(".stages").removeClass("inactive-stages");
+            } else {
+                $(".stages").addClass("inactive-stages");
             }
         }
     });

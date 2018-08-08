@@ -1,20 +1,23 @@
 <% if(isVisible === true){ %>
 
-<div class="cosi bg-primary container-fluid">
-    <div id="topics-panel" class="panel">
+    <div id="topics-panel" class="cosi-panel">
         <% _.each(topics, function (topic) { %>
-        <div class="topics cosi-field" name="<%= topic['name'] %>">
+        <div class="topics cosi-field shadow-element" name="<%= topic['name'] %>">
             <%= topic["displayName"] %>
         </div>
         <% }); %>
     </div>
-    <div id="stages-panel" class="panel">
+    <div id="stages-panel" class="cosi-panel">
         <% _.each(stages, function (stage) { %>
-        <div class="stages cosi-field" name="<%= stage['name'] %>">
+        <div class="stages cosi-field shadow-element inactive-stages"
+             name="<%= stage['name'] %>">
             <%= stage["displayName"] %>
         </div>
         <% }); %>
     </div>
-</div>
+
+    <div class="modal-container-right">
+        <div class="reset-button shadow-element"><a href="#">Karte zurücksetzen</a></div>
+    </div>
 
 <% } %>

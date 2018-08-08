@@ -90,7 +90,8 @@ define(function () {
                     name: "after",
                     displayName: "Nach Bebauung"
                 }
-            ]
+            ],
+            initialCenter: [564959.09, 5940777.71]
         },
         portalConf: "../cosi/config.json",
         layerConf: "../portal/cosi/services.json",

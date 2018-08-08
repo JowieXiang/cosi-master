@@ -32,7 +32,7 @@
     },
     "mapView": {
       "backgroundImage": "/../../node_modules/lgv-config/img/backgroundCanvas.jpeg",
-      "startCenter": [561210, 5932600]
+      "startCenter": [564959.09, 5940777.71]
     },
     "menu": {
       "tree": {
@@ -99,7 +99,11 @@
         {
           "id": "683",
           "name": "Kitas",
-          "topic": "kitas"
+          "topic": "kitas",
+          "defaultStage": "before",
+          "stageLayerMap" : {
+            "after" : 123
+          }
         },
         {
           "id": "7484",
