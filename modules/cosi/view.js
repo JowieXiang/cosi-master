@@ -22,6 +22,9 @@ define([
             }, this);
             //TODO: Wenn Layer initial angezeigt werden, muss hier auch auf *Radio.trigger("Cosi", "selectTopic"* gehört werden
             this.render();
+
+
+            Radio.request("TableMenu", "setActiveElement", "Category");
         },
         render: function () {
             var attr = this.model.toJSON();
@@ -35,6 +38,7 @@ define([
                 });
                 clickTarget.addClass("selected");
                 Radio.trigger("Cosi", "selectTopic", clickTarget.attr('name').trim());
+                Radio.trigger("LocalStorage", "sendMessage", "topic-select", clickTarget.attr('name').trim());
             }
         },
         recenterMap: function () {

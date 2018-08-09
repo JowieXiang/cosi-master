@@ -94,9 +94,15 @@ define("app", function (require) {
         });
     }
 
-    if (Config.mouseHover) {
+    if (!(Config.cosiMode && Config.cosiMode.isInfoscreen) && Config.mouseHover) {
         require(["modules/mouseHover/view"], function (MouseHoverPopupView) {
             new MouseHoverPopupView();
+        });
+    }
+
+    if (Config.cosiMode && Config.cosiMode.isInfoscreen) {
+        require(["modules/infoScreen/view"], function (InfoscreenView) {
+            new InfoscreenView();
         });
     }
 
@@ -112,9 +118,15 @@ define("app", function (require) {
         });
     }
 
-    if (Config.cosiMode && Config.cosiMode) {
+    if (Config.cosiMode) {
         require(["modules/cosi/view"], function (CosiView) {
             new CosiView();
+        });
+    }
+
+    if (Config.isLocalStorage) {
+        require(["modules/localStorage/view"], function (LocalStorageView) {
+            new LocalStorageView();
         });
     }
 

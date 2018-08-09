@@ -93,6 +93,7 @@ define(function () {
             ],
             initialCenter: [564959.09, 5940777.71]
         },
+        isLocalStorage: true,
         portalConf: "../cosi/config.json",
         layerConf: "../portal/cosi/services.json",
         restConf: "../portal/cosi/rest-services.json",

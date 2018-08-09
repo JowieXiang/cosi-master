@@ -1,0 +1,25 @@
+{
+  "Portalconfig": {
+    "menu": {
+      "dataVisualisation": {
+        "name": "Daten",
+        "glyphicon": "glyphicon-stats"
+      }
+    },
+    "controls": {
+      "totalview": false,
+      "fullScreen": false,
+      "freeze": true
+    },
+    "scaleLine": false,
+    "Baumtyp": "light"
+  },
+  "Themenconfig": {
+    "Hintergrundkarten": {
+      "Layer": []
+    },
+    "Fachdaten": {
+      "Layer": []
+    }
+  }
+}
