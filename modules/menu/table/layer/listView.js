@@ -21,7 +21,7 @@ define(function (require) {
             this.listenTo(this.collection, {
                 "updateSelection": function () {
                     this.render();
-                    $("#table-nav-layers-panel").collapse("show");
+                    $("#table-nav-layers-panel").hide();
                     this.$el.addClass("burgerMenuIsActive");
                 }
             });
