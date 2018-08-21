@@ -33,6 +33,9 @@ define(function (require) {
             var namedProjections = this.get("namedProjections");
 
             proj4.defs(namedProjections);
+            // Alias für "EPSG:4326", wie er von Geoserver verwendet wird
+            proj4.defs("urn:ogc:def:crs:EPSG::4326", proj4.defs("EPSG:4326"));
+
             ol.proj.setProj4(proj4);
 
             _.each(namedProjections, function (namedProjection) {
