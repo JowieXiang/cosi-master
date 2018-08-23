@@ -121,7 +121,8 @@
           "topic": "nahversorgung"
         },
         {
-          "id": "csl1",
+          "id": "sozialmonitoring",
+          "styleId": "sozialmonitoring",
           "name": "Sozialmonitoring 2016",
           "topic": "basic"
         }

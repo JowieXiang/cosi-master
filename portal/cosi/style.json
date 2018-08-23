@@ -1,8 +1,71 @@
 [
   {
-    "layerId": "csl1",
+    "layerId": "sozialmonitoring",
     "class": "POLYGON",
-    "subClass": "SIMPLE",
-    "polygonFillColor": [255, 255, 255, 1]
+    "subClass": "CUSTOM",
+    "polygonStrokeColor": [0, 0, 0, 0.5],
+    "styleField": "Gesamtinde",
+    "styleFieldValues": [
+      {
+        "styleFieldValue": "1",
+        "polygonFillColor": [76, 115, 0, 0.6],
+        "polygonStrokeColor": [76, 115, 0, 1]
+      },
+      {
+        "styleFieldValue": "2",
+        "polygonFillColor": [112, 168, 0, 0.6],
+        "polygonStrokeColor": [112, 168, 0, 1]
+      },
+      {
+        "styleFieldValue": "3",
+        "polygonFillColor": [200, 215, 158, 0.6],
+        "polygonStrokeColor": [200, 215, 158, 1]
+      },
+      {
+        "styleFieldValue": "4",
+        "polygonFillColor": [0, 133, 168, 0.6],
+        "polygonStrokeColor": [0, 133, 168, 1]
+      },
+      {
+        "styleFieldValue": "5",
+        "polygonFillColor": [115, 178, 255, 0.6],
+        "polygonStrokeColor": [115, 178, 255, 1]
+      },
+      {
+        "styleFieldValue": "6",
+        "polygonFillColor": [189, 210, 255, 0.6],
+        "polygonStrokeColor": [189, 210, 255, 1]
+      },
+      {
+        "styleFieldValue": "7",
+        "polygonFillColor": [255, 234, 189, 0.6],
+        "polygonStrokeColor": [255, 234, 189, 1]
+      },
+      {
+        "styleFieldValue": "8",
+        "polygonFillColor": [255, 170, 1, 0.6],
+        "polygonStrokeColor": [255, 170, 1, 1]
+      },
+      {
+        "styleFieldValue": "9",
+        "polygonFillColor": [168, 112, 1, 0.6],
+        "polygonStrokeColor": [168, 112, 1, 1]
+      },
+      {
+        "styleFieldValue": "10",
+        "polygonFillColor": [230, 173, 188, 0.6],
+        "polygonStrokeColor": [230, 173, 188, 1]
+      },
+      {
+        "styleFieldValue": "11",
+        "polygonFillColor": [229, 83, 122, 0.6],
+        "polygonStrokeColor": [229, 83, 122, 1]
+      },
+      {
+        "styleFieldValue": "12",
+        "polygonFillColor": [179, 29, 30, 0.6],
+        "polygonStrokeColor": [179, 29, 30, 1]
+      }
+    ]
   }
 ]

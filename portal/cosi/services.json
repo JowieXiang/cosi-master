@@ -351,7 +351,7 @@
     }]
   },
   {
-    "id": "csl1",
+    "id": "sozialmonitoring",
     "name": "Sozialmonitoring 2016",
     "url": "http://csl.local.hcuhh.de:8080/geoserver/csl/wms",
     "typ": "GeoJSON",

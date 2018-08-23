@@ -260,7 +260,7 @@ define(function (require) {
             featureValue = feature.get(styleField);
             if (!_.isUndefined(featureValue)) {
                 styleFieldValueObj = _.filter(this.get("styleFieldValues"), function (styleFieldValue) {
-                    return styleFieldValue.styleFieldValue.toUpperCase() === featureValue.toUpperCase();
+                    return styleFieldValue.styleFieldValue.toUpperCase() === featureValue.toString().toUpperCase();
                 })[0];
             }
 
