@@ -27,7 +27,7 @@
     "jquery": "2.x",
     "jquery-ui": "1.x",
     "moment": "2.x",
-    "mqtt": "^2.15.x",
+    "mqtt": "^2.18.4",
     "openlayers": "4.4.2",
     "pdfmake": "^0.1.36",
     "proj4": "2.x",

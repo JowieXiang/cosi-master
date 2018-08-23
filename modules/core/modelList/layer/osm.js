@@ -6,7 +6,9 @@ define(function (require) {
 
     OSMLayer = Layer.extend({
         initialize: function () {
-            this.superInitialize();
+            if (!this.get("isChildLayer")) {
+                Layer.prototype.initialize.apply(this);
+            }
         },
 
         createLayerSource: function () {
@@ -22,6 +24,10 @@ define(function (require) {
 
         createLegendURL: function () {
             // no legend available
+        },
+
+        checkForScale: function () {
+            this.setIsOutOfRange(false);
         }
     });
 

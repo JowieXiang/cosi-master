@@ -38,7 +38,7 @@ require.config({
         jqueryui: "../node_modules/jquery-ui/ui",
         modules: "../modules",
         moment: "../node_modules/moment/min/moment-with-locales.min",
-        mqtt: "../node_modules/mqtt/browserMqtt",
+        mqtt: "../node_modules/mqtt/dist/mqtt",
         openlayers: "../node_modules/openlayers/dist/ol",
         pdfmake: "../node_modules/pdfmake/build/pdfmake",
         proj4: "../node_modules/proj4/dist/proj4",
