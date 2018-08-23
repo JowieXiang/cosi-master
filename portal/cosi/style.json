@@ -67,5 +67,13 @@
         "polygonStrokeColor": [179, 29, 30, 1]
       }
     ]
+  },
+  {
+    "layerId": "grossborstel",
+    "class": "POLYGON",
+    "subClass": "SIMPLE",
+    "polygonFillColor": [0, 0, 0, 0],
+    "polygonStrokeColor": [30, 144, 255, 1],
+    "polygonStrokeWidth": 5
   }
 ]

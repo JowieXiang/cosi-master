@@ -364,7 +364,14 @@
     "typ": "GeoJSON",
     "featureType": "csl:sozialmonitoring2016",
     "layerAttribution": "Quelle: BSW",
-    "legendURL": "assets/Gesamtindex2016_Legende.png",
-    "gfiAttributes" : "showAll"
+    "legendURL": "assets/Gesamtindex2016_Legende.png"
+  },
+  {
+    "id": "grossborstel",
+    "name": "Groß Borstel",
+    "url": "http://csl.local.hcuhh.de:8080/geoserver/csl/wms",
+    "typ": "GeoJSON",
+    "featureType": "csl:grossborstel",
+    "legendURL": "ignore"
   }
 ]

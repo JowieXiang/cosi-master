@@ -77,8 +77,22 @@
     "Hintergrundkarten": {
       "Layer": [
         {
+          "id": "grossborstel",
+          "styleId": "grossborstel",
+          "name": "Groß Borstel",
+          "topic": "basic",
+          "visibility": true
+        },
+        {
+          "id": "sozialmonitoring",
+          "styleId": "sozialmonitoring",
+          "name": "Sozialmonitoring 2016",
+          "topic": "basic"
+        },
+        {
           "id": "2425",
           "name": "Stadtteile",
+          "visibility": true,
           "topic": "basic"
         },
         {
@@ -124,12 +138,6 @@
           "id": "5722",
           "name": "Gehzeit zum nächsten Supermarkt",
           "topic": "nahversorgung"
-        },
-        {
-          "id": "sozialmonitoring",
-          "styleId": "sozialmonitoring",
-          "name": "Sozialmonitoring 2016",
-          "topic": "basic"
         }
       ]
     }
