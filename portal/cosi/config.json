@@ -91,6 +91,11 @@
           "id": "94",
           "name": "Luftbilder DOP 20",
           "topic": "basic"
+        },
+        {
+          "id": "osm",
+          "name": "OpenStreetMap",
+          "topic": "basic"
         }
       ]
     },

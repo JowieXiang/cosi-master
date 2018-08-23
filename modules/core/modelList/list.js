@@ -7,6 +7,7 @@ define(function (require) {
         GROUPLayer = require("modules/core/modelList/layer/group"),
         // SensorLayer = require("modules/core/modelList/layer/sensor"),
         HeatmapLayer = require("modules/core/modelList/layer/heatmap"),
+        OSMLayer = require("modules/core/modelList/layer/osm"),
         Folder = require("modules/core/modelList/folder/model"),
         Tool = require("modules/core/modelList/tool/model"),
         StaticLink = require("modules/core/modelList/staticlink/model"),
@@ -99,6 +100,9 @@ define(function (require) {
                 // }
                 else if (attrs.typ === "Heatmap") {
                     return new HeatmapLayer(attrs, options);
+                }
+                else if (attrs.typ === "OSM") {
+                    return new OSMLayer(attrs, options);
                 }
             }
             else if (attrs.type === "folder") {
