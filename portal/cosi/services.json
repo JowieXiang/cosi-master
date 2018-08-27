@@ -373,5 +373,14 @@
     "typ": "GeoJSON",
     "featureType": "csl:grossborstel",
     "legendURL": "ignore"
+  },
+  {
+    "id": "kitas_before",
+    "name": "Kitas",
+    "url": "http://csl.local.hcuhh.de:8080/geoserver/csl/wms",
+    "typ": "GeoJSON",
+    "featureType": "csl:kitas",
+    "layerAttribution": "Quelle: BASFI",
+    "legendURL": "ignore"
   }
 ]

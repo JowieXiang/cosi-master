@@ -79,14 +79,12 @@
         {
           "id": "grossborstel",
           "styleId": "grossborstel",
-          "name": "Groß Borstel",
           "topic": "basic",
           "visibility": true
         },
         {
           "id": "sozialmonitoring",
           "styleId": "sozialmonitoring",
-          "name": "Sozialmonitoring 2016",
           "topic": "basic"
         },
         {
@@ -108,7 +106,6 @@
         },
         {
           "id": "osm",
-          "name": "OpenStreetMap",
           "topic": "basic"
         }
       ]
@@ -116,13 +113,19 @@
     "Fachdaten": {
       "Layer": [
         {
-          "id": "683",
-          "name": "Kitas",
-          "topic": "kitas",
-          "defaultStage": "before",
-          "stageLayerMap" : {
-            "after" : 123
-          }
+          "id": "kitas_before",
+          "styleId": "kitas_before",
+          "topic": "kitas"
+        },
+        {
+          "id": "stadtteileKitaplaetze_before",
+          "styleId": "stadtteileKitaplaetze_before",
+          "topic": "kitas"
+        },
+        {
+          "id": "einwohner_before",
+          "styleId": "einwohner_before",
+          "topic": "kitas"
         },
         {
           "id": "7484",

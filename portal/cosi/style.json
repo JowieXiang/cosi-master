@@ -75,5 +75,19 @@
     "polygonFillColor": [0, 0, 0, 0],
     "polygonStrokeColor": [30, 144, 255, 1],
     "polygonStrokeWidth": 5
+  },
+  {
+    "layerId": "kitas_before",
+    "class": "POINT",
+    "subClass": "CIRCLE",
+    "circleRadius": 7,
+    "circleFillColor": [255, 255, 255, 1],
+    "circleStrokeColor": [30, 144, 255, 1],
+    "circleStrokeWidth": 1.5,
+    "labelField": "KapKindneu",
+    "textFont": "18px sans-serif",
+    "textStrokeColor": [30, 144, 255, 1],
+    "textStrokeWidth": 2,
+    "textOffsetY": -16
   }
 ]

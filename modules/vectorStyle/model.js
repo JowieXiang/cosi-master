@@ -628,7 +628,9 @@ define(function (require) {
                 textStyle = undefined;
             }
             else {
-                textObj.text = feature.get(labelField);
+                const labelFieldValue = feature.get(labelField);
+
+                textObj.text = labelFieldValue ? labelFieldValue.toString() : "";
                 textObj.textAlign = this.get("textAlign");
                 textObj.font = this.get("textFont").toString();
                 textObj.scale = parseFloat(this.get("textScale"), 10);
