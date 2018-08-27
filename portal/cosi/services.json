@@ -391,5 +391,14 @@
     "featureType": "csl:stadtteile_grossborstel",
     "layerAttribution": "Quellen: BASFI (Kitaplätze), Statistikamt Nord (Bevölkerungsstruktur)",
     "legendURL": "ignore"
+  },
+  {
+    "id": "einwohner_before",
+    "name": "Einwohner im Alter 0 bis 6 Jahre",
+    "url": "http://csl.local.hcuhh.de:8080/geoserver/csl/wms",
+    "typ": "GeoJSON",
+    "featureType": "csl:einwohner_0bis6",
+    "layerAttribution": "Quelle: Statistikamt Nord",
+    "legendURL": "ignore"
   }
 ]

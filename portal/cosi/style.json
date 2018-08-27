@@ -3,7 +3,6 @@
     "layerId": "sozialmonitoring",
     "class": "POLYGON",
     "subClass": "CUSTOM",
-    "polygonStrokeColor": [0, 0, 0, 0.5],
     "styleField": "Gesamtinde",
     "styleFieldValues": [
       {
@@ -102,6 +101,41 @@
     "textAlign": "center",
     "textFont": "22px sans-serif",
     "textStrokeColor": [128, 0, 128, 1],
+    "textStrokeWidth": 2
+  },
+  {
+    "layerId": "einwohner_before",
+    "class": "POLYGON",
+    "subClass": "CUSTOM",
+    "polygonStrokeColor": [128, 0, 0, 1],
+    "polygonStrokeWidth": 0.5,
+    "styleField": "1bis6range",
+    "styleFieldValues": [
+      {
+        "styleFieldValue": "0-9",
+        "polygonFillColor": [255, 0, 0, 0]
+      },
+      {
+        "styleFieldValue": "10-24",
+        "polygonFillColor": [255, 0, 0, 0.2]
+      },
+      {
+        "styleFieldValue": "25-49",
+        "polygonFillColor": [255, 0, 0, 0.4]
+      },
+      {
+        "styleFieldValue": "50-89",
+        "polygonFillColor": [255, 0, 0, 0.6]
+      },
+      {
+        "styleFieldValue": "90-",
+        "polygonFillColor": [255, 0, 0, 0.8]
+      }
+    ],
+    "labelField": "1bis6",
+    "textAlign": "center",
+    "textFont": "18px sans-serif",
+    "textStrokeColor": [128, 0, 0, 1],
     "textStrokeWidth": 2
   }
 ]
