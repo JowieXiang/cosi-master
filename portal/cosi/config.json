@@ -70,6 +70,7 @@
       "fullScreen": false,
       "freeze": true
     },
+    "isShowCategoryMenu": false,
     "scaleLine": false,
     "Baumtyp": "light"
   },
@@ -80,7 +81,8 @@
           "id": "grossborstel",
           "styleId": "grossborstel",
           "topic": "basic",
-          "visibility": true
+          "visibility": true,
+          "isVisibleInTree": false
         },
         {
           "id": "sozialmonitoring",

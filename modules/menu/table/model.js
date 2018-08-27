@@ -1,8 +1,10 @@
-define(function () {
+define(function (require) {
     var channel = Radio.channel("TableMenu"),
+        Config = require("config"),
         TableNavModel = Backbone.Model.extend({
             defaults: {
-                isActiveElement: ""
+                isActiveElement: "",
+                isShowCategories: Radio.request("Parser", "getPortalConfig").isShowCategoryMenu
             },
             initialize: function () {
                 channel.reply({
@@ -18,6 +20,10 @@ define(function () {
                     channel.trigger("hideMenuElement" + this.get("isActiveElement"));
                 }
                 this.set("isActiveElement", element);
+            },
+
+            getIsShowCategories: function () {
+                return this.defaults.isShowCategories;
             }
         });
 

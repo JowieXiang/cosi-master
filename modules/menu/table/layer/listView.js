@@ -63,9 +63,9 @@ define(function (require) {
                 for (var i = 0; i < this.cosiLayerFiler.length; i++) {
                     var filter = this.cosiLayerFiler[i];
                     if ($.isEmptyObject(models)) {
-                        models = this.collection.where({topic: filter});
+                        models = this.collection.where({topic: filter, isVisibleInTree: undefined || true});
                     } else {
-                        models.push.apply(models, this.collection.where({topic: filter}));
+                        models.push.apply(models, this.collection.where({topic: filter, isVisibleInTree: undefined || true}));
                     }
                 }
             } else {
