@@ -382,5 +382,14 @@
     "featureType": "csl:kitas",
     "layerAttribution": "Quelle: BASFI",
     "legendURL": "ignore"
+  },
+  {
+    "id": "stadtteileKitaplaetze_before",
+    "name": "Kitaplätze pro Kind (auf Stadtteilebene)",
+    "url": "http://csl.local.hcuhh.de:8080/geoserver/csl/wms",
+    "typ": "GeoJSON",
+    "featureType": "csl:stadtteile_grossborstel",
+    "layerAttribution": "Quellen: BASFI (Kitaplätze), Statistikamt Nord (Bevölkerungsstruktur)",
+    "legendURL": "ignore"
   }
 ]

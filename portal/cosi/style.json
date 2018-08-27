@@ -85,9 +85,23 @@
     "circleStrokeColor": [30, 144, 255, 1],
     "circleStrokeWidth": 1.5,
     "labelField": "KapKindneu",
+    "textAlign": "center",
     "textFont": "18px sans-serif",
     "textStrokeColor": [30, 144, 255, 1],
     "textStrokeWidth": 2,
     "textOffsetY": -16
+  },
+  {
+    "layerId": "stadtteileKitaplaetze_before",
+    "class": "POLYGON",
+    "subClass": "SIMPLE",
+    "polygonFillColor": [0, 0, 0, 0],
+    "polygonStrokeColor": [128, 0, 128, 1],
+    "polygonStrokeWidth": 1.5,
+    "labelField": "Kpl p K",
+    "textAlign": "center",
+    "textFont": "22px sans-serif",
+    "textStrokeColor": [128, 0, 128, 1],
+    "textStrokeWidth": 2
   }
 ]
