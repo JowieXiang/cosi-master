@@ -117,7 +117,8 @@
         {
           "id": "kitas_before",
           "styleId": "kitas_before",
-          "topic": "kitas"
+          "topic": "kitas",
+          "isDefaultVisible": true
         },
         {
           "id": "stadtteileKitaplaetze_before",

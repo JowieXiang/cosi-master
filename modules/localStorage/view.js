@@ -6,8 +6,10 @@ define(function (require) {
     LocalStorageView = Backbone.View.extend({
         model: StorageModel,
         initialize: function () {
+            var channel = Radio.channel("LocalStorage");
+
             // To set the inactivity of stages, we need to listen to changes
-            this.listenTo(Radio.channel("LocalStorage"), {
+            this.listenTo(channel, {
                 "sendMessage": function (messageType, messageData) {
                     var message = {
                         "type": messageType,
@@ -15,7 +17,6 @@ define(function (require) {
                     };
                     localStorage.setItem('message', JSON.stringify(message));
                     localStorage.removeItem('message');
-                    console.log("sendmessage")
                 }
             }, this);
 

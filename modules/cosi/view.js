@@ -14,15 +14,23 @@ define([
             "click .reset-button a": "recenterMap"
         },
         initialize: function () {
+            var channel = Radio.channel("Cosi");
+
+            channel.reply({
+                "getSavedTopicSelection": function (topic) {
+                    return this.model.getTopicSelection(topic);
+                }
+            }, this);
+
             // To set the inactivity of stages, we need to listen to changes
             this.listenTo(Radio.channel("Layer"), {
                 "layerVisibleChanged": function (layerId, visible) {
                     this.setStageMenuVisibility();
                 }
             }, this);
+
             //TODO: Wenn Layer initial angezeigt werden, muss hier auch auf *Radio.trigger("Cosi", "selectTopic"* gehört werden
             this.render();
-
 
             Radio.request("TableMenu", "setActiveElement", "Category");
         },
@@ -31,14 +39,21 @@ define([
             $(".ol-viewport").append(this.$el.html(this.template(attr)));
         },
         fieldClicked : function (evt) {
+            // Save currently selected layers before the topic switch
+            this.saveCurrentTopicLayerSelection(this.model.getCurrentTopic());
+
             var clickTarget = $(evt.currentTarget);
+            var currentTopic = clickTarget.attr('name').trim();
+            this.model.setCurrentTopic(currentTopic);
+
+            // Propagate the topic switch
             if(!clickTarget.hasClass("selected")) {
                 $(".cosi-field").each(function( index ) {
                     $( this ).removeClass("selected");
                 });
                 clickTarget.addClass("selected");
-                Radio.trigger("Cosi", "selectTopic", clickTarget.attr('name').trim());
-                Radio.trigger("LocalStorage", "sendMessage", "topic-select", clickTarget.attr('name').trim());
+                Radio.trigger("Cosi", "selectTopic", currentTopic);
+                Radio.trigger("LocalStorage", "sendMessage", "topic-select", currentTopic);
             }
         },
         recenterMap: function () {
@@ -61,6 +76,16 @@ define([
             } else {
                 $(".stages").addClass("inactive-stages");
             }
+        },
+        saveCurrentTopicLayerSelection: function (topic) {
+            var layerCollection = Radio.request("ModelList", "getCollection");
+            layerCollection = layerCollection.where({isVisibleInMap: true, topic: topic});
+            var selectedLayerIds = [];
+            _.each(layerCollection, function (layer) {
+                    selectedLayerIds.push(layer.get("id"))
+            });
+
+            this.model.setTopicSelection(topic, selectedLayerIds);
         }
     });
 

@@ -20,9 +20,10 @@ define(function (require) {
             // Aktiviert ausgewälter Layer; Layermenu ist aktiv
             this.listenTo(this.collection, {
                 "updateSelection": function () {
-                    this.render();
-                    $("#table-nav-layers-panel").hide();
-                    this.$el.addClass("burgerMenuIsActive");
+                    if (!Config.cosiMode) {
+                        this.render();
+                        this.$el.addClass("burgerMenuIsActive");
+                    }
                 }
             });
             // bootstrap collapse event
@@ -39,12 +40,17 @@ define(function (require) {
         id: "table-layer-list",
         className: "table-layer-list table-nav",
         template: _.template(ListTemplate),
-        cosiLayerFiler: ["basic"],
+        cosiLayerTopics: ["basic"],
         events: {
-            "click .icon-burgermenu_alt": 'showMenuWorkaround'
+            "click .icon-burgermenu_alt": 'showHideMenuWorkaround'
         },
-        showMenuWorkaround: function (evt) {
-            $("#table-nav-layers-panel").show();
+        showHideMenuWorkaround: function (evt) {
+            var menu = $("#table-nav-layers-panel");
+            if (menu.is(":visible")) {
+                menu.hide();
+            } else {
+                menu.show();
+            }
         },
         hideMenu: function () {
             $("#table-nav-layers-panel").collapse("hide");
@@ -54,22 +60,50 @@ define(function (require) {
             if (Radio.request("TableMenu", "getActiveElement") === "Layer") {
                 $("#table-nav-layers-panel").collapse("show");
             }
-            this.renderList();
+            this.renderList(false);
             return this.$el;
         },
-        renderList: function () {
+        renderList: function (isTopicChanged) {
             var models = {};
+            var layerFilter = this.cosiLayerTopics;
+
             if (Config.cosiMode) {
-                for (var i = 0; i < this.cosiLayerFiler.length; i++) {
-                    var filter = this.cosiLayerFiler[i];
-                    if ($.isEmptyObject(models)) {
-                        models = this.collection.where({topic: filter, isVisibleInTree: undefined || true});
+                // Gather all layers that are matching the selected topics
+                models = this.getLayerForFilters(layerFilter);
+
+                // Deselect layers that do not belong to the current topic
+                var currentSelection = Radio.request("ModelList", "getModelsByAttributes", {isVisibleInMap: true});
+                _.each(currentSelection, function (layer) {
+                    var layerTopicVisible = false;
+                    _.each(layerFilter, function (filter) {
+                        if (layer.get("topic") === filter) {
+                            layerTopicVisible = true;
+                            return;
+                        }
+                    })
+                    if (!layerTopicVisible) {
+                        layer.setIsVisibleInMap(false)
+                    }
+                })
+                if (isTopicChanged) {
+                    // Select layers that are marked as default or previously selected
+                    var prevSelectedLayers = Radio.request("Cosi", "getSavedTopicSelection", layerFilter[1]);
+                    if (prevSelectedLayers && prevSelectedLayers.length > 0) {
+                        _.each(models, function (layer) {
+                            if (_.contains(prevSelectedLayers, layer.get("id"))) {
+                                layer.setIsVisibleInMap(true)
+                            }
+                        })
                     } else {
-                        models.push.apply(models, this.collection.where({topic: filter, isVisibleInTree: undefined || true}));
+                        _.each(models, function (layer) {
+                            if (layer.get("isDefaultVisible")) {
+                                layer.setIsVisibleInMap(true)
+                            }
+                        })
                     }
                 }
             } else {
-                models = this.collection.where({type: "layer"});
+                models = Radio.request("ModelList", "getModelsByAttributes", {type: "layer"});
             }
 
             models = _.sortBy(models, function (model) {
@@ -79,7 +113,6 @@ define(function (require) {
         },
         addViews: function (models) {
             var childElement = {};
-
             _.each(models, function (model) {
                 childElement = new SingleLayerView({model: model}).render();
                 this.$el.find("ul.layers").prepend(childElement);
@@ -90,10 +123,22 @@ define(function (require) {
             $(this.$el.find("ul.layers")).empty();
         },
         addCosiFilter: function (filterValue) {
-            this.cosiLayerFiler = ["basic"];
-            this.cosiLayerFiler.push(filterValue);
+            this.cosiLayerTopics = ["basic"];
+            this.cosiLayerTopics.push(filterValue);
             this.removeAllViews();
-            this.renderList();
+            this.renderList(true);
+        },
+        getLayerForFilters: function (filters) {
+            var layers = {};
+            for (var i = 0; i < filters.length; i++) {
+                var filter = filters[i];
+                if ($.isEmptyObject(layers)) {
+                    layers = Radio.request("ModelList", "getModelsByAttributes", {topic: filter, isVisibleInTree: undefined || true});
+                } else {
+                    layers.push.apply(layers, Radio.request("ModelList", "getModelsByAttributes", {topic: filter, isVisibleInTree: undefined || true}));
+                }
+            }
+            return layers;
         }
     });
 

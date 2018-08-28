@@ -23,7 +23,7 @@ define(function (require) {
             },
 
             getIsShowCategories: function () {
-                return this.defaults.isShowCategories;
+                return this.get("isShowCategories");
             }
         });
 

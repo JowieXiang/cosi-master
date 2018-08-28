@@ -3,12 +3,14 @@ define([
     "config"
 ], function (Backbone, Config) {
     var CosiModel = Backbone.Model.extend({
+        topicSelection: {},
         defaults: {
             isVisible: false,
             topics: [],
             stages: [],
             center: [],
-            isStagesActive: false
+            isStagesActive: false,
+            currentTopic: ""
         },
         initialize: function () {
             if (Config.cosiMode) {
@@ -23,6 +25,18 @@ define([
         },
         setIsStagesActive: function (isActive) {
             return this.set("isStagesActive", isActive);
+        },
+        setCurrentTopic: function (topic) {
+            return this.set("currentTopic", topic);
+        },
+        getCurrentTopic: function () {
+            return this.get("currentTopic");
+        },
+        setTopicSelection: function (topic, selectedLayers) {
+            this.topicSelection[topic] = selectedLayers;
+        },
+        getTopicSelection: function (topic) {
+            return this.topicSelection[topic];
         }
     });
 
