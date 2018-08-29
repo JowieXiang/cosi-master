@@ -76,7 +76,7 @@
     "polygonStrokeWidth": 5
   },
   {
-    "layerId": "kitas_before",
+    "layerId": "kitas",
     "class": "POINT",
     "subClass": "CIRCLE",
     "circleRadius": 7,
@@ -91,7 +91,7 @@
     "textOffsetY": -16
   },
   {
-    "layerId": "stadtteileKitaplaetze_before",
+    "layerId": "stadtteileKitaplaetze",
     "class": "POLYGON",
     "subClass": "SIMPLE",
     "polygonFillColor": [0, 0, 0, 0],
@@ -104,7 +104,7 @@
     "textStrokeWidth": 2
   },
   {
-    "layerId": "einwohner_before",
+    "layerId": "einwohner",
     "class": "POLYGON",
     "subClass": "CUSTOM",
     "polygonStrokeColor": [128, 0, 0, 1],

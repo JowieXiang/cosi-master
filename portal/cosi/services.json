@@ -384,6 +384,15 @@
     "legendURL": "ignore"
   },
   {
+    "id": "kitas_after",
+    "name": "Kitas",
+    "url": "http://csl.local.hcuhh.de:8080/geoserver/csl/wms",
+    "typ": "GeoJSON",
+    "featureType": "csl:kitas_neu",
+    "layerAttribution": "Quelle: BASFI",
+    "legendURL": "ignore"
+  },
+  {
     "id": "stadtteileKitaplaetze_before",
     "name": "Kitaplätze pro Kind (auf Stadtteilebene)",
     "url": "http://csl.local.hcuhh.de:8080/geoserver/csl/wms",
@@ -393,11 +402,29 @@
     "legendURL": "ignore"
   },
   {
+    "id": "stadtteileKitaplaetze_after",
+    "name": "Kitaplätze pro Kind (auf Stadtteilebene)",
+    "url": "http://csl.local.hcuhh.de:8080/geoserver/csl/wms",
+    "typ": "GeoJSON",
+    "featureType": "csl:stadtteile_grossborstel_neu",
+    "layerAttribution": "Quellen: BASFI (Kitaplätze), Statistikamt Nord (Bevölkerungsstruktur)",
+    "legendURL": "ignore"
+  },
+  {
     "id": "einwohner_before",
     "name": "Einwohner im Alter 0 bis 6 Jahre",
     "url": "http://csl.local.hcuhh.de:8080/geoserver/csl/wms",
     "typ": "GeoJSON",
     "featureType": "csl:einwohner_0bis6",
+    "layerAttribution": "Quelle: Statistikamt Nord",
+    "legendURL": "ignore"
+  },
+  {
+    "id": "einwohner_after",
+    "name": "Einwohner im Alter 0 bis 6 Jahre",
+    "url": "http://csl.local.hcuhh.de:8080/geoserver/csl/wms",
+    "typ": "GeoJSON",
+    "featureType": "csl:einwohner_0bis6_neu",
     "layerAttribution": "Quelle: Statistikamt Nord",
     "legendURL": "ignore"
   }

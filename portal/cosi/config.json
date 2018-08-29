@@ -116,18 +116,33 @@
       "Layer": [
         {
           "id": "kitas_before",
-          "styleId": "kitas_before",
+          "styleId": "kitas",
           "topic": "kitas",
           "isDefaultVisible": true
         },
         {
+          "id": "kitas_after",
+          "styleId": "kitas",
+          "topic": "kitas"
+        },
+        {
           "id": "stadtteileKitaplaetze_before",
-          "styleId": "stadtteileKitaplaetze_before",
+          "styleId": "stadtteileKitaplaetze",
+          "topic": "kitas"
+        },
+        {
+          "id": "stadtteileKitaplaetze_after",
+          "styleId": "stadtteileKitaplaetze",
           "topic": "kitas"
         },
         {
           "id": "einwohner_before",
-          "styleId": "einwohner_before",
+          "styleId": "einwohner",
+          "topic": "kitas"
+        },
+        {
+          "id": "einwohner_after",
+          "styleId": "einwohner",
           "topic": "kitas"
         },
         {
