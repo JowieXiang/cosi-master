@@ -2,6 +2,7 @@ define(function (require) {
 
     var Layer = require("modules/core/modelList/layer/model"),
         $ = require("jquery"),
+        Config = require("config"),
         ol = require("openlayers"),
         GeoJSONLayer;
 
@@ -146,14 +147,20 @@ define(function (require) {
         },
 
         // wird in layerinformation benötigt. --> macht vlt. auch für Legende Sinn?!
+        // mit dem vorhandenen Code ist es nicht möglich ein statisches Image als Legende zu definieren - deswegen der Workaround 'absoluteLegendPathPriority'
         createLegendURL: function () {
             var style;
 
-            if (_.isUndefined(this.get("legendURL")) === false && this.get("legendURL").length !== 0) {
+            if (_.isUndefined(this.get("legendURL")) === false &&
+                this.get("legendURL").length !== 0 &&
+                !Config.absoluteLegendPathPriority) {
                 style = Radio.request("StyleList", "returnModelById", this.get("styleId"));
-
                 if (_.isUndefined(style) === false) {
-                    this.set("legendURL", [style.get("imagePath") + style.get("imageName")]);
+                    if (style.get("absoluteLegendPath")) {
+                        this.set("legendURL", style.get("imagePath") + style.get("imageName"));
+                    } else {
+                        this.set("legendURL", [style.get("imagePath") + style.get("imageName")]);
+                    }
                 }
             }
         },
