@@ -6,7 +6,6 @@ define(function (require) {
 
     WMSLayer = Layer.extend({
         defaults: _.extend({}, Layer.prototype.defaults, {
-            isChildLayer: false,
             infoFormat: "text/xml"
         }),
 
@@ -221,6 +220,14 @@ define(function (require) {
 
         updateSourceSLDBody: function () {
             this.get("layer").getSource().updateParams({SLD_BODY: this.get("SLDBody"), STYLES: this.get("paramStyle")});
+        },
+
+        /**
+         * Lädt den WMS neu
+         * @returns {void}
+         */
+        updateSource: function () {
+            this.get("layer").getSource().updateParams({zufall: Math.random()});
         },
 
         setInfoFormat: function (value) {
