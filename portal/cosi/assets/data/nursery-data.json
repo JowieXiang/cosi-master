@@ -1,0 +1,50 @@
+[
+  {
+    "Stadtgebiet": "Lokstedt",
+    "jahr": "2016",
+    "unter_6_perc": 6.70,
+    "spaces_p_child":1.16
+  },
+  {
+    "Stadtgebiet": "Niendorf",
+    "jahr": "2016",
+    "unter_6_perc": 5.39,
+    "spaces_p_child":0.74
+  },
+  {
+    "Stadtgebiet": "Eppendorf",
+    "jahr": "2016",
+    "unter_6_perc": 6.08,
+    "spaces_p_child":0.60
+  },
+  {
+    "Stadtgebiet": "Gro\u00df Borstel",
+    "jahr": "2016",
+    "unter_6_perc": 5.89,
+    "spaces_p_child":1.15
+  },
+  {
+    "Stadtgebiet": "Alsterdorf",
+    "jahr": "2016",
+    "unter_6_perc": 5.71,
+    "spaces_p_child":1.32
+  },
+  {
+    "Stadtgebiet": "Winterhude",
+    "jahr": "2016",
+    "unter_6_perc": 5.81,
+    "spaces_p_child":0.89
+  },
+  {
+    "Stadtgebiet": "Ohlsdorf",
+    "jahr": "2016",
+    "unter_6_perc": 5.74,
+    "spaces_p_child":0.66
+  },
+  {
+    "Stadtgebiet": "Fuhlsb\u00fcttel",
+    "jahr": "2016",
+    "unter_6_perc": 5.62,
+    "spaces_p_child":0.84
+  }
+]

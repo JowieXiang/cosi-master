@@ -1,0 +1,74 @@
+[
+  {
+    "Stadtgebiet": "Lokstedt",
+    "jahr": "2016",
+    "Bev_lkerung": "28426",
+    "supermaerkte": 5,
+    "apotheken": 7,
+    "supermaerkte_p_10000": 1.76,
+    "apotheken_p_10000": 2.46
+  },
+  {
+    "Stadtgebiet": "Niendorf",
+    "jahr": "2016",
+    "Bev_lkerung": "41836",
+    "supermaerkte": 11,
+    "apotheken": 9,
+    "supermaerkte_p_10000": 2.63,
+    "apotheken_p_10000": 2.15
+  },
+  {
+    "Stadtgebiet": "Eppendorf",
+    "jahr": "2016",
+    "Bev_lkerung": "24387",
+    "supermaerkte": 9,
+    "apotheken": 11,
+    "supermaerkte_p_10000": 3.69,
+    "apotheken_p_10000": 4.51
+  },
+  {
+    "Stadtgebiet": "Gro\u00df Borstel",
+    "jahr": "2016",
+    "Bev_lkerung": "8459",
+    "supermaerkte": 2,
+    "apotheken": 2,
+    "supermaerkte_p_10000": 2.36,
+    "apotheken_p_10000": 2.36
+  },
+  {
+    "Stadtgebiet": "Alsterdorf",
+    "jahr": "2016",
+    "Bev_lkerung": "14428",
+    "supermaerkte": 2,
+    "apotheken": 5,
+    "supermaerkte_p_10000": 1.39,
+    "apotheken_p_10000": 3.47
+  },
+  {
+    "Stadtgebiet": "Winterhude",
+    "jahr": "2016",
+    "Bev_lkerung": "54826",
+    "supermaerkte": 14,
+    "apotheken": 13,
+    "supermaerkte_p_10000": 2.55,
+    "apotheken_p_10000": 2.37
+  },
+  {
+    "Stadtgebiet": "Ohlsdorf",
+    "jahr": "2016",
+    "Bev_lkerung": "15794",
+    "supermaerkte": 1,
+    "apotheken": 4,
+    "supermaerkte_p_10000": 0.63,
+    "apotheken_p_10000": 2.53
+  },
+  {
+    "Stadtgebiet": "Fuhlsb\u00fcttel",
+    "jahr": "2016",
+    "Bev_lkerung": "12590",
+    "supermaerkte": 4,
+    "apotheken": 4,
+    "supermaerkte_p_10000": 3.18,
+    "apotheken_p_10000": 3.18
+  }
+]

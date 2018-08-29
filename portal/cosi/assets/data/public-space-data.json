@@ -1,0 +1,50 @@
+[
+  {
+    "Stadtgebiet": "Lokstedt",
+    "jahr": "2016",
+    "pspace_p_p":19.26,
+    "parks_playgrounds_p_p":6.81
+  },
+  {
+    "Stadtgebiet": "Niendorf",
+    "jahr": "2016",
+    "pspace_p_p":38.81,
+    "parks_playgrounds_p_p":18.95
+  },
+  {
+    "Stadtgebiet": "Eppendorf",
+    "jahr": "2016",
+    "pspace_p_p":9.04,
+    "parks_playgrounds_p_p":9.04
+  },
+  {
+    "Stadtgebiet": "Gro\u00df Borstel",
+    "jahr": "2016",
+    "pspace_p_p":159.67,
+    "parks_playgrounds_p_p":46.13
+  },
+  {
+    "Stadtgebiet": "Alsterdorf",
+    "jahr": "2016",
+    "pspace_p_p":21.31,
+    "parks_playgrounds_p_p":8.99
+  },
+  {
+    "Stadtgebiet": "Winterhude",
+    "jahr": "2016",
+    "pspace_p_p":31.17,
+    "parks_playgrounds_p_p":29.40
+  },
+  {
+    "Stadtgebiet": "Ohlsdorf",
+    "jahr": "2016",
+    "pspace_p_p":282.25,
+    "parks_playgrounds_p_p":272.71
+  },
+  {
+    "Stadtgebiet": "Fuhlsb\u00fcttel",
+    "jahr": "2016",
+    "pspace_p_p":15.21,
+    "parks_playgrounds_p_p":8.56
+  }
+]
