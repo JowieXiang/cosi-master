@@ -445,5 +445,14 @@
     "featureType": "csl:supermaerkte_all",
     "layerAttribution": "Quelle: OpenStreetMap",
     "legendURL": "ignore"
+  },
+  {
+    "id": "gruenflaechen",
+    "name": "Grünflächen",
+    "url": "http://csl.local.hcuhh.de:8080/geoserver/csl/wms",
+    "typ": "GeoJSON",
+    "featureType": "csl:gruenflaechen",
+    "layerAttribution": "Quelle: LGV",
+    "legendURL": "ignore"
   }
 ]

@@ -186,6 +186,12 @@
           "id": "5722",
           "name": "Gehzeit zum nächsten Supermarkt",
           "topic": "nahversorgung"
+        },
+        {
+          "id": "gruenflaechen",
+          "styleId": "gruenflaechen",
+          "topic": "gruenflaechen",
+          "isDefaultVisible": true
         }
       ]
     }

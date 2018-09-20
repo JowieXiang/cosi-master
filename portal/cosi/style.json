@@ -155,5 +155,54 @@
     "circleFillColor": [255, 255, 255, 1],
     "circleStrokeColor": [30, 144, 255, 1],
     "circleStrokeWidth": 1.5
+  },
+  {
+    "layerId": "gruenflaechen",
+    "class": "POLYGON",
+    "subClass": "CUSTOM",
+    "polygonStrokeWidth": 2,
+    "styleField": "gruenart",
+    "styleFieldValues": [
+      {
+        "styleFieldValue": "Kleingarten",
+        "polygonFillColor": [160, 82, 45, 0.6],
+        "polygonStrokeColor": [160, 82, 45, 1]
+      },
+      {
+        "styleFieldValue": "Dauerkleingarten",
+        "polygonFillColor": [160, 82, 45, 0.6],
+        "polygonStrokeColor": [160, 82, 45, 1]
+      },
+      {
+        "styleFieldValue": "Grün an Kleingärten",
+        "polygonFillColor": [160, 82, 45, 0.6],
+        "polygonStrokeColor": [160, 82, 45, 1]
+      },
+      {
+        "styleFieldValue": "Parkanlage",
+        "polygonFillColor": [60, 179, 113, 0.6],
+        "polygonStrokeColor": [60, 179, 113, 1]
+      },
+      {
+        "styleFieldValue": "Spielplatz",
+        "polygonFillColor": [124, 252, 0, 0.6],
+        "polygonStrokeColor": [124, 252, 0, 1]
+      },
+      {
+        "styleFieldValue": "Friedhof",
+        "polygonFillColor": [72, 209, 204, 0.6],
+        "polygonStrokeColor": [72, 209, 204, 1]
+      },
+      {
+        "styleFieldValue": "Schutzgrün",
+        "polygonFillColor": [199, 21, 133, 0.6],
+        "polygonStrokeColor": [199, 21, 133, 1]
+      },
+      {
+        "styleFieldValue": "anderweitige Nutzung",
+        "polygonFillColor": [106, 90, 205, 0.6],
+        "polygonStrokeColor": [106, 90, 205, 1]
+      }
+    ]
   }
 ]

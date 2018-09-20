@@ -126,7 +126,8 @@ define(function (require) {
             _.each(features, function (feature) {
                 var geometry = feature.getGeometry();
 
-                if (geometry) {
+                // TODO: check if the source CRS is acceptable
+                if (geometry && crs && mapCrs) {
                     geometry.transform(crs, mapCrs);
                 }
             });
