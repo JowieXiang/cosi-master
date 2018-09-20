@@ -10,7 +10,8 @@ define([
             stages: [],
             center: [],
             isStagesActive: false,
-            currentTopic: ""
+            currentTopic: "",
+            deactivatedStageLayers: []
         },
         initialize: function () {
             if (Config.cosiMode) {
@@ -37,6 +38,32 @@ define([
         },
         getTopicSelection: function (topic) {
             return this.topicSelection[topic];
+        },
+        addDeactivatedStageLayer: function (layer) {
+            var layers = this.getDeactivatedStageLayers();
+            layers.push(layer);
+            this.setDeactivatedStageLayers(layers);
+        },
+        setDeactivatedStageLayers: function (layers) {
+            this.set("deactivatedStageLayers", layers);
+        },
+        getDeactivatedStageLayers: function () {
+            return this.get("deactivatedStageLayers");
+        },
+        getStages: function () {
+            return this.get("stages");
+        },
+        getVisibleLayersWithStages: function () {
+            var visibleLayersWithStages = [];
+            var featureCollection = Radio.request("ModelList", "getCollection");
+            _.each(featureCollection["models"], function (feature) {
+                if (feature["attributes"]["type"] == "layer" &&
+                    feature["attributes"]["isVisibleInMap"] == true &&
+                    feature["attributes"]["layerStage"]) {
+                    visibleLayersWithStages.push(feature);
+                }
+            });
+            return visibleLayersWithStages;
         }
     });
 

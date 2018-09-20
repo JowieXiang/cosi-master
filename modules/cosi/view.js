@@ -1,16 +1,18 @@
-define([
-    "backbone",
-    "config",
-    "text!modules/cosi/template.html",
-    "modules/cosi/model"
-], function (Backbone, Config, Template, CosiModel) {
+define(function (require) {
+    var Backbone = require("backbone"),
+        _ = require("underscore"),
+        Template = require("text!modules/cosi/template.html"),
+        CosiModel = require("modules/cosi/model"),
+        $ = require("jquery"),
+        View;
 
-    var CosiView = Backbone.View.extend({
+    View = Backbone.View.extend({
         template: _.template(Template),
         model: CosiModel,
         className: "cosi",
         events: {
-            "click .cosi-field": "fieldClicked",
+            "click .topics": "topicSelected",
+            "click .stages": "stageSelected",
             "click .reset-button a": "recenterMap"
         },
         initialize: function () {
@@ -38,7 +40,21 @@ define([
             var attr = this.model.toJSON();
             $(".ol-viewport").append(this.$el.html(this.template(attr)));
         },
-        fieldClicked : function (evt) {
+        stageSelected: function (evt) {
+            var selectedStage = $(evt.currentTarget).attr('name');
+            var visibleLayersWithStages = this.model.getVisibleLayersWithStages();
+
+            for (var i = 0; i < visibleLayersWithStages.length; i++) {
+                var visibleStagelayer = visibleLayersWithStages[i];
+                var newStageLayer = Radio.request("ModelList", "getModelByAttributes", {stageId: visibleStagelayer.get("stageId"), layerStage: selectedStage});
+                // Change of visibility has to happen at the end - because this class (of the newStageLayer) listens to these changes
+                visibleStagelayer.setIsVisibleInMap(false);
+                newStageLayer.setIsVisibleInMap(true);
+            }
+        },
+        topicSelected: function (evt) {
+            //Reset
+            this.model.setDeactivatedStageLayers([]);
             // Save currently selected layers before the topic switch
             this.saveCurrentTopicLayerSelection(this.model.getCurrentTopic());
 
@@ -47,9 +63,9 @@ define([
             this.model.setCurrentTopic(currentTopic);
 
             // Propagate the topic switch
-            if(!clickTarget.hasClass("selected")) {
-                $(".cosi-field").each(function( index ) {
-                    $( this ).removeClass("selected");
+            if (!clickTarget.hasClass("selected")) {
+                $(".cosi-field").each(function (index) {
+                    $(this).removeClass("selected");
                 });
                 clickTarget.addClass("selected");
                 Radio.trigger("Cosi", "selectTopic", currentTopic);
@@ -57,24 +73,20 @@ define([
             }
         },
         recenterMap: function () {
-            Radio.trigger("MapView", "setCenter", this.model.getCenter(), 3);
+
+            Radio.trigger("MapView", "setCenter", this.model.getCenter(), 4);
         },
         setStageMenuVisibility: function () {
-            var featureCollection = Radio.request("ModelList","getCollection");
-            var  isStagesVisible = false;
-            _.each(featureCollection["models"], function (feature) {
-                if (feature["attributes"]["type"] == "layer" &&
-                    feature["attributes"]["isVisibleInMap"] == true &&
-                    feature["attributes"]["stageLayerMap"]) {
-                    isStagesVisible = true;
-                     return true;
-                }
-            });
+            var currentStageLayers = this.model.getVisibleLayersWithStages();
+            var isStagesVisible = currentStageLayers.length > 0 || this.model.getDeactivatedStageLayers().length > 0;
             this.model.setIsStagesActive(isStagesVisible);
             if (isStagesVisible) {
                 $(".stages").removeClass("inactive-stages");
+                $(".stages").removeClass("selected");
+                $('.stages[name='+currentStageLayers[0]["attributes"]["layerStage"]+']').addClass("selected");
             } else {
                 $(".stages").addClass("inactive-stages");
+                $(".stages").removeClass("selected");
             }
         },
         saveCurrentTopicLayerSelection: function (topic) {
@@ -82,12 +94,12 @@ define([
             layerCollection = layerCollection.where({isVisibleInMap: true, topic: topic});
             var selectedLayerIds = [];
             _.each(layerCollection, function (layer) {
-                    selectedLayerIds.push(layer.get("id"))
+                selectedLayerIds.push(layer.get("id"))
             });
 
             this.model.setTopicSelection(topic, selectedLayerIds);
         }
     });
 
-    return CosiView;
+    return View;
 });

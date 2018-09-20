@@ -8,7 +8,7 @@
         <% }); %>
     </div>
     <div id="stages-panel" class="cosi-panel">
-        <% _.each(stages, function (stage) { %>
+        <% _.each(stages, function (stage, index) { %>
         <div class="stages cosi-field shadow-element inactive-stages"
              name="<%= stage['name'] %>">
             <%= stage["displayName"] %>

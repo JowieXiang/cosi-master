@@ -55,7 +55,7 @@
           "gfi": {
             "name": "Informationen abfragen",
             "glyphicon": "glyphicon-info-sign",
-            "isActive": true,
+            "isActive": false,
             "isVisibleInMenu": false
           }
         }
@@ -118,32 +118,47 @@
           "id": "kitas_before",
           "styleId": "kitas",
           "topic": "kitas",
-          "isDefaultVisible": true
+          "isDefaultVisible": true,
+          "stageId" : "kita_orte",
+          "layerStage" : "before"
         },
         {
           "id": "kitas_after",
           "styleId": "kitas",
-          "topic": "kitas"
+          "topic": "kitas",
+          "isVisibleInTree": false,
+          "stageId" : "kita_orte",
+          "layerStage" : "after"
         },
         {
           "id": "stadtteileKitaplaetze_before",
           "styleId": "stadtteileKitaplaetze",
-          "topic": "kitas"
+          "topic": "kitas",
+          "stageId" : "kita_stadtteil",
+          "layerStage" : "before"
         },
         {
           "id": "stadtteileKitaplaetze_after",
           "styleId": "stadtteileKitaplaetze",
-          "topic": "kitas"
+          "topic": "kitas",
+          "isVisibleInTree": false,
+          "stageId" : "kita_stadtteil",
+          "layerStage" : "after"
         },
         {
           "id": "einwohner_before",
           "styleId": "einwohner",
-          "topic": "kitas"
+          "topic": "kitas",
+          "stageId" : "kita_einwohner",
+          "layerStage" : "before"
         },
         {
           "id": "einwohner_after",
           "styleId": "einwohner",
-          "topic": "kitas"
+          "topic": "kitas",
+          "isVisibleInTree": false,
+          "stageId" : "kita_einwohner",
+          "layerStage" : "after"
         },
         {
           "id": "7484",

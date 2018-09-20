@@ -365,5 +365,3 @@ define(function (require) {
     });
     return Renderer;
 });
-
-

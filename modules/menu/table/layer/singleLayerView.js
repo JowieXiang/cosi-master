@@ -2,6 +2,7 @@ define(function (require) {
     var TemplateSettings = require("text!modules/menu/table/layer/templates/templateSettings.html"),
         Template = require("text!modules/menu/table/layer/templates/templateSingleLayer.html"),
         $ = require("jquery"),
+        Config = require("config"),
         LayerView;
 
     LayerView = Backbone.View.extend({
@@ -59,7 +60,16 @@ define(function (require) {
             }
         },
         toggleIsSelected: function () {
-            this.model.toggleIsSelected();
+            // In CoSI mode the one checkbox serves for multiple layers (layerStages)
+            var visibleStageCounterpart = Radio.request("ModelList", "getModelByAttributes", {stageId: this.model.get("stageId"), isVisibleInMap: true});
+            if (Config.cosiMode &&
+                visibleStageCounterpart) {
+                this.model.setIsSelected(false);
+                visibleStageCounterpart.setIsVisibleInMap(false);
+                visibleStageCounterpart.setIsSelected(false);
+            } else {
+                this.model.toggleIsSelected();
+            }
             this.render();
         },
         showLayerInformation: function () {
