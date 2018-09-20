@@ -166,6 +166,18 @@
           "topic": "kitas"
         },
         {
+          "id": "apotheken",
+          "styleId": "apotheken",
+          "topic": "nahversorgung",
+          "isDefaultVisible": true
+        },
+        {
+          "id": "supermaerkte",
+          "styleId": "supermaerkte",
+          "topic": "nahversorgung",
+          "isDefaultVisible": true
+        },
+        {
           "id": "7567",
           "name": "Gehzeit zur nächsten Apotheke",
           "topic": "nahversorgung"

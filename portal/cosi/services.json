@@ -427,5 +427,23 @@
     "featureType": "csl:einwohner_0bis6_neu",
     "layerAttribution": "Quelle: Statistikamt Nord",
     "legendURL": "ignore"
+  },
+  {
+    "id": "apotheken",
+    "name": "Apotheken",
+    "url": "http://csl.local.hcuhh.de:8080/geoserver/csl/wms",
+    "typ": "GeoJSON",
+    "featureType": "csl:apotheken_all",
+    "layerAttribution": "Quelle: OpenStreetMap",
+    "legendURL": "ignore"
+  },
+  {
+    "id": "supermaerkte",
+    "name": "Supermärkte",
+    "url": "http://csl.local.hcuhh.de:8080/geoserver/csl/wms",
+    "typ": "GeoJSON",
+    "featureType": "csl:supermaerkte_all",
+    "layerAttribution": "Quelle: OpenStreetMap",
+    "legendURL": "ignore"
   }
 ]

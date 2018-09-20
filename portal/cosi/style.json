@@ -137,5 +137,23 @@
     "textFont": "18px sans-serif",
     "textStrokeColor": [128, 0, 0, 1],
     "textStrokeWidth": 2
+  },
+  {
+    "layerId": "apotheken",
+    "class": "POINT",
+    "subClass": "CIRCLE",
+    "circleRadius": 7,
+    "circleFillColor": [255, 255, 255, 1],
+    "circleStrokeColor": [220, 20, 60, 1],
+    "circleStrokeWidth": 1.5
+  },
+  {
+    "layerId": "supermaerkte",
+    "class": "POINT",
+    "subClass": "CIRCLE",
+    "circleRadius": 7,
+    "circleFillColor": [255, 255, 255, 1],
+    "circleStrokeColor": [30, 144, 255, 1],
+    "circleStrokeWidth": 1.5
   }
 ]
