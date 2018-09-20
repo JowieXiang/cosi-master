@@ -73,7 +73,7 @@ define(function (require) {
             }
         },
         recenterMap: function () {
-
+            this.model.set
             Radio.trigger("MapView", "setCenter", this.model.getCenter(), 4);
         },
         setStageMenuVisibility: function () {
