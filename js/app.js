@@ -94,6 +94,7 @@ define("app", function (require) {
         });
     }
 
+    // if (!(Config.cosiMode && Config.cosiMode.isInfoscreen) && _.has(Config, "mouseHover")) {
     if (!(Config.cosiMode && Config.cosiMode.isInfoscreen) && _.has(Config, "mouseHover")) {
         require(["modules/mouseHover/view"], function (MouseHoverPopupView) {
             new MouseHoverPopupView(Config.mouseHover);
@@ -106,6 +107,12 @@ define("app", function (require) {
         });
     }
 
+    if (Config.cosiMode) {
+        require(["modules/cosi/view"], function (CosiView) {
+            new CosiView();
+        });
+    }
+
     if (_.has(Config, "quickHelp") && Config.quickHelp === true) {
         require(["modules/quickhelp/view"], function (QuickHelpView) {
             new QuickHelpView();
@@ -115,12 +122,6 @@ define("app", function (require) {
     if (_.has(Config, "scaleLine") && Config.scaleLine === true) {
         require(["modules/scaleline/view"], function (ScaleLineView) {
             new ScaleLineView();
-        });
-    }
-
-    if (Config.cosiMode) {
-        require(["modules/cosi/view"], function (CosiView) {
-            new CosiView();
         });
     }
 
@@ -138,8 +139,16 @@ define("app", function (require) {
         new ChartPanelView();
     });
 
-    require(["modules/tools/chartRenderer/pie/pieView"], function (ChartPanelView) {
-        new ChartPanelView();
+    require(["modules/tools/chartRenderer/pie/pieView"], function (PieView) {
+        new PieView();
+    });
+
+    require(["modules/tools/chartRenderer/bar-line/barView"], function (BarView) {
+        new BarView();
+    });
+
+    require(["modules/tools/chartRenderer/util/util"], function (ChartUtil) {
+        new ChartUtil();
     });
 
     require(["modules/window/view"], function (WindowView) {

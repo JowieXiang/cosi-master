@@ -5,6 +5,7 @@ define(function (require) {
         pieModel = require("modules/tools/chartRenderer/pie/pieModel"),
         $ = require("jquery"),
         Radio = require("backbone.radio"),
+        highcharts = require("highcharts"),
         pieView;
 
     pieView = Backbone.View.extend({

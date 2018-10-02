@@ -57,6 +57,10 @@ require.config({
         },
         openlayers: {
             exports: "ol"
+        },
+        highcharts: {
+            exports: "Highcharts",
+            deps: ["jquery"]
         }
     },
     map: {

@@ -14,13 +14,12 @@ define(function () {
         restConf: "../portal/cosiInfoscreen/rest-services.json",
         styleConf: "../portal/cosiInfoscreen/style.json",
         proxyURL: "/cgi-bin/proxy.cgi",
-        attributions: true,
-        scaleLine: true,
+        attributions: false,
         mouseHover: {
             numFeaturesToShow: 2,
             infoText: "(weitere Objekte. Bitte zoomen.)"
         },
-        isMenubarVisible: true,
+        isMenubarVisible: false,
         geoAPI: false,
         clickCounter: {}
     };

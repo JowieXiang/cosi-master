@@ -1,9 +1,217 @@
-<!DOCTYPE html>
-<a href="<%= link %> " target="_blank" data-toggle="tooltip" data-placement="bottom" title="<%= tooltip %>">
-    <% if (logo !== "") { %>
-        <img src="<%= logo %>">
-    <% } %>
-</a>
-<span>
-    <%= title %>
-</span>
+<div id="testarea">
+
+</div>
+<div class="container">
+    <div class="row">
+
+        <% if(isToolStarted === false){ %>
+
+        <!--Startscreen-->
+        <div class="col-md-12 col-sm-12 start-headline">
+            <h1>Planungstool für soziale Infrastrukturen: Groß Borstel</h1>
+            <br><br>
+            <h4>Bitte tippen Sie auf die Karte zum Starten der Anwendung.</h4>
+        </div>
+
+        <% } %>
+
+        <% isToolStarted %>
+        <% {{isToolStarted}} %>
+
+        <% if(isToolStarted === true){ %>
+
+        <!--Charts after start-->
+        <div class="col-md-6 col-sm-12">
+            <div class="shadow-element holder-element">
+                <div id="info">
+
+                    <% if(selectedFeature === null){ %>
+                    <div>
+                        <h3>Tippen Sie auf ein Kartenelement für weitere Informationen ...</h3>
+                    </div>
+                    <% } %>
+
+                    <% if(selectedFeature.type === 'kita'){ %>
+                    <div>
+                        <h1>{{kita.name}}</h1>
+                        <table>
+                            <tr>
+                                <td>Adresse:</td>
+                                <td>{{kita.address}}</td>
+                            </tr>
+                            <tr>
+                                <td>Träger:</td>
+                                <td>{{kita.organisation}}</td>
+                            </tr>
+                            <tr>
+                                <td>Spitzenverband:</td>
+                                <td>{{kita.association}}</td>
+                            </tr>
+                            <tr>
+                                <td>Leistungen:</td>
+                                <td>{{kita.services}}</td>
+                            </tr>
+                            <tr>
+                                <td>Pädagogische Fläche:</td>
+                                <td>{{kita.paedagogicalArea}} m²</td>
+                            </tr>
+                            <tr>
+                                <td>Kapazität (Näherungswert):</td>
+                                <td><strong>{{kita.capacity}} Plätze</strong></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <% } %>
+
+
+                    <% if(selectedFeature.type === 'statisticalArea'){ %>
+                    <div>
+                        <h1>Baublock {{statisticalArea.name}}</h1>
+                        <table>
+                            <tr>
+                                <td>Einwohner:</td>
+                                <td>{{statisticalArea.population}}</td>
+                            </tr>
+                            <tr>
+                                <td>Einwohner (0-6 Jahre):</td>
+                                <td>{{statisticalArea.population1to6}}</td>
+                            </tr>
+                            <tr>
+                                <td>Kitas im Radius 500 m:</td>
+                                <td>{{statisticalArea.kitasIn500m}}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <% } %>
+
+
+                    <% if(selectedFeature.type === 'supermarket'){ %>
+                    <div>
+                        <h1>{{supermarket.name}}</h1>
+                        <table>
+                            <tr>
+                                <td>Betreiber:</td>
+                                <td>{{supermarket.operator}}</td>
+                            </tr>
+                            <tr>
+                                <td>Adresse:</td>
+                                <td>{{supermarket.address}}</td>
+                            </tr>
+                            <tr>
+                                <td>Barrierefrei:</td>
+                                <td>{{supermarket.wheelchair | yesNoUnknown}}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <% } %>
+
+
+                    <% if(selectedFeature.type === 'pharmacy'){ %>
+                    <div>
+                        <h1>{{pharmacy.name}}</h1>
+                        <table>
+                            <tr>
+                                <td>Adresse:</td>
+                                <td>{{pharmacy.address}}</td>
+                            </tr>
+                            <tr>
+                                <td>Barrierefrei:</td>
+                                <td>{{pharmacy.wheelchair | yesNoUnknown}}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <% } %>
+
+
+                    <% if(selectedFeature.type === 'greenArea'){ %>
+                    <div>
+                        <h1>Grünfläche {{greenArea.name}}</h1>
+                        <table>
+                            <tr>
+                                <td>Grünart:</td>
+                                <td>{{greenArea.greenType}}</td>
+                            </tr>
+                            <tr>
+                                <td>Eigentum:</td>
+                                <td>{{greenArea.owner}}</td>
+                            </tr>
+                            <tr>
+                                <td>Fläche:</td>
+                                <td>{{greenArea.area}} m²</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-sm-12">
+            <div class="shadow-element holder-element">
+                <div *ngIf="lineData">
+                    <dash-line [chartTitle]="lineTitle"
+                               [chartSubTitle]="lineSubTitle"
+                               [series]="lineData"
+                               [chartType]="'line'"
+                               [xCategories]="lineCategories"></dash-line>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-sm-12">
+            <div class="shadow-element holder-element">
+                <div id="chart-column-1"></div>
+                <!--<div *ngIf="columnData">-->
+                    <!--<dash-line [chartTitle]="columnTitle"-->
+                               <!--[chartSubTitle]="columnSubTitle"-->
+                               <!--[legendEnabled]="false"-->
+                               <!--[series]="columnData"-->
+                               <!--[chartType]="'column'"-->
+                               <!--[plotLineValue]="columnPlotLine"-->
+                               <!--[xCategories]="columnCategories"></dash-line>-->
+                <!--</div>-->
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6">
+            <div class="shadow-element holder-element">
+                <div *ngIf="pieData">
+                    <dash-pie [chartTitle]="pieTitle"
+                              [chartSubTitle]="pieSubTitle"
+                              [dataLabelDistance]="0"
+                              [isPercentageLabel]="false"
+                              [isNoDecimalPlace]="true"
+                              [series]="pieData"></dash-pie>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6">
+            <div class="shadow-element holder-element">
+                <div id="chart-column-2"></div>
+                <!--<div *ngIf="columnData2">-->
+                    <!--<dash-line [chartTitle]="column2Title"-->
+                               <!--[chartSubTitle]="column2SubTitle"-->
+                               <!--[legendEnabled]="false"-->
+                               <!--[series]="columnData2"-->
+                               <!--[chartType]="'bar'"-->
+                               <!--[isNoGridLines]="true"-->
+                               <!--[plotLineValue]="column2PlotLine"-->
+                               <!--[xCategories]="columnCategories"></dash-line>-->
+                <!--</div>-->
+            </div>
+        </div>
+        <div id="source-footer" class="col-md-12 col-sm-12">
+            Quellen: Statistikamt Nord: Hamburger Stadtteil-Profile 2012-2016; Statistikamt Nord: Melderegister
+            31.12.2016, BASFI: Kindertagesstätten in Hamburg.
+        </div>
+
+        <% } %>
+
+    </div>
+</div>
+
+
+<div id="logo">
+    <img src="../../portal/cosiInfoscreen/assets/hcu-logo.png"/>
+</div>
