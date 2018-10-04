@@ -1,18 +1,18 @@
 define(function (require, Highcharts) {
     var Backbone = require("backbone"),
         _ = require("underscore"),
-        barTemplate = require("text!modules/tools/chartRenderer/template.html"),
-        barModel = require("modules/tools/chartRenderer/bar-line/barModel"),
+        BarTemplate = require("text!modules/tools/chartRenderer/template.html"),
+        BarModel = require("modules/tools/chartRenderer/bar-line/BarModel"),
         $ = require("jquery"),
         Radio = require("backbone.radio"),
         highcharts = Highcharts,
-        barView;
+        BarView;
 
-    barView = Backbone.View.extend({
+    BarView = Backbone.View.extend({
 
         id: "bar-chart",
-        model: new barModel(),
-        template: _.template(barTemplate),
+        model: new BarModel(),
+        template: _.template(BarTemplate),
         events: {},
 
         initialize: function () {
@@ -32,19 +32,17 @@ define(function (require, Highcharts) {
 
         render: function () {
         },
-        //
-        // setBarModel: function (barModel) {
-        //     this.model = barModel;
-        // },
+
+        resetBarModel: function () {
+            this.model = new BarModel();
+        },
 
         renderBar: function () {
             var domElement = $(this.model.getHtmlElement());
             var data = this.model.getSeries();
 
-            //if (!series) {
-                // TODO: hie den alter aus dem ajax request!
-            //}
-            // data['colorByPoint'] = this.model.getIsColorByPoint();
+            data['colorByPoint'] = this.model.getIsColorByPoint();
+            this.model.setIsExport(false);
 
             if (domElement) {
                 domElement.highcharts({
@@ -64,6 +62,7 @@ define(function (require, Highcharts) {
                             }
                         },
                         title: {
+                            useHTML: true,
                             text: this.model.getChartTitle(),
                             align: this.model.getChartTitleAlign()
                         },
@@ -108,7 +107,7 @@ define(function (require, Highcharts) {
                                 cursor: 'pointer'
                             }
                         },
-                        series: [data]
+                        series: (data instanceof Array ? data : [data])
                     }
                 );
             } else {
@@ -119,37 +118,37 @@ define(function (require, Highcharts) {
         setBarParameters: function (htmlElement, series, xCategories, chartTitle, chartSubTitle, chartTitleAlign, chartType,
                                     yTitle, xTitle, plotLineValue, isShowYAxis, pointStart, legendEnabled, isColorByPoint,
                                     isExport, isNoGridLines) {
-            if (htmlElement)
+            if (htmlElement !== null)
                 this.model.setHtmlElement(htmlElement);
-            if (series)
+            if (series !== null)
                 this.model.setSeries(series);
-            if (xCategories)
+            if (xCategories !== null)
                 this.model.setXCategories(xCategories);
-            if (chartTitle)
+            if (chartTitle !== null)
                 this.model.setChartTitle(chartTitle);
-            if (chartSubTitle)
+            if (chartSubTitle !== null)
                 this.model.setChartSubTitle(chartSubTitle);
-            if (chartType)
+            if (chartType !== null)
                 this.model.setChartType(chartType);
-            if (yTitle)
+            if (yTitle !== null)
                 this.model.setYTitle(yTitle);
-            if (xTitle)
+            if (xTitle !== null)
                 this.model.setXTitle(xTitle);
-            if (isShowYAxis)
+            if (isShowYAxis !== null)
                 this.model.setIsShowYAxis(isShowYAxis);
-            if (pointStart)
+            if (pointStart !== null)
                 this.model.setPointStart(pointStart);
-            if (legendEnabled)
+            if (legendEnabled !== null)
                 this.model.setLegendEnabled(legendEnabled);
-            if (isColorByPoint)
+            if (isColorByPoint !== null)
                 this.model.setIsColorByPoint(isColorByPoint);
-            if (isExport)
+            if (isExport !== null)
                 this.model.setIsExport(isExport);
-            if (plotLineValue)
+            if (plotLineValue !== null)
                 this.model.setPlotLineValue(plotLineValue);
-            if (isNoGridLines)
+            if (isNoGridLines !== null)
                 this.model.setIsNoGridLines(isNoGridLines);
         }
     });
-    return barView;
+    return BarView;
 });

@@ -1,22 +1,22 @@
 define(function (require) {
     var Backbone = require("backbone"),
         _ = require("underscore"),
-        pieTemplate = require("text!modules/tools/chartRenderer/template.html"),
-        pieModel = require("modules/tools/chartRenderer/pie/pieModel"),
+        PieTemplate = require("text!modules/tools/chartRenderer/template.html"),
+        PieModel = require("modules/tools/chartRenderer/pie/PieModel"),
         $ = require("jquery"),
         Radio = require("backbone.radio"),
         highcharts = require("highcharts"),
-        pieView;
+        PieView;
 
-    pieView = Backbone.View.extend({
+    PieView = Backbone.View.extend({
 
         id: "pie-chart",
-        model: new pieModel(),
-        template: _.template(pieTemplate),
-
+        model: new PieModel(),
+        template: _.template(PieTemplate),
         events: {},
+
         initialize: function () {
-            this.id = this.id + '-' + Math.random().toString(36).substring(2, 15);
+            // this.id = this.id + '-' + Math.random().toString(36).substring(2, 15);
 
             // var channel = Radio.channel("chartCaller");
             // channel.on({
@@ -30,128 +30,99 @@ define(function (require) {
             // }, this);
         },
 
-        setPieModel: function (pieModel) {
-            this.model = pieModel;
+        render: function (series, domElement) {
         },
 
+        // setPieModel: function (PieModel) {
+        //     this.model = PieModel;
+        // },
+
         renderPie: function () {
-            var domElement = this.model.getHtmlElement();
-            var series = this.model.getSeries();
-            if (!series) {
-                series = this.getRandomPieData();
-            }
-            if (this.model.getInnerSize() > 0) {
-                series['innerSize'] = this.model.getInnerSize();
-            }
+            var domElement = $(this.model.getHtmlElement());
+            var data = this.model.getSeries();
+
+            // TODO: das renderTo wohl noch umstellen auf die ID des htmlElementes
+            this.model.setIsExport(false);
+
             if (domElement) {
-                this.render(series, domElement);
+                domElement.highcharts({
+                        chart: {
+                            plotBackgroundColor: null,
+                            plotBorderWidth: null,
+                            plotShadow: false,
+                            type: 'pie',
+                            renderTo: document.getElementById(this.id)
+                        },
+                        exporting: {
+                            enabled: this.model.getIsExport(),
+                            buttons: {
+                                contextButton: {
+                                    enabled: true
+                                }
+                            }
+                        },
+                        title: {
+                            useHTML: true,
+                            text: this.model.getChartTitle(),
+                            align: this.model.getChartTitleAlign()
+                        },
+                        subtitle: {
+                            text: this.model.getChartSubTitle()
+                        },
+                        credits: {
+                            enabled: false
+                        },
+                        plotOptions: {
+                            pie: {
+                                center: ['50%', '50%'],
+                                allowPointSelect: true,
+                                cursor: 'pointer',
+                                dataLabels: {
+                                    enabled: this.model.getIsShowLabels(),
+                                    format: this.model.getIsPercentageLabel() ? '<b>{point.name}</b>: {point.percentage:.1f} %'
+                                        : this.model.getIsNoDecimalPlace() ? '<b>{point.name}</b>: {point.y:.0f}' : '<b>{point.name}</b>: {point.y:.2f}',
+                                    distance: this.model.getDataLabelDistance()
+                                }
+                            },
+                            series: {
+                                cursor: 'pointer'
+                            }
+                        },
+                        series: [data]
+                    }
+                );
             } else {
                 console.warn('The Dom-Element has not been set. Cannot create chart.')
             }
         },
 
-        render: function (series, domElement) {
-            domElement.highcharts({
-                    chart: {
-                        plotBackgroundColor: null,
-                        plotBorderWidth: null,
-                        plotShadow: false,
-                        type: 'pie',
-                        renderTo: document.getElementById(this.id)
-                    },
-                    exporting: {
-                        enabled: this.model.getIsExport(),
-                        buttons: {
-                            contextButton: {
-                                enabled: true
-                            }
-                        }
-                    },
-                    title: {
-                        text: this.model.getChartTitle(),
-                        align: this.model.getChartTitleAlign()
-                    },
-                    subtitle: {
-                        text: this.model.getChartSubTitle()
-                    },
-                    credits: {
-                        enabled: false
-                    },
-                    plotOptions: {
-                        pie: {
-                            center: ['50%', '50%'],
-                            allowPointSelect: true,
-                            cursor: 'pointer',
-                            dataLabels: {
-                                enabled: this.model.getIsShowLabels(),
-                                format: this.model.getIsPercentageLabel() ? '<b>{point.name}</b>: {point.percentage:.1f} %'
-                                    : this.model.getIsNoDecimalPlace() ? '<b>{point.name}</b>: {point.y:.0f}' : '<b>{point.name}</b>: {point.y:.2f}',
-                                distance: this.model.getDataLabelDistance()
-                            }
-                        },
-                        series: {
-                            cursor: 'pointer'
-                        }
-                    },
-                    series: series
-                }
-            );
 
-        },
-
-        getRandomPieData: function () {
-            return [{
-                name: 'Brands',
-                colorByPoint: true,
-                data: [{
-                    name: 'Chrome',
-                    y: 61.41,
-                    sliced: true,
-                    selected: true
-                }, {
-                    name: 'Internet Explorer',
-                    y: 11.84
-                }, {
-                    name: 'Firefox',
-                    y: 10.85
-                }, {
-                    name: 'Edge',
-                    y: 4.67
-                }, {
-                    name: 'Safari',
-                    y: 4.18
-                }, {
-                    name: 'Sogou Explorer',
-                    y: 1.64
-                }, {
-                    name: 'Opera',
-                    y: 1.6
-                }, {
-                    name: 'QQ',
-                    y: 1.2
-                }, {
-                    name: 'Other',
-                    y: 2.61
-                }]
-            }]
-        },
-
-        // Not really userful?
-
+        // This we do via PieView, because the model cannot be imported (?) by the inforScreen module - only the views can - so no direct model access
         setPieParameters: function (htmlElement, series, chartTitle, chartSubTitle, chartTitleAlign, isShowLabels, isPercentageLabel, isNoDecimalPlace,
                                     dataLabelDistance, isExport, innerSize) {
-            this.model.setHtmlElement(htmlElement);
-            this.model.setChartTitle(chartTitle);
-            this.model.setChartSubTitle(chartSubTitle);
-            this.model.setChartTitleAlign(chartTitleAlign);
-            this.model.setIsShowLabels(isShowLabels);
-            this.model.setIsPercentageLabel(isPercentageLabel);
-            this.model.setIsNoDecimalPlace(isNoDecimalPlace);
-            this.model.setDataLabelDistance(dataLabelDistance);
-            this.model.setIsExport(isExport);
-            this.model.setInnerSize(innerSize);
-            this.model.setSeries(series);
+            if (htmlElement !== null)
+                this.model.setHtmlElement(htmlElement);
+            if (series !== null)
+                this.model.setSeries(series);
+            if (chartTitle !== null)
+                this.model.setChartTitle(chartTitle);
+            if (chartSubTitle !== null)
+                this.model.setChartSubTitle(chartSubTitle);
+            if (chartTitleAlign !== null)
+                this.model.setChartTitleAlign(chartTitleAlign);
+            if (isShowLabels !== null)
+                this.model.setIsShowLabels(isShowLabels);
+            if (isPercentageLabel !== null)
+                this.model.setIsPercentageLabel(isPercentageLabel);
+            if (isNoDecimalPlace !== null)
+                this.model.setIsNoDecimalPlace(isNoDecimalPlace);
+            if (dataLabelDistance !== null)
+                this.model.setDataLabelDistance(dataLabelDistance);
+            if (isExport !== null)
+                this.model.setIsExport(isExport);
+            if (innerSize !== null)
+                this.model.setInnerSize(innerSize);
         }
     });
-    return pieView;
+    return PieView;
 });

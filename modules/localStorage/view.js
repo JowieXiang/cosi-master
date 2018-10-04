@@ -11,6 +11,7 @@ define(function (require) {
             // To set the inactivity of stages, we need to listen to changes
             this.listenTo(channel, {
                 "sendMessage": function (messageType, messageData) {
+                    console.log("messga")
                     var message = {
                         "type": messageType,
                         "data": messageData

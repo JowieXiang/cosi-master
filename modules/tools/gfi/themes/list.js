@@ -24,6 +24,7 @@ define(function (require) {
         ItGbmTheme = require("modules/tools/gfi/themes/itgbm/model"),
         ItGbmThemeView = require("modules/tools/gfi/themes/itgbm/view"),
         DipasThemeView = require("modules/tools/gfi/themes/dipas/view"),
+        CosiTheme = require("modules/tools/gfi/themes/cosi/model"),
         FlaecheninfoTheme = require("modules/tools/gfi/themes/flaecheninfo/model"),
         FlaecheninfoThemeView = require("modules/tools/gfi/themes/flaecheninfo/view"),
         ElektroladesaeulenThemeView = require("modules/tools/gfi/themes/elektroladesaeulen/view"),
@@ -54,6 +55,9 @@ define(function (require) {
             }
             else if (attrs.gfiTheme === "mietenspiegel") {
                 theme = new MietenspiegelTheme(attrs, options);
+            }
+            else if (attrs.gfiTheme === "cosi") {
+                theme = new CosiTheme(attrs, options);
             }
             else if (attrs.gfiTheme === "sgvonline") {
                 theme = new SgvOnlineTheme(attrs, options);

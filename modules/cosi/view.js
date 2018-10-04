@@ -13,7 +13,7 @@ define(function (require) {
         events: {
             "click .topics": "topicSelected",
             "click .stages": "stageSelected",
-            "click .reset-button a": "recenterMap"
+            "click .reset-button": "recenterMap"
         },
         initialize: function () {
             var channel = Radio.channel("Cosi");
@@ -53,6 +53,9 @@ define(function (require) {
             }
         },
         topicSelected: function (evt) {
+            //TODO: wieso wird hierdurch das GFI nicht jetzt noch aktiviert??? Muss automatisch gehen111
+            Radio.channel("Tool").trigger("activatedTool", "gfi", true);
+
             //Reset
             this.model.setDeactivatedStageLayers([]);
             // Save currently selected layers before the topic switch

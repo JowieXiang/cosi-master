@@ -1,25 +1,20 @@
-<div id="testarea">
-
-</div>
 <div class="container">
+
+    <% if(isToolStarted === false){ %>
+
     <div class="row">
-
-        <% if(isToolStarted === false){ %>
-
         <!--Startscreen-->
         <div class="col-md-12 col-sm-12 start-headline">
             <h1>Planungstool für soziale Infrastrukturen: Groß Borstel</h1>
             <br><br>
             <h4>Bitte tippen Sie auf die Karte zum Starten der Anwendung.</h4>
         </div>
+    </div>
+    <% } %>
 
-        <% } %>
+    <% if(isToolStarted === true){ %>
 
-        <% isToolStarted %>
-        <% {{isToolStarted}} %>
-
-        <% if(isToolStarted === true){ %>
-
+    <div class="row">
         <!--Charts after start-->
         <div class="col-md-6 col-sm-12">
             <div class="shadow-element holder-element">
@@ -148,41 +143,44 @@
 
         <div class="col-md-6 col-sm-12">
             <div class="shadow-element holder-element">
-                <div *ngIf="lineData">
-                    <dash-line [chartTitle]="lineTitle"
-                               [chartSubTitle]="lineSubTitle"
-                               [series]="lineData"
-                               [chartType]="'line'"
-                               [xCategories]="lineCategories"></dash-line>
-                </div>
+                <div id="chart-line-1"></div>
+                <!--<div *ngIf="lineData">-->
+                <!--<dash-line [chartTitle]="lineTitle"-->
+                <!--[chartSubTitle]="lineSubTitle"-->
+                <!--[series]="lineData"-->
+                <!--[chartType]="'line'"-->
+                <!--[xCategories]="lineCategories"></dash-line>-->
+                <!--</div>-->
             </div>
         </div>
-
+    </div>
+    <div class="row">
         <div class="col-md-6 col-sm-12">
             <div class="shadow-element holder-element">
                 <div id="chart-column-1"></div>
                 <!--<div *ngIf="columnData">-->
-                    <!--<dash-line [chartTitle]="columnTitle"-->
-                               <!--[chartSubTitle]="columnSubTitle"-->
-                               <!--[legendEnabled]="false"-->
-                               <!--[series]="columnData"-->
-                               <!--[chartType]="'column'"-->
-                               <!--[plotLineValue]="columnPlotLine"-->
-                               <!--[xCategories]="columnCategories"></dash-line>-->
+                <!--<dash-line [chartTitle]="columnTitle"-->
+                <!--[chartSubTitle]="columnSubTitle"-->
+                <!--[legendEnabled]="false"-->
+                <!--[series]="columnData"-->
+                <!--[chartType]="'column'"-->
+                <!--[plotLineValue]="columnPlotLine"-->
+                <!--[xCategories]="columnCategories"></dash-line>-->
                 <!--</div>-->
             </div>
         </div>
 
         <div class="col-md-3 col-sm-6">
             <div class="shadow-element holder-element">
-                <div *ngIf="pieData">
-                    <dash-pie [chartTitle]="pieTitle"
-                              [chartSubTitle]="pieSubTitle"
-                              [dataLabelDistance]="0"
-                              [isPercentageLabel]="false"
-                              [isNoDecimalPlace]="true"
-                              [series]="pieData"></dash-pie>
-                </div>
+                <div id="chart-pie-1"></div>
+                <!--<div *ngIf="pieData">-->
+                <!--<dash-pie [chartTitle]="pieTitle"-->
+                <!--[chartSubTitle]="pieSubTitle"-->
+                <!--[dataLabelDistance]="0"-->
+                <!--[isPercentageLabel]="false"-->
+                <!--[isNoDecimalPlace]="true"-->
+                <!--[series]="pieData"></dash-pie>-->
+                <!--</div>-->
             </div>
         </div>
 
@@ -190,28 +188,33 @@
             <div class="shadow-element holder-element">
                 <div id="chart-column-2"></div>
                 <!--<div *ngIf="columnData2">-->
-                    <!--<dash-line [chartTitle]="column2Title"-->
-                               <!--[chartSubTitle]="column2SubTitle"-->
-                               <!--[legendEnabled]="false"-->
-                               <!--[series]="columnData2"-->
-                               <!--[chartType]="'bar'"-->
-                               <!--[isNoGridLines]="true"-->
-                               <!--[plotLineValue]="column2PlotLine"-->
-                               <!--[xCategories]="columnCategories"></dash-line>-->
+                <!--<dash-line [chartTitle]="column2Title"-->
+                <!--[chartSubTitle]="column2SubTitle"-->
+                <!--[legendEnabled]="false"-->
+                <!--[series]="columnData2"-->
+                <!--[chartType]="'bar'"-->
+                <!--[isNoGridLines]="true"-->
+                <!--[plotLineValue]="column2PlotLine"-->
+                <!--[xCategories]="columnCategories"></dash-line>-->
                 <!--</div>-->
             </div>
         </div>
-        <div id="source-footer" class="col-md-12 col-sm-12">
+    </div>
+    <div class="row">
+
+        <div id="logo" class="col-md-5 col-sm-12">
+            <img src="../../portal/cosiInfoscreen/assets/hcu-logo.png"/>
+        </div>
+
+        <div id="source-footer" class="col-md-7 col-sm-12">
             Quellen: Statistikamt Nord: Hamburger Stadtteil-Profile 2012-2016; Statistikamt Nord: Melderegister
             31.12.2016, BASFI: Kindertagesstätten in Hamburg.
         </div>
-
-        <% } %>
-
     </div>
+
+    <% } %>
+
 </div>
 
 
-<div id="logo">
-    <img src="../../portal/cosiInfoscreen/assets/hcu-logo.png"/>
-</div>
+
