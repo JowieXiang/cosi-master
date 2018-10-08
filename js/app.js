@@ -102,14 +102,17 @@ define("app", function (require) {
     }
 
     if (Config.cosiMode && Config.cosiMode.isInfoscreen) {
-        require(["modules/infoScreen/view"], function (InfoscreenView) {
-            new InfoscreenView();
+        require(["modules/cosi/infoScreen/view"], function (CosiInfosSreenView) {
+            new CosiInfosSreenView();
+        });
+        require(["modules/cosi/infoScreen/selectArea/view"], function (CosiSelectAreaView) {
+            new CosiSelectAreaView();
         });
     }
 
     if (Config.cosiMode) {
-        require(["modules/cosi/view"], function (CosiView) {
-            new CosiView();
+        require(["modules/cosi/touchScreen/view"], function (CosiTouchScreenView) {
+            new CosiTouchScreenView();
         });
     }
 

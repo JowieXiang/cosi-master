@@ -1,0 +1,112 @@
+<% if(selectedFeature.type === 'kita'){ %>
+<div>
+    <h1><%= selectedFeature.Name %></h1>
+    <table>
+        <tr>
+            <td>Adresse:</td>
+            <td><%= selectedFeature.Strasse2 %>, <%= selectedFeature.PLZ2 %> <%= selectedFeature.Ort %></td>
+        </tr>
+        <tr>
+            <td>Träger:</td>
+            <td><%= selectedFeature.Traeger %></td>
+        </tr>
+        <tr>
+            <td>Spitzenverband:</td>
+            <td><%= selectedFeature.Spitzenver %></td>
+        </tr>
+        <tr>
+            <td>Leistungen:</td>
+            <td><%= selectedFeature.Leistungsn %></td>
+        </tr>
+        <tr>
+            <td>Pädagogische Fläche:</td>
+            <td><%= selectedFeature['paed QM'] %> m²</td>
+        </tr>
+        <tr>
+            <td>Kapazität (Näherungswert):</td>
+            <td><strong><%= selectedFeature.KapKita %> Plätze</strong></td>
+        </tr>
+    </table>
+</div>
+<% } %>
+
+
+<% if(selectedFeature.type === 'statisticalArea'){ %>
+<div>
+    <h1>Baublock <%= selectedFeature.name %></h1>
+    <table>
+        <tr>
+            <td>Einwohner:</td>
+            <td><%= selectedFeature.population %></td>
+        </tr>
+        <tr>
+            <td>Einwohner (0-6 Jahre):</td>
+            <td><%= selectedFeature['1bis6range'] %></td>
+        </tr>
+        <tr>
+            <td>Kitas im Radius 500 m:</td>
+            <td><%= selectedFeature.kitasIn500m %></td>
+        </tr>
+    </table>
+</div>
+<% } %>
+
+
+<% if(selectedFeature.type === 'shop'){ %>
+<div>
+    <h1><%= selectedFeature.name %></h1>
+    <table>
+        <tr>
+            <td>Betreiber:</td>
+            <td><%= selectedFeature.operator %></td>
+        </tr>
+        <tr>
+            <td>Adresse:</td>
+            <td><%= selectedFeature.addr_stree %> <%= selectedFeature.addr_house %>, <%= selectedFeature.addr_postc %> <%= selectedFeature.addr_city %></td>
+        </tr>
+        <tr>
+            <td>Barrierefrei:</td>
+            <td><%= selectedFeature.wheelchair | yesNoUnknown %></td>
+        </tr>
+    </table>
+</div>
+<% } %>
+
+
+<% if(selectedFeature.type === 'pharmacy'){ %>
+<div>
+    <h1><%= selectedFeature.name %></h1>
+    <table>
+        <tr>
+            <td>Adresse:</td>
+            <td><%= selectedFeature.addr_stree %> <%= selectedFeature.addr_house %>, <%= selectedFeature.addr_postc %> <%= selectedFeature.addr_city %></td>
+        </tr>
+        <tr>
+            <td>Barrierefrei:</td>
+            <td><%= selectedFeature.wheelchair | yesNoUnknown %></td>
+        </tr>
+    </table>
+</div>
+<% } %>
+
+
+<% if(selectedFeature.type === 'greenArea'){ %>
+<div>
+    <h1>Grünfläche <%= selectedFeature.anlagennam %></h1>
+    <table>
+        <tr>
+            <td>Grünart:</td>
+            <td><%= selectedFeature.gruenart %></td>
+        </tr>
+        <tr>
+            <td>Eigentum:</td>
+            <td><%= selectedFeature.eigentum %></td>
+        </tr>
+        <tr>
+            <td>Fläche:</td>
+            <td><%= selectedFeature.area %> m²</td>
+        </tr>
+    </table>
+</div>
+<% } %>
+

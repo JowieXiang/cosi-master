@@ -1,7 +1,7 @@
 define(function (require) {
 
-    var Template = require("text!modules/infoScreen/template.html"),
-        InfoScreenModel = require("modules/infoScreen/model"),
+    var Template = require("text!modules/cosi/infoScreen/template.html"),
+        InfoScreenModel = require("modules/cosi/infoScreen/model"),
         BarView = require("modules/tools/chartRenderer/bar-line/barView"),
         PieView = require("modules/tools/chartRenderer/pie/pieView"),
         Radio = require("backbone.radio"),
@@ -18,10 +18,8 @@ define(function (require) {
         initialize: function () {
             this.listenTo(Radio.channel("LocalStorage"), {
                 "newStorageMessage": function (message) {
-                    if (message.type = 'topic-select') {
+                    if (message.type === 'topic-select') {
                         this.model.loadChartDataForTopic(message.data);
-                    } else if (message.type = 'element-select') {
-                        console.log(message)
                     }
                 }
             }, this);

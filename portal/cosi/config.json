@@ -121,7 +121,6 @@
           "isDefaultVisible": true,
           "stageId" : "kita_orte",
           "layerStage" : "before",
-
           "gfiTheme": "cosi"
         },
         {
@@ -130,7 +129,8 @@
           "topic": "kitas",
           "isVisibleInTree": false,
           "stageId" : "kita_orte",
-          "layerStage" : "after"
+          "layerStage" : "after",
+          "gfiTheme": "cosi"
         },
         {
           "id": "stadtteileKitaplaetze_before",
@@ -152,7 +152,8 @@
           "styleId": "einwohner",
           "topic": "kitas",
           "stageId" : "kita_einwohner",
-          "layerStage" : "before"
+          "layerStage" : "before",
+          "gfiTheme": "cosi"
         },
         {
           "id": "einwohner_after",
@@ -160,7 +161,8 @@
           "topic": "kitas",
           "isVisibleInTree": false,
           "stageId" : "kita_einwohner",
-          "layerStage" : "after"
+          "layerStage" : "after",
+          "gfiTheme": "cosi"
         },
         {
           "id": "7484",
@@ -171,13 +173,15 @@
           "id": "apotheken",
           "styleId": "apotheken",
           "topic": "nahversorgung",
-          "isDefaultVisible": true
+          "isDefaultVisible": true,
+          "gfiTheme": "cosi"
         },
         {
           "id": "supermaerkte",
           "styleId": "supermaerkte",
           "topic": "nahversorgung",
-          "isDefaultVisible": true
+          "isDefaultVisible": true,
+          "gfiTheme": "cosi"
         },
         {
           "id": "7567",
@@ -193,7 +197,8 @@
           "id": "gruenflaechen",
           "styleId": "gruenflaechen",
           "topic": "gruenflaechen",
-          "isDefaultVisible": true
+          "isDefaultVisible": true,
+          "gfiTheme": "cosi"
         }
       ]
     }

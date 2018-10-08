@@ -15,6 +15,12 @@ define(function (require) {
             });
 
             Radio.trigger("LocalStorage", "sendMessage", "element-select", clickedElementData);
+
+            this.listenTo(Radio.channel("GFI"), {
+                "afterRender": function () {
+                    $(".gfi-detached").remove();
+                }
+            }, this);
         },
 
         sendData: function () {

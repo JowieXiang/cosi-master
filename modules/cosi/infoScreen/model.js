@@ -7,7 +7,6 @@ define(function (require) {
     InfoScreenModel = Backbone.Model.extend({
         defaults: {
             isToolStarted: true,
-            selectedFeature: false,
 
             lineData: null,
             lineCategories: null,
@@ -39,7 +38,6 @@ define(function (require) {
                 this.setIsToolStarted(true);
             }
             topic = topic ? topic : "grobo";
-            console.log(topic)
 
             $.ajax({
                 url: "../../portal/cosiInfoscreen/assets/data/" + topic + "-data.json",
@@ -125,12 +123,6 @@ define(function (require) {
         },
         getIsToolStarted: function () {
             return this.get("isToolStarted");
-        },
-        setSelectedFeature: function (selectedFeature) {
-            return this.set("selectedFeature", selectedFeature);
-        },
-        getSelectedFeature: function () {
-            return this.get("selectedFeature");
         },
         setColumnData: function (columnData) {
             return this.set("columnData", columnData);

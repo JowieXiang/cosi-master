@@ -71,7 +71,7 @@
 @import "../modules/sidebar/style.css";
 @import "../modules/controls/orientation/poi/style.css";
 @import "../modules/controls/totalview/style.css";
-@import "../modules/cosi/style.css";
-@import "../modules/infoScreen/style.css";
+@import "../modules/cosi/touchScreen/style.css";
+@import "../modules/cosi/infoScreen/style.css";
 @import "../modules/dataMenu/style.css";
 @import "../modules/chartPanel/style.css";

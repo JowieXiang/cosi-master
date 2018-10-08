@@ -1,8 +1,8 @@
 define(function (require) {
     var Backbone = require("backbone"),
         _ = require("underscore"),
-        Template = require("text!modules/cosi/template.html"),
-        CosiModel = require("modules/cosi/model"),
+        Template = require("text!modules/cosi/touchScreen/template.html"),
+        CosiModel = require("modules/cosi/touchScreen/model"),
         $ = require("jquery"),
         View;
 

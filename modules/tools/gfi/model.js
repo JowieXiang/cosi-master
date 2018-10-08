@@ -137,7 +137,6 @@ define(function (require) {
          * @return {undefined}
          */
         toggleGFI: function (id, deaktivateGFI) {
-            console.log("akrtivate", deaktivateGFI)
             if (id === "gfi") {
                 Radio.trigger("Map", "registerListener", "click", this.setGfiParams, this);
             }
