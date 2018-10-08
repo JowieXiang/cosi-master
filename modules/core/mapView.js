@@ -108,6 +108,7 @@ define(function (require) {
 
             channel.on({
                 "setCenter": this.setCenter,
+                "setCenterAnimation": this.setCenterAnimation,
                 "toggleBackground": this.toggleBackground,
                 "setZoomLevelUp": this.setZoomLevelUp,
                 "setZoomLevelDown": this.setZoomLevelDown,
@@ -348,6 +349,14 @@ define(function (require) {
             if (!_.isUndefined(zoomLevel)) {
                 this.get("view").setZoom(zoomLevel);
             }
+        },
+
+        setCenterAnimation: function (coords, zoomLevel) {
+            this.get("view").animate({
+                center: coords,
+                duration: 2000,
+                zoom: zoomLevel
+            });
         },
 
         setZoomLevelUp: function () {

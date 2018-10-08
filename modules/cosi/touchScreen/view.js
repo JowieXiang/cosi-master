@@ -76,8 +76,7 @@ define(function (require) {
             }
         },
         recenterMap: function () {
-            this.model.set
-            Radio.trigger("MapView", "setCenter", this.model.getCenter(), 4);
+            Radio.trigger("MapView", "setCenterAnimation", this.model.getCenter(), 4);
         },
         setStageMenuVisibility: function () {
             var currentStageLayers = this.model.getVisibleLayersWithStages();
