@@ -137,7 +137,8 @@
           "styleId": "stadtteileKitaplaetze",
           "topic": "kitas",
           "stageId" : "kita_stadtteil",
-          "layerStage" : "before"
+          "layerStage" : "before",
+          "gfiTheme": "cosi"
         },
         {
           "id": "stadtteileKitaplaetze_after",
@@ -145,7 +146,8 @@
           "topic": "kitas",
           "isVisibleInTree": false,
           "stageId" : "kita_stadtteil",
-          "layerStage" : "after"
+          "layerStage" : "after",
+          "gfiTheme": "cosi"
         },
         {
           "id": "einwohner_before",
@@ -161,7 +163,6 @@
           "topic": "kitas",
           "isVisibleInTree": false,
           "stageId" : "kita_einwohner",
-          "layerStage" : "after",
           "gfiTheme": "cosi"
         },
         {

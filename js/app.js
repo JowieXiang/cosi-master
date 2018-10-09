@@ -101,21 +101,6 @@ define("app", function (require) {
         });
     }
 
-    if (Config.cosiMode && Config.cosiMode.isInfoscreen) {
-        require(["modules/cosi/infoScreen/view"], function (CosiInfosSreenView) {
-            new CosiInfosSreenView();
-        });
-        require(["modules/cosi/infoScreen/selectArea/view"], function (CosiSelectAreaView) {
-            new CosiSelectAreaView();
-        });
-    }
-
-    if (Config.cosiMode) {
-        require(["modules/cosi/touchScreen/view"], function (CosiTouchScreenView) {
-            new CosiTouchScreenView();
-        });
-    }
-
     if (_.has(Config, "quickHelp") && Config.quickHelp === true) {
         require(["modules/quickhelp/view"], function (QuickHelpView) {
             new QuickHelpView();
@@ -437,6 +422,21 @@ define("app", function (require) {
     require(["modules/highlightFeature/model"], function (HighlightFeature) {
         new HighlightFeature();
     });
+
+    if (Config.cosiMode && Config.cosiMode.isInfoscreen) {
+        require(["modules/cosi/infoScreen/view"], function (CosiInfosSreenView) {
+            new CosiInfosSreenView();
+        });
+        require(["modules/cosi/infoScreen/selectArea/view"], function (CosiSelectAreaView) {
+            new CosiSelectAreaView();
+        });
+    }
+
+    if (Config.cosiMode) {
+        require(["modules/cosi/touchScreen/view"], function (CosiTouchScreenView) {
+            new CosiTouchScreenView();
+        });
+    }
 
     Radio.trigger("Util", "hideLoader");
 });

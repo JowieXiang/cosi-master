@@ -18,6 +18,7 @@ define(function (require) {
         initialize: function () {
             this.listenTo(Radio.channel("LocalStorage"), {
                 "newStorageMessage": function (message) {
+                    console.log("new storage message")
                     if (message.type === 'topic-select') {
                         this.model.loadChartDataForTopic(message.data);
                     }

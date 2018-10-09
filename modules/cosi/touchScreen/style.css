@@ -1,4 +1,15 @@
+.cosi {
+    position: absolute;
+    width: 100%;
+    top: 0;
+    left: 0;
+    height: 100%;
+}
 
+#start-overlay {
+    width: 100%;
+    height: 100%;
+}
 
 .cosi-panel {
     height: 100%;

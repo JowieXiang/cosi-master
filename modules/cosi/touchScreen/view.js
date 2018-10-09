@@ -13,7 +13,8 @@ define(function (require) {
         events: {
             "click .topics": "topicSelected",
             "click .stages": "stageSelected",
-            "click .reset-button": "recenterMap"
+            "click .reset-button": "recenterMap",
+            "click #start-overlay": "clickStartTool"
         },
         initialize: function () {
             var channel = Radio.channel("Cosi");
@@ -31,14 +32,20 @@ define(function (require) {
                 }
             }, this);
 
-            //TODO: Wenn Layer initial angezeigt werden, muss hier auch auf *Radio.trigger("Cosi", "selectTopic"* gehört werden
             this.render();
-
             Radio.request("TableMenu", "setActiveElement", "Category");
         },
         render: function () {
             var attr = this.model.toJSON();
             $(".ol-viewport").append(this.$el.html(this.template(attr)));
+        },
+        clickStartTool: function (evt) {
+            Radio.channel("Tool").trigger("activatedTool", "gfi", false);
+            $(".start-container").fadeIn(2000);
+            $("#table-nav").fadeIn(2000);
+            $("#start-overlay").unbind("click", false);
+            $("#start-overlay").remove();
+            Radio.trigger("MapView", "setCenterAnimation", this.model.getCenter(), 4);
         },
         stageSelected: function (evt) {
             var selectedStage = $(evt.currentTarget).attr('name');
@@ -46,16 +53,16 @@ define(function (require) {
 
             for (var i = 0; i < visibleLayersWithStages.length; i++) {
                 var visibleStagelayer = visibleLayersWithStages[i];
-                var newStageLayer = Radio.request("ModelList", "getModelByAttributes", {stageId: visibleStagelayer.get("stageId"), layerStage: selectedStage});
+                var newStageLayer = Radio.request("ModelList", "getModelByAttributes", {
+                    stageId: visibleStagelayer.get("stageId"),
+                    layerStage: selectedStage
+                });
                 // Change of visibility has to happen at the end - because this class (of the newStageLayer) listens to these changes
                 visibleStagelayer.setIsVisibleInMap(false);
                 newStageLayer.setIsVisibleInMap(true);
             }
         },
         topicSelected: function (evt) {
-            //TODO: wieso wird hierdurch das GFI nicht jetzt noch aktiviert??? Muss automatisch gehen111
-            Radio.channel("Tool").trigger("activatedTool", "gfi", true);
-
             //Reset
             this.model.setDeactivatedStageLayers([]);
             // Save currently selected layers before the topic switch
@@ -85,7 +92,7 @@ define(function (require) {
             if (isStagesVisible) {
                 $(".stages").removeClass("inactive-stages");
                 $(".stages").removeClass("selected");
-                $('.stages[name='+currentStageLayers[0]["attributes"]["layerStage"]+']').addClass("selected");
+                $('.stages[name=' + currentStageLayers[0]["attributes"]["layerStage"] + ']').addClass("selected");
             } else {
                 $(".stages").addClass("inactive-stages");
                 $(".stages").removeClass("selected");

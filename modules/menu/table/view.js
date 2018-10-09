@@ -5,6 +5,7 @@ define(function (require) {
         LayerListView = require("modules/menu/table/layer/listView"),
         CategoryList = require("modules/menu/table/categories/view"),
         ToolView = require("modules/menu/table/tool/view"),
+        Config = require("config"),
         Menu;
 
     Menu = Backbone.View.extend({
@@ -22,6 +23,11 @@ define(function (require) {
         render: function () {
             $(this.el).html(this.template());
             $(".lgv-container").append(this.$el);
+
+            if (Config.cosiMode) {
+                // Special case - the menu is going to be visible on the start of the tool
+                $("#"+this.id).hide();
+            }
 
             return this;
         },

@@ -66,7 +66,7 @@
         </tr>
         <tr>
             <td>Barrierefrei:</td>
-            <td><%= selectedFeature.wheelchair | yesNoUnknown %></td>
+            <td><%= selectedFeature.wheelchair ? selectedFeature.wheelchair : 'unbekannt' %></td>
         </tr>
     </table>
 </div>
@@ -83,7 +83,7 @@
         </tr>
         <tr>
             <td>Barrierefrei:</td>
-            <td><%= selectedFeature.wheelchair | yesNoUnknown %></td>
+            <td><%= selectedFeature.wheelchair ? selectedFeature.wheelchair : 'unbekannt' %></td>
         </tr>
     </table>
 </div>

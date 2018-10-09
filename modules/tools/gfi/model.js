@@ -119,6 +119,7 @@ define(function (require) {
                 gfiTheme;
 
             if (this.get("isVisible")) {
+                console.log("new theme vis")
                 gfiFeature = this.get("themeList").models[0].attributes.feature;
 
                 if (gfiFeature === feature) {
@@ -173,6 +174,7 @@ define(function (require) {
             else {
                 CurrentView = require("modules/tools/gfi/desktop/detached/view");
             }
+
             this.setCurrentView(new CurrentView({model: this}));
         },
 
