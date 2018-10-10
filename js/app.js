@@ -113,12 +113,6 @@ define("app", function (require) {
         });
     }
 
-    if (Config.isLocalStorage) {
-        require(["modules/localStorage/view"], function (LocalStorageView) {
-            new LocalStorageView();
-        });
-    }
-
     require(["modules/window/view"], function (WindowView) {
         new WindowView();
     });
@@ -415,6 +409,16 @@ define("app", function (require) {
             });
             require(["modules/cosi/infoScreen/selectArea/view"], function (CosiSelectAreaView) {
                 new CosiSelectAreaView();
+            });
+        }
+
+        /*
+        *   Loclstorage so far only used in the context of CoSI
+        */
+
+        if (Config.isLocalStorage) {
+            require(["modules/localStorage/view"], function (LocalStorageView) {
+                new LocalStorageView();
             });
         }
 
