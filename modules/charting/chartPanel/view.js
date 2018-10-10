@@ -1,11 +1,11 @@
 define(function (require) {
     var Backbone = require("backbone"),
         _ = require("underscore"),
-        ChartPanelTemplate = require("text!modules/chartPanel/template.html"),
-        ChartPanelModel = require("modules/chartPanel/model"),
-        PieModel = require("modules/tools/chartRenderer/pie/pieModel"),
-        Renderer = require("modules/chartPanel/renderer"),
-        PieView = require("modules/tools/chartRenderer/pie/pieView"),
+        ChartPanelTemplate = require("text!modules/charting/chartPanel/template.html"),
+        ChartPanelModel = require("modules/charting/chartPanel/model"),
+        PieModel = require("modules/charting/chartRenderer/pie/pieModel"),
+        Renderer = require("modules/charting/chartPanel/renderer"),
+        PieView = require("modules/charting/chartRenderer/pie/pieView"),
         $ = require("jquery"),
         Radio = require("backbone.radio"),
         View;
@@ -54,7 +54,6 @@ define(function (require) {
                 this.pieModel.setChartTitle(dataIdent);
                 this.pieView.setPieModel(this.pieModel);
                 this.pieView.renderPie();
-                // this.chartRender.getChartById(dataIdent, graphElement);
                 $(graphElement).children().first().addClass(dataIdent);
                 $("body").append(this.$el);
             } else {

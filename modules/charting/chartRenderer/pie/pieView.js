@@ -1,8 +1,8 @@
 define(function (require) {
     var Backbone = require("backbone"),
         _ = require("underscore"),
-        PieTemplate = require("text!modules/tools/chartRenderer/template.html"),
-        PieModel = require("modules/tools/chartRenderer/pie/PieModel"),
+        PieTemplate = require("text!modules/charting/chartRenderer/template.html"),
+        PieModel = require("modules/charting/chartRenderer/pie/PieModel"),
         $ = require("jquery"),
         Radio = require("backbone.radio"),
         highcharts = require("highcharts"),

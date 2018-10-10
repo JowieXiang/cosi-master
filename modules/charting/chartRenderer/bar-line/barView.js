@@ -1,8 +1,8 @@
 define(function (require, Highcharts) {
     var Backbone = require("backbone"),
         _ = require("underscore"),
-        BarTemplate = require("text!modules/tools/chartRenderer/template.html"),
-        BarModel = require("modules/tools/chartRenderer/bar-line/BarModel"),
+        BarTemplate = require("text!modules/charting/chartRenderer/template.html"),
+        BarModel = require("modules/charting/chartRenderer/bar-line/BarModel"),
         $ = require("jquery"),
         Radio = require("backbone.radio"),
         highcharts = Highcharts,

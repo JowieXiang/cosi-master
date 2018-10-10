@@ -73,5 +73,5 @@
 @import "../modules/controls/totalview/style.css";
 @import "../modules/cosi/touchScreen/style.css";
 @import "../modules/cosi/infoScreen/style.css";
-@import "../modules/dataMenu/style.css";
-@import "../modules/chartPanel/style.css";
+@import "../modules/charting/dataMenu/style.css";
+@import "../modules/charting/chartPanel/style.css";

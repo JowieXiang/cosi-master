@@ -2,8 +2,8 @@ define(function (require) {
 
     var Template = require("text!modules/cosi/infoScreen/template.html"),
         InfoScreenModel = require("modules/cosi/infoScreen/model"),
-        BarView = require("modules/tools/chartRenderer/bar-line/barView"),
-        PieView = require("modules/tools/chartRenderer/pie/pieView"),
+        BarView = require("modules/charting/chartRenderer/bar-line/barView"),
+        PieView = require("modules/charting/chartRenderer/pie/pieView"),
         Radio = require("backbone.radio"),
         $ = require("jquery"),
         InfoScreenView;

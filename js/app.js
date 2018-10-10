@@ -119,26 +119,6 @@ define("app", function (require) {
         });
     }
 
-    require(["modules/dataMenu/view"], function (DataMenuView) {
-        new DataMenuView();
-    });
-
-    require(["modules/chartPanel/view"], function (ChartPanelView) {
-        new ChartPanelView();
-    });
-
-    require(["modules/tools/chartRenderer/pie/pieView"], function (PieView) {
-        new PieView();
-    });
-
-    require(["modules/tools/chartRenderer/bar-line/barView"], function (BarView) {
-        new BarView();
-    });
-
-    require(["modules/tools/chartRenderer/util/util"], function (ChartUtil) {
-        new ChartUtil();
-    });
-
     require(["modules/window/view"], function (WindowView) {
         new WindowView();
     });
@@ -423,19 +403,45 @@ define("app", function (require) {
         new HighlightFeature();
     });
 
-    if (Config.cosiMode && Config.cosiMode.isInfoscreen) {
-        require(["modules/cosi/infoScreen/view"], function (CosiInfosSreenView) {
-            new CosiInfosSreenView();
-        });
-        require(["modules/cosi/infoScreen/selectArea/view"], function (CosiSelectAreaView) {
-            new CosiSelectAreaView();
-        });
-    }
-
     if (Config.cosiMode) {
+
         require(["modules/cosi/touchScreen/view"], function (CosiTouchScreenView) {
             new CosiTouchScreenView();
         });
+
+        if (Config.cosiMode.isInfoscreen) {
+            require(["modules/cosi/infoScreen/view"], function (CosiInfosSreenView) {
+                new CosiInfosSreenView();
+            });
+            require(["modules/cosi/infoScreen/selectArea/view"], function (CosiSelectAreaView) {
+                new CosiSelectAreaView();
+            });
+        }
+
+        /*
+        *   Charting so far only used in the context of CoSI
+        */
+
+        require(["modules/charting/dataMenu/view"], function (DataMenuView) {
+            new DataMenuView();
+        });
+
+        require(["modules/charting/chartPanel/view"], function (ChartPanelView) {
+            new ChartPanelView();
+        });
+
+        require(["modules/charting/chartRenderer/pie/pieView"], function (PieView) {
+            new PieView();
+        });
+
+        require(["modules/charting/chartRenderer/bar-line/barView"], function (BarView) {
+            new BarView();
+        });
+
+        require(["modules/charting/chartRenderer/util/util"], function (ChartUtil) {
+            new ChartUtil();
+        });
+
     }
 
     Radio.trigger("Util", "hideLoader");

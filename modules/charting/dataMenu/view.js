@@ -1,8 +1,8 @@
 define(function (require) {
     var Backbone = require("backbone"),
         _ = require("underscore"),
-        DataMenuTemplate = require("text!modules/dataMenu/template.html"),
-        DataMenuModel = require("modules/dataMenu/model"),
+        DataMenuTemplate = require("text!modules/charting/dataMenu/template.html"),
+        DataMenuModel = require("modules/charting/dataMenu/model"),
         Radio = require("backbone.radio"),
         $ = require("jquery"),
         View;
