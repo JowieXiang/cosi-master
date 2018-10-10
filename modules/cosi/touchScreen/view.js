@@ -46,6 +46,7 @@ define(function (require) {
             $("#start-overlay").unbind("click", false);
             $("#start-overlay").remove();
             Radio.trigger("MapView", "setCenterAnimation", this.model.getCenter(), 4);
+            Radio.trigger("LocalStorage", "sendMessage", "topic-select", "grobo");
         },
         stageSelected: function (evt) {
             var selectedStage = $(evt.currentTarget).attr('name');
@@ -80,6 +81,11 @@ define(function (require) {
                 clickTarget.addClass("selected");
                 Radio.trigger("Cosi", "selectTopic", currentTopic);
                 Radio.trigger("LocalStorage", "sendMessage", "topic-select", currentTopic);
+            } else {
+                clickTarget.removeClass("selected");
+                Radio.trigger("Cosi", "selectTopic", "");
+                Radio.trigger("LocalStorage", "sendMessage", "topic-select", "grobo");
+
             }
         },
         recenterMap: function () {

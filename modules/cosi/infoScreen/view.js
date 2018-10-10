@@ -18,17 +18,16 @@ define(function (require) {
         initialize: function () {
             this.listenTo(Radio.channel("LocalStorage"), {
                 "newStorageMessage": function (message) {
-                    console.log("new storage message")
                     if (message.type === 'topic-select') {
                         this.model.loadChartDataForTopic(message.data);
                     }
                 }
             }, this);
 
-            this.listenTo(Radio.channel("Charting"), {
-                "dataCalculated": function (topic) {
-                    this.renderCharts(topic);
-                }
+            var channel = Radio.channel("InfoScreen");
+            channel.on({
+                "dataCalculated":  this.renderCharts,
+                "loadChartPanels": this.render
             }, this);
 
             this.render();
@@ -73,7 +72,7 @@ define(function (require) {
 
             this.pieView = new PieView();
             this.pieView.setPieParameters(document.getElementById("chart-pie-1"),
-                this.model.getPieData(), this.model.getPieTitle(), null, null, null, false, true, 0);
+                this.model.getPieData(), this.model.getPieTitle(), null, null, true, false, true, 0);
             this.pieView.renderPie();
             // }
         }

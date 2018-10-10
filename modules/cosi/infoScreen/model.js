@@ -6,7 +6,7 @@ define(function (require) {
 
     InfoScreenModel = Backbone.Model.extend({
         defaults: {
-            isToolStarted: true,
+            isToolStarted: false,
 
             lineData: null,
             lineCategories: null,
@@ -29,14 +29,17 @@ define(function (require) {
             column2PlotLine: 0
         },
         initialize: function () {
-            this.loadChartDataForTopic("grobo");
         },
         loadChartDataForTopic: function (topic) {
-            // TODO: What is this?
-            // Radio.trigger("Util", "showLoader");
+
             if (!this.getIsToolStarted()) {
+                // Radio.trigger("Util", "showLoader");
                 this.setIsToolStarted(true);
             }
+
+            //The panels need to be loaded first, for highcharts to use the dom elements
+            Radio.trigger("InfoScreen", "loadChartPanels");
+
             topic = topic ? topic : "grobo";
 
             $.ajax({
@@ -47,74 +50,70 @@ define(function (require) {
                 dataType: "json",
                 context: this,
                 success: function (data) {
-                    if (data.success === false) {
-                        Radio.trigger("Alert", "alert", {text: "NOT???", kategorie: "alert-warning"});
+                    if (topic === "kitas") {
+                        this.set("columnCategories", Radio.request("ChartUtil", "getUniqueSeriesNames", data, ['Stadtgebiet']));
+                        this.set("columnData", Radio.request("ChartUtil", "getSeriesData", data, 'Stadtgebiet',
+                            'unter_6_perc', 'jahr', ['2016'], 'Groß Borstel'));
+                        this.set("columnTitle", 'Anteil Bevölkerung < 6 Jahren in % (2016)');
+                        this.set("columnSubTitle", '');
+
+                        this.set("columnData2", Radio.request("ChartUtil", "getSeriesData", data, 'Stadtgebiet',
+                            'spaces_p_child', 'jahr', ['2016'], 'Groß Borstel'));
+                        this.set("column2Title", 'Kitaplätze pro Kind (2016)');
+                        this.set("column2SubTitle", 'Berechnungsgrundlage sind Ø 3m² Fläche pro Kind');
+                    } else if (topic === "nahversorgung") {
+                        this.set("columnCategories", Radio.request("ChartUtil", "getUniqueSeriesNames", data, ['Stadtgebiet']));
+                        this.set("columnData", Radio.request("ChartUtil", "getSeriesData", data, 'Stadtgebiet',
+                            'apotheken_p_10000', 'jahr', ['2016'], 'Groß Borstel'));
+                        this.set("columnTitle", 'Apotheken pro 10 Tsd. Einwohner');
+                        this.set("columnSubTitle", '');
+
+                        this.set("columnData2", Radio.request("ChartUtil", "getSeriesData", data, 'Stadtgebiet',
+                            'supermaerkte_p_10000', 'jahr', ['2016'], 'Groß Borstel'));
+                        this.set("column2Title", 'Supermärkte pro 10 Tsd. Einwohner');
+                        this.set("column2SubTitle", '');
+                    } else if (topic === "gruenflaechen") {
+                        this.set("columnCategories", Radio.request("ChartUtil", "getUniqueSeriesNames", data, ['Stadtgebiet']));
+                        this.set("columnData", Radio.request("ChartUtil", "getSeriesData", data, 'Stadtgebiet',
+                            'pspace_p_p', 'jahr', ['2016'], 'Groß Borstel'));
+                        this.set("columnTitle", 'Öffentliche Grünfläche je EW in m²');
+                        this.set("columnSubTitle", '');
+
+                        this.set("columnData2", Radio.request("ChartUtil", "getSeriesData", data, 'Stadtgebiet',
+                            'parks_playgrounds_p_p', 'jahr', ['2016'], 'Groß Borstel'));
+                        this.set("column2Title", 'Park-, Spielplatzfläche je EW in m²');
+                        this.set("column2SubTitle", '');
+                    } else {
+                        this.set("columnCategories", Radio.request("ChartUtil", "getUniqueSeriesNames", data, ['Stadtgebiet']));
+                        this.set("columnData", Radio.request("ChartUtil", "getSeriesData", data, 'Stadtgebiet',
+                            'Anteil_der_unter_18_J_hrigen_in', 'jahr', ['2016'], 'Groß Borstel'));
+                        this.set("columnTitle", 'Anteil der Bevölkerung < 18 Jahren in % (2016)');
+                        this.set("columnSubTitle", 'Die rote Linie zeigt den Hamburger Durchschnitt');
+                        this.set("columnPlotLine", 16.2);
+
+                        this.set("columnData2", Radio.request("ChartUtil", "getSeriesData", data, 'Stadtgebiet',
+                            'Anteil_der_Bev_lkerung_mit_Migrations_hintergrund_in', 'jahr', ['2016'], 'Groß Borstel'));
+                        this.set("column2Title", 'Anteil der Bevölkerung mit Migrationshintergrund in % (2016)');
+                        this.set("column2SubTitle", 'Die rote Linie zeigt den Hamburger Durchschnitt');
+                        this.set("column2PlotLine", 34.1);
                     }
-                    else {
-                        if (topic === "kitas") {
-                            this.set("columnCategories", Radio.request("ChartUtil", "getUniqueSeriesNames", data, ['Stadtgebiet']));
-                            this.set("columnData", Radio.request("ChartUtil", "getSeriesData", data, 'Stadtgebiet',
-                                'unter_6_perc', 'jahr', ['2016'], 'Groß Borstel'));
-                            this.set("columnTitle", 'Anteil Bevölkerung < 6 Jahren in % (2016)');
-                            this.set("columnSubTitle", '');
 
-                            this.set("columnData2", Radio.request("ChartUtil", "getSeriesData", data, 'Stadtgebiet',
-                                'spaces_p_child', 'jahr', ['2016'], 'Groß Borstel'));
-                            this.set("column2Title", 'Kitaplätze pro Kind (2016)');
-                            this.set("column2SubTitle", 'Berechnungsgrundlage sind Ø 3m² Fläche pro Kind');
-                        } else if (topic === "nahversorgung") {
-                            this.set("columnCategories", Radio.request("ChartUtil", "getUniqueSeriesNames", data, ['Stadtgebiet']));
-                            this.set("columnData", Radio.request("ChartUtil", "getSeriesData", data, 'Stadtgebiet',
-                                'apotheken_p_10000', 'jahr', ['2016'], 'Groß Borstel'));
-                            this.set("columnTitle", 'Apotheken pro 10 Tsd. Einwohner');
-                            this.set("columnSubTitle", '');
-
-                            this.set("columnData2", Radio.request("ChartUtil", "getSeriesData", data, 'Stadtgebiet',
-                                'supermaerkte_p_10000', 'jahr', ['2016'], 'Groß Borstel'));
-                            this.set("column2Title", 'Supermärkte pro 10 Tsd. Einwohner');
-                            this.set("column2SubTitle", '');
-                        } else if (topic === "gruenflaechen") {
-                            this.set("columnCategories", Radio.request("ChartUtil", "getUniqueSeriesNames", data, ['Stadtgebiet']));
-                            this.set("columnData", Radio.request("ChartUtil", "getSeriesData", data, 'Stadtgebiet',
-                                'pspace_p_p', 'jahr', ['2016'], 'Groß Borstel'));
-                            this.set("columnTitle", 'Öffentliche Grünfläche je EW in m²');
-                            this.set("columnSubTitle", '');
-
-                            this.set("columnData2", Radio.request("ChartUtil", "getSeriesData", data, 'Stadtgebiet',
-                                'parks_playgrounds_p_p', 'jahr', ['2016'], 'Groß Borstel'));
-                            this.set("column2Title", 'Park-, Spielplatzfläche je EW in m²');
-                            this.set("column2SubTitle", '');
-                        } else {
-                            this.set("columnCategories", Radio.request("ChartUtil", "getUniqueSeriesNames", data, ['Stadtgebiet']));
-                            this.set("columnData", Radio.request("ChartUtil", "getSeriesData", data, 'Stadtgebiet',
-                                'Anteil_der_unter_18_J_hrigen_in', 'jahr', ['2016'], 'Groß Borstel'));
-                            this.set("columnTitle", 'Anteil der Bevölkerung < 18 Jahren in % (2016)');
-                            this.set("columnSubTitle", 'Die rote Linie zeigt den Hamburger Durchschnitt');
-                            this.set("columnPlotLine", 16.2);
-
-                            this.set("columnData2", Radio.request("ChartUtil", "getSeriesData", data, 'Stadtgebiet',
-                                'Anteil_der_Bev_lkerung_mit_Migrations_hintergrund_in', 'jahr', ['2016'], 'Groß Borstel'));
-                            this.set("column2Title", 'Anteil der Bevölkerung mit Migrationshintergrund in % (2016)');
-                            this.set("column2SubTitle", 'Die rote Linie zeigt den Hamburger Durchschnitt');
-                            this.set("column2PlotLine", 34.1);
-                        }
-
-                        if(this.getLineData() === null) {
-                            this.set("lineCategories", Radio.request("ChartUtil", "getUniqueSeriesNames", data, ['jahr']));
-                            this.set("lineData", Radio.request("ChartUtil", "getSeriesData", data, 'Stadtgebiet',
-                                'Geburten', 'jahr', this.getLineCategories(), 'Groß Borstel'));
-                            this.set("lineTitle", 'Geburten pro Jahr zwischen 2012-2016');
-                            this.set("lineSubTitle", '');
-                        }
-                        if(this.getPieData() === null) {
-                            this.set("pieData", Radio.request("ChartUtil", "getSeriesData", data, 'Stadtgebiet',
-                                'Bev_lkerung', 'jahr', ['2016'], 'Groß Borstel'));
-                            this.set("pieTitle", 'Geburten pro Jahr zwischen 2012-2016');
-                            this.set("pieSubTitle", '');
-                        }
-
-                        Radio.trigger("Charting", "dataCalculated", topic);
+                    if (this.getLineData() === null) {
+                        this.set("lineCategories", Radio.request("ChartUtil", "getUniqueSeriesNames", data, ['jahr']));
+                        this.set("lineData", Radio.request("ChartUtil", "getSeriesData", data, 'Stadtgebiet',
+                            'Geburten', 'jahr', this.getLineCategories(), 'Groß Borstel'));
+                        this.set("lineTitle", 'Geburten pro Jahr zwischen 2012-2016');
+                        this.set("lineSubTitle", '');
                     }
+                    if (this.getPieData() === null) {
+                        this.set("pieData", Radio.request("ChartUtil", "getSeriesData", data, 'Stadtgebiet',
+                            'Bev_lkerung', 'jahr', ['2016'], 'Groß Borstel'));
+                        this.set("pieTitle", 'Geburten pro Jahr zwischen 2012-2016');
+                        this.set("pieSubTitle", '');
+                    }
+
+                    Radio.trigger("Util", "hideLoader");
+                    Radio.trigger("InfoScreen", "dataCalculated", topic);
                 }
             });
         },

@@ -25,23 +25,30 @@ define(function (require) {
                         } else if (element.hasOwnProperty("1bis6range")) {
                             element.type = 'statisticalArea';
                         }
-                        console.log(element)
-                        this.model.setSelectedFeature(element);
-                        this.render()
+                        if (!element.type) {
+                            this.setInitElement();
+                        } else {
+                            this.model.setSelectedFeature(element);
+                        }
+
+                        this.render();
                 }
             }, this);
 
-            var element = {};
-            element.type = 'init';
-            this.model.setSelectedFeature(element);
-
+            this.setInitElement();
             this.render();
         },
 
         render: function () {
-            $("#select-info-area").empty()
+            $("#select-info-area").empty();
             var attr = this.model.toJSON();
             $("#select-info-area").append(this.$el.html(this.template(attr)));
+        },
+
+        setInitElement: function () {
+            var element = {};
+            element.type = 'init';
+            this.model.setSelectedFeature(element);
         }
     });
 

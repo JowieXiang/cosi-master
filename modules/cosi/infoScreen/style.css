@@ -4,12 +4,18 @@
     /*height: 100%;*/
 }
 
+h1, h3 {
+    font-family: inherit !important;
+    color: black;
+}
+
 .row:first-child {
     height: 100%;
 }
 
 .start-headline:first-child {
-    margin-top: 100px;
+    margin-top: 200px;
+    font-size: 42px;
 }
 
 .start-headline {

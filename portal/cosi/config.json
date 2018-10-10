@@ -133,6 +133,24 @@
           "gfiTheme": "cosi"
         },
         {
+          "id": "einwohner_before",
+          "styleId": "einwohner",
+          "topic": "kitas",
+          "isDefaultVisible": true,
+          "stageId" : "kita_einwohner",
+          "layerStage" : "before",
+          "gfiTheme": "cosi"
+        },
+        {
+          "id": "einwohner_after",
+          "styleId": "einwohner",
+          "topic": "kitas",
+          "isVisibleInTree": false,
+          "stageId" : "kita_einwohner",
+          "layerStage" : "after",
+          "gfiTheme": "cosi"
+        },
+        {
           "id": "stadtteileKitaplaetze_before",
           "styleId": "stadtteileKitaplaetze",
           "topic": "kitas",
@@ -147,22 +165,6 @@
           "isVisibleInTree": false,
           "stageId" : "kita_stadtteil",
           "layerStage" : "after",
-          "gfiTheme": "cosi"
-        },
-        {
-          "id": "einwohner_before",
-          "styleId": "einwohner",
-          "topic": "kitas",
-          "stageId" : "kita_einwohner",
-          "layerStage" : "before",
-          "gfiTheme": "cosi"
-        },
-        {
-          "id": "einwohner_after",
-          "styleId": "einwohner",
-          "topic": "kitas",
-          "isVisibleInTree": false,
-          "stageId" : "kita_einwohner",
           "gfiTheme": "cosi"
         },
         {
