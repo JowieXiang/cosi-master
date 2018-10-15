@@ -125,7 +125,9 @@ define(function (require) {
             _.each(features, function (feature) {
                 var geometry = feature.getGeometry();
 
-                geometry.transform(crs, mapCrs);
+                if (geometry && crs && mapCrs) {
+                    geometry.transform(crs, mapCrs);
+                }
             });
             return features;
         },

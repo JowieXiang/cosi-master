@@ -182,7 +182,10 @@ define(function (require) {
          * @return {undefined}
          */
         setGfiParams: function (evt) {
-            var visibleLayerList = Radio.request("ModelList", "getModelsByAttributes", {isVisibleInMap: true, isOutOfRange: false}),
+            var visibleLayerList = Radio.request("ModelList", "getModelsByAttributes", {
+                    isVisibleInMap: true,
+                    isOutOfRange: false
+                }),
                 gfiParamsList = this.getGFIParamsList(visibleLayerList),
                 visibleWMSLayerList = gfiParamsList.wmsLayerList,
                 visibleVectorLayerList = gfiParamsList.vectorLayerList,
@@ -250,31 +253,33 @@ define(function (require) {
             var vectorGfiParams = [];
 
             _.each(layerlist, function (vectorLayer) {
-                var features = Radio.request("Map", "getFeaturesAtPixel", eventPixel, {
-                        layerFilter: function (layer) {
-                            return layer.get("name") === vectorLayer.get("name");
-                        },
-                        hitTolerance: 0
-                    }),
-                    modelAttributes;
+                if (vectorLayer.get("gfiAttributes") !== "ignore") {
+                    var features = Radio.request("Map", "getFeaturesAtPixel", eventPixel, {
+                            layerFilter: function (layer) {
+                                return layer.get("name") === vectorLayer.get("name");
+                            },
+                            hitTolerance: 0
+                        }),
+                        modelAttributes;
 
-                _.each(features, function (featureAtPixel) {
-                    modelAttributes = _.pick(vectorLayer.attributes, "name", "gfiAttributes", "typ", "gfiTheme", "routable", "id", "isComparable");
+                    _.each(features, function (featureAtPixel) {
+                        modelAttributes = _.pick(vectorLayer.attributes, "name", "gfiAttributes", "typ", "gfiTheme", "routable", "id", "isComparable");
 
-                    // Feature
-                    if (_.has(featureAtPixel.getProperties(), "features") === false) {
-                        modelAttributes.feature = featureAtPixel;
-                        vectorGfiParams.push(modelAttributes);
-                    }
-                    // Cluster Feature
-                    else {
-                        _.each(featureAtPixel.get("features"), function (feature) {
-                            modelAttributes = _.pick(vectorLayer.attributes, "name", "gfiAttributes", "typ", "gfiTheme", "routable");
-                            modelAttributes.feature = feature;
+                        // Feature
+                        if (_.has(featureAtPixel.getProperties(), "features") === false) {
+                            modelAttributes.feature = featureAtPixel;
                             vectorGfiParams.push(modelAttributes);
-                        });
-                    }
-                }, this);
+                        }
+                        // Cluster Feature
+                        else {
+                            _.each(featureAtPixel.get("features"), function (feature) {
+                                modelAttributes = _.pick(vectorLayer.attributes, "name", "gfiAttributes", "typ", "gfiTheme", "routable");
+                                modelAttributes.feature = feature;
+                                vectorGfiParams.push(modelAttributes);
+                            });
+                        }
+                    }, this);
+                }
             }, this);
 
             return vectorGfiParams;
@@ -378,11 +383,11 @@ define(function (require) {
         },
 
         /**
-        * Prüft, ob clickpunkt in RemoveIcon und liefert true/false zurück.
-        * @param  {integer} top Pixelwert
-        * @param  {integer} left Pixelwert
-        * @return {undefined}
-        */
+         * Prüft, ob clickpunkt in RemoveIcon und liefert true/false zurück.
+         * @param  {integer} top Pixelwert
+         * @param  {integer} left Pixelwert
+         * @return {undefined}
+         */
         checkInsideSearchMarker: function (top, left) {
             var button = Radio.request("MapMarker", "getCloseButtonCorners"),
                 bottomSM = button.bottom,
