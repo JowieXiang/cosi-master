@@ -87,7 +87,6 @@ define(function (require) {
                 request = "bbox=" + this.get("extent") + "&outputformat=json&srsName=" + this.get("epsg") + "&query=" + encodeURIComponent(searchString) + "&" + this.get("filter") + "&count=" + this.get("suggestCount");
                 this.setTypeOfRequest("direct");
                 this.sendRequest(this.get("bkgSuggestURL"), request, this.directPushSuggestions, false, this.get("typeOfRequest"));
-                Radio.trigger("Searchbar", "createRecommendedList");
             }
         },
         directPushSuggestions: function (data) {
@@ -101,6 +100,7 @@ define(function (require) {
                     if (hit.score > this.get("score")) {
                         Radio.trigger("Searchbar", "pushHits", "hitList", {
                             name: hit.suggestion,
+                            metaName: hit.suggestion,
                             type: "Ort",
                             bkg: true,
                             glyphicon: "glyphicon-road",
@@ -113,6 +113,7 @@ define(function (require) {
                     }
                 }, this);
             }
+            Radio.trigger("Searchbar", "createRecommendedList", "bkg");
         },
 
         /**
@@ -143,6 +144,7 @@ define(function (require) {
                 if (hit.score > this.get("score")) {
                     Radio.trigger("Searchbar", "pushHits", "hitList", {
                         name: hit.suggestion,
+                        metaName: hit.suggestion,
                         type: "Ort",
                         bkg: true,
                         glyphicon: "glyphicon-road",
@@ -211,6 +213,7 @@ define(function (require) {
                     if (err.status !== 0) { // Bei abort keine Fehlermeldung
                         this.showError(err);
                     }
+                    Radio.trigger("Searchbar", "abortSearch", "bkg");
                 },
                 complete: function () {
                     this.polishAjax(typeRequest);

@@ -1,11 +1,11 @@
 define(function (require) {
     var ol = require("openlayers"),
+        Tool = require("modules/core/modelList/tool/model"),
         ThemeList = require("modules/tools/gfi/themes/list"),
-        gfiParams = [],
         Gfi;
 
-    Gfi = Backbone.Model.extend({
-        defaults: {
+    Gfi = Tool.extend({
+        defaults: _.extend({}, Tool.prototype.defaults, {
             // detached | attached
             desktopViewType: "detached",
             // ist das Modal/Popover sichtbar
@@ -27,14 +27,14 @@ define(function (require) {
             // Anzahl der Themes
             numberOfThemes: 0,
             rotateAngle: 0
-        },
+        }),
         initialize: function () {
             var channel = Radio.channel("GFI"),
                 tool;
 
             channel.on({
                 "setIsVisible": this.setIsVisible,
-                "setGfiParams": this.setGfiParamsFromCustomModule,
+                "layerAtPosition": this.setGfiOfLayerAtPosition,
                 "changeFeature": this.changeFeature
             }, this);
 
@@ -42,7 +42,7 @@ define(function (require) {
                 "getIsVisible": function () {
                     return this.get("isVisible");
                 },
-                "getGFIForPrint": this.getGFIForPrint,
+                "getGfiForPrint": this.getGfiForPrint,
                 "getCoordinate": function () {
                     return this.get("coordinate");
                 },
@@ -95,15 +95,13 @@ define(function (require) {
             }, this);
 
             this.listenTo(Radio.channel("Tool"), {
-                "activatedTool": function (id, deaktivateGFI) {
-                    this.toggleGFI(id, deaktivateGFI);
-                }
+                "activatedTool": this.toggleGFI
             });
 
             tool = Radio.request("Parser", "getItemByAttributes", {isActive: true});
 
             if (!_.isUndefined(tool)) {
-                this.toggleGFI(tool.id);
+                this.toggleGFI(tool.id, !tool.isActive);
             }
             this.initView();
             Radio.trigger("Map", "addOverlay", this.get("overlay"));
@@ -138,7 +136,7 @@ define(function (require) {
          * @return {undefined}
          */
         toggleGFI: function (id, deaktivateGFI) {
-            if (id === "gfi") {
+            if (id === "gfi" && deaktivateGFI === false) {
                 Radio.trigger("Map", "registerListener", "click", this.setGfiParams, this);
             }
             else if (deaktivateGFI === true) {
@@ -185,35 +183,14 @@ define(function (require) {
          */
         setGfiParams: function (evt) {
             var visibleLayerList = Radio.request("ModelList", "getModelsByAttributes", {isVisibleInMap: true, isOutOfRange: false}),
-                visibleWMSLayerList = [],
-                visibleVectorLayerList = [],
+                gfiParamsList = this.getGFIParamsList(visibleLayerList),
+                visibleWMSLayerList = gfiParamsList.wmsLayerList,
+                visibleVectorLayerList = gfiParamsList.vectorLayerList,
                 eventPixel = Radio.request("Map", "getEventPixel", evt.originalEvent),
                 vectorGFIParams,
                 wmsGFIParams;
 
             Radio.trigger("ClickCounter", "gfi");
-
-            // Zuordnen von Layertypen zur Abfrage
-            _.each(visibleLayerList, function (layer) {
-                var typ = layer.get("typ");
-
-                if (typ === "WMS") {
-                    visibleWMSLayerList.push(layer);
-                }
-                else if (typ === "GROUP") {
-                    _.each(layer.get("layerSource"), function (layerSource) {
-                        if (layerSource.get("typ") === "WMS") {
-                            visibleWMSLayerList.push(layerSource);
-                        }
-                        else {
-                            visibleVectorLayerList.push(layerSource);
-                        }
-                    }, this);
-                }
-                else {
-                    visibleVectorLayerList.push(layer);
-                }
-            });
 
             this.setCoordinate(evt.coordinate);
 
@@ -224,6 +201,43 @@ define(function (require) {
 
             this.setThemeIndex(0);
             this.get("themeList").reset(_.union(vectorGFIParams, wmsGFIParams));
+        },
+
+        /**
+         * Aufschlüsselung von WMS und Vector-GFI Abfragen aus einer gemischten Layerliste unter Berücksichtung von GroupLayern.
+         * @param   {model[]} layerList Liste der aufzuschlüsselnden Layer
+         * @returns {Object}            Objekt der aufgeschlüsslten GFI
+         */
+        getGFIParamsList: function (layerList) {
+            var wmsLayerList = [],
+                vectorLayerList = [];
+
+            // Zuordnen von Layertypen zur Abfrage
+            _.each(layerList, function (layer) {
+                var typ = layer.get("typ");
+
+                if (typ === "WMS") {
+                    wmsLayerList.push(layer);
+                }
+                else if (typ === "GROUP") {
+                    _.each(layer.get("layerSource"), function (layerSource) {
+                        if (layerSource.get("typ") === "WMS") {
+                            wmsLayerList.push(layerSource);
+                        }
+                        else {
+                            vectorLayerList.push(layerSource);
+                        }
+                    }, this);
+                }
+                else {
+                    vectorLayerList.push(layer);
+                }
+            });
+
+            return {
+                wmsLayerList: wmsLayerList,
+                vectorLayerList: vectorLayerList
+            };
         },
 
         /**
@@ -284,17 +298,33 @@ define(function (require) {
             return wmsGfiParams;
         },
 
-        setGfiParamsFromCustomModule: function (params) {
-            this.setCoordinate(params.coordinates);
-            gfiParams = [{
-                name: params.name,
-                gfiAttributes: params.attributes,
-                typ: params.typ,
-                feature: params.feature,
-                gfiTheme: params.gfiTheme
-            }];
-            this.get("themeList").reset(gfiParams);
-            gfiParams = [];
+        /**
+         * Erzeugt ein GFI eines spezifischen Layers an einer bestimmten Position
+         * @param {string} layerId    ID des Layers
+         * @param {coordinate[]} coordinate Position des GFI
+         * @returns {void}
+         */
+        setGfiOfLayerAtPosition: function (layerId, coordinate) {
+            var layerList = Radio.request("ModelList", "getModelsByAttributes", {id: layerId}),
+                gfiParamsList = this.getGFIParamsList(layerList),
+                visibleWMSLayerList = gfiParamsList.wmsLayerList,
+                visibleVectorLayerList = gfiParamsList.vectorLayerList,
+                vectorGFIParams,
+                wmsGFIParams;
+
+            Radio.trigger("ClickCounter", "gfi");
+
+            if (layerList.length === 1) {
+                this.setCoordinate(coordinate);
+
+                // Vector
+                vectorGFIParams = this.getVectorGFIParams(visibleVectorLayerList, coordinate);
+                // WMS
+                wmsGFIParams = this.getWMSGFIParams(visibleWMSLayerList);
+
+                this.setThemeIndex(0);
+                this.get("themeList").reset(_.union(vectorGFIParams, wmsGFIParams));
+            }
         },
 
         // Setter
@@ -333,10 +363,14 @@ define(function (require) {
         /*
         * @description Liefert die GFI-Infos ans Print-Modul.
         */
-        getGFIForPrint: function () {
-            var theme = this.get("themeList").at(this.get("themeIndex"));
+        getGfiForPrint: function () {
+            var theme = this.get("themeList").at(this.get("themeIndex")),
+                responseArray = [];
 
-            return [theme.get("gfiContent")[0], theme.get("name"), this.get("coordinate")];
+            if (!_.isUndefined(theme)) {
+                responseArray = [theme.get("gfiContent")[0], theme.get("name"), this.get("coordinate")];
+            }
+            return responseArray;
         },
 
         getVisibleTheme: function () {

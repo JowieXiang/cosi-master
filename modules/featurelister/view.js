@@ -1,7 +1,6 @@
 define(function (require) {
     var Template = require("text!modules/featurelister/template.html"),
         $ = require("jquery"),
-        Model = require("modules/featurelister/model"),
         FeatureLister;
 
     require("jqueryui/widgets/draggable");
@@ -17,15 +16,9 @@ define(function (require) {
             "click .featurelist-list-button": "moreFeatures", // Klick auf Button zum Nachladen von Features
             "click .featurelist-list-table-th": "orderList" // Klick auf Sortiersymbol in thead
         },
-        initialize: function (attr) {
-            var channel = Radio.channel("FeatureListerView");
-
-            this.model = new Model(attr);
-            this.listenTo(channel, {
-                "toggle": this.toggle
-            }, this);
-
+        initialize: function () {
             this.listenTo(this.model, {
+                "change:isActive": this.toggle,
                 "change:layerlist": this.updateVisibleLayer,
                 "change:layer": function () {
                     this.updateLayerList();
@@ -36,6 +29,9 @@ define(function (require) {
                 "gfiClose": this.deselectGFIHit,
                 "switchTabToTheme": this.switchTabToTheme
             });
+
+            // Bestätige, dass das Modul geladen wurde
+            Radio.trigger("Autostart", "initializedModul", this.model.get("id"));
 
             this.render();
         },

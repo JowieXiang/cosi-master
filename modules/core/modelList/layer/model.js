@@ -20,7 +20,8 @@ define(function (require) {
             selectionIDX: 0,
             layerInfoClicked: false,
             minScale: "0",
-            maxScale: "1000000"
+            maxScale: "1000000",
+            legendURL: ""
         },
 
         initialize: function () {
@@ -45,7 +46,7 @@ define(function (require) {
         },
 
         featuresLoaded: function (features) {
-            Radio.trigger(this.get("channel"), "featuresLoaded", this.get("id"), features);
+            this.get("channel").trigger("featuresLoaded", this.get("id"), features);
         },
 
         /**

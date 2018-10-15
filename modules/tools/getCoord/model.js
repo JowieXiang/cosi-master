@@ -1,41 +1,31 @@
 define(function (require) {
-    var ol = require("openlayers"),
+    var Tool = require("modules/core/modelList/tool/model"),
+        ol = require("openlayers"),
         CoordPopup;
 
-    CoordPopup = Backbone.Model.extend({
-        defaults: {
+    CoordPopup = Tool.extend({
+        defaults: _.extend({}, Tool.prototype.defaults, {
             selectPointerMove: null,
             projections: [],
             mapProjection: null,
             positionMapProjection: [],
             updatePosition: true,
-            currentProjectionName: "EPSG:25832"
-        },
+            currentProjectionName: "EPSG:25832",
+            deactivateGFI: true,
+            renderToWindow: true
+        }),
         initialize: function () {
-            this.listenTo(Radio.channel("Window"), {
-                "winParams": this.setStatus
+            this.superInitialize();
+            this.listenTo(this, {
+                "change:isActive": function () {
+                    Radio.trigger("MapMarker", "hideMarker");
+                }
             });
-
-            this.setProjections(Radio.request("CRS", "getProjections"));
-            this.setMapProjection(Radio.request("MapView", "getProjection"));
-            if (!_.isUndefined(this.get("mapProjection"))) {
-                this.setCurrentProjectionName(this.get("mapProjection").getCode());
-            }
-        },
-
-        setStatus: function (args) { // Fenstermanagement
-            if (args[2].get("id") === "coord") {
-                this.set("isCollapsed", args[1]);
-                this.set("isCurrentWin", args[0]);
-            }
-            else {
-                this.set("isCurrentWin", false);
-                this.data = {};
-                this.formats = {};
-            }
         },
 
         createInteraction: function () {
+            this.setProjections(Radio.request("CRS", "getProjections"));
+            this.setMapProjection(Radio.request("MapView", "getProjection"));
             this.setSelectPointerMove(new ol.interaction.Pointer({
                 handleMoveEvent: function (evt) {
                     this.checkPosition(evt.coordinate);
@@ -60,8 +50,24 @@ define(function (require) {
         },
 
         positionClicked: function (position) {
+            var updatePosition = this.get("updatePosition");
+
             this.setPositionMapProjection(position);
-            this.setUpdatePosition(!this.get("updatePosition"));
+            this.setUpdatePosition(!updatePosition);
+            this.toggleMapMarker(position, updatePosition);
+        },
+
+        /**
+         * Shows the map marker when the coordinate is frozen.
+         * Otherwise, the MapMarker hide
+         * @param {array} position at which was clicked
+         * @param {boolean} updatePosition display of the position is frozen
+         * @returns {void}
+         */
+        toggleMapMarker: function (position, updatePosition) {
+            var showHideMarker = updatePosition ? "showMarker" : "hideMarker";
+
+            Radio.trigger("MapMarker", showHideMarker, position);
         },
 
         returnTransformedPosition: function (targetProjection) {

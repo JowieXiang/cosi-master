@@ -80,22 +80,28 @@ define(function (require) {
             "modules/tools/schulwegrouting_hh/testModel.js",
             "modules/tools/parcelSearch/testModel.js",
             "modules/tools/einwohnerabfrage/testModel.js",
-            "modules/tools/parcelSearch/testModel.js",
+            "modules/searchbar/osm/testModel.js",
             "modules/core/configLoader/testParserCustomTree.js",
             "modules/core/configLoader/testParserDefaultTree.js",
             "modules/core/configLoader/testPreparser.js",
             "modules/menu/desktop/folder/testViewTree.js",
             "modules/menu/mobile/folder/testView.js",
             "modules/core/testUtil.js",
-            "modules/tools/schulwegrouting_hh/testModel.js",
             "modules/tools/compareFeatures/testModel.js",
             "modules/menu/mobile/folder/testView.js",
             "modules/tools/graph/testModel.js",
             "modules/functionalities/browserPrint/testModel.js",
+            // "modules/tools/print/testModel.js",
+            "modules/tools/print/testBuildSpec.js",
             "modules/tools/searchByCoord/testModel.js",
             "modules/legend/legendModel.js",
+            "modules/tools/layerslider/layersliderModel.js",
             "modules/tools/styleWMS/testModel.js",
-            "modules/tools/styleWMS/testView.js"
+            "modules/tools/styleWMS/testView.js",
+            "modules/menu/desktop/layer/testViewLight.js",
+            "modules/menu/desktop/layer/testViewSelection.js",
+            "modules/layerinformation/testModel.js",
+            "modules/tools/animation/testModel.js"
         ], function () {
             mocha.run();
         });

@@ -2,7 +2,6 @@ define(function (require) {
 
     var Layer = require("modules/core/modelList/layer/model"),
         $ = require("jquery"),
-        Config = require("config"),
         ol = require("openlayers"),
         GeoJSONLayer;
 
@@ -126,10 +125,7 @@ define(function (require) {
             _.each(features, function (feature) {
                 var geometry = feature.getGeometry();
 
-                // TODO: check if the source CRS is acceptable
-                if (geometry && crs && mapCrs) {
-                    geometry.transform(crs, mapCrs);
-                }
+                geometry.transform(crs, mapCrs);
             });
             return features;
         },
@@ -151,20 +147,14 @@ define(function (require) {
         },
 
         // wird in layerinformation benötigt. --> macht vlt. auch für Legende Sinn?!
-        // mit dem vorhandenen Code ist es nicht möglich ein statisches Image als Legende zu definieren - deswegen der Workaround 'absoluteLegendPathPriority'
         createLegendURL: function () {
             var style;
 
-            if (_.isUndefined(this.get("legendURL")) === false &&
-                this.get("legendURL").length !== 0 &&
-                !Config.absoluteLegendPathPriority) {
+            if (!_.isUndefined(this.get("legendURL")) && !this.get("legendURL").length) {
                 style = Radio.request("StyleList", "returnModelById", this.get("styleId"));
-                if (_.isUndefined(style) === false) {
-                    if (style.get("absoluteLegendPath")) {
-                        this.set("legendURL", style.get("imagePath") + style.get("imageName"));
-                    } else {
-                        this.set("legendURL", [style.get("imagePath") + style.get("imageName")]);
-                    }
+
+                if (!_.isUndefined(style)) {
+                    this.setLegendURL([style.get("imagePath") + style.get("imageName")]);
                 }
             }
         },
@@ -222,6 +212,7 @@ define(function (require) {
             }, this);
         },
 
+        // setter for styleId
         setStyleId: function (value) {
             this.set("styleId", value);
         },
@@ -229,7 +220,11 @@ define(function (require) {
         // setter for style
         setStyle: function (value) {
             this.set("style", value);
+        },
 
+        // setter for legendURL
+        setLegendURL: function (value) {
+            this.set("legendURL", value);
         }
     });
 

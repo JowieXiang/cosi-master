@@ -31,7 +31,7 @@ define(function (require) {
             "circleStrokeWidth": 2,
             // Für Label
             "textAlign": "left",
-            "textFont": "Courier",
+            "textFont": "10px sans-serif",
             "textScale": 1,
             "textOffsetX": 0,
             "textOffsetY": 0,
@@ -744,6 +744,8 @@ define(function (require) {
                 newColor = this.rgbToHex(newColor[0], newColor[1], newColor[2]);
             }
 
+            newColor = dest === "rgb" ? this.normalizeRgbColor(newColor) : newColor;
+
             return newColor;
         },
         rgbToHex: function (r, g, b) {
@@ -768,6 +770,29 @@ define(function (require) {
             result = result.exec(hexReplace);
 
             return result ? [parseFloat(result[1], 16), parseFloat(result[2], 16), parseFloat(result[3], 16)] : null;
+        },
+
+        /**
+         * makes sure that one rgb color always consists of four values
+         * @param {array} newColor Color in rgb
+         * @return {array} normColor
+         */
+        normalizeRgbColor: function (newColor) {
+            var normColor = newColor;
+
+            if (normColor.length === 4) {
+                return normColor;
+            }
+            else if (newColor.length > 4) {
+                normColor = normColor.slice(0, 3);
+            }
+            else if (newColor.length < 4) {
+                while (newColor.length !== 4) {
+                    newColor.push(1);
+                }
+            }
+
+            return normColor;
         },
 
         /**

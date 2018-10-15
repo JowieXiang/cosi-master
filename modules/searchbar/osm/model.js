@@ -61,9 +61,13 @@ define(function (require) {
          * @returns {void}
          */
         search: function (searchString) {
+
             if (searchString.length >= this.get("minChars")) {
                 Radio.trigger("Searchbar", "removeHits", "hitList", {type: "OpenStreetMap"});
                 this.suggestByOSM(searchString);
+            }
+            else {
+                Radio.trigger("Searchbar", "abortSearch", "osm");
             }
         },
         /**
@@ -105,6 +109,7 @@ define(function (require) {
          */
         pushSuggestions: function (data) {
             var display,
+                metaName,
                 bbox,
                 north,
                 east,
@@ -115,7 +120,7 @@ define(function (require) {
 
             _.each(data, function (hit) {
                 if (this.get("states").length === 0 || this.get("states").includes(hit.address.state)) {
-                    if (this.isSearched(hit)) {
+                    if (this.isSearched(hit, this.get("searchParams"))) {
                         weg = hit.address.road || hit.address.pedestrian;
                         display = hit.address.city || hit.address.city_district || hit.address.town || hit.address.village;
                         if (!_.isUndefined(weg)) {
@@ -124,6 +129,16 @@ define(function (require) {
                                 display = display + " " + hit.address.house_number;
                             }
                         }
+
+                        // Tooltip
+                        metaName = display;
+                        if (!_.isUndefined(hit.address.postcode) && !_.isUndefined(hit.address.state)) {
+                            metaName = metaName + ", " + hit.address.postcode + " " + hit.address.state;
+                            if (!_.isUndefined(hit.address.suburb)) {
+                                metaName = metaName + " (" + hit.address.suburb + ")";
+                            }
+                        }
+
                         bbox = hit.boundingbox;
                         if (!_.isUndefined(hit.address.house_number)) {
                             // Zentrum der BoundingBox ermitteln und von lat/lon ins Zielkoordinatensystem transformieren...
@@ -143,6 +158,7 @@ define(function (require) {
                         }
                         Radio.trigger("Searchbar", "pushHits", "hitList", {
                             name: display,
+                            metaName: metaName,
                             type: "OpenStreetMap",
                             osm: true,
                             glyphicon: "glyphicon-road",
@@ -153,34 +169,34 @@ define(function (require) {
                     }
                 }
             }, this);
-            Radio.trigger("Searchbar", "createRecommendedList");
+            Radio.trigger("Searchbar", "createRecommendedList", "osm");
         },
 
         /**
          * stellt fest, ob Das Ergebnis alle eingegebenen Parameter enthält
-         * @param  {[type]} searched [description] Das zu untersuchende Suchergebnis
+         * @param  {[object]} searched Das zu untersuchende Suchergebnis
+         * @param  {[array]} params Das Ergebnis aufgesplittet
          * @returns {boolean} true | false
          */
-        isSearched: function (searched) {
+        isSearched: function (searched, params) {
             var hits = [],
-                address = searched.address,
-                params = this.get("searchParams");
+                address = searched.address;
 
             if (this.canShowHit(searched)) {
 
                 _.each(params, function (param) {
-                    if ((address.house_number !== null && address.house_number.toLowerCase() === param.toLowerCase()) ||
-                        (address.road !== null && address.road.toLowerCase().indexOf(param.toLowerCase()) > -1) ||
-                        (address.pedestrian !== null && address.pedestrian.toLowerCase().indexOf(param.toLowerCase()) > -1) ||
-                        (address.city !== null && address.city.toLowerCase().indexOf(param.toLowerCase()) > -1) ||
-                        (address.city_district !== null && address.city_district.toLowerCase().indexOf(param.toLowerCase()) > -1) ||
-                        (address.town !== null && address.town.toLowerCase().indexOf(param.toLowerCase()) > -1) ||
-                        (address.village !== null && address.village.toLowerCase().indexOf(param.toLowerCase()) > -1) ||
-                        (address.suburb !== null && address.suburb.toLowerCase().indexOf(param.toLowerCase()) > -1)
+                    if ((_.has(address, "house_number") && address.house_number !== null && address.house_number.toLowerCase() === param.toLowerCase()) ||
+                        (_.has(address, "road") && address.road !== null && address.road.toLowerCase().indexOf(param.toLowerCase()) > -1) ||
+                        (_.has(address, "pedestrian") && address.pedestrian !== null && address.pedestrian.toLowerCase().indexOf(param.toLowerCase()) > -1) ||
+                        (_.has(address, "city") && address.city !== null && address.city.toLowerCase().indexOf(param.toLowerCase()) > -1) ||
+                        (_.has(address, "city_district") && address.city_district !== null && address.city_district.toLowerCase().indexOf(param.toLowerCase()) > -1) ||
+                        (_.has(address, "town") && address.town !== null && address.town.toLowerCase().indexOf(param.toLowerCase()) > -1) ||
+                        (_.has(address, "village") && address.village !== null && address.village.toLowerCase().indexOf(param.toLowerCase()) > -1) ||
+                        (_.has(address, "suburb") && address.suburb !== null && address.suburb.toLowerCase().indexOf(param.toLowerCase()) > -1)
                     ) {
-                        this.push(param);
+                        hits.push(param);
                     }
-                }, hits);
+                });
             }
 
             return params.length === hits.length;
@@ -245,6 +261,7 @@ define(function (require) {
                     if (err.status !== 0) { // Bei abort keine Fehlermeldung
                         this.showError(err);
                     }
+                    Radio.trigger("Searchbar", "abortSearch", "osm");
                 },
                 complete: function () {
                     this.polishAjax();
@@ -260,7 +277,7 @@ define(function (require) {
         showError: function (err) {
             var detail = err.statusText && err.statusText !== "" ? err.statusText : "";
 
-            Radio.trigger("Alert", "alert", "URL nicht erreichbar. " + detail);
+            Radio.trigger("Alert", "alert", "OpenStreetMap-Suche nicht erreichbar. " + detail);
         },
 
         polishAjax: function () {
