@@ -56,33 +56,39 @@ define(function (require) {
                             'unter_6_perc', 'jahr', ['2016'], 'Groß Borstel'));
                         this.set("columnTitle", 'Anteil Bevölkerung < 6 Jahren in % (2016)');
                         this.set("columnSubTitle", '');
+                        this.set("columnPlotLine", 5.92);
 
                         this.set("columnData2", Radio.request("ChartUtil", "getSeriesData", data, 'Stadtgebiet',
                             'spaces_p_child', 'jahr', ['2016'], 'Groß Borstel'));
                         this.set("column2Title", 'Kitaplätze pro Kind (2016)');
                         this.set("column2SubTitle", 'Berechnungsgrundlage sind Ø 3m² Fläche pro Kind');
+                        this.set("columnPlotLine", 0.89);
                     } else if (topic === "nahversorgung") {
                         this.set("columnCategories", Radio.request("ChartUtil", "getUniqueSeriesNames", data, ['Stadtgebiet']));
                         this.set("columnData", Radio.request("ChartUtil", "getSeriesData", data, 'Stadtgebiet',
                             'apotheken_p_10000', 'jahr', ['2016'], 'Groß Borstel'));
                         this.set("columnTitle", 'Apotheken pro 10 Tsd. Einwohner');
                         this.set("columnSubTitle", '');
+                        this.set("columnPlotLine", 2.15);
 
                         this.set("columnData2", Radio.request("ChartUtil", "getSeriesData", data, 'Stadtgebiet',
                             'supermaerkte_p_10000', 'jahr', ['2016'], 'Groß Borstel'));
                         this.set("column2Title", 'Supermärkte pro 10 Tsd. Einwohner');
                         this.set("column2SubTitle", '');
+                        this.set("column2PlotLine", 3.23);
                     } else if (topic === "gruenflaechen") {
                         this.set("columnCategories", Radio.request("ChartUtil", "getUniqueSeriesNames", data, ['Stadtgebiet']));
                         this.set("columnData", Radio.request("ChartUtil", "getSeriesData", data, 'Stadtgebiet',
                             'pspace_p_p', 'jahr', ['2016'], 'Groß Borstel'));
                         this.set("columnTitle", 'Öffentliche Grünfläche je EW in m²');
                         this.set("columnSubTitle", '');
+                        this.set("columnPlotLine", 31.61);
 
                         this.set("columnData2", Radio.request("ChartUtil", "getSeriesData", data, 'Stadtgebiet',
                             'parks_playgrounds_p_p', 'jahr', ['2016'], 'Groß Borstel'));
                         this.set("column2Title", 'Park-, Spielplatzfläche je EW in m²');
                         this.set("column2SubTitle", '');
+                        this.set("column2PlotLine", 15.67);
                     } else {
                         this.set("columnCategories", Radio.request("ChartUtil", "getUniqueSeriesNames", data, ['Stadtgebiet']));
                         this.set("columnData", Radio.request("ChartUtil", "getSeriesData", data, 'Stadtgebiet',

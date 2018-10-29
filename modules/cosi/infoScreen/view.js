@@ -39,15 +39,15 @@ define(function (require) {
         },
 
         renderCharts: function (topic) {
-            var plotLine = topic === "grobo" ? this.model.getColumnPlotLine() : null;
-            var plotLine2 = topic === "grobo" ? this.model.getColumn2PlotLine() : null;
+            // var plotLine = topic === "grobo" ? this.model.getColumnPlotLine() : null;
+            // var plotLine2 = topic === "grobo" ? this.model.getColumn2PlotLine() : null;
 
             // Bar-Chart 1
             this.barView = new BarView();
             this.barView.resetBarModel();
             this.barView.setBarParameters(document.getElementById("chart-column-1"),
                 this.model.getColumnData(), this.model.getColumnCategories(), this.model.getColumnTitle(),
-                this.model.getColumnSubTitle(), null, 'column', null, null, plotLine, null, null, false);
+                this.model.getColumnSubTitle(), null, 'column', null, null, this.model.getColumnPlotLine(), null, null, false);
             this.barView.renderBar();
 
             // Bar-Chart 2
@@ -55,7 +55,7 @@ define(function (require) {
             this.barView.resetBarModel();
             this.barView.setBarParameters(document.getElementById("chart-column-2"),
                 this.model.getColumnData2(), this.model.getColumnCategories(), this.model.getColumn2Title(),
-                this.model.getColumn2SubTitle(), null, 'column', null, null, plotLine2, null, null, false);
+                this.model.getColumn2SubTitle(), null, 'column', null, null, this.model.getColumn2PlotLine(), null, null, false);
             this.barView.renderBar();
 
             //TODO: wieder anfangen!"
