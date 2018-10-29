@@ -3,14 +3,14 @@
 </div>
 <% if(isVisible === true){ %>
 
-    <div id="topics-panel" class="cosi-panel start-container" style="display: none">
+    <div id="topics-panel" class="cosi-panel start-container ol-overlaycontainer-stopevent" style="display: none">
         <% _.each(topics, function (topic) { %>
         <div class="topics cosi-field shadow-element" name="<%= topic['name'] %>">
             <%= topic["displayName"] %>
         </div>
         <% }); %>
     </div>
-    <div id="stages-panel" class="cosi-panel start-container" style="display: none">
+    <div id="stages-panel" class="cosi-panel start-container ol-overlaycontainer-stopevent" style="display: none">
         <% _.each(stages, function (stage, index) { %>
         <div class="stages cosi-field shadow-element inactive-stages"
              name="<%= stage['name'] %>">
@@ -19,7 +19,7 @@
         <% }); %>
     </div>
 
-    <div class="modal-container-right start-container" style="display: none">
+    <div class="modal-container-right start-container ol-overlaycontainer-stopevent" style="display: none">
         <div class="reset-button shadow-element"><a href="#">Karte zurücksetzen</a></div>
     </div>
 

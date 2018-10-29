@@ -62,7 +62,7 @@ define(function (require) {
                             'spaces_p_child', 'jahr', ['2016'], 'Groß Borstel'));
                         this.set("column2Title", 'Kitaplätze pro Kind (2016)');
                         this.set("column2SubTitle", 'Berechnungsgrundlage sind Ø 3m² Fläche pro Kind');
-                        this.set("columnPlotLine", 0.89);
+                        this.set("column2PlotLine", 0.89);
                     } else if (topic === "nahversorgung") {
                         this.set("columnCategories", Radio.request("ChartUtil", "getUniqueSeriesNames", data, ['Stadtgebiet']));
                         this.set("columnData", Radio.request("ChartUtil", "getSeriesData", data, 'Stadtgebiet',

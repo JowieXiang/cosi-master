@@ -37,7 +37,7 @@ define(function (require) {
         },
         render: function () {
             var attr = this.model.toJSON();
-            $(".ol-viewport").append(this.$el.html(this.template(attr)));
+            $(".lgv-container").append(this.$el.html(this.template(attr)));
         },
         clickStartTool: function (evt) {
             Radio.channel("Tool").trigger("activatedTool", "gfi", false);
@@ -62,6 +62,8 @@ define(function (require) {
                 visibleStagelayer.setIsVisibleInMap(false);
                 newStageLayer.setIsVisibleInMap(true);
             }
+
+
         },
         topicSelected: function (evt) {
             //Reset
