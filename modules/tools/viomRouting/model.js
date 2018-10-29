@@ -1,6 +1,6 @@
 define(function (require) {
     var ol = require("openlayers"),
-        Tool = require("modules/core/modelList/Tool/model"),
+        Tool = require("modules/core/modelList/tool/model"),
         $ = require("jquery"),
         RoutingModel;
 

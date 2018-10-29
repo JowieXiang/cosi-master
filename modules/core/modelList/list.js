@@ -27,7 +27,7 @@ define(function (require) {
         TreeFilter = require("modules/treefilter/model"),
         ExtendedFilter = require("modules/tools/extendedFilter/model"),
         Formular = require("modules/formular/grenznachweis"),
-        FeatureLister = require("modules/featureLister/model"),
+        FeatureLister = require("modules/featurelister/model"),
         AddWms = require("modules/tools/addwms/model"),
         GetCoord = require("modules/tools/getCoord/model"),
         Schulwegrouting = require("modules/tools/schulwegRouting_hh/model"),
