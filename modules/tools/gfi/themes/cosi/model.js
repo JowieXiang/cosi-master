@@ -6,11 +6,10 @@ define(function (require) {
 
     CosiTheme = Theme.extend({
         initialize: function () {
-            console.log("clicked")
             var clickedElementData = {};
 
             $.each( this.get("feature")["O"], function( key, value ) {
-                if ( typeof value === "string") {
+                if ( typeof value !== "object") {
                     clickedElementData[key] = value;
                 }
             });

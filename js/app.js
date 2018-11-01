@@ -415,9 +415,11 @@ define("app", function (require) {
 
     if (Config.cosiMode) {
 
-        require(["modules/cosi/touchScreen/view"], function (CosiTouchScreenView) {
-            new CosiTouchScreenView();
-        });
+        if (!Config.cosiMode.isInfoscreen) {
+            require(["modules/cosi/touchScreen/view"], function (CosiTouchScreenView) {
+                new CosiTouchScreenView();
+            });
+        }
 
         if (Config.cosiMode.isInfoscreen) {
             require(["modules/cosi/infoScreen/view"], function (CosiInfosSreenView) {

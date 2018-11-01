@@ -43,7 +43,7 @@
     <table>
         <tr>
             <td>Einwohner:</td>
-            <td><%= selectedFeature.population %></td>
+            <td><%= selectedFeature.Gesamt %></td>
         </tr>
         <tr>
             <td>Einwohner (0-6 Jahre):</td>
@@ -51,7 +51,7 @@
         </tr>
         <tr>
             <td>Kitas im Radius 500 m:</td>
-            <td><%= selectedFeature.kitasIn500m %></td>
+            <td><%= selectedFeature['Kita500m'] %></td>
         </tr>
     </table>
 </div>
@@ -110,7 +110,7 @@
         </tr>
         <tr>
             <td>Fläche:</td>
-            <td><%= selectedFeature.area %> m²</td>
+            <td><%= Intl.NumberFormat('de-DE').format(selectedFeature.flaeche_qm, 0, '.') %> m²</td>
         </tr>
     </table>
 </div>
