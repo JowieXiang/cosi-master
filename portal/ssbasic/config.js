@@ -2,7 +2,7 @@ const Config = {
     ignoredKeys: ["BOUNDEDBY", "SHAPE", "SHAPE_LENGTH", "SHAPE_AREA", "OBJECTID", "GLOBALID", "GEOMETRY", "SHP", "SHP_AREA", "SHP_LENGTH", "GEOM"],
     gfiWindow: "detached",
     simpleMap: false,
-    wfsImgPath: "../portal/cosi/assets/",
+    wfsImgPath: "../../node_modules/lgv-config/img/",
     allowParametricURL: true,
     namedProjections: [
         // GK DHDN
@@ -15,7 +15,7 @@ const Config = {
         ["EPSG:4326", "+title=WGS 84 (long/lat) +proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"]
     ],
     footer: {
-        visibility: false,
+        visibility: true,
         urls: [
             {
                 "bezeichnung": "Kartographie und Gestaltung: ",
@@ -26,42 +26,13 @@ const Config = {
         ]
     },
     quickHelp: true,
-    cosiMode: {
-        topics: [
-            {
-                name: "gruenflaechen",
-                displayName: "Grün­flä­chen"
-            },
-            {
-                name: "nahversorgung",
-                displayName: "Nah­ver­sor­gung"
-            },
-            {
-                name: "kitas",
-                displayName: "Ki­tas"
-            }
-        ],
-        stages: [
-            {
-                name: "before",
-                displayName: "Vor Bebauung"
-            },
-            {
-                name: "after",
-                displayName: "Nach Bebauung"
-            }
-        ],
-        initialCenter: [564959.09, 5940777.71]
-    },
-    isLocalStorage: true,
 
-    portalConf: "./",
+    portalConf: "../../portal/cosi/",
     layerConf: "../../portal/cosi/services.json",
     restConf: "../../portal/cosi/rest-services.json",
     styleConf: "../../portal/cosi/style.json",
     proxyURL: "/cgi-bin/proxy.cgi",
 
-    uiStyle: "table",
     attributions: true,
     scaleLine: true,
     mouseHover:

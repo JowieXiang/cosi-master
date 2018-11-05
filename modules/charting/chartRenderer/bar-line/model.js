@@ -1,9 +1,9 @@
-define(function (require) {
-    var Backbone = require("backbone"),
-        highcharts = require("highcharts"),
-        Model;
+// define(function (require) {
+//     var Backbone = require("backbone"),
+//         highcharts = require("highcharts"),
+//         Model;
 
-    Model = Backbone.Model.extend({
+const Model = Backbone.Model.extend({
         defaults: {
             htmlElement: {},
             chartTitle: '',
@@ -157,6 +157,4 @@ define(function (require) {
             this.set("xCategories", xCategories);
         }
     });
-
-    return Model;
-});
+export default Model;

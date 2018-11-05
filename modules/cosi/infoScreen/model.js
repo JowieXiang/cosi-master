@@ -1,10 +1,10 @@
-define(function (require) {
+// define(function (require) {
+//
+//     var Backbone = require("backbone"),
+//         Radio = require("backbone.radio"),
+//         InfoScreenModel;
 
-    var Backbone = require("backbone"),
-        Radio = require("backbone.radio"),
-        InfoScreenModel;
-
-    InfoScreenModel = Backbone.Model.extend({
+    const InfoScreenModel = Backbone.Model.extend({
         defaults: {
             isToolStarted: false,
 
@@ -185,6 +185,5 @@ define(function (require) {
         }
 
     });
+export default InfoScreenModel;
 
-    return InfoScreenModel;
-});

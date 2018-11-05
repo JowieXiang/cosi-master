@@ -1,16 +1,22 @@
-define(function (require) {
-    var Backbone = require("backbone"),
-        _ = require("underscore"),
-        ChartPanelTemplate = require("text!modules/charting/chartPanel/template.html"),
-        ChartPanelModel = require("modules/charting/chartPanel/model"),
-        PieModel = require("modules/charting/chartRenderer/pie/pieModel"),
-        Renderer = require("modules/charting/chartPanel/renderer"),
-        PieView = require("modules/charting/chartRenderer/pie/pieView"),
-        $ = require("jquery"),
-        Radio = require("backbone.radio"),
-        View;
+import ChartPanelTemplate from "text-loader!./template.html";
+import ChartPanelModel from "./model";
+import PieModel from "../chartRenderer/pie/model";
+import PieView from "../chartRenderer/pie/view";
+import Renderer from "../chartPanel/renderer";
+//
+// define(function (require) {
+//     var Backbone = require("backbone"),
+//         _ = require("underscore"),
+//         ChartPanelTemplate = require("text-loader!modules/charting/chartPanel/template.html"),
+//         ChartPanelModel = require("modules/charting/chartPanel/model"),
+//         PieModel = require("modules/charting/chartRenderer/pie/pieModel"),
+//         Renderer = require("modules/charting/chartPanel/renderer"),
+//         PieView = require("modules/charting/chartRenderer/pie/pieView"),
+//         $ = require("jquery"),
+//         Radio = require("backbone.radio"),
+//         View;
 
-    View = Backbone.View.extend({
+const View = Backbone.View.extend({
 
         id: "chart-panel",
         model: new ChartPanelModel(),
@@ -82,5 +88,4 @@ define(function (require) {
             }
         }
     });
-    return View;
-});
+export default View;

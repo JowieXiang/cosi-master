@@ -4,6 +4,7 @@ import GeoJSONLayer from "./layer/geojson";
 import GROUPLayer from "./layer/group";
 import SensorLayer from "./layer/sensor";
 import HeatmapLayer from "./layer/heatmap";
+import OSMLayer from "./layer/osm";
 import Folder from "./folder/model";
 import Tool from "./tool/model";
 import StaticLink from "./staticlink/model";
@@ -122,6 +123,9 @@ const ModelList = Backbone.Collection.extend({
             }
             else if (attrs.typ === "Heatmap") {
                 return new HeatmapLayer(attrs, options);
+            }
+            else if (attrs.typ === "OSM") {
+                return new OSMLayer(attrs, options);
             }
         }
         else if (attrs.type === "folder") {

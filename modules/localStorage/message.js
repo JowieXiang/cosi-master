@@ -1,19 +1,15 @@
-define(function () {
+const Message = Backbone.Model.extend({
+    defaults: {
+        type: "select" | "deselect" | "topic-select" | "tool-interaction",
+        data: ""
+    },
+    setId: function (value) {
+        this.set("type", value);
+    },
 
-    var Message = Backbone.Model.extend({
-        defaults: {
-            type: "select" | "deselect" | "topic-select" | "tool-interaction",
-            data: ""
-        },
-        setId: function (value) {
-            this.set("type", value);
-        },
+    setName: function (value) {
+        this.set("data", value);
+    }
 
-        setName: function (value) {
-            this.set("data", value);
-        }
-
-    });
-
-    return Message;
 });
+export default Message;

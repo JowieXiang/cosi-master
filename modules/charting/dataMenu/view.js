@@ -1,52 +1,54 @@
-define(function (require) {
-    var Backbone = require("backbone"),
-        _ = require("underscore"),
-        DataMenuTemplate = require("text!modules/charting/dataMenu/template.html"),
-        DataMenuModel = require("modules/charting/dataMenu/model"),
-        Radio = require("backbone.radio"),
-        $ = require("jquery"),
-        View;
+import DataMenuModel from "./model";
+import DataMenuTemplate from "text-loader!./template.html";
 
-    View = Backbone.View.extend({
+// define(function (require) {
+//     var Backbone = require("backbone"),
+//         _ = require("underscore"),
+//         DataMenuTemplate = require("text-loader!modules/charting/dataMenu/template.html"),
+//         DataMenuModel = require("modules/charting/dataMenu/model"),
+//         Radio = require("backbone.radio"),
+//         $ = require("jquery"),
+//         View;
 
-        // Konvention: Id = Name des Moduls
-        id: "data-vis",
-        model: new DataMenuModel(),
-        // underscore template Funktion
-        template: _.template(DataMenuTemplate),
-        events: {
-            "change .input-checkbox": "showVisualisation",
-            "click .clear-data": "clearVisualisation"
-        },
+const View = Backbone.View.extend({
 
-        initialize: function () {
-            this.listenTo(this.model, {
-                //Soll als Menü angezeigt werden
-                "change:isCollapsed change:isCurrentWin": this.render
-            });
-            this.render();
-        },
-        // Konvention: Die Methode fürs zeichnen der View, heißt render.
-        render: function () {
-            if (this.model.get("isCurrentWin") === true && this.model.get("isCollapsed") === false) {
-                var attr = this.model.toJSON();
+    // Konvention: Id = Name des Moduls
+    id: "data-vis",
+    model: new DataMenuModel(),
+    // underscore template Funktion
+    template: _.template(DataMenuTemplate),
+    events: {
+        "change .input-checkbox": "showVisualisation",
+        "click .clear-data": "clearVisualisation"
+    },
 
-                this.$el.html("");
-                $(".win-heading").after(this.$el.html(this.template(attr)));
-                this.delegateEvents();
-            } else {
-                this.undelegateEvents();
-            }
-        },
+    initialize: function () {
+        this.listenTo(this.model, {
+            //Soll als Menü angezeigt werden
+            "change:isCollapsed change:isCurrentWin": this.render
+        });
+        this.render();
+    },
+    // Konvention: Die Methode fürs zeichnen der View, heißt render.
+    render: function () {
+        if (this.model.get("isCurrentWin") === true && this.model.get("isCollapsed") === false) {
+            var attr = this.model.toJSON();
 
-        showVisualisation: function (evt) {
-            Radio.trigger("chartCaller", "createChart", [evt.currentTarget.value, evt.currentTarget.checked]);
-        },
-
-        clearVisualisation: function (evt) {
-            Radio.trigger("chartCaller", "deleteAll");
-            $(".input-checkbox").prop("checked", false );
+            this.$el.html("");
+            $(".win-heading").after(this.$el.html(this.template(attr)));
+            this.delegateEvents();
+        } else {
+            this.undelegateEvents();
         }
-    });
-    return View;
+    },
+
+    showVisualisation: function (evt) {
+        Radio.trigger("chartCaller", "createChart", [evt.currentTarget.value, evt.currentTarget.checked]);
+    },
+
+    clearVisualisation: function (evt) {
+        Radio.trigger("chartCaller", "deleteAll");
+        $(".input-checkbox").prop("checked", false);
+    }
 });
+export default View;

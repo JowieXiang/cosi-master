@@ -1,9 +1,6 @@
-define(function (require) {
-    var Backbone = require("backbone"),
-        highcharts = require("highcharts"),
-        Renderer;
+import "highcharts";
 
-    Renderer = Backbone.Model.extend({
+const Renderer = Backbone.Model.extend({
 
         getChartById: function (chartIdFull, htmlElement) {
             var chartId = chartIdFull.substr(0, chartIdFull.indexOf('-'));
@@ -363,7 +360,7 @@ define(function (require) {
             }
         }
     });
-    return Renderer;
-});
+    export default Renderer;
+
 
 

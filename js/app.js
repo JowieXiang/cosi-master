@@ -52,6 +52,17 @@ import TreeFilterView from "../modules/treefilter/view";
 import Formular from "../modules/formular/view";
 import FeatureLister from "../modules/featurelister/view";
 import PrintView from "../modules/tools/print_/view";
+//CoSI
+import CosiTouchScreenView from "../modules/cosi/touchScreen/view";
+import CosiInfosSreenView from "../modules/cosi/infoScreen/view";
+import CosiSelectAreaView from "../modules/cosi/infoScreen/selectArea/view";
+import LocalStorageView from "../modules/localStorage/view";
+import DataMenuView from "../modules/charting/dataMenu/view";
+import ChartPanelView from "../modules/charting/chartPanel/view";
+import PieView from "../modules/charting/chartRenderer/pie/view";
+import BarView from "../modules/charting/chartRenderer/bar-line/view";
+import ChartUtil from "../modules/charting/chartRenderer/util/util";
+
 // @deprecated in version 3.0.0
 // remove "version" in doc and config.
 // rename "print_" to "print"
@@ -75,7 +86,7 @@ import "es6-promise/auto";
 
 var sbconfig, controls, controlsView;
 
-function loadApp () {
+function loadApp() {
     // RemoteInterface laden
     if (_.has(Config, "remoteInterface")) {
         new RemoteInterface(Config.remoteInterface);
@@ -121,7 +132,6 @@ function loadApp () {
     if (_.has(Config, "mouseHover")) {
         new MouseHoverPopupView(Config.mouseHover);
     }
-
 
     if (_.has(Config, "quickHelp") && Config.quickHelp === true) {
         new QuickHelpView();
@@ -273,7 +283,10 @@ function loadApp () {
                 }
                 case "orientation": {
                     element = controlsView.addRowTR(control.id, true);
-                    new OrientationView({el: element, attr: {config: {epsg: Radio.request("MapView", "getProjection").getCode()}}});
+                    new OrientationView({
+                        el: element,
+                        attr: {config: {epsg: Radio.request("MapView", "getProjection").getCode()}}
+                    });
                     break;
                 }
                 case "mousePosition": {
@@ -341,12 +354,44 @@ function loadApp () {
     // Variable CUSTOMMODULE wird im webpack.DefinePlugin gesetzt
     if (CUSTOMMODULE !== "") {
         return import(/* webpackMode: "eager" */ CUSTOMMODULE)
-        .then(module => {
-            new module.default;
-        })
-        .catch(error => {
-            Radio.trigger("Alert", "alert", "Entschuldigung, diese Anwendung konnte nicht vollständig geladen werden. Bitte wenden sie sich an den Administrator.");
-        });
+            .then(module => {
+                new module.default;
+            })
+            .catch(error => {
+                Radio.trigger("Alert", "alert", "Entschuldigung, diese Anwendung konnte nicht vollständig geladen werden. Bitte wenden sie sich an den Administrator.");
+            });
+    }
+
+    if (_.has(Config, "cosiMode")) {
+        if (_.has(Config, "mouseHover")) {
+            new MouseHoverPopupView(Config.mouseHover);
+        }
+
+        if (!_.has(Config.cosiMode, "isInfoscreen")) {
+            new CosiTouchScreenView(Config);
+        }
+
+        if (_.has(Config.cosiMode, "isInfoscreen")) {
+            new CosiInfosSreenView();
+            new CosiSelectAreaView();
+        }
+
+        /*
+        *   Loclstorage so far only used in the context of CoSI
+        */
+        if (_.has(Config, "isLocalStorage")) {
+            new LocalStorageView();
+        }
+
+        /*
+        *   Charting so far only used in the context of CoSI
+        */
+        new DataMenuView();
+        new ChartPanelView();
+        new PieView();
+        new BarView();
+        new ChartUtil();
+
     }
 
     Radio.trigger("Util", "hideLoader");

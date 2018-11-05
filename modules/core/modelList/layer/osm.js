@@ -1,10 +1,8 @@
-define(function (require) {
+import Layer from "./model";
+import OSM from "ol/source/OSM";
+import Tile from "ol/layer/Tile";
 
-    var Layer = require("modules/core/modelList/layer/model"),
-        ol = require("openlayers"),
-        OSMLayer;
-
-    OSMLayer = Layer.extend({
+const OSMLayer = Layer.extend({
         initialize: function () {
             if (!this.get("isChildLayer")) {
                 Layer.prototype.initialize.apply(this);
@@ -13,12 +11,12 @@ define(function (require) {
 
         createLayerSource: function () {
             // Is this really needed? Confusing...
-            this.setLayerSource(new ol.source.OSM({}));
+            this.setLayerSource(new OSM({}));
         },
 
         createLayer: function () {
-            this.setLayer(new ol.layer.Tile({
-                source: new ol.source.OSM({})
+            this.setLayer(new Tile({
+                source: new OSM({})
             }));
         },
 
@@ -30,6 +28,4 @@ define(function (require) {
             this.setIsOutOfRange(false);
         }
     });
-
-    return OSMLayer;
-});
+export default OSMLayer;

@@ -1,8 +1,8 @@
-define(function (require) {
-    var Backbone = require("backbone"),
-        Model;
+// define(function (require) {
+//     var Backbone = require("backbone"),
+//         Model;
 
-    Model = Backbone.Model.extend({
+const Model = Backbone.Model.extend({
         defaults: {
             htmlElement: {},
             chartTitle: '',
@@ -110,6 +110,4 @@ define(function (require) {
         }
 
     });
-
-    return Model;
-});
+export default Model;

@@ -1,5 +1,11 @@
 {
   "Portalconfig": {
+    "portalTitle":
+    {
+      "title": "CoSI",
+      "link": "http://geoinfo.hamburg.de",
+      "tooltip": "Landesbetrieb Geoinformation und Vermessung"
+    },
     "searchBar": {
       "gazetteer": {
         "minChars": 3,
@@ -14,7 +20,12 @@
         "minChars": 3,
         "suggestServiceId": "4",
         "geosearchServiceId": "5",
-        "extent": [454591, 5809000, 700000, 6075769],
+        "extent": [
+          454591,
+          5809000,
+          700000,
+          6075769
+        ],
         "suggestCount": 10,
         "epsg": "EPSG:25832",
         "filter": "filter=(typ:*)",
@@ -32,7 +43,10 @@
     },
     "mapView": {
       "backgroundImage": "/../../node_modules/lgv-config/img/backgroundCanvas.jpeg",
-      "startCenter": [564959.09, 5940777.71]
+      "startCenter": [
+        564959.09,
+        5940777.71
+      ]
     },
     "menu": {
       "tree": {
@@ -96,7 +110,12 @@
           "topic": "basic"
         },
         {
-          "id": ["1043", "1044", "1045", "1046"],
+          "id": [
+            "1043",
+            "1044",
+            "1045",
+            "1046"
+          ],
           "name": "Stadtkarte Hamburg",
           "visibility": true,
           "topic": "basic"
@@ -119,8 +138,8 @@
           "styleId": "kitas",
           "topic": "kitas",
           "isDefaultVisible": true,
-          "stageId" : "kita_orte",
-          "layerStage" : "before",
+          "stageId": "kita_orte",
+          "layerStage": "before",
           "gfiTheme": "cosi"
         },
         {
@@ -128,8 +147,8 @@
           "styleId": "kitas",
           "topic": "kitas",
           "isVisibleInTree": false,
-          "stageId" : "kita_orte",
-          "layerStage" : "after",
+          "stageId": "kita_orte",
+          "layerStage": "after",
           "gfiTheme": "cosi"
         },
         {
@@ -137,8 +156,8 @@
           "styleId": "einwohner",
           "topic": "kitas",
           "isDefaultVisible": true,
-          "stageId" : "kita_einwohner",
-          "layerStage" : "before",
+          "stageId": "kita_einwohner",
+          "layerStage": "before",
           "gfiTheme": "cosi"
         },
         {
@@ -146,16 +165,16 @@
           "styleId": "einwohner",
           "topic": "kitas",
           "isVisibleInTree": false,
-          "stageId" : "kita_einwohner",
-          "layerStage" : "after",
+          "stageId": "kita_einwohner",
+          "layerStage": "after",
           "gfiTheme": "cosi"
         },
         {
           "id": "stadtteileKitaplaetze_before",
           "styleId": "stadtteileKitaplaetze",
           "topic": "kitas",
-          "stageId" : "kita_stadtteil",
-          "layerStage" : "before",
+          "stageId": "kita_stadtteil",
+          "layerStage": "before",
           "gfiTheme": "cosi"
         },
         {
@@ -163,8 +182,8 @@
           "styleId": "stadtteileKitaplaetze",
           "topic": "kitas",
           "isVisibleInTree": false,
-          "stageId" : "kita_stadtteil",
-          "layerStage" : "after",
+          "stageId": "kita_stadtteil",
+          "layerStage": "after",
           "gfiTheme": "cosi"
         },
         {
