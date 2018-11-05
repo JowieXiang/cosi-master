@@ -10,7 +10,6 @@ Im Folgenden werden die einzelnen Konfigurationsoptionen beschrieben. Darüber h
 |----|-------------|---|-------|------------|--------|
 |[clickCounter](#markdown-header-clickcounter)|nein|Object||Konfigurationsobjekt des ClickCounterModuls. Dieses lädt für jeden registrierten Klick ein iFrame.||
 |cswId|nein|String|"1"|Referenz auf eine CS-W Schnittstelle, die für die Layerinformation genutzt wird. ID wird über [rest-services.json](rest-services.json.md) aufgelöst.|`"1"`|
-|customModules|nein|Array[String]||Pfad zu portalspezifischen Modulen. Der Pfad ist relativ zu *js/main.js*.| `["../portal/master/verkehrsfunctions"]`|
 |[footer](#markdown-header-footer)|nein|Object||Zeigt einen Footer-Bereich an und konfiguriert diesen.||
 |gfiWindow|nein|String|"detached"|Darstellungsart der Attributinformationen für alle Layertypen. **attached**: das Fenster mit Attributinformationen wird am Klickpunkt geöffnet. **detached**: das Fenster mit Attributinformationen wird oben rechts auf der Karte geöffnet. Der Klickpunkt wird zusätzlich mit einem Marker gekennzeichnet.|`"attached"`|
 |ignoredKeys|nein|Array[String]||Liste der ignorierten Attributnamen bei der Anzeige von Attributinformationen aller Layertypen.|`["BOUNDEDBY", "SHAPE", "SHAPE_LENGTH", "SHAPE_AREA", "OBJECTID", "GLOBALID", "GEOMETRY", "SHP", "SHP_AREA", "SHP_LENGTH","GEOM"]`|
@@ -31,7 +30,6 @@ Im Folgenden werden die einzelnen Konfigurationsoptionen beschrieben. Darüber h
 |wpsID|nein|String|""|Referenz auf eine WPS-Schnittstelle, die in verschiedenen Modulen genutzt wird. ID wird über [rest-services.json](rest-services.json.md) aufgelöst.|`""`|
 |[zoomToFeature](#markdown-header-zoomtofeature)|nein|Object||Optionale Konfigurations-Einstellungen für den URL-Parameter *featureid*. Siehe [URL-Parameter](URL-Parameter.md).||
 |[remoteInterface](#markdown-header-remoteInterface)|nein|object||Optionale Konfiguration für das remoteInterface.||
-|[browserPrint](#markdown-header-browserPrint)|nein|object||Optionale Konfiguration für das clientseitige Druckmodul.||
 
 ******
 ## mouseHover ##
@@ -55,26 +53,6 @@ remoteInterface:{
 
 ```
 *********
-
-******
-## browserPrint ##
-|Name|Verpflichtend|Typ|Default|Beschreibung|
-|----|-------------|---|-------|------------|
-|footerText|nein|String|"Kartographie und Gestaltung: Freie und Hansestadt Hamburg \nLandesbetrieb Geoinformation und Vermessung"|Text der in der Fußleiste angezeigt werden soll|
-|titleText|nein|String|"PDF ohne Titel"|Text der im Titel-Element angezeigt werden soll|
-
-**Beispiel:**
-```
-#!json
-browserPrint:{
-    footerText: "Mein Fußleisten-Text",
-    titleText: "Mein Titel"
-}
-
-```
-*********
-
-******
 
 ## clickCounter ##
 |Name|Verpflichtend|Typ|Default|Beschreibung|

@@ -1,31 +1,26 @@
-define(function (require) {
-    var channel = Radio.channel("TableMenu"),
-        Config = require("config"),
-        TableNavModel = Backbone.Model.extend({
-            defaults: {
-                isActiveElement: "",
-                isShowCategories: Radio.request("Parser", "getPortalConfig").isShowCategoryMenu
-            },
-            initialize: function () {
-                channel.reply({
-                    "getActiveElement": function () {
-                        return this.get("isActiveElement");
-                    },
-                    "setActiveElement": this.setActiveElement
-                }, this);
-            },
+const TableNavModel = Backbone.Model.extend({
+    defaults: {
+        isActiveElement: ""
+    },
+    initialize: function () {
+        var channel = Radio.channel("TableMenu");
 
-            setActiveElement: function (element) {
-                if (this.get("isActiveElement") !== element) {
-                    channel.trigger("hideMenuElement" + this.get("isActiveElement"));
-                }
-                this.set("isActiveElement", element);
+        channel.reply({
+            "getActiveElement": function () {
+                return this.get("isActiveElement");
             },
+            "setActiveElement": this.setActiveElement
+        }, this);
+    },
 
-            getIsShowCategories: function () {
-                return this.get("isShowCategories");
-            }
-        });
+    setActiveElement: function (element) {
+        var channel = Radio.channel("TableMenu");
 
-    return TableNavModel;
+        if (this.get("isActiveElement") !== element) {
+            channel.trigger("hideMenuElement" + this.get("isActiveElement"));
+        }
+        this.set("isActiveElement", element);
+    }
 });
+
+export default TableNavModel;
