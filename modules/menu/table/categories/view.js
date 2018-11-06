@@ -6,6 +6,10 @@ const CategoryView = Backbone.View.extend({
     },
     initialize: function () {
         this.listenTo(Radio.channel("TableMenu"), {
+            "noDisplayCategoryView": this.hideCategoryMenu
+        });
+
+        this.listenTo(Radio.channel("TableMenu"), {
             "hideMenuElementCategory": this.hideCategoryMenu
         });
 
@@ -41,6 +45,10 @@ const CategoryView = Backbone.View.extend({
         this.$(".table-category-list").addClass("table-category-active");
         this.$(".table-nav-cat-panel").addClass("in");
         Radio.request("TableMenu", "setActiveElement", "Category");
+    },
+    noDisplayMenu: function () {
+        this.$("#table-nav-cat-panel").remove();
+        this.$("#table-nav-cat-panel-toggler").parent().remove();
     }
 });
 

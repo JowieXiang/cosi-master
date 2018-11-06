@@ -29,7 +29,7 @@ const View = Backbone.View.extend({
         }, this);
 
         this.render();
-        Radio.request("TableMenu", "setActiveElement", "Category");
+        Radio.trigger("TableMenu", "noDisplayCategoryView");
     },
     render: function () {
         var attr = this.model.toJSON();

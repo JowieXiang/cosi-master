@@ -44,8 +44,6 @@ const InfoScreenView = Backbone.View.extend({
     },
 
     renderCharts: function (topic) {
-        // var plotLine = topic === "grobo" ? this.model.getColumnPlotLine() : null;
-        // var plotLine2 = topic === "grobo" ? this.model.getColumn2PlotLine() : null;
 
         // Bar-Chart 1
         this.barView = new BarView();

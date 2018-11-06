@@ -18,20 +18,29 @@ const LocalStorageView = Backbone.View.extend({
                     "data": messageData
                 };
                 localStorage.setItem('message', JSON.stringify(message));
+                // It did not work without this trigger?
+                dispatchEvent( new Event('storage') );
                 localStorage.removeItem('message');
             }
         }, this);
 
-        window.addEventListener('storage', function (event) {
-            if (event.key !== 'message') {
-                return;
-            }
-            const message = JSON.parse(event.newValue);
-            if (!message) {
-                return;
-            }
-            Radio.trigger("LocalStorage", "newStorageMessage", message);
-        });
+        $(window).on('storage', this.eventsTTT);
+    },
+
+    eventsTTT: function (event) {
+        let localStorage = event.currentTarget.localStorage;
+
+        // if (event.key !== 'message') {
+            if (!localStorage.hasOwnProperty("message")) {
+            return;
+        }
+
+        // const message = JSON.parse(event.newValue);
+        const message = JSON.parse(localStorage.message);
+        if (!message) {
+            return;
+        }
+        Radio.trigger("LocalStorage", "newStorageMessage", message);
     }
 });
 export default LocalStorageView;
