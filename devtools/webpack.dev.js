@@ -14,7 +14,7 @@ module.exports = function (env, args) {
             port: 9001,
             publicPath: "/build/",
             overlay: true,
-            https: true,
+            https: false,
             open: true,
             openPage: "portal/master",
             proxy: proxies
