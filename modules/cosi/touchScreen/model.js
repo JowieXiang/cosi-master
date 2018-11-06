@@ -36,7 +36,7 @@ const CosiModel = Backbone.Model.extend({
         return this.topicSelection[topic];
     },
     addDeactivatedStageLayer: function (layer) {
-        var layers = this.getDeactivatedStageLayers();
+        let layers = this.getDeactivatedStageLayers();
         layers.push(layer);
         this.setDeactivatedStageLayers(layers);
     },
@@ -50,8 +50,8 @@ const CosiModel = Backbone.Model.extend({
         return this.get("stages");
     },
     getVisibleLayersWithStages: function () {
-        var visibleLayersWithStages = [];
-        var featureCollection = Radio.request("ModelList", "getCollection");
+        let visibleLayersWithStages = [];
+        let featureCollection = Radio.request("ModelList", "getCollection");
         _.each(featureCollection["models"], function (feature) {
             if (feature["attributes"]["type"] == "layer" &&
                 feature["attributes"]["isVisibleInMap"] == true &&

@@ -5,7 +5,7 @@ import PieView from "../../charting/chartRenderer/pie/view";
 
 // define(function (require) {
 //
-//     var Template = require("text-loader!modules/cosi/infoScreen/template.html"),
+//     let Template = require("text-loader!modules/cosi/infoScreen/template.html"),
 //         InfoScreenModel = require("modules/cosi/infoScreen/model"),
 //         BarView = require("modules/charting/chartRenderer/bar-line/barView"),
 //         PieView = require("modules/charting/chartRenderer/pie/pieView"),
@@ -29,7 +29,7 @@ const InfoScreenView = Backbone.View.extend({
             }
         }, this);
 
-        var channel = Radio.channel("InfoScreen");
+        let channel = Radio.channel("InfoScreen");
         channel.on({
             "dataCalculated": this.renderCharts,
             "loadChartPanels": this.render
@@ -39,7 +39,7 @@ const InfoScreenView = Backbone.View.extend({
     },
 
     render: function () {
-        var attr = this.model.toJSON();
+        let attr = this.model.toJSON();
         $("#info-screen").append(this.$el.html(this.template(attr)));
     },
 

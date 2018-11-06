@@ -1,19 +1,19 @@
 import StorageModel from "./model";
 //
 // define(function (require) {
-//     var Backbone = require("backbone"),
+//     let Backbone = require("backbone"),
 //         Radio = require("backbone.radio"),
 //         StorageModel = require("modules/localStorage/model");
 
 const LocalStorageView = Backbone.View.extend({
     model: StorageModel,
     initialize: function () {
-        var channel = Radio.channel("LocalStorage");
+        let channel = Radio.channel("LocalStorage");
 
         // To set the inactivity of stages, we need to listen to changes
         this.listenTo(channel, {
             "sendMessage": function (messageType, messageData) {
-                var message = {
+                let message = {
                     "type": messageType,
                     "data": messageData
                 };

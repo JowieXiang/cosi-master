@@ -1,5 +1,5 @@
 // define(function (require) {
-//     var Backbone = require("backbone"),
+//     let Backbone = require("backbone"),
 //         Model;
 
 const Model = Backbone.Model.extend({

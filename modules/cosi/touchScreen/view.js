@@ -13,7 +13,7 @@ const View = Backbone.View.extend({
     },
     initialize: function (config) {
         this.model = new CosiModel(config);
-        var channel = Radio.channel("Cosi");
+        let channel = Radio.channel("Cosi");
 
         channel.reply({
             "getSavedTopicSelection": function (topic) {
@@ -32,7 +32,7 @@ const View = Backbone.View.extend({
         Radio.trigger("TableMenu", "noDisplayCategoryView");
     },
     render: function () {
-        var attr = this.model.toJSON();
+        let attr = this.model.toJSON();
         $(".lgv-container").append(this.$el.html(this.template(attr)));
     },
     clickStartTool: function (evt) {
@@ -45,12 +45,12 @@ const View = Backbone.View.extend({
         Radio.trigger("LocalStorage", "sendMessage", "topic-select", "grobo");
     },
     stageSelected: function (evt) {
-        var selectedStage = $(evt.currentTarget).attr('name');
-        var visibleLayersWithStages = this.model.getVisibleLayersWithStages();
+        let selectedStage = $(evt.currentTarget).attr('name');
+        let visibleLayersWithStages = this.model.getVisibleLayersWithStages();
 
-        for (var i = 0; i < visibleLayersWithStages.length; i++) {
-            var visibleStagelayer = visibleLayersWithStages[i];
-            var newStageLayer = Radio.request("ModelList", "getModelByAttributes", {
+        for (let i = 0; i < visibleLayersWithStages.length; i++) {
+            let visibleStagelayer = visibleLayersWithStages[i];
+            let newStageLayer = Radio.request("ModelList", "getModelByAttributes", {
                 stageId: visibleStagelayer.get("stageId"),
                 layerStage: selectedStage
             });
@@ -67,8 +67,8 @@ const View = Backbone.View.extend({
         // Save currently selected layers before the topic switch
         this.saveCurrentTopicLayerSelection(this.model.getCurrentTopic());
 
-        var clickTarget = $(evt.currentTarget);
-        var currentTopic = clickTarget.attr('name').trim();
+        let clickTarget = $(evt.currentTarget);
+        let currentTopic = clickTarget.attr('name').trim();
         this.model.setCurrentTopic(currentTopic);
 
         // Propagate the topic switch
@@ -90,8 +90,8 @@ const View = Backbone.View.extend({
         Radio.trigger("MapView", "setCenterAnimation", this.model.getCenter(), 4);
     },
     setStageMenuVisibility: function () {
-        var currentStageLayers = this.model.getVisibleLayersWithStages();
-        var isStagesVisible = currentStageLayers.length > 0 || this.model.getDeactivatedStageLayers().length > 0;
+        let currentStageLayers = this.model.getVisibleLayersWithStages();
+        let isStagesVisible = currentStageLayers.length > 0 || this.model.getDeactivatedStageLayers().length > 0;
         this.model.setIsStagesActive(isStagesVisible);
         if (isStagesVisible) {
             $(".stages").removeClass("inactive-stages");
@@ -103,9 +103,9 @@ const View = Backbone.View.extend({
         }
     },
     saveCurrentTopicLayerSelection: function (topic) {
-        var layerCollection = Radio.request("ModelList", "getCollection");
+        let layerCollection = Radio.request("ModelList", "getCollection");
         layerCollection = layerCollection.where({isVisibleInMap: true, topic: topic});
-        var selectedLayerIds = [];
+        let selectedLayerIds = [];
         _.each(layerCollection, function (layer) {
             selectedLayerIds.push(layer.get("id"))
         });

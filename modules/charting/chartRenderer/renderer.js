@@ -1,13 +1,17 @@
-import "highcharts";
+import Highcharts from "highcharts";
+
+/*
+*   This module is for random chart creation - just for a showcase of a chart menu
+*/
 
 const Renderer = Backbone.Model.extend({
 
         getChartById: function (chartIdFull, htmlElement) {
-            var chartId = chartIdFull.substr(0, chartIdFull.indexOf('-'));
-            var headline = chartIdFull.replace('-',' - ');
+            let chartId = chartIdFull.substr(0, chartIdFull.indexOf('-'));
+            let headline = chartIdFull.replace('-',' - ');
 
             if (chartId === 'Schülerstruktur') {
-                htmlElement.highcharts({
+                let newChart = Highcharts.chart(htmlElement[0]["id"], {
                     chart: {
                         width: ($(document).width() / 5),
                         height: (($(document).width() / 5) * 0.66),
@@ -65,7 +69,7 @@ const Renderer = Backbone.Model.extend({
                     }]
                 });
             } else if (chartId === 'Alterstruktur') {
-                htmlElement.highcharts({
+                let newChart = Highcharts.chart(htmlElement[0]["id"], {
                     chart: {
                         width: ($(document).width() / 5),
                         height: (($(document).width() / 5) * 0.66),
@@ -136,7 +140,7 @@ const Renderer = Backbone.Model.extend({
                     }]
                 });
             } else if (chartId === 'Altersentwicklung') {
-                htmlElement.highcharts({
+                let newChart = Highcharts.chart(htmlElement[0]["id"], {
                     chart: {
                         width: ($(document).width() / 5),
                         height: (($(document).width() / 5) * 0.66),
@@ -251,7 +255,7 @@ const Renderer = Backbone.Model.extend({
                     }]
                 });
             } else if (chartId === 'Haushaltsstruktur') {
-                htmlElement.highcharts({
+                let newChart = Highcharts.chart(htmlElement[0]["id"], {
                     chart: {
                         width: ($(document).width() / 5),
                         height: (($(document).width() / 5) * 0.66),
@@ -314,7 +318,7 @@ const Renderer = Backbone.Model.extend({
                     }]
                 });
             } else {
-                htmlElement.highcharts({
+                let newChart = Highcharts.chart(htmlElement[0]["id"], {
                     chart: {
                         width: ($(document).width() / 5),
                         height: (($(document).width() / 5) * 0.66)

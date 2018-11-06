@@ -3,7 +3,7 @@ import Template from "text-loader!./template.html";
 
 // define(function (require) {
 //
-//     var SelectAreaModel = require("modules/cosi/infoScreen/selectArea/model"),
+//     let SelectAreaModel = require("modules/cosi/infoScreen/selectArea/model"),
 //         Radio = require("backbone.radio"),
 //         $ = require("jquery"),
 //         Template = require("text-loader!modules/cosi/infoScreen/selectArea/template.html"),
@@ -16,7 +16,7 @@ const SelectAreaView = Backbone.View.extend({
     initialize: function () {
         this.listenTo(Radio.channel("LocalStorage"), {
             "newStorageMessage": function (message) {
-                var element = message.data;
+                let element = message.data;
                 if (element.hasOwnProperty("KapKita")) {
                     element.type = 'kita';
                 } else if (element.hasOwnProperty("shop")) {
@@ -44,12 +44,12 @@ const SelectAreaView = Backbone.View.extend({
 
     render: function () {
         $("#select-info-area").empty();
-        var attr = this.model.toJSON();
+        let attr = this.model.toJSON();
         $("#select-info-area").append(this.$el.html(this.template(attr)));
     },
 
     setInitElement: function () {
-        var element = {};
+        let element = {};
         element.type = 'init';
         this.model.setSelectedFeature(element);
     }

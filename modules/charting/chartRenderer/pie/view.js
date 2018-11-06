@@ -1,6 +1,7 @@
 import PieModel from "./model";
 import PieTemplate from "text-loader!../template.html";
 import Highcharts from "highcharts";
+import BarModel from "../bar-line/model";
 
 window.Highcharts = Highcharts;
 
@@ -12,30 +13,18 @@ const PieView = Backbone.View.extend({
     events: {},
 
     initialize: function () {
-        // this.id = this.id + '-' + Math.random().toString(36).substring(2, 15);
-
-        // var channel = Radio.channel("chartCaller");
-        // channel.on({
-        //     "createChart": function (callerData) {
-        //         console.log('Called ' + callerData[0] + ' value ' + callerData[1]);
-        //         this.render(callerData[0], callerData[1]);
-        //     },
-        //     "deleteAll": function () {
-        //         this.render('deleteAll', false);
-        //     }
-        // }, this);
     },
 
     render: function (series, domElement) {
     },
 
-    // setPieModel: function (PieModel) {
-    //     this.model = PieModel;
-    // },
+    resetPieModel: function () {
+        this.model = new PieModel();
+    },
 
     renderPie: function () {
-        var domElement = $(this.model.getHtmlElement());
-        var data = this.model.getSeries();
+        let domElement = $(this.model.getHtmlElement());
+        let data = this.model.getSeries();
 
         // TODO: das renderTo wohl noch umstellen auf die ID des htmlElementes
         this.model.setIsExport(false);

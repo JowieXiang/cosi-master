@@ -1,7 +1,7 @@
 const Util = Backbone.Model.extend({
     defaults: {},
     initialize: function () {
-        var channel = Radio.channel("ChartUtil");
+        let channel = Radio.channel("ChartUtil");
 
         channel.reply({
             "getCountData": this.getCountData,
@@ -29,17 +29,17 @@ const Util = Backbone.Model.extend({
         return this.getDataByFunction(data, seriesIdent, "MAXIMUM", dataIdent);
     },
     getSeriesData: function (data, seriesIdent, dataIdent, seriesPointIdent, seriesPointElements, highlight) {
-        var dataArray = [];
-        var seriesNames = this.getUniqueSeriesNames(data, [seriesIdent]);
-        for (var _i = 0, seriesNames_1 = seriesNames; _i < seriesNames_1.length; _i++) {
-            var uniqueName = seriesNames_1[_i];
-            var series = {name: uniqueName};
-            var seriesData = [];
-            for (var _a = 0, seriesPointElements_1 = seriesPointElements; _a < seriesPointElements_1.length; _a++) {
-                var seriesPoint = seriesPointElements_1[_a];
-                var found = true;
-                for (var _b = 0, data_1 = data; _b < data_1.length; _b++) {
-                    var obj = data_1[_b];
+        let dataArray = [];
+        let seriesNames = this.getUniqueSeriesNames(data, [seriesIdent]);
+        for (let _i = 0, seriesNames_1 = seriesNames; _i < seriesNames_1.length; _i++) {
+            let uniqueName = seriesNames_1[_i];
+            let series = {name: uniqueName};
+            let seriesData = [];
+            for (let _a = 0, seriesPointElements_1 = seriesPointElements; _a < seriesPointElements_1.length; _a++) {
+                let seriesPoint = seriesPointElements_1[_a];
+                let found = true;
+                for (let _b = 0, data_1 = data; _b < data_1.length; _b++) {
+                    let obj = data_1[_b];
                     if (obj[seriesPointIdent] === seriesPoint &&
                         this.getElementNameAtLevel([seriesIdent], obj) === uniqueName) {
                         seriesData.push(Number(obj[dataIdent]));
@@ -63,7 +63,7 @@ const Util = Backbone.Model.extend({
             dataArray.push(series);
         }
         if (seriesPointElements.length == 1) {
-            var newDataArray = {};
+            let newDataArray = {};
             newDataArray["data"] = dataArray;
             newDataArray["name"] = [seriesIdent];
             return newDataArray;
@@ -73,19 +73,19 @@ const Util = Backbone.Model.extend({
         }
     },
     getDataByFunction: function (data, seriesIdent, calcFunction, dataIdentity) {
-        var dataArray = {};
+        let dataArray = {};
         dataArray['name'] = seriesIdent;
-        var seriesCollection = [];
-        var seriesNames = this.getUniqueSeriesNames(data, seriesIdent);
-        var ident = dataIdentity ? dataIdentity : '';
-        for (var _i = 0, seriesNames_2 = seriesNames; _i < seriesNames_2.length; _i++) {
-            var uniqueName = seriesNames_2[_i];
-            var series = {name: uniqueName};
-            var dataFunction = 0;
-            for (var _a = 0, data_2 = data; _a < data_2.length; _a++) {
-                var obj = data_2[_a];
+        let seriesCollection = [];
+        let seriesNames = this.getUniqueSeriesNames(data, seriesIdent);
+        let ident = dataIdentity ? dataIdentity : '';
+        for (let _i = 0, seriesNames_2 = seriesNames; _i < seriesNames_2.length; _i++) {
+            let uniqueName = seriesNames_2[_i];
+            let series = {name: uniqueName};
+            let dataFunction = 0;
+            for (let _a = 0, data_2 = data; _a < data_2.length; _a++) {
+                let obj = data_2[_a];
                 if (this.getElementNameAtLevel(seriesIdent, obj) === uniqueName) {
-                    var dataElement = Number(obj[ident]);
+                    let dataElement = Number(obj[ident]);
                     if (calcFunction === "COUNT" ||
                         calcFunction === "SUM") {
                         if (!dataFunction) {
@@ -123,10 +123,10 @@ const Util = Backbone.Model.extend({
         return dataArray;
     },
     getUniqueSeriesNames: function (data, seriesIdent) {
-        var seriesNames = [];
-        for (var _i = 0, data_3 = data; _i < data_3.length; _i++) {
-            var obj = data_3[_i];
-            var currentSeriesName = this.getElementNameAtLevel(seriesIdent, obj);
+        let seriesNames = [];
+        for (let _i = 0, data_3 = data; _i < data_3.length; _i++) {
+            let obj = data_3[_i];
+            let currentSeriesName = this.getElementNameAtLevel(seriesIdent, obj);
             if (seriesNames.indexOf(currentSeriesName) === -1) {
                 seriesNames.push(currentSeriesName);
             }
@@ -134,9 +134,9 @@ const Util = Backbone.Model.extend({
         return seriesNames;
     },
     getElementNameAtLevel: function (seriesIdent, obj) {
-        var latestElement;
-        for (var _i = 0, seriesIdent_1 = seriesIdent; _i < seriesIdent_1.length; _i++) {
-            var sIdent = seriesIdent_1[_i];
+        let latestElement;
+        for (let _i = 0, seriesIdent_1 = seriesIdent; _i < seriesIdent_1.length; _i++) {
+            let sIdent = seriesIdent_1[_i];
             latestElement = latestElement ? latestElement : obj;
             if (latestElement[sIdent] instanceof Array) {
                 latestElement = latestElement[sIdent][0];
@@ -145,19 +145,19 @@ const Util = Backbone.Model.extend({
                 latestElement = latestElement[sIdent];
             }
         }
-        var currentSeriesName = latestElement;
+        let currentSeriesName = latestElement;
         return currentSeriesName;
     },
     concatAllElements: function (textArr) {
-        var concatenated = '';
-        for (var _i = 0, textArr_1 = textArr; _i < textArr_1.length; _i++) {
-            var text = textArr_1[_i];
+        let concatenated = '';
+        for (let _i = 0, textArr_1 = textArr; _i < textArr_1.length; _i++) {
+            let text = textArr_1[_i];
             concatenated = concatenated.concat(' ' + text);
         }
         return concatenated;
     },
     capitalize: function (value) {
-        var string = '';
+        let string = '';
         if (value instanceof Array) {
             string = value[0].name;
         }

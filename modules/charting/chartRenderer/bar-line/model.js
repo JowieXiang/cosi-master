@@ -1,5 +1,5 @@
 // define(function (require) {
-//     var Backbone = require("backbone"),
+//     let Backbone = require("backbone"),
 //         highcharts = require("highcharts"),
 //         Model;
 

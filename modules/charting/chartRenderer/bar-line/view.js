@@ -2,16 +2,6 @@ import BarModel from "./model";
 import BarTemplate from "text-loader!../template.html";
 import Highcharts from "highcharts";
 
-// define(function (require, Highcharts) {
-//     var Backbone = require("backbone"),
-//         _ = require("underscore"),
-//         BarTemplate = require("text-loader!modules/charting/chartRenderer/template.html"),
-//         BarModel = require("modules/charting/chartRenderer/bar-line/barModel"),
-//         $ = require("jquery"),
-//         Radio = require("backbone.radio"),
-//         highcharts = Highcharts,
-//         BarView;
-
 const BarView = Backbone.View.extend({
 
     id: "bar-chart",
@@ -20,18 +10,6 @@ const BarView = Backbone.View.extend({
     events: {},
 
     initialize: function () {
-        // this.id = this.id + '-' + Math.random().toString(36).substring(2, 15);
-
-        // var channel = Radio.channel("chartCaller");
-        // channel.on({
-        //     "createChart": function (callerData) {
-        //         console.log('Called ' + callerData[0] + ' value ' + callerData[1]);
-        //         this.render(callerData[0], callerData[1]);
-        //     },
-        //     "deleteAll": function () {
-        //         this.render('deleteAll', false);
-        //     }
-        // }, this);
     },
 
     render: function () {
@@ -42,8 +20,8 @@ const BarView = Backbone.View.extend({
     },
 
     renderBar: function () {
-        var domElement = $(this.model.getHtmlElement());
-        var data = this.model.getSeries();
+        let domElement = $(this.model.getHtmlElement());
+        let data = this.model.getSeries();
 
         data['colorByPoint'] = this.model.getIsColorByPoint();
         this.model.setIsExport(false);
