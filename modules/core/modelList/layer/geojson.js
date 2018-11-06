@@ -1,7 +1,7 @@
 import Layer from "./model";
 import VectorSource from "ol/source/Vector.js";
 import VectorLayer from "ol/layer/Vector.js";
-import {GeoJSON} from "ol/format.js";
+import GeoJSON from 'ol/format/GeoJSON';
 
 const GeoJSONLayer = Layer.extend({
     defaults: _.extend({}, Layer.prototype.defaults),
@@ -54,7 +54,7 @@ const GeoJSONLayer = Layer.extend({
             request: "GetFeature",
             service: "WFS",
             typeName: this.get("featureType"),
-            outputFormat: "application/geo+json",
+            outputFormat: "application/json",
             version: this.get("version")
         };
 
@@ -64,7 +64,7 @@ const GeoJSONLayer = Layer.extend({
                     Radio.trigger("Util", "showLoader");
                 }
             },
-            url: Radio.request("Util", "getProxyURL", this.get("url")),
+            url: this.isUseProxy() === true ? Radio.request("Util", "getProxyURL", this.get("url")) : this.get("url"),
             data: params,
             async: true,
             type: "GET",
@@ -111,7 +111,6 @@ const GeoJSONLayer = Layer.extend({
 
     parseDataToFeatures: function (data) {
         var geojsonReader = new GeoJSON();
-
         return geojsonReader.readFeatures(data);
     },
 
@@ -219,6 +218,10 @@ const GeoJSONLayer = Layer.extend({
     // setter for legendURL
     setLegendURL: function (value) {
         this.set("legendURL", value);
+    },
+
+    isUseProxy: function () {
+        return (this.hasOwnProperty("isUseProxy") && this.get("isUseProxy") === true);
     }
 });
 

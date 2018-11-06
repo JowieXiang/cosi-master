@@ -1,6 +1,6 @@
 import Layer from "./model";
-import OSM from "ol/source/OSM";
-import Tile from "ol/layer/Tile";
+import OSM from "ol/source/OSM.js";
+import Tile from "ol/layer/Tile.js";
 
 const OSMLayer = Layer.extend({
         initialize: function () {

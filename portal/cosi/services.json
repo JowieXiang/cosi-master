@@ -364,7 +364,8 @@
     "typ": "GeoJSON",
     "featureType": "csl:sozialmonitoring2016",
     "layerAttribution": "Quelle: BSW",
-    "legendURL": "../cosi/assets/Gesamtindex2016_Legende.png"
+    "legendURL": "../cosi/assets/Gesamtindex2016_Legende.png",
+    "isUseProxy": false
   },
   {
     "id": "grossborstel",
@@ -373,7 +374,8 @@
     "typ": "GeoJSON",
     "featureType": "csl:grossborstel",
     "legendURL": "ignore",
-    "gfiAttributes": "ignore"
+    "gfiAttributes": "ignore",
+    "isUseProxy": false
   },
   {
     "id": "kitas_before",
@@ -382,7 +384,8 @@
     "typ": "GeoJSON",
     "featureType": "csl:kitas",
     "layerAttribution": "Quelle: BASFI",
-    "legendURL": "ignore"
+    "legendURL": "ignore",
+    "isUseProxy": false
   },
   {
     "id": "kitas_after",
@@ -391,7 +394,8 @@
     "typ": "GeoJSON",
     "featureType": "csl:kitas_neu",
     "layerAttribution": "Quelle: BASFI",
-    "legendURL": "ignore"
+    "legendURL": "ignore",
+    "isUseProxy": false
   },
   {
     "id": "stadtteileKitaplaetze_before",
@@ -400,7 +404,8 @@
     "typ": "GeoJSON",
     "featureType": "csl:stadtteile_grossborstel",
     "layerAttribution": "Quellen: BASFI (Kitaplätze), Statistikamt Nord (Bevölkerungsstruktur)",
-    "legendURL": "ignore"
+    "legendURL": "ignore",
+    "isUseProxy": false
   },
   {
     "id": "stadtteileKitaplaetze_after",
@@ -409,7 +414,8 @@
     "typ": "GeoJSON",
     "featureType": "csl:stadtteile_grossborstel_neu",
     "layerAttribution": "Quellen: BASFI (Kitaplätze), Statistikamt Nord (Bevölkerungsstruktur)",
-    "legendURL": "ignore"
+    "legendURL": "ignore",
+    "isUseProxy": false
   },
   {
     "id": "einwohner_before",
@@ -418,7 +424,8 @@
     "typ": "GeoJSON",
     "featureType": "csl:einwohner_0bis6",
     "layerAttribution": "Quelle: Statistikamt Nord",
-    "legendURL": "ignore"
+    "legendURL": "ignore",
+    "isUseProxy": false
   },
   {
     "id": "einwohner_after",
@@ -427,7 +434,8 @@
     "typ": "GeoJSON",
     "featureType": "csl:einwohner_0bis6_neu",
     "layerAttribution": "Quelle: Statistikamt Nord",
-    "legendURL": "ignore"
+    "legendURL": "ignore",
+    "isUseProxy": false
   },
   {
     "id": "apotheken",
@@ -436,7 +444,8 @@
     "typ": "GeoJSON",
     "featureType": "csl:apotheken_all",
     "layerAttribution": "Quelle: OpenStreetMap",
-    "legendURL": "ignore"
+    "legendURL": "ignore",
+    "isUseProxy": false
   },
   {
     "id": "supermaerkte",
@@ -445,7 +454,8 @@
     "typ": "GeoJSON",
     "featureType": "csl:supermaerkte_all",
     "layerAttribution": "Quelle: OpenStreetMap",
-    "legendURL": "ignore"
+    "legendURL": "ignore",
+    "isUseProxy": false
   },
   {
     "id": "gruenflaechen",
@@ -454,6 +464,7 @@
     "typ": "GeoJSON",
     "featureType": "csl:gruenflaechen",
     "layerAttribution": "Quelle: LGV",
-    "legendURL": "ignore"
+    "legendURL": "ignore",
+    "isUseProxy": false
   }
 ]
