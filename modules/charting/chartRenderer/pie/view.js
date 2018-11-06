@@ -1,6 +1,8 @@
 import PieModel from "./model";
 import PieTemplate from "text-loader!../template.html";
-import "highcharts";
+import Highcharts from "highcharts";
+
+window.Highcharts = Highcharts;
 
 const PieView = Backbone.View.extend({
 
@@ -39,52 +41,51 @@ const PieView = Backbone.View.extend({
         this.model.setIsExport(false);
 
         if (domElement) {
-            domElement.highcharts({
-                    chart: {
-                        plotBackgroundColor: null,
-                        plotBorderWidth: null,
-                        plotShadow: false,
-                        type: 'pie',
-                        renderTo: document.getElementById(this.id)
-                    },
-                    exporting: {
-                        enabled: this.model.getIsExport(),
-                        buttons: {
-                            contextButton: {
-                                enabled: true
-                            }
+            let newChart = Highcharts.chart(domElement[0]["id"], {
+                chart: {
+                    plotBackgroundColor: null,
+                    plotBorderWidth: null,
+                    plotShadow: false,
+                    type: 'pie',
+                    renderTo: document.getElementById(this.id)
+                },
+                exporting: {
+                    enabled: this.model.getIsExport(),
+                    buttons: {
+                        contextButton: {
+                            enabled: true
+                        }
+                    }
+                },
+                title: {
+                    useHTML: true,
+                    text: this.model.getChartTitle(),
+                    align: this.model.getChartTitleAlign()
+                },
+                subtitle: {
+                    text: this.model.getChartSubTitle()
+                },
+                credits: {
+                    enabled: false
+                },
+                plotOptions: {
+                    pie: {
+                        center: ['50%', '50%'],
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: this.model.getIsShowLabels(),
+                            format: this.model.getIsPercentageLabel() ? '<b>{point.name}</b>: {point.percentage:.1f} %'
+                                : this.model.getIsNoDecimalPlace() ? '<b>{point.name}</b>: {point.y:.0f}' : '<b>{point.name}</b>: {point.y:.2f}',
+                            distance: this.model.getDataLabelDistance()
                         }
                     },
-                    title: {
-                        useHTML: true,
-                        text: this.model.getChartTitle(),
-                        align: this.model.getChartTitleAlign()
-                    },
-                    subtitle: {
-                        text: this.model.getChartSubTitle()
-                    },
-                    credits: {
-                        enabled: false
-                    },
-                    plotOptions: {
-                        pie: {
-                            center: ['50%', '50%'],
-                            allowPointSelect: true,
-                            cursor: 'pointer',
-                            dataLabels: {
-                                enabled: this.model.getIsShowLabels(),
-                                format: this.model.getIsPercentageLabel() ? '<b>{point.name}</b>: {point.percentage:.1f} %'
-                                    : this.model.getIsNoDecimalPlace() ? '<b>{point.name}</b>: {point.y:.0f}' : '<b>{point.name}</b>: {point.y:.2f}',
-                                distance: this.model.getDataLabelDistance()
-                            }
-                        },
-                        series: {
-                            cursor: 'pointer'
-                        }
-                    },
-                    series: [data]
-                }
-            );
+                    series: {
+                        cursor: 'pointer'
+                    }
+                },
+                series: [data]
+            });
         } else {
             console.warn('The Dom-Element has not been set. Cannot create chart.')
         }
