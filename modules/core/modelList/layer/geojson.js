@@ -1,7 +1,7 @@
 import Layer from "./model";
 import VectorSource from "ol/source/Vector.js";
 import VectorLayer from "ol/layer/Vector.js";
-import GeoJSON from 'ol/format/GeoJSON';
+import GeoJSON from "ol/format/GeoJSON";
 
 const GeoJSONLayer = Layer.extend({
     defaults: _.extend({}, Layer.prototype.defaults),
@@ -115,6 +115,7 @@ const GeoJSONLayer = Layer.extend({
 
     parseDataToFeatures: function (data) {
         var geojsonReader = new GeoJSON();
+
         return geojsonReader.readFeatures(data);
     },
 
@@ -156,26 +157,27 @@ const GeoJSONLayer = Layer.extend({
                 this.setLegendURL([style.get("imagePath") + style.get("imageName")]);
             }
         }
-        },
-        /**
-        * Zeigt nur die Features an, deren Id übergeben wird
-        * @param  {string[]} featureIdList Liste der FeatureIds
-        * @return {undefined}
-        */
-        showFeaturesByIds: function (featureIdList) {
+    },
+
+    /**
+    * Zeigt nur die Features an, deren Id übergeben wird
+    * @param  {string[]} featureIdList Liste der FeatureIds
+    * @return {undefined}
+    */
+    showFeaturesByIds: function (featureIdList) {
         this.hideAllFeatures();
         _.each(featureIdList, function (id) {
             var feature = this.get("layerSource").getFeatureById(id);
 
             feature.setStyle(undefined);
         }, this);
-        },
+    },
 
-        /**
-        * sets null style (=no style) for all features
-        * @return {undefined}
-        */
-        hideAllFeatures: function () {
+    /**
+    * sets null style (=no style) for all features
+    * @return {undefined}
+    */
+    hideAllFeatures: function () {
         var collection = this.get("layerSource").getFeatures();
 
         collection.forEach(function (feature) {
@@ -183,14 +185,14 @@ const GeoJSONLayer = Layer.extend({
                 return null;
             });
         }, this);
-        },
+    },
 
-        /**
-        * Prüft anhand der Scale ob der Layer sichtbar ist oder nicht
-        * @param {object} options -
-        * @returns {void}
-        **/
-        checkForScale: function (options) {
+    /**
+    * Prüft anhand der Scale ob der Layer sichtbar ist oder nicht
+    * @param {object} options -
+    * @returns {void}
+    **/
+    checkForScale: function (options) {
         if (parseFloat(options.scale, 10) <= this.get("maxScale") && parseFloat(options.scale, 10) >= this.get("minScale")) {
             this.setIsOutOfRange(false);
         }
@@ -227,7 +229,7 @@ const GeoJSONLayer = Layer.extend({
     },
 
     isUseProxy: function () {
-        return (this.hasOwnProperty("isUseProxy") && this.get("isUseProxy") === true);
+        return this.hasOwnProperty("isUseProxy") && this.get("isUseProxy") === true;
     }
 });
 
