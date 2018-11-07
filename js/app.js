@@ -81,7 +81,7 @@ import FreezeModel from "../modules/controls/freeze/model";
 import MapMarkerView from "../modules/mapMarker/view";
 import SearchbarView from "../modules/searchbar/view";
 import TitleView from "../modules/title/view";
-import HighlightFeature from "../modules/highlightFeature/model";
+import HighlightFeature from "../modules/highlightfeature/model";
 import "es6-promise/auto";
 
 var sbconfig, controls, controlsView;

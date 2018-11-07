@@ -25,7 +25,7 @@ import WfsFeatureFilter from "../../wfsfeaturefilter/model";
 import TreeFilter from "../../treefilter/model";
 import ExtendedFilter from "../../tools/extendedFilter/model";
 import Formular from "../../formular/grenznachweis";
-import FeatureLister from "../../featureLister/model";
+import FeatureLister from "../../featurelister/model";
 import AddWms from "../../tools/addwms/model";
 import GetCoord from "../../tools/getCoord/model";
 import Schulwegrouting from "../../tools/schulwegRouting_hh/model";
