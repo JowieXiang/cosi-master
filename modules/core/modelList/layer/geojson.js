@@ -103,7 +103,7 @@ const GeoJSONLayer = Layer.extend({
                 var geometry = feature.getGeometry();
 
                 if (geometry) {
-                    feature.set("extent", feature.getGeometry().getExtent());
+                    feature.set("extent", geometry.getExtent());
                     newFeatures.push(_.omit(feature.getProperties(), ["geometry", "geometry_EPSG_25832", "geometry_EPSG_4326"]));
                 }
             });

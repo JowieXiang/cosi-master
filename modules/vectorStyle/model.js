@@ -255,7 +255,7 @@ const WFSStyle = Backbone.Model.extend({
         featureValue = feature.get(styleField);
         if (!_.isUndefined(featureValue)) {
             styleFieldValueObj = _.filter(this.get("styleFieldValues"), function (styleFieldValue) {
-                return styleFieldValue.styleFieldValue.toUpperCase() === featureValue.toUpperCase();
+                return styleFieldValue.styleFieldValue.toUpperCase() === featureValue.toString().toUpperCase();
             })[0];
         }
 
@@ -623,7 +623,7 @@ const WFSStyle = Backbone.Model.extend({
             textStyle = undefined;
         }
         else {
-            textObj.text = feature.get(labelField);
+            textObj.text = feature.get(labelField) ? feature.get(labelField).toString() : "";
             textObj.textAlign = this.get("textAlign");
             textObj.font = this.get("textFont").toString();
             textObj.scale = parseFloat(this.get("textScale"), 10);
