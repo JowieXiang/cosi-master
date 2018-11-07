@@ -100,8 +100,12 @@ const GeoJSONLayer = Layer.extend({
         // für it-gbm
         if (!this.has("autoRefresh")) {
             features.forEach(function (feature) {
-                feature.set("extent", feature.getGeometry().getExtent());
-                newFeatures.push(_.omit(feature.getProperties(), ["geometry", "geometry_EPSG_25832", "geometry_EPSG_4326"]));
+                var geometry = feature.getGeometry();
+
+                if (geometry) {
+                    feature.set("extent", feature.getGeometry().getExtent());
+                    newFeatures.push(_.omit(feature.getProperties(), ["geometry", "geometry_EPSG_25832", "geometry_EPSG_4326"]));
+                }
             });
             Radio.trigger("RemoteInterface", "postMessage", {"allFeatures": JSON.stringify(newFeatures), "layerId": this.get("id")});
         }
@@ -118,7 +122,9 @@ const GeoJSONLayer = Layer.extend({
         _.each(features, function (feature) {
             var geometry = feature.getGeometry();
 
-            geometry.transform(crs, mapCrs);
+            if (geometry) {
+                geometry.transform(crs, mapCrs);
+            }
         });
         return features;
     },
