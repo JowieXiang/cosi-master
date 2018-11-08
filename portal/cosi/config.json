@@ -96,7 +96,8 @@
           "styleId": "grossborstel",
           "topic": "basic",
           "visibility": true,
-          "isVisibleInTree": false
+          "isVisibleInTree": false,
+          "gfiAttributes": "ignore"
         },
         {
           "id": "sozialmonitoring",

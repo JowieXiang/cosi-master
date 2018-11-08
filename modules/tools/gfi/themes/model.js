@@ -263,7 +263,8 @@ const Theme = Backbone.Model.extend({
             else {
                 preGfi = this.allKeysToLowerCase(preGfi);
                 _.each(gfiAttributes, function (value, key) {
-                    var name = preGfi[key.toLowerCase()];
+                    let formattedKey = typeof key === "string" ? key.toLowerCase() : key;
+                    let name = preGfi[formattedKey];
 
                     if (name) {
                         gfi[value] = name;

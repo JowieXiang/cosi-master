@@ -385,6 +385,7 @@
     "featureType": "csl:kitas",
     "layerAttribution": "Quelle: BASFI",
     "legendURL": "ignore",
+    "gfiAttributes": "showAll",
     "isUseProxy": false
   },
   {
@@ -395,6 +396,7 @@
     "featureType": "csl:kitas_neu",
     "layerAttribution": "Quelle: BASFI",
     "legendURL": "ignore",
+    "gfiAttributes": "showAll",
     "isUseProxy": false
   },
   {
@@ -405,6 +407,7 @@
     "featureType": "csl:stadtteile_grossborstel",
     "layerAttribution": "Quellen: BASFI (Kitaplätze), Statistikamt Nord (Bevölkerungsstruktur)",
     "legendURL": "ignore",
+    "gfiAttributes": "showAll",
     "isUseProxy": false
   },
   {
@@ -415,6 +418,7 @@
     "featureType": "csl:stadtteile_grossborstel_neu",
     "layerAttribution": "Quellen: BASFI (Kitaplätze), Statistikamt Nord (Bevölkerungsstruktur)",
     "legendURL": "ignore",
+    "gfiAttributes": "showAll",
     "isUseProxy": false
   },
   {
@@ -425,7 +429,9 @@
     "featureType": "csl:einwohner_0bis6",
     "layerAttribution": "Quelle: Statistikamt Nord",
     "legendURL": "ignore",
-    "isUseProxy": false
+    "gfiAttributes": "showAll",
+    "isUseProxy": false,
+    "gfiTheme": "cosi"
   },
   {
     "id": "einwohner_after",
@@ -435,6 +441,7 @@
     "featureType": "csl:einwohner_0bis6_neu",
     "layerAttribution": "Quelle: Statistikamt Nord",
     "legendURL": "ignore",
+    "gfiAttributes": "showAll",
     "isUseProxy": false
   },
   {
@@ -445,6 +452,7 @@
     "featureType": "csl:apotheken_all",
     "layerAttribution": "Quelle: OpenStreetMap",
     "legendURL": "ignore",
+    "gfiAttributes": "showAll",
     "isUseProxy": false
   },
   {
@@ -455,6 +463,7 @@
     "featureType": "csl:supermaerkte_all",
     "layerAttribution": "Quelle: OpenStreetMap",
     "legendURL": "ignore",
+    "gfiAttributes": "showAll",
     "isUseProxy": false
   },
   {
@@ -465,6 +474,7 @@
     "featureType": "csl:gruenflaechen",
     "layerAttribution": "Quelle: LGV",
     "legendURL": "ignore",
+    "gfiAttributes": "showAll",
     "isUseProxy": false
   }
 ]

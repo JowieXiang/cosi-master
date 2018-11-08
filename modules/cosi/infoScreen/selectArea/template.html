@@ -10,7 +10,7 @@
     <table>
         <tr>
             <td>Adresse:</td>
-            <td><%= selectedFeature.Strasse2 %>, <%= selectedFeature.PLZ2 %> <%= selectedFeature.Ort %></td>
+            <td><%= selectedFeature.Strasse2 ? selectedFeature.Strasse2 + ',' : '' %> <%= selectedFeature.PLZ2 %> <%= selectedFeature.Ort %></td>
         </tr>
         <tr>
             <td>Träger:</td>
@@ -26,11 +26,11 @@
         </tr>
         <tr>
             <td>Pädagogische Fläche:</td>
-            <td><%= selectedFeature['paed QM'] %> m²</td>
+            <td><%= selectedFeature['paed QM'] ? selectedFeature['paed QM']+' m²' : ''%></td>
         </tr>
         <tr>
             <td>Kapazität (Näherungswert):</td>
-            <td><strong><%= selectedFeature.KapKita %> Plätze</strong></td>
+            <td><strong><%= selectedFeature.KapKita ? selectedFeature.KapKita : selectedFeature.KapKindneu %> Plätze</strong></td>
         </tr>
     </table>
 </div>

@@ -64,6 +64,8 @@ const View = Backbone.View.extend({
     topicSelected: function (evt) {
         //Reset
         this.model.setDeactivatedStageLayers([]);
+        //Reset-Marker
+        Radio.trigger("MapMarker", "clearMarker");
         // Save currently selected layers before the topic switch
         this.saveCurrentTopicLayerSelection(this.model.getCurrentTopic());
 
@@ -88,6 +90,8 @@ const View = Backbone.View.extend({
     },
     recenterMap: function () {
         Radio.trigger("MapView", "setCenterAnimation", this.model.getCenter(), 4);
+        //Reset-Marker
+        Radio.trigger("MapMarker", "clearMarker");
     },
     setStageMenuVisibility: function () {
         let currentStageLayers = this.model.getVisibleLayersWithStages();

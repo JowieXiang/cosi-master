@@ -184,6 +184,10 @@ const ThemeList = Backbone.Collection.extend({
                 new ActiveCityMapsThemeView({model: model});
                 break;
             }
+            case "cosi": {
+                // Supposed to be empty
+                break;
+            }
             default: {
                 new DefaultThemeView({model: model});
             }

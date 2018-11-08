@@ -4,7 +4,7 @@ const CosiTheme = Theme.extend({
     initialize: function () {
         var clickedElementData = {};
 
-        $.each(this.get("feature")["O"], function (key, value) {
+        $.each(this.get("feature")["values_"], function (key, value) {
             if (typeof value !== "object") {
                 clickedElementData[key] = value;
             }
