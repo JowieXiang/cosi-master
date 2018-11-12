@@ -193,6 +193,14 @@
           "topic": "kitas"
         },
         {
+          "id": "kitas_heat",
+          "styleId": "kitas",
+          "topic": "kitas",
+          "isVisibleInTree": true,
+          "gfiTheme": "cosi",
+          "dataLayerId" : "kitas_before"
+        },
+        {
           "id": "apotheken",
           "styleId": "apotheken",
           "topic": "nahversorgung",

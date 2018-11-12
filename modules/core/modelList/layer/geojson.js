@@ -71,6 +71,10 @@ const GeoJSONLayer = Layer.extend({
             context: this,
             success: function (data) {
                 this.handleData(data, Radio.request("MapView", "getProjection").getCode());
+                // Create associated heatmaps - as in the SenrosrThings layer, should be included in the model
+                if (this.get("hasHeatmap")) {
+                    Radio.trigger("HeatmapLayer", "loadInitialData", this.get("id"), this.get("layerSource").getFeatures());
+                }
             },
             complete: function () {
                 if (showLoader) {

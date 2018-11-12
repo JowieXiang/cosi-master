@@ -56,7 +56,11 @@ const HeatmapLayer = Layer.extend({
             typ: this.get("typ"),
             id: this.get("id"),
             weight: function (feature) {
-                return feature.get("normalizeWeightForHeatmap");
+                if (!_.isUndefined(feature.get("calculatedWeight"))) {
+                    return feature.get("calculatedWeight");
+                } else {
+                    return feature.get("normalizeWeightForHeatmap");
+                }
             },
             gfiAttributes: this.get("gfiAttributes"),
             blur: this.get("blur"),
@@ -76,13 +80,15 @@ const HeatmapLayer = Layer.extend({
 
     /**
      * draw heatmap with initialize features
-     * @param  {[Ol.Feature]} features - all features from associated sensorLayer
+     * @param  {[Ol.Feature]} features - all features from associated layer
      * @returns {void}
      */
     initializeHeatmap: function (features) {
         var attribute = this.get("attribute"),
             value = this.get("value"),
             layerSource = this.get("layerSource"),
+            weightAttribute = this.get("weightAttribute"),
+            weightAttributeMax = this.get("weightAttributeMax"),
             cloneFeatures = [];
 
         _.each(features, function (feature) {
@@ -91,8 +97,11 @@ const HeatmapLayer = Layer.extend({
 
             if (!_.isUndefined(attribute || value)) {
                 count = this.countStates(feature, attribute, value);
-
                 cloneFeature.set("weightForHeatmap", count);
+            }
+
+            if (!_.isUndefined(weightAttribute && weightAttributeMax)) {
+                cloneFeature.set("calculatedWeight", feature.get(weightAttribute) / weightAttributeMax);
             }
 
             cloneFeature.setId(feature.getId());
@@ -107,7 +116,7 @@ const HeatmapLayer = Layer.extend({
         }
     },
     createLegendURL: function () {
-        console.error("legendURL for heatmap not yet implemented");
+        console.info("legendURL for heatmap not yet implemented");
     },
 
     /**

@@ -386,7 +386,8 @@
     "layerAttribution": "Quelle: BASFI",
     "legendURL": "ignore",
     "gfiAttributes": "showAll",
-    "isUseProxy": false
+    "isUseProxy": false,
+    "hasHeatmap" : true
   },
   {
     "id": "kitas_after",
@@ -400,22 +401,25 @@
     "isUseProxy": false
   },
   {
+    "id": "kitas_heat",
+    "name": "Kita Heatmap",
+    "url": "http://csl.local.hcuhh.de:8080/geoserver/csl/wms",
+    "typ": "Heatmap",
+    "featureType": "csl:kitas",
+    "layerAttribution": "Quelle: BASFI",
+    "gfiAttributes": "showAll",
+    "isUseProxy": false,
+    "weightAttribute" : "KapKindneu",
+    "weightAttributeMax" : 350,
+    "radius" : 16,
+    "blur" : 30
+  },
+  {
     "id": "stadtteileKitaplaetze_before",
     "name": "Kitaplätze pro Kind (auf Stadtteilebene)",
     "url": "http://csl.local.hcuhh.de:8080/geoserver/csl/wms",
     "typ": "GeoJSON",
     "featureType": "csl:stadtteile_grossborstel",
-    "layerAttribution": "Quellen: BASFI (Kitaplätze), Statistikamt Nord (Bevölkerungsstruktur)",
-    "legendURL": "ignore",
-    "gfiAttributes": "showAll",
-    "isUseProxy": false
-  },
-  {
-    "id": "stadtteileKitaplaetze_after",
-    "name": "Kitaplätze pro Kind (auf Stadtteilebene)",
-    "url": "http://csl.local.hcuhh.de:8080/geoserver/csl/wms",
-    "typ": "GeoJSON",
-    "featureType": "csl:stadtteile_grossborstel_neu",
     "layerAttribution": "Quellen: BASFI (Kitaplätze), Statistikamt Nord (Bevölkerungsstruktur)",
     "legendURL": "ignore",
     "gfiAttributes": "showAll",
@@ -432,6 +436,17 @@
     "gfiAttributes": "showAll",
     "isUseProxy": false,
     "gfiTheme": "cosi"
+  },
+  {
+    "id": "stadtteileKitaplaetze_after",
+    "name": "Kitaplätze pro Kind (auf Stadtteilebene)",
+    "url": "http://csl.local.hcuhh.de:8080/geoserver/csl/wms",
+    "typ": "GeoJSON",
+    "featureType": "csl:stadtteile_grossborstel_neu",
+    "layerAttribution": "Quellen: BASFI (Kitaplätze), Statistikamt Nord (Bevölkerungsstruktur)",
+    "legendURL": "ignore",
+    "gfiAttributes": "showAll",
+    "isUseProxy": false
   },
   {
     "id": "einwohner_after",
