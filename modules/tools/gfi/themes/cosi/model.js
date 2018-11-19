@@ -12,11 +12,11 @@ const CosiTheme = Theme.extend({
 
         Radio.trigger("LocalStorage", "sendMessage", "element-select", clickedElementData);
 
-        this.listenTo(Radio.channel("GFI"), {
-            "afterRender": function () {
-                $(".gfi-detached").remove();
-            }
-        }, this);
+        //Hack to never have a gfiWindow
+        setTimeout(function(){
+            console.log("remove")
+            $(".gfi-detached").remove();
+        }, 300);
     },
 
     sendData: function () {

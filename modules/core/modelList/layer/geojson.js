@@ -1,7 +1,7 @@
 import Layer from "./model";
 import VectorSource from "ol/source/Vector.js";
 import VectorLayer from "ol/layer/Vector.js";
-import GeoJSON from "ol/format.js";
+import {GeoJSON} from "ol/format.js";
 
 const GeoJSONLayer = Layer.extend({
     defaults: _.extend({}, Layer.prototype.defaults, {
