@@ -81,12 +81,15 @@ import FreezeModel from "../modules/controls/freeze/model";
 import MapMarkerView from "../modules/mapMarker/view";
 import SearchbarView from "../modules/searchbar/view";
 import TitleView from "../modules/title/view";
-import HighlightFeature from "../modules/highlightfeature/model";
+import HighlightFeature from "../modules/highlightFeature/model";
+import Button3DView from "../modules/controls/button3d/view";
+import ButtonObliqueView from "../modules/controls/buttonoblique/view";
+import Orientation3DView from "../modules/controls/orientation3d/view";
 import "es6-promise/auto";
 
 var sbconfig, controls, controlsView;
 
-function loadApp() {
+function loadApp () {
     // RemoteInterface laden
     if (_.has(Config, "remoteInterface")) {
         new RemoteInterface(Config.remoteInterface);
@@ -94,7 +97,8 @@ function loadApp() {
     // Core laden
     new Autostarter();
     new Util(_.has(Config, "uiStyle") ? {uiStyle: Config.uiStyle.toUpperCase()} : {});
-    new RawLayerList();
+    // Pass null to create an empty Collection with options
+    new RawLayerList(null, {url: Config.layerConf});
     new RestReaderList();
     new Preparser();
     new StyleList();
@@ -133,8 +137,9 @@ function loadApp() {
         new MouseHoverPopupView(Config.mouseHover);
     }
 
-    if (_.has(Config, "quickHelp") && Config.quickHelp === true) {
-        new QuickHelpView();
+
+    if (_.has(Config, "quickHelp")) {
+        new QuickHelpView(Config.quickHelp);
     }
 
     if (_.has(Config, "scaleLine") && Config.scaleLine === true) {
@@ -330,13 +335,33 @@ function loadApp() {
                     }
                     break;
                 }
+                case "button3d": {
+                    if (control.attr === true) {
+                        element = controlsView.addRowTR(control.id);
+                        new Button3DView({el: element});
+                    }
+                    break;
+                }
+                case "buttonOblique": {
+                    if (control.attr === true) {
+                        element = controlsView.addRowTR(control.id);
+                        new ButtonObliqueView({el: element});
+                    }
+                    break;
+                }
+                case "orientation3d": {
+                    if (control.attr === true) {
+                        element = controlsView.addRowTR(control.id);
+                        new Orientation3DView({el: element});
+                    }
+                    break;
+                }
                 default: {
                     break;
                 }
             }
         });
     }
-
 
     new MapMarkerView();
 

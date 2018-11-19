@@ -5,6 +5,9 @@ import GROUPLayer from "./layer/group";
 import SensorLayer from "./layer/sensor";
 import HeatmapLayer from "./layer/heatmap";
 import OSMLayer from "./layer/osm";
+import TerrainLayer from "./layer/terrain";
+import TileSetLayer from "./layer/tileset";
+import ObliqueLayer from "./layer/oblique";
 import Folder from "./folder/model";
 import Tool from "./tool/model";
 import StaticLink from "./staticlink/model";
@@ -35,6 +38,7 @@ import ParcelSearch from "../../tools/parcelSearch/model";
 import StyleWMS from "../../tools/styleWMS/model";
 import LayersliderModel from "../../tools/layerslider/model";
 import GFI from "../../tools/gfi/model";
+import Viewpoint from "./viewpoint/model";
 
 const ModelList = Backbone.Collection.extend({
     initialize: function () {
@@ -66,7 +70,8 @@ const ModelList = Backbone.Collection.extend({
             "setAllDescendantsInvisible": this.setAllDescendantsInvisible,
             "renderTree": function () {
                 this.trigger("renderTree");
-            }
+            },
+            "toggleWfsCluster": this.toggleWfsCluster
         }, this);
 
         this.listenTo(this, {
@@ -118,11 +123,20 @@ const ModelList = Backbone.Collection.extend({
             else if (attrs.typ === "GROUP") {
                 return new GROUPLayer(attrs, options);
             }
-            else if (attrs.typ === "SensorThings") {
+            else if (attrs.typ === "SensorThings" || attrs.typ === "ESRIStreamLayer") {
                 return new SensorLayer(attrs, options);
             }
             else if (attrs.typ === "Heatmap") {
                 return new HeatmapLayer(attrs, options);
+            }
+            else if (attrs.typ === "Terrain3D") {
+                return new TerrainLayer(attrs, options);
+            }
+            else if (attrs.typ === "TileSet3D") {
+                return new TileSetLayer(attrs, options);
+            }
+            else if (attrs.typ === "Oblique") {
+                return new ObliqueLayer(attrs, options);
             }
             else if (attrs.typ === "OSM") {
                 return new OSMLayer(attrs, options);
@@ -140,7 +154,6 @@ const ModelList = Backbone.Collection.extend({
             }
             else if (attrs.id === "gfi") {
                 return new GFI(_.extend(attrs, _.has(Config, "gfiWindow") ? {desktopViewType: Config.gfiWindow} : {}), options);
-
             }
             else if (attrs.id === "parcelSearch") {
                 return new ParcelSearch(attrs, options);
@@ -167,7 +180,7 @@ const ModelList = Backbone.Collection.extend({
                 return new GetCoord(attrs, options);
             }
             else if (attrs.id === "measure") {
-                return new Measure(_.extend(attrs, _.has(Config, "quickHelp") ? {quickHelp: Config.quickHelp} : {}), options);
+                return new Measure(attrs, options);
             }
             else if (attrs.id === "draw") {
                 return new Draw(attrs, options);
@@ -218,6 +231,9 @@ const ModelList = Backbone.Collection.extend({
         }
         else if (attrs.type === "staticlink") {
             return new StaticLink(attrs, options);
+        }
+        else if (attrs.type === "viewpoint") {
+            return new Viewpoint(attrs, options);
         }
         else {
             Radio.trigger("Alert", "alert", "unbekannter LayerTyp " + attrs.type + ". Bitte wenden Sie sich an einen Administrator!");
@@ -377,15 +393,14 @@ const ModelList = Backbone.Collection.extend({
         }
     },
 
-    setActiveToolToFalse: function (model, deactivateGFI) {
-        var tools = _.without(this.where({isActive: true}), model);
+    setActiveToolToFalse: function (model) {
+        var activeTools = _.without(this.where({isActive: true}), model),
+            legendModel = this.where({id: "legend"})[0];
 
-        _.each(tools, function (tool) {
-            if (!_.isUndefined(tool)) {
-                if (model.get("id") !== "gfi" || model.get("id") !== "compareFeatures" || deactivateGFI) {
-                    tool.setIsActive(false);
-                }
-            }
+        activeTools = _.without(activeTools, legendModel);
+
+        _.each(activeTools, function (tool) {
+            tool.setIsActive(false);
         });
     },
 
@@ -530,6 +545,7 @@ const ModelList = Backbone.Collection.extend({
         }
         else {
             this.addModelsByAttributes({type: "layer", isSelected: true});
+            this.addModelsByAttributes({typ: "Oblique"});
         }
 
     },
@@ -576,15 +592,17 @@ const ModelList = Backbone.Collection.extend({
     * @return {undefined}
     */
     showModelInTree: function (modelId) {
-        var lightModel = Radio.request("Parser", "getItemByAttributes", {id: modelId});
+        var mode = Radio.request("Map", "getMapMode"),
+            lightModel = Radio.request("Parser", "getItemByAttributes", {id: modelId});
 
         this.closeAllExpandedFolder();
-
         // Ã¶ffnet den Themenbaum
         $("#root li:first-child").addClass("open");
         // Parent und eventuelle Siblings werden hinzugefÃ¼gt
         this.addAndExpandModelsRecursive(lightModel.parentId);
-        this.setModelAttributesById(modelId, {isSelected: true});
+        if (this.get(modelId).get("supported").indexOf(mode) >= 0) {
+            this.setModelAttributesById(modelId, {isSelected: true});
+        }
         // Nur bei Overlayern wird in Tree gescrollt.
         if (lightModel.parentId !== "Baselayer") {
             this.scrollToLayer(lightModel.name);
@@ -712,6 +730,22 @@ const ModelList = Backbone.Collection.extend({
         }
 
         return model;
+    },
+
+    /**
+     * is used when changing the map mode
+     * in 3d mode features cannot be clustered
+     * @param {boolean} value -
+     * @returns {void}
+     */
+    toggleWfsCluster: function (value) {
+        const clusterModels = this.filter(function (model) {
+            return model.has("clusterDistance");
+        });
+
+        clusterModels.forEach(function (layer) {
+            layer.set("isClustered", value);
+        });
     }
 });
 

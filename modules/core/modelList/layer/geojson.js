@@ -1,10 +1,13 @@
 import Layer from "./model";
 import VectorSource from "ol/source/Vector.js";
 import VectorLayer from "ol/layer/Vector.js";
-import GeoJSON from "ol/format/GeoJSON";
+import GeoJSON from "ol/format.js";
 
 const GeoJSONLayer = Layer.extend({
-    defaults: _.extend({}, Layer.prototype.defaults),
+    defaults: _.extend({}, Layer.prototype.defaults, {
+        supported: ["2D", "3D"],
+        showSettings: true
+    }),
 
     initialize: function () {
         if (!this.get("isChildLayer")) {
@@ -34,7 +37,8 @@ const GeoJSONLayer = Layer.extend({
             gfiAttributes: this.get("gfiAttributes"),
             routable: this.get("routable"),
             gfiTheme: this.get("gfiTheme"),
-            id: this.get("id")
+            id: this.get("id"),
+            altitudeMode: "clampToGround"
         }));
         if (_.isUndefined(this.get("geojson"))) {
             this.updateSource();
@@ -162,7 +166,6 @@ const GeoJSONLayer = Layer.extend({
             }
         }
     },
-
     /**
     * Zeigt nur die Features an, deren Id übergeben wird
     * @param  {string[]} featureIdList Liste der FeatureIds
