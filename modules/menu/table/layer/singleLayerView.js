@@ -56,10 +56,15 @@ const LayerView = Backbone.View.extend({
             this.$el.find(".layer-settings").slideDown();
         }
     },
-    toggleIsSelected: function () {// In CoSI mode the one checkbox serves for multiple layers (layerStages)
-        var visibleStageCounterpart = Radio.request("ModelList", "getModelByAttributes", {stageId: this.model.get("stageId"), isVisibleInMap: true});
-        if (Config.cosiMode &&
-            visibleStageCounterpart) {
+
+    /*
+    *   In CoSI mode, one checkbox serves for multiple layers (layerStages)
+    *   The stage layers share the stageId - if we hide a stagelayer we make sure all corresponding layers are hidden
+    */
+
+    toggleIsSelected: function () {
+        let visibleStageCounterpart = Radio.request("ModelList", "getModelByAttributes", {stageId: this.model.get("stageId"), isVisibleInMap: true});
+        if (Config.cosiMode && visibleStageCounterpart) {
             this.model.setIsSelected(false);
             visibleStageCounterpart.setIsVisibleInMap(false);
             visibleStageCounterpart.setIsSelected(false);

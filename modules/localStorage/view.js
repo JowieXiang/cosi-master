@@ -1,12 +1,14 @@
 import StorageModel from "./model";
-//
-// define(function (require) {
-//     let Backbone = require("backbone"),
-//         Radio = require("backbone.radio"),
-//         StorageModel = require("modules/localStorage/model");
 
 const LocalStorageView = Backbone.View.extend({
     model: StorageModel,
+
+    /*
+    *   This module connects two portals that are running in different tabs
+    *   One portal writes a message to the localStorage and the second portal subscribes to specific messages sent from the other portal
+    *   This is used in the context of a CoSI type project
+    */
+
     initialize: function () {
         let channel = Radio.channel("LocalStorage");
 

@@ -3,16 +3,6 @@ import Template from "text-loader!./template.html";
 import BarView from "../../charting/chartRenderer/bar-line/view";
 import PieView from "../../charting/chartRenderer/pie/view";
 
-// define(function (require) {
-//
-//     let Template = require("text-loader!modules/cosi/infoScreen/template.html"),
-//         InfoScreenModel = require("modules/cosi/infoScreen/model"),
-//         BarView = require("modules/charting/chartRenderer/bar-line/barView"),
-//         PieView = require("modules/charting/chartRenderer/pie/pieView"),
-//         Radio = require("backbone.radio"),
-//         $ = require("jquery"),
-//         InfoScreenView;
-
 const InfoScreenView = Backbone.View.extend({
     className: "info-screen",
     id: "infoScreen",
@@ -20,6 +10,12 @@ const InfoScreenView = Backbone.View.extend({
     template: _.template(Template),
     barView: new BarView(),
     pieView: new PieView(),
+
+    /*
+    *   The CoSI infoscreen is a second portal - communicating with the touchscreen portal via localStorage
+    *   It renders the charts concerning the selected CoSI topic and acts as a GFI (the GFI is in the infoscreen/selectArea folder)
+    */
+
     initialize: function () {
         this.listenTo(Radio.channel("LocalStorage"), {
             "newStorageMessage": function (message) {
@@ -43,7 +39,11 @@ const InfoScreenView = Backbone.View.extend({
         $("#info-screen").append(this.$el.html(this.template(attr)));
     },
 
-    renderCharts: function (topic) {
+    /*
+    *   Calls the chart module renderer and passes the containing html object
+    */
+
+    renderCharts: function () {
 
         // Bar-Chart 1
         this.barView = new BarView();
@@ -61,8 +61,6 @@ const InfoScreenView = Backbone.View.extend({
             this.model.getColumn2SubTitle(), null, 'column', null, null, this.model.getColumn2PlotLine(), null, null, false);
         this.barView.renderBar();
 
-        //TODO: wieder anfangen!"
-        // if (topic === "grobo") {
         // Line-Chart 1
         this.barView = new BarView();
         this.barView.resetBarModel();
@@ -72,12 +70,10 @@ const InfoScreenView = Backbone.View.extend({
         this.barView.renderBar();
 
         // Pie-Chart 1
-
         this.pieView = new PieView();
         this.pieView.setPieParameters(document.getElementById("chart-pie-1"),
             this.model.getPieData(), this.model.getPieTitle(), null, null, true, false, true, 0);
         this.pieView.renderPie();
-        // }
     }
 });
 export default InfoScreenView;

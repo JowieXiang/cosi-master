@@ -11,6 +11,12 @@ const View = Backbone.View.extend({
         "click .reset-button": "recenterMap",
         "click #start-overlay": "clickStartTool"
     },
+
+    /*
+    *   The CoSI touchscreen contains stage layers defined in the config.json
+    *   These have to be managed from here according to the current stage and layer selected
+    */
+
     initialize: function (config) {
         this.model = new CosiModel(config);
         let channel = Radio.channel("Cosi");
@@ -35,6 +41,11 @@ const View = Backbone.View.extend({
         let attr = this.model.toJSON();
         $(".lgv-container").append(this.$el.html(this.template(attr)));
     },
+
+    /*
+    *   Hides and shows HTML elements and triggers localStorage events that have to be performed on start
+    */
+
     clickStartTool: function (evt) {
         Radio.channel("Tool").trigger("activatedTool", "gfi", false);
         $(".start-container").fadeIn(2000);
@@ -43,7 +54,13 @@ const View = Backbone.View.extend({
         $("#start-overlay").remove();
         Radio.trigger("MapView", "setCenterAnimation", this.model.getCenter(), 4);
         Radio.trigger("LocalStorage", "sendMessage", "topic-select", "grobo");
+        $("#table-category-list").remove();
     },
+
+    /*
+    *   Performs the logic for the change of a stage
+    */
+
     stageSelected: function (evt) {
         let selectedStage = $(evt.currentTarget).attr('name');
         let visibleLayersWithStages = this.model.getVisibleLayersWithStages();

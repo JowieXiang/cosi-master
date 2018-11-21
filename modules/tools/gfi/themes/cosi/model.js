@@ -14,7 +14,6 @@ const CosiTheme = Theme.extend({
 
         //Hack to never have a gfiWindow
         setTimeout(function(){
-            console.log("remove")
             $(".gfi-detached").remove();
         }, 300);
     },

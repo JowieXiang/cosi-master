@@ -135,6 +135,7 @@
     "labelField": "1bis6",
     "textAlign": "center",
     "textFont": "18px sans-serif",
+    "textScale": 0,
     "textStrokeColor": [128, 0, 0, 1],
     "textStrokeWidth": 2
   },

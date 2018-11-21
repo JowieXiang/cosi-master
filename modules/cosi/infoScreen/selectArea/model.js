@@ -1,9 +1,3 @@
-// define(function (require) {
-//
-//     let Backbone = require("backbone"),
-//         Radio = require("backbone.radio"),
-//         InfoScreenModel;
-
 const InfoScreenModel = Backbone.Model.extend({
     defaults: {
         selectedFeature: {}

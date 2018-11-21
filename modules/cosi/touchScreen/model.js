@@ -49,6 +49,11 @@ const CosiModel = Backbone.Model.extend({
     getStages: function () {
         return this.get("stages");
     },
+
+    /*
+    *   Collects all layers that have defined a layer-stage
+    */
+
     getVisibleLayersWithStages: function () {
         let visibleLayersWithStages = [];
         let featureCollection = Radio.request("ModelList", "getCollection");

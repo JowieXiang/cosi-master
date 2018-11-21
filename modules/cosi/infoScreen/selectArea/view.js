@@ -1,14 +1,6 @@
 import SelectAreaModel from "./model";
 import Template from "text-loader!./template.html";
 
-// define(function (require) {
-//
-//     let SelectAreaModel = require("modules/cosi/infoScreen/selectArea/model"),
-//         Radio = require("backbone.radio"),
-//         $ = require("jquery"),
-//         Template = require("text-loader!modules/cosi/infoScreen/selectArea/template.html"),
-//         SelectAreaView;
-
 const SelectAreaView = Backbone.View.extend({
     id: "info-area-content",
     model: new SelectAreaModel(),
@@ -47,6 +39,10 @@ const SelectAreaView = Backbone.View.extend({
         let attr = this.model.toJSON();
         $("#select-info-area").append(this.$el.html(this.template(attr)));
     },
+
+    /*
+    *   Sets the element to display the initial message
+    */
 
     setInitElement: function () {
         let element = {};
