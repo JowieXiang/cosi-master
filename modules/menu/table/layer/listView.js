@@ -67,22 +67,30 @@ const LayerView = Backbone.View.extend({
                     }
                 })
                 if (!layerTopicVisible) {
-                    layer.setIsVisibleInMap(false)
+                    layer.setIsVisibleInMap(false);
                 }
             })
             if (isTopicChanged) {
                 // Select layers that are marked as default or previously selected
-                var prevSelectedLayers = Radio.request("Cosi", "getSavedTopicSelection", layerFilter[1]);
+                let prevSelectedLayers = Radio.request("Cosi", "getSavedTopicSelection", layerFilter[1]);
                 if (prevSelectedLayers && prevSelectedLayers.length > 0) {
-                    _.each(models, function (layer) {
-                        if (_.contains(prevSelectedLayers, layer.get("id"))) {
-                            layer.setIsVisibleInMap(true)
+                    _.each(prevSelectedLayers, function (layerId) {
+                        let layer = Radio.request("ModelList", "getModelByAttributes", {id: layerId});
+                        if (!layer.get("isVisibleInTree")) {
+                            Radio.trigger("Cosi", "setLaterStageVisible", layerId);
+                        } else {
+                            _.each(models, function (layer) {
+                                if (_.contains(prevSelectedLayers, layer.get("id"))) {
+                                    layer.setIsVisibleInMap(true)
+                                }
+                            })
                         }
                     })
                 } else {
                     _.each(models, function (layer) {
                         if (layer.get("isDefaultVisible")) {
-                            layer.setIsVisibleInMap(true)
+                            layer.setIsVisibleInMap(true);
+                            layer.setIsSelected(true);
                         }
                     })
                 }
@@ -116,9 +124,9 @@ const LayerView = Backbone.View.extend({
         this.renderList(true);
     },
     getLayerForFilters: function (filters) {
-        var layers = {};
-        for (var i = 0; i < filters.length; i++) {
-            var filter = filters[i];
+        let layers = {};
+        for (let i = 0; i < filters.length; i++) {
+            let filter = filters[i];
             if ($.isEmptyObject(layers)) {
                 layers = Radio.request("ModelList", "getModelsByAttributes", {topic: filter, isVisibleInTree: undefined || true});
             } else {

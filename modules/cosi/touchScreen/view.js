@@ -22,8 +22,32 @@ const View = Backbone.View.extend({
         let channel = Radio.channel("Cosi");
 
         channel.reply({
+            "getSameStageOtherCounterPart": function (id) {
+                return this.getSameStageOtherCounterPart(id);
+            }
+        }, this);
+
+        channel.reply({
+            "getSameStageLayersById": function (id) {
+                return this.getSameStageLayersById(id);
+            }
+        }, this);
+
+        channel.on({
+            "setLaterStageVisible": function (id) {
+                return this.setLaterStageVisible(id);
+            }
+        }, this);
+
+        channel.reply({
             "getSavedTopicSelection": function (topic) {
                 return this.model.getTopicSelection(topic);
+            }
+        }, this);
+
+        channel.reply({
+            "getCurrentStage": function () {
+                return this.model.getCurrentStage();
             }
         }, this);
 
@@ -64,6 +88,7 @@ const View = Backbone.View.extend({
     stageSelected: function (evt) {
         let selectedStage = $(evt.currentTarget).attr('name');
         let visibleLayersWithStages = this.model.getVisibleLayersWithStages();
+        this.model.setCurrentStage(selectedStage);
 
         for (let i = 0; i < visibleLayersWithStages.length; i++) {
             let visibleStagelayer = visibleLayersWithStages[i];
@@ -75,8 +100,6 @@ const View = Backbone.View.extend({
             visibleStagelayer.setIsVisibleInMap(false);
             newStageLayer.setIsVisibleInMap(true);
         }
-
-
     },
     topicSelected: function (evt) {
         //Reset
@@ -102,7 +125,6 @@ const View = Backbone.View.extend({
             clickTarget.removeClass("selected");
             Radio.trigger("Cosi", "selectTopic", "");
             Radio.trigger("LocalStorage", "sendMessage", "topic-select", "grobo");
-
         }
     },
     recenterMap: function () {
@@ -115,9 +137,11 @@ const View = Backbone.View.extend({
         let isStagesVisible = currentStageLayers.length > 0 || this.model.getDeactivatedStageLayers().length > 0;
         this.model.setIsStagesActive(isStagesVisible);
         if (isStagesVisible) {
+            let currentStage = currentStageLayers[0]["attributes"]["layerStage"];
             $(".stages").removeClass("inactive-stages");
             $(".stages").removeClass("selected");
             $('.stages[name=' + currentStageLayers[0]["attributes"]["layerStage"] + ']').addClass("selected");
+            this.model.setCurrentStage(currentStage)
         } else {
             $(".stages").addClass("inactive-stages");
             $(".stages").removeClass("selected");
@@ -132,6 +156,32 @@ const View = Backbone.View.extend({
         });
 
         this.model.setTopicSelection(topic, selectedLayerIds);
+    },
+    getSameStageLayersById: function (layerId) {
+        let layerWithId = Radio.request("ModelList", "getModelByAttributes", {id: layerId});
+        return Radio.request("ModelList", "getModelsByAttributes", {stageId: layerWithId.get("stageId")});
+    },
+    getSameStageOtherCounterPart: function (layerId) {
+        let layerWithId = Radio.request("ModelList", "getModelByAttributes", {id: layerId});
+        let sameStageLayer = Radio.request("ModelList", "getModelsByAttributes", {stageId: layerWithId.get("stageId")});
+
+        // Here we currently assume only two stages, because we return only one layer
+        for (let layer of sameStageLayer) {
+            if (layer.get("id") !== layerId) {
+                return layer;
+            }
+        }
+    },
+    setLaterStageVisible: function (layerId) {
+        let layerWithId = Radio.request("ModelList", "getModelByAttributes", {id: layerId});
+        layerWithId.setIsVisibleInMap(true);
+        let sameStageLayer = Radio.request("ModelList", "getModelsByAttributes", {stageId: layerWithId.get("stageId")});
+        for (let stageLayer of sameStageLayer) {
+            if (stageLayer.get("isVisibleInTree") && stageLayer.get("id") !== layerId) {
+                stageLayer.setIsSelected(true);
+                stageLayer.setIsVisibleInMap(false);
+            }
+        }
     }
 });
 export default View;

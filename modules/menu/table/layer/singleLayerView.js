@@ -59,16 +59,37 @@ const LayerView = Backbone.View.extend({
 
     /*
     *   In CoSI mode, one checkbox serves for multiple layers (layerStages)
-    *   The stage layers share the stageId - if we hide a stagelayer we make sure all corresponding layers are hidden
+    *   The stage layers share the stageId
+    *       - if we hide a stagelayer we make sure all corresponding layers are hidden
+    *       - if we show a stagelayer we make sure it shows the same stage as the active stage
     */
 
     toggleIsSelected: function () {
+        let normalCalculation = true;
         let visibleStageCounterpart = Radio.request("ModelList", "getModelByAttributes", {stageId: this.model.get("stageId"), isVisibleInMap: true});
+        if (!visibleStageCounterpart) {
+            visibleStageCounterpart = Radio.request("Cosi", "getSameStageOtherCounterPart", this.model.get("id"));
+        }
+        let currentStage = Radio.request("Cosi", "getCurrentStage");
+
         if (Config.cosiMode && visibleStageCounterpart) {
-            this.model.setIsSelected(false);
-            visibleStageCounterpart.setIsVisibleInMap(false);
-            visibleStageCounterpart.setIsSelected(false);
-        } else {
+            normalCalculation = false;
+            // if (Config.cosiMode && visibleStageCounterpart.get("isVisibleInMap")) {
+            if (Config.cosiMode && (this.model.get("isVisibleInMap") || visibleStageCounterpart.get("isVisibleInMap"))) {
+                this.model.setIsSelected(false);
+                this.model.setIsVisibleInMap(false);
+                visibleStageCounterpart.setIsVisibleInMap(false);
+                visibleStageCounterpart.setIsSelected(false);
+            } else if(Config.cosiMode && visibleStageCounterpart.get("layerStage") === currentStage) {
+                visibleStageCounterpart.setIsVisibleInMap(true);
+                this.model.toggleIsSelected();
+                this.model.setIsVisibleInMap(false);
+            } else {
+                normalCalculation = true;
+            }
+        }
+
+        if (normalCalculation) {
             var layerCollection = Radio.request("ModelList", "getCollection").where({type: "layer"});
             this.setSettingsVisibility(layerCollection, this.model);
             this.model.toggleIsSelected();

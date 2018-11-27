@@ -7,6 +7,7 @@ const CosiModel = Backbone.Model.extend({
         center: [],
         isStagesActive: false,
         currentTopic: "",
+        currentStage: "",
         deactivatedStageLayers: []
     },
     initialize: function () {
@@ -28,6 +29,12 @@ const CosiModel = Backbone.Model.extend({
     },
     getCurrentTopic: function () {
         return this.get("currentTopic");
+    },
+    setCurrentStage: function (stage) {
+        return this.set("currentStage", stage);
+    },
+    getCurrentStage: function () {
+        return this.get("currentStage");
     },
     setTopicSelection: function (topic, selectedLayers) {
         this.topicSelection[topic] = selectedLayers;

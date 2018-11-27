@@ -454,6 +454,13 @@ const ModelList = Backbone.Collection.extend({
         var oldIDX = model.get("selectionIDX"),
             newIDX = oldIDX - 1;
 
+        let models = this.where({type: "layer"});
+        let layerAtNewIndex = models[newIDX];
+        while (!layerAtNewIndex.get("isVisibleInTree") && newIDX > -1) {
+            newIDX--;
+            layerAtNewIndex = models[newIDX];
+        }
+
         if (oldIDX > 0) {
             this.removeFromSelectionIDX(model);
             this.insertIntoSelectionIDXAt(model, newIDX);
@@ -469,6 +476,13 @@ const ModelList = Backbone.Collection.extend({
     moveModelUp: function (model) {
         var oldIDX = model.get("selectionIDX"),
             newIDX = oldIDX + 1;
+
+        let models = this.where({type: "layer"});
+        let layerAtNewIndex = models[newIDX];
+        while (!layerAtNewIndex.get("isVisibleInTree") && newIDX <= models.length) {
+            newIDX++;
+            layerAtNewIndex = models[newIDX];
+        }
 
         if (oldIDX < this.selectionIDX.length - 1) {
             this.removeFromSelectionIDX(model);
