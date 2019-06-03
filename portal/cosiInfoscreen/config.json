@@ -12,7 +12,7 @@
       "freeze": true
     },
     "scaleLine": false,
-    "Baumtyp": "light"
+    "treeType": "light"
   },
   "Themenconfig": {
     "Hintergrundkarten": {

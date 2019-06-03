@@ -57,7 +57,7 @@
     },
     "isShowCategoryMenu": false,
     "scaleLine": false,
-    "Baumtyp": "light"
+    "treeType": "light"
   },
   "Themenconfig": {
     "Hintergrundkarten": {
@@ -82,12 +82,7 @@
           "topic": "basic"
         },
         {
-          "id": [
-            "1043",
-            "1044",
-            "1045",
-            "1046"
-          ],
+          "id": "1043",
           "name": "Stadtkarte Hamburg",
           "visibility": true,
           "topic": "basic"
