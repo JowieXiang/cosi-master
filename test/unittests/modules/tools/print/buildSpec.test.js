@@ -457,8 +457,8 @@ describe("tools/print_/buildSpec", function () {
                     RoutenName: "1. Grüner Ring",
                     Group_: "1. Grüner Ring_Hauptroute_Hinweg",
                     Routennummer: "0",
-                    Verlauf: "\r\nLandungsbrücken - Deichtorhallen - Planten un Blomen - Wallring - Landungsbrücken\r\n",
-                    Routeninformation: "\r\nLandungsbrücken - Deichtorhallen - Planten un Blomen - Wallring - Landungsbrücken\r\n"
+                    Verlauf: "\nLandungsbrücken - Deichtorhallen - Planten un Blomen - Wallring - Landungsbrücken\n",
+                    Routeninformation: "\nLandungsbrücken - Deichtorhallen - Planten un Blomen - Wallring - Landungsbrücken\n"
                 },
                 geometry: {
                     type: "MultiLineString",
@@ -661,8 +661,8 @@ describe("tools/print_/buildSpec", function () {
                     RoutenName: "1. Grüner Ring",
                     Group_: "1. Grüner Ring_Hauptroute_Hinweg",
                     Routennummer: "0",
-                    Verlauf: "\r\nLandungsbrücken - Deichtorhallen - Planten un Blomen - Wallring - Landungsbrücken\r\n",
-                    Routeninformation: "\r\nLandungsbrücken - Deichtorhallen - Planten un Blomen - Wallring - Landungsbrücken\r\n"
+                    Verlauf: "\nLandungsbrücken - Deichtorhallen - Planten un Blomen - Wallring - Landungsbrücken\n",
+                    Routeninformation: "\nLandungsbrücken - Deichtorhallen - Planten un Blomen - Wallring - Landungsbrücken\n"
                 },
                 geometry: {
                     type: "MultiLineString",
