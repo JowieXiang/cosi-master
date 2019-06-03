@@ -1,3 +1,8 @@
+/**
+ * @file
+ * <h1>Welcome to the Open Source Project "Masterportal" of the [Landesbetrieb Geoinformation und Vermessung]{@link http://www.geoinfo.hamburg.de}</h1>
+ */
+import "@babel/polyfill";
 import {loadApp} from "./app";
 import "../css/bootstrap.less";
 // CSS-Handling: Importieren von Css damit Webpack das verarbeitet.
@@ -53,7 +58,9 @@ if (!("Config" in window)) {
     scriptTagsArray.forEach(function (scriptTag) {
         if (scriptTag.getAttribute("data-masterportal-config") !== null) {
             // ?noext notwendig, damit nicht automatisch von Require ein .js an den Pfad angehängt wird!
-            configPath = scriptTag.getAttribute("data-masterportal-config") + "?noext";
+            configPath = scriptTag.getAttribute("data-masterportal-config")
+                + (scriptTag.getAttribute("data-masterportal-config").indexOf("?") !== -1 ? "&" : "?")
+                + "noext";
         }
     }, this);
 

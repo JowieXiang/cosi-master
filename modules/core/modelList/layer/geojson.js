@@ -1,45 +1,87 @@
 import Layer from "./model";
 import VectorSource from "ol/source/Vector.js";
+import Cluster from "ol/source/Cluster.js";
 import VectorLayer from "ol/layer/Vector.js";
 import {GeoJSON} from "ol/format.js";
 
-const GeoJSONLayer = Layer.extend({
+const GeoJSONLayer = Layer.extend(/** @lends GeoJSONLayer.prototype */{
+    /**
+     * @class Class representing a GeoJSONLayer
+     * @description Module to represent GeoJSONLayer
+     * @extends Layer
+     * @constructs
+     * @memberOf Core.ModelList.Layer
+     * @property {String[]} [supported="2D,3D"] Supported modes "2D" and / or "3D"
+     * @property {number} [clusterDistance="undefined"] Distance to group features to clusters
+     * @property {string} [styleId="ol default"] ID of style in style.json
+     * @fires StyleList#RadioRequestReturnModelById
+     * @fires MapView#RadioRequestGetProjection
+     * @fires Alerting#RadioTriggerAlertAlert
+     * @fires Util#RadioTriggerUtilHideLoader
+     * @fires RemoteInterface#RadioTriggerPostMessage
+     */
     defaults: _.extend({}, Layer.prototype.defaults, {
         supported: ["2D", "3D"],
-        showSettings: true
+        isClustered: false
     }),
 
+    /**
+     * @fires StyleList#RadioRequestReturnModelById
+     * @returns {void}
+     */
     initialize: function () {
         if (!this.get("isChildLayer")) {
             Layer.prototype.initialize.apply(this);
         }
+
+        if (this.has("clusterDistance")) {
+            this.set("isClustered", true);
+        }
+
         this.setStyleId(this.get("styleId") || this.get("id"));
         this.setStyleFunction(Radio.request("StyleList", "returnModelById", this.get("styleId")));
     },
 
     /**
-     * [createLayerSource description]
-     * @return {[type]} [description]
+     * Triggert by Layer to create a layerSource respectively a clusterLayerSource
+     * @returns {void}
      */
     createLayerSource: function () {
         this.setLayerSource(new VectorSource());
+        if (this.has("clusterDistance")) {
+            this.createClusterLayerSource();
+        }
     },
 
     /**
-     * [createLayer description]
-     * @return {[type]} [description]
+     * Triggert by createLayerSource to create a clusterLayerSource
+     * @returns {void}
+     */
+    createClusterLayerSource: function () {
+        this.setClusterLayerSource(new Cluster({
+            source: this.get("layerSource"),
+            distance: this.get("clusterDistance")
+        }));
+    },
+
+    /**
+     * Triggert by Layer to create a ol/layer/Vector
+     * @fires MapView#RadioRequestGetProjection
+     * @returns {void}
      */
     createLayer: function () {
         this.setLayer(new VectorLayer({
-            source: this.get("layerSource"),
+            source: this.has("clusterDistance") ? this.get("clusterLayerSource") : this.get("layerSource"),
             name: this.get("name"),
             typ: this.get("typ"),
             gfiAttributes: this.get("gfiAttributes"),
             routable: this.get("routable"),
             gfiTheme: this.get("gfiTheme"),
             id: this.get("id"),
-            altitudeMode: "clampToGround"
+            altitudeMode: "clampToGround",
+            hitTolerance: this.get("hitTolerance")
         }));
+
         if (_.isUndefined(this.get("geojson"))) {
             this.updateSource();
         }
@@ -49,8 +91,17 @@ const GeoJSONLayer = Layer.extend({
     },
 
     /**
-     * Lädt das GeoJSON neu
-     * @param  {boolean} [showLoader=false] Zeigt einen Loader während der Request läuft
+     * Setter for clusterLayerSource
+     * @param {ol.source.vector} value clusterLayerSource
+     * @returns {void}
+     */
+    setClusterLayerSource: function (value) {
+        this.set("clusterLayerSource", value);
+    },
+
+    /**
+     * Sends GET request with or without wfs parameter according to typ
+     * @param  {boolean} [showLoader=false] shows loader div
      * @returns {void}
      */
     updateSource: function (showLoader) {
@@ -87,12 +138,24 @@ const GeoJSONLayer = Layer.extend({
             }
         });
     },
+
+    /**
+     * Takes the response, parses the geojson and creates ol.features.
+     * According to the GeoJSON Specification (RFC 7946) the geometry is expected to be in EPSG:4326.
+     * @fires RemoteInterface#RadioTriggerPostMessage
+     * @param   {string} data   response as GeoJson
+     * @param   {string} mapCrs EPSG-Code of ol.map
+     * @returns {void}
+     */
     handleData: function (data, mapCrs) {
-        var jsonCrs = _.has(data, "crs") && data.crs.properties.name ? data.crs.properties.name : "EPSG:4326",
+        var jsonCrs = "EPSG:4326",
             features = this.parseDataToFeatures(data),
             newFeatures = [];
 
-        if (jsonCrs !== mapCrs) {
+        if (!features) {
+            return;
+        }
+        else if (jsonCrs !== mapCrs) {
             features = this.transformFeatures(features, jsonCrs, mapCrs);
         }
 
@@ -121,12 +184,33 @@ const GeoJSONLayer = Layer.extend({
         this.featuresLoaded(features);
     },
 
+    /**
+     * Tries to parse data string to ol.format.GeoJson
+     * @param   {string} data string to parse
+     * @throws Will throw an error if the argument cannot be parsed.
+     * @returns {object}    ol/format/GeoJSON/features
+     */
     parseDataToFeatures: function (data) {
-        var geojsonReader = new GeoJSON();
+        const geojsonReader = new GeoJSON();
+        let jsonObjects;
 
-        return geojsonReader.readFeatures(data);
+        try {
+            jsonObjects = geojsonReader.readFeatures(data);
+        }
+        catch (err) {
+            console.error("GeoJSON cannot be parsed.");
+        }
+
+        return jsonObjects;
     },
 
+    /**
+     * Transforms features between CRS
+     * @param   {feature[]} features Array of ol.features
+     * @param   {string}    crs      EPSG-Code of feature
+     * @param   {string}    mapCrs   EPSG-Code of ol.map
+     * @returns {void}
+     */
     transformFeatures: function (features, crs, mapCrs) {
         _.each(features, function (feature) {
             var geometry = feature.getGeometry();
@@ -141,7 +225,7 @@ const GeoJSONLayer = Layer.extend({
     /**
      * sets style function for features or layer
      * @param  {Backbone.Model} stylelistmodel Model für Styles
-     * @returns {undefined}
+     * @returns {void}
      */
     setStyleFunction: function (stylelistmodel) {
         if (_.isUndefined(stylelistmodel)) {
@@ -149,14 +233,18 @@ const GeoJSONLayer = Layer.extend({
         }
         else {
             this.set("styleFunction", function (feature) {
-                return stylelistmodel.createStyle(feature);
-            });
+                return stylelistmodel.createStyle(feature, this.get("isClustered"));
+            }.bind(this));
         }
     },
 
-    // wird in layerinformation benötigt. --> macht vlt. auch für Legende Sinn?!
+    /**
+     * creates the legendUrl used by layerinformation
+     * @fires StyleList#RadioRequestReturnModelById
+     * @returns {void}
+     */
     createLegendURL: function () {
-        var style;
+        let style;
 
         if (!_.isUndefined(this.get("legendURL")) && !this.get("legendURL").length) {
             style = Radio.request("StyleList", "returnModelById", this.get("styleId"));
@@ -166,24 +254,28 @@ const GeoJSONLayer = Layer.extend({
             }
         }
     },
+
     /**
-    * Zeigt nur die Features an, deren Id übergeben wird
-    * @param  {string[]} featureIdList Liste der FeatureIds
-    * @return {undefined}
-    */
+     * Filters the visibility of features by ids
+     * @param  {string[]} featureIdList Liste der FeatureIds
+     * @return {void}
+     */
     showFeaturesByIds: function (featureIdList) {
         this.hideAllFeatures();
         _.each(featureIdList, function (id) {
             var feature = this.get("layerSource").getFeatureById(id);
 
-            feature.setStyle(undefined);
+            if (feature !== null) {
+                feature.setStyle(undefined);
+            }
+
         }, this);
     },
 
     /**
-    * sets null style (=no style) for all features
-    * @return {undefined}
-    */
+     * sets null style (=no style) for all features
+     * @return {void}
+     */
     hideAllFeatures: function () {
         var collection = this.get("layerSource").getFeatures();
 
@@ -195,10 +287,10 @@ const GeoJSONLayer = Layer.extend({
     },
 
     /**
-    * Prüft anhand der Scale ob der Layer sichtbar ist oder nicht
-    * @param {object} options -
-    * @returns {void}
-    **/
+     * Sets inside or outside of scale range
+     * @param {object} options scale options
+     * @returns {void}
+     */
     checkForScale: function (options) {
         if (parseFloat(options.scale, 10) <= this.get("maxScale") && parseFloat(options.scale, 10) >= this.get("minScale")) {
             this.setIsOutOfRange(false);
@@ -209,8 +301,8 @@ const GeoJSONLayer = Layer.extend({
     },
 
     /**
-     * sets style for all features
-     * @return {undefined}
+     * sets undefined style for all features so the layer style will be used
+     * @returns {void}
      */
     showAllFeatures: function () {
         var collection = this.get("layerSource").getFeatures();

@@ -1,6 +1,6 @@
 import * as moment from "moment";
 
-const CswParser = Backbone.Model.extend({
+const CswParserModel = Backbone.Model.extend(/** @lends CswParserModel.prototype */{
     defaults: {
         cswId: "3"
     },
@@ -13,6 +13,16 @@ const CswParser = Backbone.Model.extend({
         }
         return url;
     },
+    /**
+     * @class CswParserModel
+     * @extends Backbone.Model
+     * @memberof CswParser
+     * @constructs
+     * @property {String} cswId="" Id of csw service, corresponding to rest-services.json
+     * @fires Alerting#RadioTriggerAlertAlert
+     * @fires CswParser#RadioTriggerFetchedMetaData
+     * @listens CswParser#RadioTriggerGetMetaData
+     */
     initialize: function () {
         var channel = Radio.channel("CswParser");
 
@@ -20,6 +30,12 @@ const CswParser = Backbone.Model.extend({
             "getMetaData": this.getMetaData
         }, this);
     },
+    /**
+     * Requests the meta data from the corresponding service.
+     * @param {Object} cswObj Object of CSW request information.
+     * @fires Alerting#RadioTriggerAlertAlert
+     * @returns {void}
+     */
     getMetaData: function (cswObj) {
         $.ajax({
             url: this.url(),
@@ -41,14 +57,24 @@ const CswParser = Backbone.Model.extend({
             }
         });
     },
-
+    /**
+     * Parses the data returned by the meta data request.
+     * @param {Object} xmlDoc Result of the meta data request.
+     * @param {Object} cswObj Object of CSW request information.
+     * @fires CswParser#RadioTriggerFetchedMetaData
+     * @returns {void}
+     */
     parseData: function (xmlDoc, cswObj) {
         var parsedData = {};
 
         _.each(cswObj.keyList, function (key) {
             switch (key) {
+                case "date": {
+                    parsedData[key] = this.parseDate(xmlDoc);
+                    break;
+                }
                 case "datePublication": {
-                    parsedData[key] = this.parseDate(xmlDoc, "publication");
+                    parsedData[key] = this.parseDate(xmlDoc, "publication", "creation");
                     break;
                 }
                 case "dateRevision": {
@@ -99,6 +125,11 @@ const CswParser = Backbone.Model.extend({
         cswObj.parsedData = parsedData;
         Radio.trigger("CswParser", "fetchedMetaData", cswObj);
     },
+    /**
+     * Parses the download link part of the data returned by the meta data request.
+     * @param {Object} xmlDoc Result of the meta data request.
+     * @returns {Array} downloadLinks array of download links
+     */
     parseDownloadLinks: function (xmlDoc) {
         var transferOptions = $("gmd\\:MD_DigitalTransferOptions,MD_DigitalTransferOptions", xmlDoc),
             downloadLinks = [],
@@ -119,6 +150,12 @@ const CswParser = Backbone.Model.extend({
         });
         return downloadLinks.length > 0 ? downloadLinks : null;
     },
+    /**
+     * Parses the title part of the data returned by the meta data request.
+     * @param {Object} xmlDoc Result of the meta data request.
+     * @param {Object} cswObj Object of CSW request information.
+     * @returns {String} title Title of the meta data entry
+     */
     parseTitle: function (xmlDoc, cswObj) {
         var ci_Citation = $("gmd\\:CI_Citation,CI_Citation", xmlDoc)[0],
             gmdTitle = _.isUndefined(ci_Citation) === false ? $("gmd\\:title,title", ci_Citation) : undefined,
@@ -126,6 +163,11 @@ const CswParser = Backbone.Model.extend({
 
         return title;
     },
+    /**
+     * Parses the address part of the data returned by the meta data request.
+     * @param {Object} xmlDoc Result of the meta data request.
+     * @returns {Object} address Address of the meta data entry's owner
+     */
     parseAddress: function (xmlDoc) {
         var orga = this.parseOrga(xmlDoc, "owner"),
             addressField = $("gmd\\:CI_Address,CI_Address", orga),
@@ -144,6 +186,11 @@ const CswParser = Backbone.Model.extend({
 
         return address;
     },
+    /**
+     * Parses the abstract text part of the data returned by the meta data request.
+     * @param {Object} xmlDoc Result of the meta data request.
+     * @returns {String} abstractText Abstract text of the meta data entry
+     */
     parseAbstractText: function (xmlDoc) {
         var abstractText = $("gmd\\:abstract,abstract", xmlDoc)[0].textContent;
 
@@ -153,6 +200,11 @@ const CswParser = Backbone.Model.extend({
 
         return abstractText;
     },
+    /**
+     * Parses the URL part of the data returned by the meta data request.
+     * @param {Object} xmlDoc Result of the meta data request.
+     * @returns {String} url URL of the meta data entry's owner
+     */
     parseUrl: function (xmlDoc) {
         var orga = this.parseOrga(xmlDoc, "owner"),
             urlField = $("gmd\\:CI_OnlineResource,CI_OnlineResource", orga),
@@ -161,6 +213,11 @@ const CswParser = Backbone.Model.extend({
 
         return url;
     },
+    /**
+     * Parses the e-mail part of the data returned by the meta data request.
+     * @param {Object} xmlDoc Result of the meta data request.
+     * @returns {String} email e-mail of the meta data entry's owner
+     */
     parseEmail: function (xmlDoc) {
         var orga = this.parseOrga(xmlDoc, "owner"),
             emailField = $("gmd\\:electronicMailAddress,electronicMailAddress", orga),
@@ -168,6 +225,11 @@ const CswParser = Backbone.Model.extend({
 
         return email;
     },
+    /**
+     * Parses the phone number part of the data returned by the meta data request.
+     * @param {Object} xmlDoc Result of the meta data request.
+     * @returns {String} phone phone number of the meta data entry's owner
+     */
     parseTel: function (xmlDoc) {
         var orga = this.parseOrga(xmlDoc, "owner"),
             phoneField = $("gmd\\:CI_Telephone,CI_Telephone", orga),
@@ -178,6 +240,11 @@ const CswParser = Backbone.Model.extend({
         return phone;
 
     },
+    /**
+     * Parses the organisation name of the data returned by the meta data request.
+     * @param {Object} xmlDoc Result of the meta data request.
+     * @returns {String} orgaName name of the organisation of the meta data entry's owner
+     */
     parseOrgaOwner: function (xmlDoc) {
         var orga = this.parseOrga(xmlDoc, "owner"),
             orgaField = $("gmd\\:organisationName,organisationName", orga),
@@ -185,6 +252,12 @@ const CswParser = Backbone.Model.extend({
 
         return orgaName;
     },
+    /**
+     * Parses the organisation part of the data returned by the meta data request.
+     * @param {Object} xmlDoc Result of the meta data request.
+     * @param {String} roleType Type of role which shall be parsed ("owner", "pointOfContact").
+     * @returns {String} orga details of organisation of the meta data entry's owner
+     */
     parseOrga: function (xmlDoc, roleType) {
         var identificationInfo = $("gmd\\:identificationInfo,identificationInfo", xmlDoc),
             pointOfContact = $("gmd\\:pointOfContact,pointOfContact", identificationInfo),
@@ -209,38 +282,77 @@ const CswParser = Backbone.Model.extend({
 
         return orga;
     },
-
-    parseDate: function (xmlDoc, status) {
+    /**
+     * Parses the XML Document and returns the formatted date defined in status.
+     * If no status is defined there is a given logic to search for the latest date
+     * @param  {XML} xmlDoc The returned XML Document from the requested CSW-Interface containing possibly multiple dates.
+     * @param  {String} status The defined date status to be extracted.
+     * @param  {String} fallbackStatus If date with given status returns undefined the fallback status is parsed.
+     * @return {String} Parsed date in Format (DD.MM.YYYY).
+     */
+    parseDate: function (xmlDoc, status, fallbackStatus) {
         var citation = $("gmd\\:citation,citation", xmlDoc),
             dates = $("gmd\\:CI_Date,CI_Date", citation),
-            datetype,
-            revisionDateTime,
-            publicationDateTime,
             dateTime;
 
-        dates.each(function (index, element) {
-            datetype = $("gmd\\:CI_DateTypeCode,CI_DateTypeCode", element);
-            if ($(datetype).attr("codeListValue") === "revision") {
-                revisionDateTime = $("gco\\:DateTime,DateTime, gco\\:Date,Date", element)[0].textContent;
-            }
-            else if ($(datetype).attr("codeListValue") === "publication") {
-                publicationDateTime = $("gco\\:DateTime,DateTime, gco\\:Date,Date", element)[0].textContent;
-            }
-            else {
-                publicationDateTime = _.isUndefined(publicationDateTime) ? $("gco\\:DateTime,DateTime, gco\\:Date,Date", element)[0].textContent : publicationDateTime;
-            }
-        });
-
-        if (!_.isUndefined(revisionDateTime) && status === "revision") {
-            dateTime = revisionDateTime;
+        if (_.isUndefined(status)) {
+            dateTime = this.getNormalDateTimeString(dates);
         }
-        else if (!_.isUndefined(publicationDateTime) && status === "publication") {
-            dateTime = publicationDateTime;
+        else {
+            dateTime = this.getDateTimeStringByStatus(dates, status, fallbackStatus);
         }
-
         return !_.isUndefined(dateTime) ? moment(dateTime).format("DD.MM.YYYY") : null;
     },
+    /**
+     * Parses the given XML and returns a date string using the following logic.
+     * First look for revision date.
+     * If there is no revision date look for publication date.
+     * If no publication date fallback to creation date.
+     * @param  {XML} dates Preparsed dates as XML.
+     * @return {String} The raw date String extractec from XML.
+     */
+    getNormalDateTimeString: function (dates) {
+        var dateTimeString;
 
+        dateTimeString = this.getDateTimeStringByStatus(dates, "revision");
+        if (_.isUndefined(dateTimeString)) {
+            dateTimeString = this.getDateTimeStringByStatus(dates, "publication", "creation");
+        }
+        return dateTimeString;
+    },
+    /**
+     * Parses the given XML and returns the date with given status.
+     * If no date is found and fallback status is defined it recursionly calls itsef with fallback status as new status.
+     * @param  {XML} dates Preparsed dates as XML.
+     * @param  {String} status Status of the date Object to be used
+     * @param  {String} fallbackStatus Fallback if no date with given status is found
+     * @return {String} The raw date String extractec from XML.
+     */
+    getDateTimeStringByStatus: function (dates, status, fallbackStatus) {
+        var dateTimeString,
+            datetype,
+            codeListValue;
+
+        if (!_.isUndefined(dates)) {
+            dates.each(function (index, element) {
+                datetype = $("gmd\\:CI_DateTypeCode,CI_DateTypeCode", element);
+                codeListValue = $(datetype).attr("codeListValue");
+
+                if (codeListValue === status) {
+                    dateTimeString = $("gco\\:DateTime,DateTime, gco\\:Date,Date", element)[0].textContent;
+                }
+            });
+        }
+        if (!_.isUndefined(fallbackStatus) && _.isUndefined(dateTimeString)) {
+            dateTimeString = this.getDateTimeStringByStatus(dates, fallbackStatus);
+        }
+        return dateTimeString;
+    },
+    /**
+     * Parses the periodicity part of the data returned by the meta data request.
+     * @param {Object} xmlDoc Result of the meta data request.
+     * @returns {String} dateType type of date for this frequency
+     */
     parsePeriodicity: function (xmlDoc) {
         var resourceMaintenance = $("gmd\\:resourceMaintenance,resourceMaintenance", xmlDoc),
             maintenanceInformation = $("gmd\\:MD_MaintenanceInformation,MD_MaintenanceInformation", resourceMaintenance),
@@ -266,4 +378,4 @@ const CswParser = Backbone.Model.extend({
     }
 });
 
-export default CswParser;
+export default CswParserModel;

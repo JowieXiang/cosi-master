@@ -12,6 +12,7 @@ const LayerView = Backbone.View.extend({
                 this.render();
             }
         });
+
         // Aktiviert ausgewälter Layer; Layermenu ist aktiv
         this.listenTo(this.collection, {
             "updateSelection": function () {
@@ -22,7 +23,11 @@ const LayerView = Backbone.View.extend({
                 }
             }
         });
-        // bootstrap collapse event
+
+        this.$el.on("hide.bs.collapse", function () {
+            Radio.trigger("TableMenu", "deactivateCloseClickFrame");
+        });
+
         this.$el.on("show.bs.collapse", function () {
             Radio.request("TableMenu", "setActiveElement", "Layer");
         });
@@ -39,6 +44,7 @@ const LayerView = Backbone.View.extend({
     cosiLayerTopics: ["basic"],
     hideMenu: function () {
         $("#table-nav-layers-panel").collapse("hide");
+        Radio.trigger("TableMenu", "deactivateCloseClickFrame");
     },
     render: function () {
         this.$el.html(this.template());
@@ -104,14 +110,16 @@ const LayerView = Backbone.View.extend({
         });
         this.addViews(models);
     },
-
     addViews: function (models) {
         var childElement = {};
 
         _.each(models, function (model) {
-            childElement = new SingleLayerView({model: model}).render().$el;
-            this.$el.find("ul.layers").prepend(childElement);
-
+            if (!model.get("isNeverVisibleInTree")) {
+                if (model.get("isVisibleInTree") === true) {
+                    childElement = new SingleLayerView({model: model}).render().$el;
+                    this.$el.find("ul.layers").prepend(childElement);
+                }
+            }
         }, this);
     },
     removeAllViews: function () {

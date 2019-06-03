@@ -21,7 +21,7 @@ import SliderRangeView from "../modules/snippets/slider/range/view";
 import DropdownView from "../modules/snippets/dropdown/view";
 import LayerinformationModel from "../modules/layerinformation/model";
 import FooterView from "../modules/footer/view";
-import ClickCounterView from "../modules/ClickCounter/view";
+import ClickCounterModel from "../modules/ClickCounter/model";
 import MouseHoverPopupView from "../modules/mouseHover/view";
 import QuickHelpView from "../modules/quickhelp/view";
 import ScaleLineView from "../modules/scaleline/view";
@@ -30,6 +30,7 @@ import SidebarView from "../modules/sidebar/view";
 import LegendLoader from "../modules/legend/legendLoader";
 import MeasureView from "../modules/tools/measure/view";
 import CoordPopupView from "../modules/tools/getCoord/view";
+import ShadowView from "../modules/tools/shadow/view";
 import DrawView from "../modules/tools/draw/view";
 import ParcelSearchView from "../modules/tools/parcelSearch/view";
 import SearchByCoordView from "../modules/tools/searchByCoord/view";
@@ -38,7 +39,7 @@ import AnimationView from "../modules/tools/pendler/animation/view";
 import FilterView from "../modules/tools/filter/view";
 import SaveSelectionView from "../modules/tools/saveSelection/view";
 import StyleWMSView from "../modules/tools/styleWMS/view";
-import LayersliderView from "../modules/tools/layerslider/view";
+import LayerSliderView from "../modules/tools/layerSlider/view";
 import CompareFeaturesView from "../modules/tools/compareFeatures/view";
 import EinwohnerabfrageView from "../modules/tools/einwohnerabfrage_hh/selectView";
 import ImportView from "../modules/tools/kmlimport/view";
@@ -47,7 +48,7 @@ import ExtendedFilterView from "../modules/tools/extendedFilter/view";
 import AddWMSView from "../modules/tools/addwms/view";
 import RoutingView from "../modules/tools/viomRouting/view";
 import SchulwegRoutingView from "../modules/tools/schulwegRouting_hh/view";
-import Contact from "../modules/contact/view";
+import Contact from "../modules/tools/contact/view";
 import TreeFilterView from "../modules/treefilter/view";
 import Formular from "../modules/formular/view";
 import FeatureLister from "../modules/featurelister/view";
@@ -62,12 +63,6 @@ import ChartPanelView from "../modules/charting/chartPanel/view";
 import PieView from "../modules/charting/chartRenderer/pie/view";
 import BarView from "../modules/charting/chartRenderer/bar-line/view";
 import ChartUtil from "../modules/charting/chartRenderer/util/util";
-
-// @deprecated in version 3.0.0
-// remove "version" in doc and config.
-// rename "print_" to "print"
-// only load PrintView
-import PrintView2 from "../modules/tools/print/view";
 // controls
 import ControlsView from "../modules/controls/view";
 import ZoomControlView from "../modules/controls/zoom/view";
@@ -85,29 +80,54 @@ import HighlightFeature from "../modules/highlightFeature/model";
 import Button3DView from "../modules/controls/button3d/view";
 import ButtonObliqueView from "../modules/controls/buttonoblique/view";
 import Orientation3DView from "../modules/controls/orientation3d/view";
+import BackForwardView from "../modules/controls/backforward/view";
 import "es6-promise/auto";
+import { log } from "util";
 
 var sbconfig, controls, controlsView;
 
 function loadApp () {
+
+    // Prepare config for Utils
+    var utilConfig = {},
+        layerInformationModelSettings = {},
+        cswParserSettings = {};
+
+    if (_.has(Config, "uiStyle")) {
+        utilConfig.uiStyle = Config.uiStyle.toUpperCase();
+    }
+    if (_.has(Config, "proxyHost")) {
+        utilConfig.proxyHost = Config.proxyHost;
+    }
+
     // RemoteInterface laden
     if (_.has(Config, "remoteInterface")) {
         new RemoteInterface(Config.remoteInterface);
     }
-    // Core laden
+
+    if (_.has(Config, "quickHelp")) {
+        new QuickHelpView(Config.quickHelp);
+    }
+
+   // Core laden
     new Autostarter();
-    new Util(_.has(Config, "uiStyle") ? {uiStyle: Config.uiStyle.toUpperCase()} : {});
+    new Util(utilConfig);
     // Pass null to create an empty Collection with options
+    new RestReaderList(null, {url: Config.restConf});
     new RawLayerList(null, {url: Config.layerConf});
-    new RestReaderList();
-    new Preparser();
+    new Preparser(null, {url: Config.portalConf});
     new StyleList();
     new ParametricURL();
     new CRS();
     new Map();
     new WPS();
     new AddGeoJSON();
-    new CswParserModel();
+
+    if (_.has(Config, "cswId")) {
+        cswParserSettings.cswId = Config.cswId;
+    }
+
+    new CswParserModel(cswParserSettings);
     new GraphModel();
     new WFSTransactionModel();
     new MenuLoader();
@@ -122,24 +142,21 @@ function loadApp () {
     new SliderRangeView();
     new DropdownView();
 
-    new LayerinformationModel(_.has(Config, "cswId") ? {cswId: Config.cswId} : {});
+    if (_.has(Config, "metaDataCatalogueId")) {
+        layerInformationModelSettings.metaDataCatalogueId = Config.metaDataCatalogueId;
+    }
+    new LayerinformationModel(layerInformationModelSettings);
 
     if (_.has(Config, "footer")) {
         new FooterView(Config.footer);
     }
 
-
     if (_.has(Config, "clickCounter") && _.has(Config.clickCounter, "desktop") && Config.clickCounter.desktop !== "" && _.has(Config.clickCounter, "mobile") && Config.clickCounter.mobile !== "") {
-        new ClickCounterView(Config.clickCounter.desktop, Config.clickCounter.mobile);
+        new ClickCounterModel(Config.clickCounter.desktop, Config.clickCounter.mobile, Config.clickCounter.staticLink);
     }
 
     if (_.has(Config, "mouseHover")) {
         new MouseHoverPopupView(Config.mouseHover);
-    }
-
-
-    if (_.has(Config, "quickHelp")) {
-        new QuickHelpView(Config.quickHelp);
     }
 
     if (_.has(Config, "scaleLine") && Config.scaleLine === true) {
@@ -182,6 +199,10 @@ function loadApp () {
                 new CoordPopupView({model: tool});
                 break;
             }
+            case "shadow": {
+                new ShadowView({model: tool});
+                break;
+            }
             case "measure": {
                 new MeasureView({model: tool});
                 break;
@@ -191,16 +212,7 @@ function loadApp () {
                 break;
             }
             case "print": {
-                // @deprecated in version 3.0.0
-                // remove "version" in doc and config.
-                // rename "print_" to "print"
-                // only load correct view
-                if (tool.has("version") && tool.get("version") === "mapfish_print_3") {
-                    new PrintView({model: tool});
-                }
-                else {
-                    new PrintView2({model: tool});
-                }
+                new PrintView({model: tool});
                 break;
             }
             case "parcelSearch": {
@@ -259,8 +271,16 @@ function loadApp () {
                 new StyleWMSView({model: tool});
                 break;
             }
+            /**
+             * layerslider
+             * @deprecated in 3.0.0
+             */
             case "layerslider": {
-                new LayersliderView({model: tool});
+                new LayerSliderView({model: tool});
+                break;
+            }
+            case "layerSlider": {
+                new LayerSliderView({model: tool});
                 break;
             }
             default: {
@@ -287,11 +307,11 @@ function loadApp () {
                     break;
                 }
                 case "orientation": {
+                    var orientationConfigAttr =_.isString(control.attr) ? {zoomMode: control.attr} : control;
+
                     element = controlsView.addRowTR(control.id, true);
-                    new OrientationView({
-                        el: element,
-                        attr: {config: {epsg: Radio.request("MapView", "getProjection").getCode()}}
-                    });
+                    orientationConfigAttr.epsg = Radio.request("MapView", "getProjection").getCode();
+                    new OrientationView({el: element, config: orientationConfigAttr});
                     break;
                 }
                 case "mousePosition": {
@@ -308,23 +328,65 @@ function loadApp () {
                     }
                     break;
                 }
+                /**
+                 * totalView
+                 * @deprecated in 3.0.0
+                 */
                 case "totalview": {
-                    if (control.attr === true) {
-                        new TotalView();
+                    if (control.attr === true || _.isObject(control.attr)) {
+                        console.warn("'totalview' is deprecated. Please use 'totalView' instead");
+                        new TotalView(control.id);
+                    }
+                    break;
+                }
+                case "totalView": {
+                    if (control.attr === true || _.isObject(control.attr)) {
+                        new TotalView(control.id);
                     }
                     break;
                 }
                 case "attributions": {
-                    if (control.attr === true || typeof control.attr === "object") {
-                        element = controlsView.addRowBR(control.id);
+                    if (control.attr === true || _.isObject(control.attr)) {
+                        element = controlsView.addRowBR(control.id, true);
                         new AttributionsView({el: element});
                     }
                     break;
                 }
+                /**
+                 * backforward
+                 * @deprecated in 3.0.0
+                 */
+                case "backforward" : {
+                    if (control.attr === true || _.isObject(control.attr)) {
+                        console.warn("'backforward' is deprecated. Please use 'backForward' instead");
+                        element = controlsView.addRowTR(control.id, false);
+                        new BackForwardView({el: element});
+                    }
+                    break;
+                }
+                case "backForward" : {
+                    if (control.attr === true || _.isObject(control.attr)) {
+                        element = controlsView.addRowTR(control.id, false);
+                        new BackForwardView({el: element});
+                    }
+                    break;
+                }
+                /**
+                 * overviewmap
+                 * @deprecated in 3.0.0
+                 */
                 case "overviewmap": {
-                    if (control.attr === true || typeof control.attr === "object") {
-                        element = controlsView.addRowBR(control.id);
-                        new OverviewmapView({el: element});
+                    if (control.attr === true || _.isObject(control.attr)) {
+                        console.warn("'overviewmap' is deprecated. Please use 'overviewMap' instead");
+                        element = controlsView.addRowBR(control.id, false);
+                        new OverviewmapView(element, control.id, control.attr);
+                    }
+                    break;
+                }
+                case "overviewMap": {
+                    if (control.attr === true || _.isObject(control.attr)) {
+                        element = controlsView.addRowBR(control.id, false);
+                        new OverviewmapView(element, control.id, control.attr);
                     }
                     break;
                 }
@@ -379,12 +441,12 @@ function loadApp () {
     // Variable CUSTOMMODULE wird im webpack.DefinePlugin gesetzt
     if (CUSTOMMODULE !== "") {
         return import(/* webpackMode: "eager" */ CUSTOMMODULE)
-            .then(module => {
-                new module.default;
-            })
-            .catch(error => {
-                Radio.trigger("Alert", "alert", "Entschuldigung, diese Anwendung konnte nicht vollständig geladen werden. Bitte wenden sie sich an den Administrator.");
-            });
+        .then(module => {
+            new module.default;
+        })
+        .catch(error => {
+            Radio.trigger("Alert", "alert", "Entschuldigung, diese Anwendung konnte nicht vollständig geladen werden. Bitte wenden sie sich an den Administrator.");
+        });
     }
 
     if (_.has(Config, "cosiMode")) {

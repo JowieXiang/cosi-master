@@ -1,18 +1,14 @@
-/**
- * Module for drawing different geometries and text
- * @exports module:lgv.lgv/modules/tools/draw/model
- * @module lgv/modules/tools/draw/model
- */
 import {Select, Modify, Draw} from "ol/interaction.js";
 import {Circle, Fill, Stroke, Style, Text} from "ol/style.js";
+import {GeoJSON} from "ol/format.js";
+import MultiPolygon from "ol/geom/MultiPolygon.js";
+import MultiPoint from "ol/geom/MultiPoint.js";
+import MultiLine from "ol/geom/MultiLineString.js";
+import {fromCircle as circPoly} from "ol/geom/Polygon.js";
+import Feature from "ol/Feature";
 import Tool from "../../core/modelList/tool/model";
 
 const DrawTool = Tool.extend({
-    /**
-     * @class DrawTool
-     * @name module:lgv.lgv/modules/tools/draw/model
-     * @augments Backbone.Model
-     */
     defaults: _.extend({}, Tool.prototype.defaults, {
         drawInteraction: undefined,
         selectInteraction: undefined,
@@ -31,7 +27,9 @@ const DrawTool = Tool.extend({
         },
         renderToWindow: true,
         deactivateGFI: true,
-        glyphicon: "glyphicon-pencil"
+        glyphicon: "glyphicon-pencil",
+        addFeatureListener: {},
+        zIndex: 0
     }),
 
     /**
@@ -46,8 +44,18 @@ const DrawTool = Tool.extend({
         channel.reply({
             "getLayer": function () {
                 return this.get("layer");
-            }
+            },
+            "downloadWithoutGUI": this.downloadFeaturesWithoutGUI
         }, this);
+
+        channel.on({
+            "initWithoutGUI": this.inititalizeWithoutGUI,
+            "deleteAllFeatures": this.deleteFeatures,
+            "editWithoutGUI": this.editFeaturesWithoutGUI,
+            "cancelDrawWithoutGUI": this.cancelDrawWithoutGUI,
+            "downloadViaRemoteInterface": this.downloadViaRemoteInterface
+        }, this);
+
         this.listenTo(this, {
             "change:isActive": function (model, value) {
                 var layer = model.createLayer(model.get("layer"));
@@ -62,14 +70,275 @@ const DrawTool = Tool.extend({
                 }
             }
         });
+        Radio.trigger("RemoteInterface", "postMessage", {"initDrawTool": true});
     },
-    createSourceListenerForStyling: function (layer) {
-        var source = layer.getSource();
 
-        source.on("addfeature", function (evt) {
+    /**
+     * Creates an addfeature-Listener
+     * @param   {ol.layer} layer Layer, to which the Listener is registered
+     * @returns {void}
+     */
+    createSourceListenerForStyling: function (layer) {
+        var layerSource = layer.getSource();
+
+        this.setAddFeatureListener(layerSource.on("addfeature", function (evt) {
             evt.feature.setStyle(this.getStyle());
-        }.bind(this));
+            this.countupZIndex();
+        }.bind(this)));
     },
+
+    /**
+     * initialises the drawing functionality without a GUI
+     * useful for instance for the use via RemoteInterface
+     * @param {String} para_object - an Object which includes the parameters
+     *                 {String} drawType - which type is meant to be drawn ["Point", "LineString", "Polygon", "Circle"]
+     *                 {String} color - color, in rgb (default: "55, 126, 184")
+     *                 {Float} opacity - transparency (default: 1.0)
+     *                 {Integer} maxFeatures - maximum number of Features allowed to be drawn (default: unlimeted)
+     *                 {String} initialJSON - GeoJSON containing the Features to be drawn on the Layer, i.e. for editing
+     *                 {Boolean} transformWGS - The GeoJSON will be transformed from WGS84 to UTM if set to true
+     *                 {Boolean} zoomToExtent - The map will be zoomed to the extent of the GeoJson if set to true
+     * @returns {String} GeoJSON of all Features as a String
+     */
+    inititalizeWithoutGUI: function (para_object) {
+        var featJSON,
+            newColor,
+            format = new GeoJSON(),
+            initJson = para_object.initialJSON,
+            zoomToExtent = para_object.zoomToExtent,
+            transformWGS = para_object.transformWGS;
+
+        if (this.collection) {
+            this.collection.setActiveToolsToFalse(this);
+        }
+
+        this.set("renderToWindow", false);
+        this.setIsActive(true);
+
+        if ($.inArray(para_object.drawType, ["Point", "LineString", "Polygon", "Circle"]) > -1) {
+            this.setDrawType(para_object.drawType, para_object.drawType + " zeichnen");
+            if (para_object.color) {
+                this.set("color", para_object.color);
+            }
+            if (para_object.opacity) {
+                newColor = this.get("color");
+
+                newColor[3] = parseFloat(para_object.opacity);
+                this.setColor(newColor);
+                this.setOpacity(para_object.opacity);
+            }
+
+            // this.createDrawInteraction(this.get("drawType"), this.get("layer"), para_object.maxFeatures);
+            this.createDrawInteractionAndAddToMap(this.get("layer"), this.get("drawType"), true, para_object.maxFeatures);
+
+            if (initJson) {
+                try {
+
+                    if (transformWGS === true) {
+                        format = new GeoJSON({
+                            defaultDataProjection: "EPSG:4326"
+                        });
+                        // read GeoJson and transfrom the coordiantes from WGS84 to UTM
+                        featJSON = format.readFeatures(initJson, {
+                            dataProjection: "EPSG:4326",
+                            featureProjection: "EPSG:25832"
+                        });
+                    }
+                    else {
+                        featJSON = format.readFeatures(initJson);
+                    }
+
+                    if (featJSON.length > 0) {
+                        this.get("layer").setStyle(this.getStyle(para_object.drawType));
+                        this.get("layer").getSource().addFeatures(featJSON);
+                    }
+
+                    if (featJSON.length > 0 && zoomToExtent === true) {
+                        Radio.trigger("Map", "zoomToExtent", this.get("layer").getSource().getExtent());
+                    }
+                }
+                catch (e) {
+                    // das übergebene JSON war nicht gültig
+                    Radio.trigger("Alert", "alert", "Die übergebene Geometrie konnte nicht dargestellt werden.");
+                }
+            }
+        }
+    },
+    /**
+     * enable editing of already drawn Features without a GUI
+     * usefule for instance for the use via RemoteInterface
+     * @returns {void}
+     */
+    editFeaturesWithoutGUI: function () {
+        this.deactivateDrawInteraction();
+        this.createModifyInteractionAndAddToMap(this.get("layer"), true);
+    },
+
+    /**
+     * creates and returns a GeoJSON of all drawn Features without a GUI
+     * returns an empty Object if no init happened previously (= no layer set)
+     * by default single geometries are added to the GeoJSON
+     * if geomType is set to "multiGeometry" multiGeometry Features of all drawn Features are created for each geometry type individually
+     * @param {String} para_object - an Object which includes the parameters
+     *                 {String} geomType singleGeometry (default) or multiGeometry ("multiGeometry")
+     *                 {Boolean} transformWGS if true, the coordinates will be transformed from WGS84 to UTM
+     * @returns {String} GeoJSON all Features as String
+     */
+    downloadFeaturesWithoutGUI: function (para_object) {
+        var features = null,
+            format = new GeoJSON(),
+            geomType = null,
+            transformWGS = null,
+            multiPolygon = new MultiPolygon([]),
+            multiPoint = new MultiPoint([]),
+            multiLine = new MultiLine([]),
+            multiGeomFeature = null,
+            circleFeature = null,
+            circularPoly = null,
+            featureType = null,
+            featureArray = [],
+            singleGeom = null,
+            featuresConverted = {"type": "FeatureCollection", "features": []};
+
+        if (!_.isUndefined(para_object) && para_object.geomType === "multiGeometry") {
+            geomType = "multiGeometry";
+        }
+        if (!_.isUndefined(para_object) && para_object.transformWGS === true) {
+            transformWGS = true;
+        }
+
+        if (!_.isUndefined(this.get("layer")) && !_.isNull(this.get("layer"))) {
+            features = this.get("layer").getSource().getFeatures();
+
+            if (geomType === "multiGeometry") {
+
+                _.each(features, function (item) {
+                    featureType = item.getGeometry().getType();
+
+                    if (featureType === "Polygon") {
+                        if (transformWGS === true) {
+                            multiPolygon.appendPolygon(item.getGeometry().clone().transform("EPSG:25832", "EPSG:4326"));
+                        }
+                        else {
+                            multiPolygon.appendPolygon(item.getGeometry());
+                        }
+                    }
+                    else if (featureType === "Point") {
+                        if (transformWGS === true) {
+                            multiPoint.appendPoint(item.getGeometry().clone().transform("EPSG:25832", "EPSG:4326"));
+                        }
+                        else {
+                            multiPoint.appendPoint(item.getGeometry());
+                        }
+                    }
+                    else if (featureType === "LineString") {
+                        if (transformWGS === true) {
+                            multiLine.appendLineString(item.getGeometry().clone().transform("EPSG:25832", "EPSG:4326"));
+                        }
+                        else {
+                            multiLine.appendLineString(item.getGeometry());
+                        }
+                    }
+                    // Circles cannot be added to a featureCollection
+                    // They must therefore be converted into a polygon
+                    else if (featureType === "Circle") {
+                        if (transformWGS === true) {
+                            circularPoly = circPoly(item.getGeometry().clone().transform("EPSG:25832", "EPSG:4326"), 64);
+                            multiPolygon.appendPolygon(circularPoly);
+                        }
+                        else {
+                            circularPoly = circPoly(item.getGeometry(), 64);
+                            multiPolygon.appendPolygon(circularPoly);
+                        }
+                    }
+                });
+
+                if (multiPolygon.getCoordinates().length > 0) {
+                    multiGeomFeature = new Feature(multiPolygon);
+                    featureArray.push(multiGeomFeature);
+                }
+                if (multiPoint.getCoordinates().length > 0) {
+                    multiGeomFeature = new Feature(multiPoint);
+                    featureArray.push(multiGeomFeature);
+                }
+                if (multiLine.getCoordinates().length > 0) {
+                    multiGeomFeature = new Feature(multiLine);
+                    featureArray.push(multiGeomFeature);
+                }
+                // The features in the featureArray are converted into a feature collection.
+                // Note, any text added using the draw / text tool is not included in the feature collection
+                // created by writeFeaturesObject(). If any text needs to be included in the feature collection's
+                // properties the feature collection needs to be created in a different way. The text content can be
+                // retrieved by item.getStyle().getText().getText().
+                featuresConverted = format.writeFeaturesObject(featureArray);
+
+            }
+            else {
+                _.each(features, function (item) {
+                    featureType = item.getGeometry().getType();
+
+                    if (transformWGS === true) {
+                        singleGeom = item.clone();
+                        singleGeom.getGeometry().transform("EPSG:25832", "EPSG:4326");
+                    }
+                    else {
+                        singleGeom = item;
+                    }
+
+                    // Circles cannot be added to a featureCollection
+                    // They must therefore be converted into a polygon
+                    if (featureType === "Circle") {
+                        circularPoly = circPoly(singleGeom.getGeometry(), 64);
+                        circleFeature = new Feature(circularPoly);
+                        featureArray.push(circleFeature);
+                    }
+                    else {
+                        featureArray.push(singleGeom);
+                    }
+                });
+                // The features in the featureArray are converted into a feature collection.
+                // Note, any text added using the draw / text tool is not included in the feature collection
+                // created by  writeFeaturesObject(). If any text needs to be included in the feature collection's
+                // properties the feature collection needs to be created in a different way. The text content can be
+                // retrieved by item.getStyle().getText().getText().
+                featuresConverted = format.writeFeaturesObject(featureArray);
+
+            }
+        }
+
+        return JSON.stringify(featuresConverted);
+    },
+    /**
+     * sends the generated GeoJSON to the RemoteInterface in order to communicate with an iframe
+     * @param {String} geomType singleGeometry (default) or multiGeometry ("multiGeometry")
+     * @returns {void}
+     */
+    downloadViaRemoteInterface: function (geomType) {
+        var result = this.downloadFeaturesWithoutGUI(geomType);
+
+        Radio.trigger("RemoteInterface", "postMessage", {
+            "downloadViaRemoteInterface": "function identifier",
+            "success": true,
+            "response": result
+        });
+    },
+    /**
+     * finishes the draw interaction via Radio
+     * @param {String} cursor check and receive the parameter from Cockpit
+     * @returns {void}
+     */
+    cancelDrawWithoutGUI: function (cursor) {
+        this.deactivateDrawInteraction();
+        this.deactivateSelectInteraction();
+        this.deactivateModifyInteraction();
+        this.resetModule();
+        // Turn GFI on again after drawing
+        this.setIsActive(false);
+        if (cursor !== undefined && cursor.cursor) {
+            $("#map").removeClass("no-cursor");
+        }
+    },
+
     /**
      * creates a vector layer for drawn features, if layer input is undefined
      * and removes this callback from the change:isCurrentWin event
@@ -86,12 +355,12 @@ const DrawTool = Tool.extend({
 
         return vectorLayer;
     },
-    createDrawInteractionAndAddToMap: function (layer, drawType, isActive) {
+    createDrawInteractionAndAddToMap: function (layer, drawType, isActive, maxFeatures) {
         var drawInteraction = this.createDrawInteraction(drawType, layer);
 
         drawInteraction.setActive(isActive);
         this.setDrawInteraction(drawInteraction);
-        this.createDrawInteractionListener(drawInteraction);
+        this.createDrawInteractionListener(drawInteraction, maxFeatures);
         Radio.trigger("Map", "addInteraction", drawInteraction);
     },
     createSelectInteractionAndAddToMap: function (layer, isActive) {
@@ -111,7 +380,7 @@ const DrawTool = Tool.extend({
     },
 
     /**
-     * creates the draw to draw in the map
+     * creates the draw interaction to draw in the map
      * @param {object} drawType - contains the geometry and description
      * @param {ol/layer/Vector} layer - layer to draw
      * @param {array} color - of geometries
@@ -128,18 +397,41 @@ const DrawTool = Tool.extend({
     /**
      * lister to change the entries for the next drawing
      * @param {ol/interaction/Draw} drawInteraction - drawInteraction
+     * @param {integer} maxFeatures - maximal number of features to be drawn
      * @return {void}
      */
-    createDrawInteractionListener: function (drawInteraction) {
+    createDrawInteractionListener: function (drawInteraction, maxFeatures) {
+        var that = this;
+
         drawInteraction.on("drawend", function (evt) {
             evt.feature.set("styleId", _.uniqueId());
         });
+
+        if (maxFeatures && maxFeatures > 0) {
+
+            drawInteraction.on("drawstart", function () {
+                var count = that.get("layer").getSource().getFeatures().length,
+                    text = "";
+
+                if (count > maxFeatures - 1) {
+                    text = "Sie haben bereits " + maxFeatures + " Objekte gezeichnet, bitte löschen Sie erst eines, bevor Sie fortfahren!";
+                    if (maxFeatures === 1) {
+                        text = "Sie haben bereits " + maxFeatures + " Objekt gezeichnet, bitte löschen Sie dieses, bevor Sie fortfahren!";
+                    }
+
+                    Radio.trigger("Alert", "alert", text);
+                    that.deactivateDrawInteraction();
+                }
+            }, this);
+        }
     },
     updateDrawInteraction: function () {
         Radio.trigger("Map", "removeInteraction", this.get("drawInteraction"));
         this.createDrawInteractionAndAddToMap(this.get("layer"), this.get("drawType"), true);
     },
+
     /**
+     * Creates and returns the ol.style
      * @param {object} drawType - contains the geometry and description
      * @param {array} color - of drawings
      * @return {ol/style/Style} style
@@ -152,13 +444,14 @@ const DrawTool = Tool.extend({
             font = this.get("font"),
             fontSize = this.get("fontSize"),
             strokeWidth = this.get("strokeWidth"),
-            radius = this.get("radius");
+            radius = this.get("radius"),
+            zIndex = this.get("zIndex");
 
         if (_.has(drawType, "text") && drawType.text === "Text schreiben") {
-            style = this.getTextStyle(color, text, fontSize, font);
+            style = this.getTextStyle(color, text, fontSize, font, 9999);
         }
         else if (_.has(drawType, "geometry") && drawType.geometry) {
-            style = this.getDrawStyle(color, drawType.geometry, strokeWidth, radius);
+            style = this.getDrawStyle(color, drawType.geometry, strokeWidth, radius, zIndex);
         }
 
         return style.clone();
@@ -170,9 +463,10 @@ const DrawTool = Tool.extend({
      * @param {string} text - of drawings
      * @param {number} fontSize - of drawings
      * @param {string} font - of drawings
+     * @param {number} zIndex - zIndex of Element
      * @return {ol/style/Style} style
      */
-    getTextStyle: function (color, text, fontSize, font) {
+    getTextStyle: function (color, text, fontSize, font, zIndex) {
         return new Style({
             text: new Text({
                 textAlign: "left",
@@ -181,19 +475,21 @@ const DrawTool = Tool.extend({
                 fill: new Fill({
                     color: color
                 })
-            })
+            }),
+            zIndex: zIndex
         });
     },
 
     /**
-     * Creates and returns a feature style for points, lines, or faces
+     * Creates and returns a feature style for points, lines, or faces and returns it
      * @param {number} color - of drawings
      * @param {string} drawGeometryType - geometry type of drawings
      * @param {number} strokeWidth - from geometry
      * @param {number} radius - from geometry
+     * @param {number} zIndex - zIndex of Element
      * @return {ol/style/Style} style
      */
-    getDrawStyle: function (color, drawGeometryType, strokeWidth, radius) {
+    getDrawStyle: function (color, drawGeometryType, strokeWidth, radius, zIndex) {
         return new Style({
             fill: new Fill({
                 color: color
@@ -207,7 +503,8 @@ const DrawTool = Tool.extend({
                 fill: new Fill({
                     color: color
                 })
-            })
+            }),
+            zIndex: zIndex
         });
     },
 
@@ -402,10 +699,9 @@ const DrawTool = Tool.extend({
      * @returns {void}
      */
     startDownloadTool: function () {
-        var features = this.get("layer").getSource().getFeatures(),
-            downloadView = this.get("downloadView");
+        var features = this.get("layer").getSource().getFeatures();
 
-        downloadView.start({
+        Radio.trigger("download", "start", {
             data: features,
             formats: ["kml"],
             caller: {
@@ -524,12 +820,31 @@ const DrawTool = Tool.extend({
     },
 
     /**
-     * setter for modifyInteraction
-     * @param {ol/interaction/modify} value - modifyInteraction
+     * setter for addFeatureListener
+     * @param {object} value - addFeatureListener
      * @return {void}
      */
-    setDownloadView: function (value) {
-        this.set("downloadView", value);
+    setAddFeatureListener: function (value) {
+        this.set("addFeatureListener", value);
+    },
+
+    /*
+    * count up zIndex
+    * @returns {void}
+    */
+    countupZIndex: function () {
+        var value = this.get("zIndex") + 1;
+
+        this.setZIndex(value);
+    },
+
+    /*
+    * setter for zIndex
+    * @param {number} value zIndex
+    * @returns {void}
+    */
+    setZIndex: function (value) {
+        this.set("zIndex", value);
     }
 });
 

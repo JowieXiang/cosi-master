@@ -1,7 +1,3 @@
-/**
-@Discription Stellt das Tool-fenster da, in dem ein WMS per URL angefordert werden kann
-@Author: RL
-**/
 import AddWMSWin from "text-loader!./template.html";
 
 const AddWMSView = Backbone.View.extend({
@@ -18,8 +14,9 @@ const AddWMSView = Backbone.View.extend({
             "change:wmsURL": this.urlChange,
             "change:isActive": this.render
         });
-        // Bestätige, dass das Modul geladen wurde
-        Radio.trigger("Autostart", "initializedModul", this.model.get("id"));
+        if (this.model.get("isActive") === true) {
+            this.render(this.model, true);
+        }
     },
     template: _.template(AddWMSWin),
     // Löst das laden und einfügen der Layer in den Baum aus

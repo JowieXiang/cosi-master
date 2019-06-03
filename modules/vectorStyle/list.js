@@ -19,11 +19,29 @@ const StyleList = Backbone.Collection.extend({
             this.fetch({
                 cache: false,
                 async: false,
-                error: function () {
-                    Radio.trigger("Alert", "alert", {
-                        text: "Fehler beim Laden von: " + Config.styleConf,
-                        kategorie: "alert-warning"
-                    });
+                error: function (model, xhr, error) {
+                    const statusText = xhr.statusText;
+                    let message,
+                        position,
+                        snippet;
+
+                    if (statusText === "Not Found") {
+                        Radio.trigger("Alert", "alert", {
+                            text: "<strong>Die Datei '" + model.url() + "' ist nicht vorhanden!</strong>",
+                            kategorie: "alert-warning"
+                        });
+                    }
+                    else {
+                        message = error.errorThrown.message;
+                        position = parseInt(message.substring(message.lastIndexOf(" ")), 10);
+                        snippet = xhr.responseText.substring(position - 30, position + 30);
+                        Radio.trigger("Alert", "alert", {
+                            text: "<strong>Die Datei '" + model.url() + "' konnte leider nicht geladen werden!</strong> <br> " +
+                            "<small>Details: " + error.textStatus + " - " + error.errorThrown.message + ".</small><br>" +
+                            "<small>Auszug:" + snippet + "</small>",
+                            kategorie: "alert-warning"
+                        });
+                    }
                 }
             });
         }
@@ -42,6 +60,7 @@ const StyleList = Backbone.Collection.extend({
      */
     parse: function (data) {
         var layers = Radio.request("Parser", "getItemsByAttributes", {type: "layer"}),
+            tools = Radio.request("Parser", "getItemsByAttributes", {type: "tool"}),
             styleIds = [],
             filteredData = [];
 
@@ -59,11 +78,28 @@ const StyleList = Backbone.Collection.extend({
                 });
             }
         });
-        filteredData = _.filter(data, function (styleModel) {
+        styleIds.push(this.getStyleIdForZoomToFeature());
+
+        _.each(tools, function (tool) {
+            if (_.has(tool, "styleId")) {
+                styleIds.push(tool.styleId);
+            }
+        });
+
+        filteredData = data.filter(function (styleModel) {
             return _.contains(styleIds, styleModel.layerId);
         });
 
         return filteredData;
+    },
+
+    getStyleIdForZoomToFeature: function () {
+        var styleId;
+
+        if (Config && Config.hasOwnProperty("zoomToFeature") && Config.zoomToFeature.hasOwnProperty("styleId")) {
+            styleId = Config.zoomToFeature.styleId;
+        }
+        return styleId;
     }
 });
 

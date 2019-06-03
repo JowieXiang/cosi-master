@@ -2,7 +2,7 @@ import proj4 from "proj4";
 import {KML} from "ol/format.js";
 import Tool from "../../core/modelList/tool/model";
 
-const Download = Tool.extend({
+const DownloadModel = Tool.extend({
     defaults: _.extend({}, Tool.prototype.defaults, {
         id: "download",
         renderToWindow: true
@@ -41,7 +41,7 @@ const Download = Tool.extend({
     },
     /**
      * setter für Data
-     * @param {Ol.Feature} data Vektor Objekt das heruntergeladen werden kann
+     * @param {ol.Feature} data Vektor Objekt das heruntergeladen werden kann
      * @returns {void}
      */
     setData: function (data) {
@@ -49,7 +49,6 @@ const Download = Tool.extend({
     },
     /**
      * getter für Data
-     * @param {Ol.Feature} data Vektor Objekt das heruntergeladen werden kann
      * @returns {void}
      */
     getData: function () {
@@ -86,7 +85,7 @@ const Download = Tool.extend({
     },
     /**
      * setter für das Tool, dass den Download aufgerufen hat
-     * @param {obj} caller -
+     * @param {Object} caller -
      * @returns {void}
      */
     setCaller: function (caller) {
@@ -126,7 +125,7 @@ const Download = Tool.extend({
     },
     /**
      * Überprüft, ob im Format Selectfeld ein Format ausgewählt wurde.
-     * @return {[type]} [description]
+     * @return {Boolean} Flag if fileExtension is valid
      */
     validateFileExtension: function () {
         var format = this.getSelectedFormat();
@@ -141,7 +140,7 @@ const Download = Tool.extend({
     /**
      * prepare Convertiert die Übergebenen Daten für den Download und setzt sie hinterher wieder zurück,
      * damit sie weiterhin korrekt angezeigt werden.
-     * @returns {converted} converted
+     * @returns {object} converted
      */
     prepareData: function () {
 
@@ -185,7 +184,7 @@ const Download = Tool.extend({
     },
     /**
          * Nutzt das 'HTML% Attribute "Download" um einen localen Download zu ermöglichen.
-         * @return {[type]} [description]
+         * @return {void}
          */
     prepareDownloadButtonNonIE: function () {
         var url = "data:text/plain;charset=utf-8,%EF%BB%BF" + encodeURIComponent(this.getData()),
@@ -221,7 +220,7 @@ const Download = Tool.extend({
      * Erzeugt ein unsichtbares <a> mit Hilfe dessen ein download getriggert werden kann
      * @param  {String} data     Das Objekt, das heruntergeladen werden soll
      * @param  {String} filename Der Dateiname, der herunterzuladenen Daten
-     * @return {a-tag}  Ein <a>-Tag das die herunterzuladenen Daten enthält
+     * @return {HTML}  Ein <a>-Tag das die herunterzuladenen Daten enthält
      */
     createDOM: function (data, filename) {
         var a = document.createElement("a");
@@ -240,7 +239,7 @@ const Download = Tool.extend({
      * Konvertiert ein Feature Objekt in ein Format
      * @param  {string} format das Fromat in das Konvertiert werden soll
      * @param  {ol.Feature} data das Vector Object, dass nach kml konvertiert werden soll
-     * @return {Format} das konvertierte Objekt
+     * @return {Object} das konvertierte Objekt
      */
     convert: function (format, data) {
         var converter = this.getConverter(format);
@@ -359,7 +358,8 @@ const Download = Tool.extend({
             pointOpacities = [],
             pointColors = [],
             featuresWithPointStyle,
-            pointRadiuses = [];
+            pointRadiuses = [],
+            textFonts = [];
 
         _.each(features, function (feature) {
             var transCoord = this.transformCoords(feature.getGeometry(), this.getProjections("EPSG:25832", "EPSG:4326", "32")),
@@ -380,16 +380,24 @@ const Download = Tool.extend({
 
             // wenn Punkt-Geometrie
             if (type === "Point") {
+
+                if (feature.getStyle().getText()) {
+                    textFonts.push(feature.getStyle().getText().getFont());
+                    pointOpacities.push(undefined);
+                    pointColors.push(undefined);
+                    pointRadiuses.push(undefined);
+                }
                 // wenn es kein Text ist(also Punkt), werden Farbe, Transparenz und Radius in arrays gespeichert um dann das KML zu erweitern.
-                if (!feature.getStyle().getText()) {
+                else {
                     color = style.getImage().getFill().getColor();
                     pointOpacities.push(style.getImage().getFill().getColor()[3]);
                     pointColors.push(color[0] + "," + color[1] + "," + color[2]);
                     pointRadiuses.push(style.getImage().getRadius());
+                    textFonts.push(undefined);
                 }
+
             }
         }, context);
-
 
         // KML zerlegen und die Punktstyles einfügen
         featuresWithPointStyle = $.parseXML(format.writeFeatures(features));
@@ -397,10 +405,16 @@ const Download = Tool.extend({
         $(featuresWithPointStyle).find("Point").each(function (i, point) {
             var placemark = point.parentNode,
                 style,
-                pointStyle;
+                pointStyle,
+                fontStyle;
 
+            if ($(placemark).find("name")[0]) {
+                style = $(placemark).find("LabelStyle")[0];
+                fontStyle = "<font>" + textFonts[i] + "</font>";
+                $(style).append($(fontStyle));
+            }
             // kein Text, muss also Punkt sein
-            if (!$(placemark).find("name")[0]) {
+            else {
                 style = $(placemark).find("Style")[0];
                 pointStyle = "<pointstyle>";
 
@@ -433,4 +447,4 @@ const Download = Tool.extend({
     }
 });
 
-export default Download;
+export default DownloadModel;

@@ -3,18 +3,31 @@ import Image from "ol/layer/Image.js";
 import View from "ol/View.js";
 import {OverviewMap} from "ol/control.js";
 
-const OverviewmapModel = Backbone.Model.extend({
+const OverviewMapModel = Backbone.Model.extend(/** @lends OverviewMapModel.prototype */{
     defaults: {
-        baselayer: "",
+        id: "",
+        layerId: "",
+        baseLayer: {},
         newOvmView: ""
     },
+    /**
+     * @class OverviewMapModel
+     * @memberof Controls.Overviewmap
+     * @extends Backbone.Model
+     * @constructs
+     * @fires Map#RadioRequestMapGetMap
+     * @fires MapView#RadioRequestMapViewGetResolutions
+     * @fires Parser#RadioRequestParserGetItemByAttributes
+     * @fires Parser#RadioRequestParserGetInitVisibBaseLayer
+     * @fires Map#RadioTriggerMapAddControl
+     * @fires RawLayerList#RadioRequestRawLayerListGetLayerWhere
+     * @fires AlertingModel#RadioTriggerAlertAlert
+     */
     initialize: function () {
         var map = Radio.request("Map", "getMap"),
             maxResolution = _.first(Radio.request("MapView", "getResolutions")),
             mapView = map.getView(),
             layers = map.getLayers().getArray(),
-            ovmConfig = Radio.request("Parser", "getItemByAttributes", {id: "overviewmap"}),
-            ovmConfigRes = _.isUndefined(ovmConfig) === false ? ovmConfig.attr : ovmConfig,
             initVisibBaselayer = Radio.request("Parser", "getInitVisibBaselayer"),
             initVisibBaselayerId = _.isUndefined(initVisibBaselayer) === false ? initVisibBaselayer.id : initVisibBaselayer,
             newOlView;
@@ -23,11 +36,11 @@ const OverviewmapModel = Backbone.Model.extend({
             center: mapView.getCenter(),
             projection: mapView.getProjection(),
             resolution: mapView.getResolution(),
-            resolutions: [ovmConfigRes.resolution ? ovmConfigRes.resolution : maxResolution]
+            resolutions: [this.get("resolution") ? this.get("resolution") : maxResolution]
         });
         this.setNewOvmView(newOlView);
-        this.setBaselayer(ovmConfigRes.baselayer ? this.getBaseLayerFromCollection(layers, ovmConfigRes.baselayer) : this.getBaseLayerFromCollection(layers, initVisibBaselayerId));
-        if (_.isUndefined(this.get("baselayer")) === false) {
+        this.setBaseLayer(this.get("layerId") ? this.getBaseLayerFromCollection(layers, this.get("layerId")) : this.getBaseLayerFromCollection(layers, initVisibBaselayerId));
+        if (_.isUndefined(this.get("baseLayer")) === false) {
             Radio.trigger("Map", "addControl", this.newOverviewmap());
         }
         else {
@@ -35,13 +48,17 @@ const OverviewmapModel = Backbone.Model.extend({
         }
     },
 
+    /**
+     * Creates a new overview map.
+     * @returns {ol/control/OverviewMap} - The generated overview map.
+     */
     newOverviewmap: function () {
         var overviewmap = new OverviewMap({
             collapsible: false,
             className: "ol-overviewmap ol-custom-overviewmap",
-            target: "overviewmap",
+            target: this.get("id"),
             layers: [
-                this.getOvmLayer(this.get("baselayer"))
+                this.getOvmLayer(this.get("baseLayer"))
             ],
             view: this.get("newOvmView")
         });
@@ -49,6 +66,14 @@ const OverviewmapModel = Backbone.Model.extend({
         return overviewmap;
     },
 
+    /**
+     * @description Derives the baselayer from the given layer collection
+     * @param {Layer[]} layers The Array of layers
+     * @param {string} baselayer The id of the baselayer
+     * @fires RawLayerList#RadioRequestRawLayerListGetLayerWhere
+     * @fires AlertingModel#RadioTriggerAlertAlert
+     * @returns {object} - Baselayer params.
+     */
     getBaseLayerFromCollection: function (layers, baselayer) {
         var modelFromCollection,
             baseLayerParams;
@@ -77,6 +102,11 @@ const OverviewmapModel = Backbone.Model.extend({
 
     },
 
+    /**
+     * Creates the layer for the overview map
+     * @param {string} baselayer Id of baselayer
+     * @returns {ol/Image} - The open layer image layer
+     */
     getOvmLayer: function (baselayer) {
         var imageLayer;
 
@@ -93,8 +123,8 @@ const OverviewmapModel = Backbone.Model.extend({
     },
 
     // setter for baselayer
-    setBaselayer: function (value) {
-        this.set("baselayer", value);
+    setBaseLayer: function (value) {
+        this.set("baseLayer", value);
     },
 
     // setter for newOvmView
@@ -104,4 +134,4 @@ const OverviewmapModel = Backbone.Model.extend({
 
 });
 
-export default OverviewmapModel;
+export default OverviewMapModel;

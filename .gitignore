@@ -22,8 +22,10 @@ jshintrc
 examples.zip
 bowerupdate.log
 portalconfigs
+stablePortale
 package-lock.json
 test/end2end/Screenshots/ScreenshotsTest
 npm-debug.log
 .vscode
 build
+/jsdoc

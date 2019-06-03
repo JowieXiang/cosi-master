@@ -4,13 +4,21 @@ import Cluster from "ol/source/Cluster.js";
 import VectorLayer from "ol/layer/Vector.js";
 import {WFS} from "ol/format.js";
 
-const WFSLayer = Layer.extend({
+const WFSLayer = Layer.extend(/** @lends WFSLayer.prototype */{
     defaults: _.extend({}, Layer.prototype.defaults, {
         supported: ["2D", "3D"],
         showSettings: true,
         isClustered: false
     }),
-
+    /**
+     * @class WFSLayer
+     * @extends Layer
+     * @memberof Core.ModelList.Layer
+     * @constructs
+     * @property {String[]} supported=["2D", "3D"] Supported map modes.
+     * @property {Boolean} showSettings=true Flag if settings selectable.
+     * @property {Boolean} isClustered=false Flag if layer is clustered.
+     */
     initialize: function () {
         if (!this.get("isChildLayer")) {
             Layer.prototype.initialize.apply(this);
@@ -22,10 +30,8 @@ const WFSLayer = Layer.extend({
     },
 
     /**
-     * Wird vom Model getriggert und erzeugt eine vectorSource.
-     * Ggf. auch eine clusterSource
-     * @return {[type]} [description]
-     * @uses this createClusterLayerSource
+     * creates layer source.
+     * @return {void}
      */
     createLayerSource: function () {
         this.setLayerSource(new VectorSource());
@@ -35,8 +41,8 @@ const WFSLayer = Layer.extend({
     },
 
     /**
-     * [createClusterLayerSource description]
-     * @return {[type]} [description]
+     * Creates cluster layer source.
+     * @return {void}
      */
     createClusterLayerSource: function () {
         this.setClusterLayerSource(new Cluster({
@@ -46,8 +52,8 @@ const WFSLayer = Layer.extend({
     },
 
     /**
-     * [createLayer description]
-     * @return {[type]} [description]
+     * Creates vector layer.
+     * @return {void}
      */
     createLayer: function () {
         this.setLayer(new VectorLayer({
@@ -58,6 +64,7 @@ const WFSLayer = Layer.extend({
             routable: this.get("routable"),
             gfiTheme: this.get("gfiTheme"),
             id: this.get("id"),
+            hitTolerance: this.get("hitTolerance"),
             altitudeMode: "clampToGround"
         }));
 
@@ -65,14 +72,9 @@ const WFSLayer = Layer.extend({
     },
 
     /**
-     * [setClusterLayerSource description]
-     * @param {[type]} value [description]
-     * @returns {void}
+     * Creates new WFS-Format.
+     * @returns {ol.format.wfs} - WFS format.
      */
-    setClusterLayerSource: function (value) {
-        this.set("clusterLayerSource", value);
-    },
-
     getWfsFormat: function () {
         return new WFS({
             featureNS: this.get("featureNS"),
@@ -81,8 +83,8 @@ const WFSLayer = Layer.extend({
     },
 
     /**
-     * Lädt den WFS neu
-     * @param  {boolean} [showLoader=false] Zeigt einen Loader während der Request läuft
+     * Updates layer source
+     * @param  {Boolean} [showLoader] Flag if Loader should be shown.
      * @returns {void}
      */
     updateSource: function (showLoader) {
@@ -115,8 +117,8 @@ const WFSLayer = Layer.extend({
     },
 
     /**
-     * Anstoßen der notwendigen Schritte nachdem neue Daten geladen wurden.
-     * @param  {xml} data Response des Ajax-Requests
+     * Handles response after new data is loaded.
+     * @param  {xml} data Response from Ajax-Request.
      * @returns {void}
      */
     handleResponse: function (data) {
@@ -129,9 +131,9 @@ const WFSLayer = Layer.extend({
     },
 
     /**
-     * Erzeugt aus einer XML-Response eine ol.features Collection
-     * @param  {xml} data die XML-Response
-     * @return {ol/Feature[]}   Collection aus ol/Feature
+     * Parses xml data to openlayer features.
+     * @param  {xml} data XML response.
+     * @return {ol.feature[]} Array aus ol/Feature.
      */
     getFeaturesFromData: function (data) {
         var wfsReader,
@@ -143,25 +145,21 @@ const WFSLayer = Layer.extend({
         features = wfsReader.readFeatures(data);
 
         // Nur die Features verwenden, die eine Geometrie haben. Aufgefallen bei KITAs am 05.01.2018 (JW)
-        features = _.filter(features, function (feature) {
+        features = features.filter(function (feature) {
             return !_.isUndefined(feature.getGeometry());
         });
 
         return features;
     },
 
+    /**
+     * Sets Style for layer.
+     * @returns {void}
+     */
     styling: function () {
         var stylelistmodel = Radio.request("StyleList", "returnModelById", this.get("styleId"));
 
         if (!_.isUndefined(stylelistmodel)) {
-            /**
-             * function that takes a feature and resolution and returns an array of styles
-             * Erfordert beide Parameter, sonst Laufzeitfehler (in ol <= 4.6.5)
-             * @param  {[ol.feature]} feature
-             * @param  {number} resolution
-             * @return {[ol.style.Style]}
-             * @tutorial https://openlayers.org/en/latest/apidoc/ol.html#.StyleFunction
-             */
             this.setStyle(function (feature) {
                 return stylelistmodel.createStyle(feature, this.get("isClustered"));
             }.bind(this));
@@ -170,11 +168,10 @@ const WFSLayer = Layer.extend({
         this.get("layer").setStyle(this.get("style"));
     },
 
-    setProjection: function (proj) {
-        this.set("projection", proj);
-    },
-
-    // wird in layerinformation benötigt. --> macht vlt. auch für Legende Sinn?!
+    /**
+     * Generates a legend url.
+     * @returns {void}
+     */
     createLegendURL: function () {
         var style;
 
@@ -188,7 +185,7 @@ const WFSLayer = Layer.extend({
     },
 
     /**
-     * sets null style (= no style) for all features
+     * Hides all features by setting style= null for all features.
      * @returns {void}
      */
     hideAllFeatures: function () {
@@ -201,6 +198,10 @@ const WFSLayer = Layer.extend({
         }, this);
     },
 
+    /**
+     * Shows all features by setting their style.
+     * @returns {void}
+     */
     showAllFeatures: function () {
         var collection = this.get("layerSource").getFeatures(),
             style;
@@ -211,9 +212,10 @@ const WFSLayer = Layer.extend({
             feature.setStyle(style(feature));
         }, this);
     },
+
     /**
-     * Zeigt nur die Features an, deren Id übergeben wird
-     * @param  {string[]} featureIdList - featureIdList
+     * Only shows features that match the given ids.
+     * @param {string[]} featureIdList List of feature ids.
      * @returns {void}
      */
     showFeaturesByIds: function (featureIdList) {
@@ -228,6 +230,11 @@ const WFSLayer = Layer.extend({
         }, this);
     },
 
+    /**
+     * Returns the style as a function.
+     * @param {Function|Object} style ol style object or style function.
+     * @returns {function} - style as function.
+     */
     getStyleAsFunction: function (style) {
         if (_.isFunction(style)) {
             return style;
@@ -240,8 +247,8 @@ const WFSLayer = Layer.extend({
     },
 
     /**
-    * Prüft anhand der Scale ob der Layer sichtbar ist oder nicht
-    * @param {object} options -
+    * Checks on scale if layer is out of range.
+    * @param {Object} options Option from MapView.
     * @returns {void}
     **/
     checkForScale: function (options) {
@@ -253,9 +260,29 @@ const WFSLayer = Layer.extend({
         }
     },
 
-    // setter for style
+    /**
+     * Setter for attribute "style".
+     * @param {ol.style} value openlayers style.
+     * @returns {void}
+     */
     setStyle: function (value) {
         this.set("style", value);
+    },
+    /**
+     * Setter for attribute "clusterLayerSource".
+     * @param {ol.source.vector} value vector source.
+     * @returns {void}
+     */
+    setClusterLayerSource: function (value) {
+        this.set("clusterLayerSource", value);
+    },
+    /**
+     * Setter for attribute "projection".
+     * @param {ol.projection} value projection.
+     * @returns {void}
+     */
+    setProjection: function (value) {
+        this.set("projection", value);
     }
 });
 

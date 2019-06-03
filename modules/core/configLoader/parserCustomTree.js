@@ -1,14 +1,26 @@
 import Parser from "./parser";
 
-const CustomTreeParser = Parser.extend({
-
+const CustomTreeParser = Parser.extend(/** @lends CustomTreeParser.prototype */{
     /**
-     * Parsed response.Themenconfig
-     * Die Objekte aus der config.json und services.json werden über die Id zusammengeführt
+     * @class CustomTreeParser
+     * @extends Parser
+     * @memberof Core.ConfigLoader
+     * @constructs
+     * @fires RawLayerList#RadioRequestRawLayerListGetLayerAttributesWhere
+     * @fires RawLayerList#RadioRequestRawLayerListGetLayerAttributesList
+     */
+    defaults: _.extend({}, Parser.prototype.defaults, {}),
+    /**
+     * Recursive function.
+     * Parses the config.json. response.Themenconfig.
+     * The object from config.json and services.json are merged by id.
+     *
      * @param  {Object} object - Baselayer | Overlayer | Folder
-     * @param  {string} parentId Elternid
-     * @param  {Number} level - Rekursionsebene = Ebene im Themenbaum
-     * @return {undefined}
+     * @param  {string} parentId Id of parent item.
+     * @param  {Number} level Level of recursion. Equals to level in layertree.
+     * @fires RawLayerList#RadioRequestRawLayerListGetLayerAttributesWhere
+     * @fires RawLayerList#RadioRequestRawLayerListGetLayerAttributesList
+     * @returns {void}
      */
     parseTree: function (object, parentId, level) {
         if (_.has(object, "Layer")) {
@@ -20,11 +32,20 @@ const CustomTreeParser = Parser.extend({
 
                 // Für Singel-Layer (ol.layer.Layer)
                 // z.B.: {id: "5181", visible: false}
+
                 if (!_.has(layerExtended, "children") && _.isString(layerExtended.id)) {
                     objFromRawList = Radio.request("RawLayerList", "getLayerAttributesWhere", {id: layerExtended.id});
+                    // DIPAS -> Steht ein Objekt nicht in der ServicesJSON, hat aber eine url dann wird der Layer ohne Services Eintrag trotzdemübergeben
 
-                    if (_.isNull(objFromRawList)) { // Wenn LayerID nicht definiert, dann Abbruch
-                        return;
+                    // DIPAS -> wenn der Layertyp "StaticImage" übergeben wird brechen wur nicht ab sondern arbeiten mit der neuen ImageURL weiter.
+                    // Wird für den Einsatz eines individuell eingestelölten Bildes benötigt.
+                    if (_.isNull(objFromRawList)) {
+                        if (_.has(layerExtended, "url")) { // Wenn LayerID nicht definiert, dann Abbruch
+                            objFromRawList = layerExtended;
+                        }
+                        else {
+                            return;
+                        }
                     }
                     layerExtended = _.extend(objFromRawList, layerExtended, {"isChildLayer": false});
                 }
@@ -34,7 +55,7 @@ const CustomTreeParser = Parser.extend({
                     objsFromRawList = Radio.request("RawLayerList", "getLayerAttributesList");
                     mergedObjsFromRawList = this.mergeObjectsByIds(layerExtended.id, objsFromRawList);
 
-                    if (layerExtended.id.length !== mergedObjsFromRawList.layers.split(",").length) { // Wenn nicht alle LayerIDs des Arrays definiert, dann Abbruch
+                    if (_.isNull(mergedObjsFromRawList)) { // Wenn Layer nicht definiert, dann Abbruch
                         return;
                     }
                     layerExtended = _.extend(mergedObjsFromRawList, _.omit(layerExtended, "id"), {"isChildLayer": false});
@@ -52,7 +73,7 @@ const CustomTreeParser = Parser.extend({
                         return undefined;
                     }, this);
 
-                    layerExtended.children = _.filter(layerExtended.children, function (childLayer) {
+                    layerExtended.children = layerExtended.children.filter(function (childLayer) {
                         return !_.isUndefined(childLayer);
                     });
 
@@ -122,6 +143,13 @@ const CustomTreeParser = Parser.extend({
         }
     },
 
+    /**
+     * Returns a flag if layer has to be displayed.
+     * @param {Number} level The layers level in the layertree.
+     * @param {String} type Type of Item.
+     * @param {Boolean} isInThemen  Flag if layer or folder is in layertree
+     * @returns {Boolean} - Flag if layer is visible in layertree
+     */
     getIsVisibleInTree: function (level, type, isInThemen) {
         var isInThemenBool = _.isUndefined(isInThemen) ? false : isInThemen;
 

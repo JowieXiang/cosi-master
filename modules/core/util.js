@@ -3,7 +3,10 @@ const Util = Backbone.Model.extend({
         // isViewMobile: false,
         config: "",
         ignoredKeys: ["BOUNDEDBY", "SHAPE", "SHAPE_LENGTH", "SHAPE_AREA", "OBJECTID", "GLOBALID", "GEOMETRY", "SHP", "SHP_AREA", "SHP_LENGTH", "GEOM"],
-        uiStyle: "DEFAULT"
+        uiStyle: "DEFAULT",
+        proxyHost: "",
+        loaderOverlayTimeoutReference: null,
+        loaderOverlayTimeout: 10
     },
     initialize: function () {
         var channel = Radio.channel("Util");
@@ -55,19 +58,24 @@ const Util = Backbone.Model.extend({
     },
     /**
      * converts value to String and rewrites punctuation rules. The 1000 separator is "." and the decimal separator is a ","
-     * @param  {[type]} value - feature attribute values
+     * @param  {String} value - feature attribute values
      * @returns {string} punctuated value
      */
     punctuate: function (value) {
         var pattern = /(-?\d+)(\d{3})/,
             stringValue = value.toString(),
+            decimals,
             predecimals = stringValue;
 
         if (stringValue.indexOf(".") !== -1) {
             predecimals = stringValue.split(".")[0];
+            decimals = stringValue.split(".")[1];
         }
         while (pattern.test(predecimals)) {
             predecimals = predecimals.replace(pattern, "$1.$2");
+        }
+        if (decimals) {
+            return predecimals + "," + decimals;
         }
         return predecimals;
     },
@@ -158,7 +166,9 @@ const Util = Backbone.Model.extend({
 
         range.selectNodeContents(el);
         selection.removeAllRanges();
-        selection.addRange(range);
+        if (!this.isInternetExplorer()) {
+            selection.addRange(range);
+        }
         el.setSelectionRange(0, 999999); // A big number, to cover anything that could be inside the element.
 
         el.readOnly = oldReadOnly;
@@ -200,7 +210,7 @@ const Util = Backbone.Model.extend({
     isChrome: function () {
         var isChrome = false;
 
-        if (/Chrome/i.test(navigator.userAgent)) {
+        if ((/Chrome/i).test(navigator.userAgent)) {
             isChrome = true;
         }
         return isChrome;
@@ -211,22 +221,29 @@ const Util = Backbone.Model.extend({
     isInternetExplorer: function () {
         var ie = false;
 
-        if (/MSIE 9/i.test(navigator.userAgent)) {
+        if ((/MSIE 9/i).test(navigator.userAgent)) {
             ie = "IE9";
         }
-        else if (/MSIE 10/i.test(navigator.userAgent)) {
+        else if ((/MSIE 10/i).test(navigator.userAgent)) {
             ie = "IE10";
         }
-        else if (/rv:11.0/i.test(navigator.userAgent)) {
+        else if ((/rv:11.0/i).test(navigator.userAgent)) {
             ie = "IE11";
         }
         return ie;
     },
     showLoader: function () {
+        clearTimeout(this.get("loaderOverlayTimeoutReference"));
+        this.setLoaderOverlayTimeoutReference(setTimeout(function () {
+            Radio.trigger("Util", "hideLoader");
+        }, 1000 * this.get("loaderOverlayTimeout")));
         $("#loader").show();
     },
     hideLoader: function () {
         $("#loader").hide();
+    },
+    setLoaderOverlayTimeoutReference: function (timeoutReference) {
+        this.set("loaderOverlayTimeoutReference", timeoutReference);
     },
     getProxyURL: function (url) {
         var parser = document.createElement("a"),
@@ -251,14 +268,15 @@ const Util = Backbone.Model.extend({
             parser.hostname = window.location.hostname;
         }
         hostname = parser.hostname.split(".").join("_");
-        result = result.replace(parser.hostname, "/" + hostname);
+        result = this.get("proxyHost") + "/" + result.replace(parser.hostname, hostname);
+
         return result;
     },
 
     /**
      * Setter für Attribut isViewMobile
      * @param {boolean} value sichtbar
-     * @return {undefined}
+     * @return {void}
      */
     setIsViewMobile: function (value) {
         this.set("isViewMobile", value);
@@ -266,7 +284,7 @@ const Util = Backbone.Model.extend({
 
     /**
      * Toggled das Attribut isViewMobile bei über- oder unterschreiten einer Fensterbreite von 768px
-     * @return {undefined}
+     * @return {void}
      */
     toggleIsViewMobile: function () {
         if (window.innerWidth >= 768) {

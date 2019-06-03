@@ -30,7 +30,7 @@ const Config = {
     ],
     portalConf: "../../portal/master/",
     remoteInterface: {
-        postMessageUrl: "http://localhost:8080"
+        postMessageUrl: "https://localhost:9001"
     },
     proxyURL: "/cgi-bin/proxy.cgi",
     quickHelp: {
@@ -43,7 +43,7 @@ const Config = {
     wfsImgPath: "/lgv-config/img/",
     zoomToFeature: {
         attribute: "flaechenid",
-        imgLink: "../img/location_eventlotse.svg",
+        imgLink: "/lgv-config/img/location_eventlotse.svg",
         layerId: "4561",
         wfsId: "4560"
     },

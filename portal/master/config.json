@@ -29,14 +29,22 @@
         "suggestCount": 10,
         "epsg": "EPSG:25832",
         "filter": "filter=(typ:*)",
-        "score": 0.6
+        "score": 0.6,
+        "zoomToResult": true
       },
       "osm": {
         "minChars": 3,
         "serviceId": "10",
         "limit": 60,
-        "states": "Hamburg",
-        "classes": "place,highway,building,shop,historic,leisure"
+        "states": "Hamburg Thüringen Hessen Nordrhein-Westfalen",
+        "classes": "place,highway,building,shop,historic,leisure,county"
+      },
+      "gdi":{
+		"minChars": 3,
+		"serviceId": "elastic"
+	  },
+     "visibleVector": {
+        "gfiOnClick": false
       },
       "specialWFS":
       {
@@ -45,27 +53,34 @@
         "definitions": [
           {
             "url": "/geodienste_hamburg_de/MRH_WFS_Rotenburg",
-            "data": "service=WFS&request=GetFeature&version=2.0.0&typeNames=app:mrh_row_bplan&propertyName=name",
+            "typeName": "app:mrh_row_bplan",
+            "propertyNames": ["app:name"],
             "name": "B-Plan"
           },
           {
             "url": "/geodienste_hamburg_de/HH_WFS_Bebauungsplaene",
-            "data": "service=WFS&request=GetFeature&version=2.0.0&typeNames=prosin_festgestellt&propertyName=planrecht",
+            "typeName": "app:hh_hh_festgestellt",
+            "propertyNames": ["app:geltendes_planrecht"],
+            "geometryName": "app:geom",
             "name": "festgestellt"
           },
           {
             "url": "/geodienste_hamburg_de/HH_WFS_Bebauungsplaene",
-            "data": "service=WFS&request=GetFeature&version=2.0.0&typeNames=prosin_imverfahren&propertyName=plan",
+            "typeName": "app:prosin_imverfahren",
+            "propertyNames": ["app:plan"],
+            "geometryName": "app:the_geom",
             "name": "im Verfahren"
           },
           {
             "url": "/geodienste_hamburg_de/HH_WFS_KitaEinrichtung",
-            "data": "service=WFS&request=GetFeature&version=2.0.0&typeNames=app:KitaEinrichtungen&propertyName=app:Name",
+            "typeName": "app:KitaEinrichtungen",
+            "propertyNames": ["app:Name"],
             "name": "Kita"
           },
           {
             "url": "/geodienste_hamburg_de/HH_WFS_Stoerfallbetriebe",
-            "data": "service=WFS&request=GetFeature&version=1.1.0&typeName=app:stoerfallbetrieb&propertyName=app:standort",
+            "typeName": "app:stoerfallbetrieb",
+            "propertyNames": ["app:standort"],
             "name": "Störfallbetrieb"
           }
         ]
@@ -187,7 +202,8 @@
         "children": {
           "einwohnerabfrage": {
             "name": "Einwohneranzahl abfragen",
-            "glyphicon": "glyphicon-wrench"
+            "glyphicon": "glyphicon-wrench",
+            "onlyDesktop": false
           },
           "compareFeatures": {
             "name": "Vergleichsliste",
@@ -199,7 +215,7 @@
             "glyphicon": "glyphicon-search",
             "serviceId": "6",
             "storedQueryID": "Flurstueck",
-            "configJSON": "/../../node_modules/lgv-config/gemarkungen_hh.json",
+            "configJSON": "/lgv-config/gemarkungen_hh.json",
             "parcelDenominator": false
           },
           "measure":
@@ -210,6 +226,11 @@
           "coord":
           {
             "name": "Koordinaten abfragen",
+            "glyphicon": "glyphicon-screenshot"
+          },
+          "shadow":
+          {
+            "name": "Schatten",
             "glyphicon": "glyphicon-screenshot"
           },
           "gfi":
@@ -223,7 +244,7 @@
             "name": "Karte drucken",
             "glyphicon": "glyphicon-print",
             "mapfishServiceId": "mapfish_qs",
-            "printAppId": "master",
+            "printAppId": "mrh",
             "filename": "Ausdruck",
             "title": "Mein Titel",
             "version" : "mapfish_print_3"
@@ -266,8 +287,7 @@
           },
           "styleWMS": {
             "name": "Style WMS",
-            "glyphicon": "glyphicon-tint",
-            "onlyDesktop": true
+            "glyphicon": "glyphicon-tint"
           },
           "featureLister": {
             "name": "Liste",
@@ -303,7 +323,7 @@
             "name": "Auswahl speichern",
             "glyphicon": "glyphicon-share"
           },
-          "layerslider": {
+          "layerSlider": {
             "name": "Zeitreihe",
             "glyphicon": "glyphicon-film",
             "title": "Simulation von Beispiel-WMS",
@@ -366,24 +386,25 @@
         "zoomMode": "once",
         "poiDistances": [500, 1000, 2000]
       },
-      "totalview": true,
+      "totalView": true,
       "attributions":
       {
         "isInitOpenDesktop": true,
-        "isInitOpenMobile": false
+        "isInitOpenMobile": true
       },
-      "overviewmap":
+      "overviewMap":
       {
         "resolution": 611.4974492763076,
-        "baselayer": "452"
+        "baseLayer": "452"
       },
       "mousePosition": true,
       "button3d": true,
       "buttonOblique": true,
-      "freeze": true
+      "freeze": true,
+      "backForward" : true
     },
     "scaleLine": true,
-    "Baumtyp": "light"
+    "layersRemovable": true
   },
   "Themenconfig":
   {
@@ -398,9 +419,8 @@
           "id": "452"
         },
         {
-          "id": ["713", "714", "715", "716"],
-          "name": "Geobasiskarten (schwarz-weiß)",
-          "visibility": true
+          "id": ["4736", "12062", "4745", "4739", "12061", "4742", "12060", "12059"],
+          "name": "Geobasiskarten (schwarz-grau)"
         },
         {
           "id": "12883",
@@ -413,9 +433,9 @@
           "visibility": true
         },
         {
-          "id": "12885",
-          "name": "Oblique",
-          "visibility": true
+         "id": "14261",
+         "name": "Oblique",
+         "visibility": true
         }
       ]
     },
@@ -433,10 +453,28 @@
         "id": "8730"
       },
       {
+        "id": "10220"
+      },
+      {
         "id": "2426"
       },
       {
-        "id": "4561"
+        "id": "1933",
+        "infoFormat": "application/vnd.ogc.gml",
+        "styles": [
+          "geofox_stations"
+        ],
+        "name": [
+          "HVV Haltestellen"
+        ],
+        "legendURL": [
+          "https://geoportal.metropolregion.hamburg.de/legende_mrh/hvv-bus.png"
+        ]
+      },
+      {
+        "id": "4561",
+        "infoFormat": "text/html",
+        "visibility": false
       },
       {
         "id": "441"
@@ -465,6 +503,16 @@
         ]
       },
       {
+        "id": "13765",
+        "name": "Err. Arbeitsplätze deegree",
+        "visibility": false,
+        "styleable": true,
+        "geomType": "Polygon",
+        "attributesToStyle": [
+          "mit_dem_pwk_in_30_min_erreichbare_arbeitsplaetze"
+        ]
+      },
+      {
         "id": "2003",
         "styleId": "2003",
         "mouseHoverField": "gebietsname"
@@ -472,7 +520,8 @@
       {
         "id": "47",
         "styleId": "47",
-        "mouseHoverField": ["beginn", "ende"]
+        "mouseHoverField": ["beginn", "ende"],
+        "autoRefresh": 6000
       },
       {
         "id": "2714",
@@ -488,7 +537,8 @@
         "id": "2404",
         "styleId": "45",
         "clusterDistance": 40,
-        "routable": true
+        "routable": true,
+        "searchField": "bezeichnung"
       },
       {
         "id": "4479"
@@ -525,8 +575,7 @@
             "filterString": ["*", "Ja", "Eingeschränkt", "Nein"]
           }
         ],
-        "extendedFilter": true,
-        "autoRefresh": 6000
+        "extendedFilter": true
       },
       {
         "id": "8712",
@@ -554,8 +603,9 @@
       },
       {
         "id": "8145",
-        "visibility": true,
+        "visibility": false,
         "styleId": "8145",
+        "hitTolerance": 25,
         "mouseHoverField": "kategorie",
         "extendedFilter": true
       },
@@ -589,6 +639,9 @@
           }
         ],
         "name": "Kita und KH"
+      },
+      {
+        "id": "13023"
       }]
     }
   }

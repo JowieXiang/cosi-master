@@ -29,8 +29,10 @@ const CompareFeaturesView = Backbone.View.extend({
             "renderFeedbackModal": this.renderFeedbackModal
         });
         document.getElementsByClassName("lgv-container")[0].appendChild(this.el);
-        // Bestätige, dass das Modul geladen wurde
-        Radio.trigger("Autostart", "initializedModul", this.model.get("id"));
+
+        if (this.model.get("isActive") === true) {
+            this.render(this.model, true);
+        }
     },
 
     /**
@@ -59,7 +61,9 @@ const CompareFeaturesView = Backbone.View.extend({
      * @returns {void}
      */
     renderListModal: function (model) {
-        var layerModel = Radio.request("ModelList", "getModelByAttributes", {id: model.get("layerId")}),
+        // In reaction to modules/tools/gfi/model.js @ prepareVectorGfiParam(), only use 1st part of underscore delimited layerId
+        var realLayerId = model.get("layerId").split("_")[0],
+            layerModel = Radio.request("ModelList", "getModelByAttributes", {"id": realLayerId}),
             attr = {
                 list: model.prepareFeatureListToShow(layerModel.get("gfiAttributes")),
                 rowsToShow: model.get("numberOfAttributesToShow"),

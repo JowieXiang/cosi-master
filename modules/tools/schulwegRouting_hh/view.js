@@ -70,8 +70,9 @@ const SchulwegRoutingView = Backbone.View.extend({
                 this.render();
             }
         });
-        // Bestätige, dass das Modul geladen wurde
-        Radio.trigger("Autostart", "initializedModul", this.model.get("id"));
+        if (this.model.get("isActive") === true) {
+            this.render();
+        }
     },
     className: "schulweg-routing",
     template: _.template(template),
@@ -83,6 +84,11 @@ const SchulwegRoutingView = Backbone.View.extend({
         var attr = this.model.toJSON();
 
         this.$el.html(this.template(attr));
+        this.renderRouteResult(this.model, this.model.get("routeResult"));
+        this.renderRouteDescription(this.model, this.model.get("routeDescription"));
+        this.updateRegionalSchool(this.model.get("schoolWithAdress"));
+        this.togglePrintEnabled(this.model.get("printRoute"));
+
         this.initSelectpicker();
         this.setPresetValues();
         this.$el.find(".routing-checkbox").append(this.checkBoxHVV.render().$el);
@@ -94,9 +100,11 @@ const SchulwegRoutingView = Backbone.View.extend({
     togglePrintEnabled: function (value) {
         if (value) {
             this.$el.find(".print-route").removeAttr("disabled");
+            this.model.setPrintRoute(true);
         }
         else {
             this.$el.find(".print-route").attr("disabled", true);
+            this.model.setPrintRoute(false);
         }
     },
     setPresetValues: function () {
@@ -132,14 +140,14 @@ const SchulwegRoutingView = Backbone.View.extend({
     },
 
     renderRouteResult: function (model, value) {
-        var attr = this.model.toJSON();
+        var attr = model.toJSON();
 
         if (Object.keys(value).length !== 0) {
             this.$el.find(".result").html(this.templateRouteResult(attr));
         }
     },
     renderRouteDescription: function (model, value) {
-        var attr = this.model.toJSON();
+        var attr = model.toJSON();
 
         if (value.length > 0) {
             this.$el.find(".description").html(this.templateRouteDescription(attr));
@@ -189,6 +197,7 @@ const SchulwegRoutingView = Backbone.View.extend({
     },
     closeView: function () {
         this.model.setIsActive(false);
+        Radio.trigger("ModelList", "toggleDefaultTool");
     },
     selectSchool: function (evt) {
         var schoolname = evt.target.value;
@@ -222,7 +231,7 @@ const SchulwegRoutingView = Backbone.View.extend({
     },
     /**
      * trigger the model to print the route
-     * @return {[type]} [description]
+     * @return {void}
      */
     printRoute: function () {
         this.model.printRouteMapFish();

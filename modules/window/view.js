@@ -10,12 +10,24 @@ const WindowView = Backbone.View.extend({
         "click .glyphicon-remove": "hide"
     },
     initialize: function () {
+        var channel = Radio.channel("WindowView");
+
         this.listenTo(this.model, {
             "change:isVisible change:winType": this.render
         });
+
         this.$el.draggable({
             containment: "#map",
             handle: ".move",
+            start: function (event, ui) {
+                // As .draggable works by manipulating the css top and left values the following code is necessary if the bottom and right values
+                // are used for the positioning of the tool window (as is the case for the table tool window). Otherwise dragging the window will
+                // resize the window if no height and width values are set.
+                ui.helper.css({
+                    right: "auto",
+                    bottom: "auto"
+                });
+            },
             stop: function (event, ui) {
                 ui.helper.css({"height": "", "width": ""});
             }
@@ -26,9 +38,16 @@ const WindowView = Backbone.View.extend({
 
         $(window).resize($.proxy(function () {
             this.$el.css({
-                "max-height": window.innerHeight - 100 // 100 fixer Wert für navbar &co.
+                "max-height": window.innerHeight - 100, // 100 fixer Wert für navbar &co.
+                "overflow": "auto"
             });
         }, this));
+
+        channel.on({
+            "hide": this.hide
+        }, this);
+
+        this.render();
     },
     id: "window",
     className: "tool-window ui-widget-content",
@@ -36,15 +55,45 @@ const WindowView = Backbone.View.extend({
     templateMax: _.template(templateMax),
     templateTable: _.template(templateTable),
     render: function () {
-        var attr = this.model.toJSON();
+        const attr = this.model.toJSON();
+        var currentClass,
+            currentTableClass;
 
         if (this.model.get("isVisible") === true) {
             if (Radio.request("Util", "getUiStyle") === "TABLE") {
-                $(".lgv-container").append(this.$el.html(this.templateTable(attr)));
-                this.$el.addClass("table-tool-window");
+                this.$el.html(this.templateTable(attr));
+                document.getElementsByClassName("lgv-container")[0].appendChild(this.el);
+                currentClass = $("#window").attr("class").split(" ");
+
+                this.$el.addClass("table-tool-win-all");
+
+                _.each(currentClass, function (item) {
+
+                    if (item.startsWith("table-tool-window")) {
+                        currentTableClass = item;
+                    }
+                });
+
+                if ($("#table-nav").attr("class") === "table-nav-0deg ui-draggable" || $("#table-nav").attr("class") === "table-nav-0deg") {
+                    this.$el.removeClass(currentTableClass);
+                    this.$el.addClass("table-tool-window");
+                }
+                else if ($("#table-nav").attr("class") === "table-nav-90deg") {
+                    this.$el.removeClass(currentTableClass);
+                    this.$el.addClass("table-tool-window-90deg");
+                }
+                else if ($("#table-nav").attr("class") === "table-nav-180deg") {
+                    this.$el.removeClass(currentTableClass);
+                    this.$el.addClass("table-tool-window-180deg");
+                }
+                else if ($("#table-nav").attr("class") === "table-nav-270deg") {
+                    this.$el.removeClass(currentTableClass);
+                    this.$el.addClass("table-tool-window-270deg");
+                }
             }
             else {
-                $("body").append(this.$el.html(this.templateMax(attr)));
+                this.$el.html(this.templateMax(attr));
+                document.body.appendChild(this.el);
                 this.$el.css({"top": this.model.get("maxPosTop"), "bottom": "", "left": this.model.get("maxPosLeft"), "margin-bottom": "30px"});
             }
             this.$el.show("slow");
@@ -77,9 +126,8 @@ const WindowView = Backbone.View.extend({
 
         if (toolModel) {
             toolModel.setIsActive(false);
+            Radio.trigger("ModelList", "toggleDefaultTool");
         }
-        this.$el.hide("slow");
-        this.model.setVisible(false);
     }
 });
 

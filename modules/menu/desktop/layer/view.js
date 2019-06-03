@@ -84,6 +84,10 @@ const LayerView = Backbone.View.extend({
         this.model.toggleIsSelected();
         Radio.trigger("ModelList", "setIsSelectedOnParent", this.model);
         this.rerender();
+
+        if (Radio.request("LayerInformation", "getIsVisible")) {
+            this.showLayerInformation();
+        }
     },
     removeFromSelection: function () {
         this.model.setIsInSelection(false);
@@ -92,7 +96,7 @@ const LayerView = Backbone.View.extend({
     showLayerInformation: function () {
         this.model.showLayerInformation();
         // Navigation wird geschlossen
-        $("div.collapse.navbar-collapse").removeClass("in");
+        this.$("div.collapse.navbar-collapse").removeClass("in");
     },
     toggleIsSettingVisible: function () {
         this.model.toggleIsSettingVisible();

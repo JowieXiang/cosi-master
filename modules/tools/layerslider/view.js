@@ -1,6 +1,6 @@
-import LayersliderTemplate from "text-loader!./template.html";
+import LayerSliderTemplate from "text-loader!./template.html";
 
-const LayersliderView = Backbone.View.extend({
+const LayerSliderView = Backbone.View.extend({
     events: {
         "click #play": "playSlider",
         "click #stop": "stopSlider",
@@ -14,11 +14,12 @@ const LayersliderView = Backbone.View.extend({
             },
             "change:activeLayer": this.layerSwitched
         });
-        // Bestätige, dass das Modul geladen wurde
-        Radio.trigger("Autostart", "initializedModul", this.model.get("id"));
+        if (this.model.get("isActive") === true) {
+            this.render();
+        }
     },
     className: "layerslider",
-    template: _.template(LayersliderTemplate),
+    template: _.template(LayerSliderTemplate),
 
     render: function () {
         var attr;
@@ -127,4 +128,4 @@ const LayersliderView = Backbone.View.extend({
 });
 
 
-export default LayersliderView;
+export default LayerSliderView;

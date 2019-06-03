@@ -1,4 +1,13 @@
-const ThemeView = Backbone.View.extend({
+const ThemeView = Backbone.View.extend(/** @lends ThemeView.prototype */{
+    /**
+     * @class ThemeView
+     * @extends Tools.GFI
+     * @memberof Tools.GFI.Themes
+     * @constructs
+     * @listens gfiView#RadioTriggerRender
+     * @fires Util#RadioRequestUtilIsViewMobile
+     * @fires GFI#RadioRequestGFIGetCurrentView
+     */
     initialize: function () {
         var gfiWindow = _.has(Config, "gfiWindow") ? Config.gfiWindow : "detached",
             channel = Radio.channel("gfiView");
@@ -19,19 +28,25 @@ const ThemeView = Backbone.View.extend({
     defaults: {
         gfiWindow: "detached"
     },
+    /**
+    * todo
+    * @returns {*} todo
+    */
     render: function () {
-
         var attr;
 
         if (_.isUndefined(this.model.get("gfiContent")) === false) {
             attr = this.model.toJSON();
             this.$el.html(this.template(attr));
         }
-
-        Radio.trigger("GFI", "afterRender");
         return this;
     },
-
+    /**
+    * todo
+    * @param {*} model todo
+    * @param {*} value todo
+    * @returns {*} todo
+    */
     appendTheme: function (model, value) {
         var isViewMobile = Radio.request("Util", "isViewMobile"),
             currentView = Radio.request("GFI", "getCurrentView"),
@@ -50,12 +65,24 @@ const ThemeView = Backbone.View.extend({
             this.appendChildren();
             this.appendRoutableButton();
             if (this.gfiWindow === "detached" && !isViewMobile) {
+                if (this.model.get("infoFormat") === "text/html") {
+                    currentView.$el.addClass("gfi-text-html");
+                }
+                else if (currentView.$el.hasClass("gfi-text-html")) {
+                    currentView.$el.removeClass("gfi-text-html");
+                }
                 this.adjustGfiWindow(currentView, oldGfiWidth, oldLeft);
             }
         }
         this.delegateEvents();
     },
-
+    /**
+    * todo
+    * @param {*} currentView todo
+    * @param {*} oldGfiWidth todo
+    * @param {*} oldLeft todo
+    * @returns {*} todo
+    */
     adjustGfiWindow: function (currentView, oldGfiWidth, oldLeft) {
         var newGfiWidth,
             newLeft;
@@ -84,7 +111,7 @@ const ThemeView = Backbone.View.extend({
      * Alle Children werden dem gfi-content appended. Eine Übernahme in dessen table ist nicht HTML-konform (<div> kann nicht in <table>).
      * Nur $.append, $.replaceWith usw. sorgen für einen korrekten Zusammenbau eines <div>. Mit element.val.el.innerHTML wird HTML nur kopiert, sodass Events
      * nicht im view ankommen.
-     * @return {undefined}
+     * @returns {*} todo
      */
     appendChildren: function () {
         var children = this.model.get("children");
@@ -102,7 +129,7 @@ const ThemeView = Backbone.View.extend({
     },
     /**
      * Fügt den Button dem gfiContent hinzu
-     * @return {undefined}
+     * @returns {*} todo
      */
     appendRoutableButton: function () {
         var rb;

@@ -1,19 +1,47 @@
-const SearchbarModel = Backbone.Model.extend({
+const SearchbarModel = Backbone.Model.extend(/** @lends SearchbarModel.prototype */{
     defaults: {
         placeholder: "Suche",
         recommendedList: "",
         recommendedListLength: 5,
         quickHelp: false,
-        searchString: "", // der aktuelle String in der Suchmaske
+        searchString: "",
         hitList: [],
         minChars: "",
-        isInitialSearch: true, // Flag das nach Ende der initialen Suche (ParametricURL) auf false gesetzt wird
-        isInitialRecommendedListCreated: false, // Wurde die Ergebnisliste nach der initialen Suche bereits erzeugt?
-        knownInitialSearchTasks: ["gazetteer", "specialWFS", "bkg", "tree", "osm"], // Suchalgorithmen, für die eine initiale Suche möglich ist
-        activeInitialSearchTasks: [] // Suchalgorithmen, für die eine initiale Suche aktiviert ist
-        // isHitListReady: true
+        isInitialSearch: true,
+        isInitialRecommendedListCreated: false,
+        knownInitialSearchTasks: ["gazetteer", "specialWFS", "bkg", "tree", "osm"],
+        activeInitialSearchTasks: []
     },
 
+    /**
+     * @class SearchbarModel
+     * @description todo
+     * @extends Backbone.Model
+     * @memberof Searchbar
+     * @constructs
+     * @property {String} placeholder="" todo
+     * @property {String} recommendedList="" todo
+     * @property {Number} recommendedListLength=5 todo
+     * @property {Boolean} quickHelp=false todo
+     * @property {String} searchString="" the current string in the search mask
+     * @property {Array} hitList=[] todo
+     * @property {String} minChars="" todo
+     * @property {Boolean} isInitialSearch=true Flag that is set to false at the end of the initial search (ParametricURL).
+     * @property {Boolean} isInitialRecommendedListCreated=false Has the recommended list already been generated after the initial search?
+     * @property {String[]} knownInitialSearchTasks=["gazetteer", "specialWFS", "bkg", "tree", "osm"] Search algorithms for which an initial search is possible
+     * @property {Array} activeInitialSearchTasks=[] Search algorithms for which an initial search is activated
+     * @listens Searchbar#RadioTriggerSearchbarCreateRecommendedList
+     * @listens Searchbar#RadioTriggerSearchbarPushHits
+     * @listens Searchbar#RadioTriggerSearchbarRemoveHits
+     * @listens Searchbar#RadioTriggerSearchbarCheckInitialSearch
+     * @listens Searchbar#RadioTriggerSearchbarAbortSearch
+     * @fires ParametricURL#RadioRequestParametricURLGetInitString
+     * @fires Searchbar#RadioTriggerSearchbarSetPastedHouseNumber
+     * @fires Searchbar#RadioTriggerSearchbarSearch
+     * @fires ViewZoom#RadioTriggerViewZoomHitSelected
+     * @fires Searchbar#RadioTriggerSearchbarCheckInitialSearch
+     * @returns {void}
+     */
     initialize: function () {
         this.listenTo(Radio.channel("Searchbar"), {
             "createRecommendedList": this.createRecommendedList,
@@ -36,11 +64,10 @@ const SearchbarModel = Backbone.Model.extend({
     },
 
     /**
-     * Bricht ein Suchalgorithmus die Suche ab, so muss für diesen nicht mehr auf ein Ergebnis gewartet werden.
-     * Daher wird dieser Suchalgoritghmus als erledigt markiert.
-     *
-     * @param {String} triggeredBy Name des aufrufenden Suchalgorithmus
-     * @returns {Void} Kein Rückgabewert
+     * If a search algorithm terminates the search, it is no longer necessary to wait for a result for this algorithm.
+     * Therefore, this search algorithm is marked as done.
+     * @param {String} triggeredBy Name of the calling search algorithm
+     * @returns {void} result
      */
     abortSearch: function (triggeredBy) {
         if (this.get("isInitialSearch")) {
@@ -52,8 +79,8 @@ const SearchbarModel = Backbone.Model.extend({
     },
 
     /**
-     * Prüft ob alle Suchalgorithmen der initialen Suche abgearbeitet wurden
-     * @returns {Void} Kein Rückgabewert
+     * Checks whether all search algorithms of the initial search have been processed.
+     * @returns {void}
      */
     checkInitialSearch: function () {
         var allDone = true;
@@ -78,9 +105,9 @@ const SearchbarModel = Backbone.Model.extend({
     },
 
     /**
-     * Prüfe anhand der Konfiguration welche Suchalgorithmen zur initialen Suche aktiviert sind
-     * @param {Object} config Konfiguration
-     * @returns {Void} Keine Rückgabe
+     * Check by configuration which search algorithms are activated for initial search
+     * @param {Object} config Configuration
+     * @returns {void}
      */
     setInitialSearchTasks: function (config) {
         var searchTasks = this.get("knownInitialSearchTasks"),
@@ -112,9 +139,11 @@ const SearchbarModel = Backbone.Model.extend({
     },
 
     /**
-    * aus View gaufgerufen
+    * called from view
     * @param {string} value - value from event
     * @param {string} eventType - type of the event
+    * @fires Searchbar#RadioTriggerSearchbarSetPastedHouseNumber
+    * @fires Searchbar#RadioTriggerSearchbarSearch
     * @returns {void}
     */
     setSearchString: function (value, eventType) {
@@ -140,13 +169,12 @@ const SearchbarModel = Backbone.Model.extend({
     },
 
     /**
-     * Hilfsmethode um ein Attribut vom Typ Array zu setzen.
-     * {String} attribute - Das Attribut das gesetzt werden soll
-     * {whatever} value - Der Wert des Attributs
-     * @param  {[type]} attribute [description]
-     * @param  {[type]} value     [description]
-     * @param  {[type]} evtType     [description]
-     * @return {[type]}         [description]
+     * Help method to set an attribute of type Array.
+     * @param  {String} attribute - todo
+     * @param  {String} value - todo
+     * @param  {event} evtType - todo
+     * @fires ViewZoom#RadioTriggerViewZoomHitSelected
+     * @return {void}
      */
     pushHits: function (attribute, value, evtType) {
         var tempArray = _.clone(this.get(attribute)),
@@ -156,7 +184,7 @@ const SearchbarModel = Backbone.Model.extend({
 
         // removes addresses without house number, if more than one exists
         if (evtType === "paste" && !_.isUndefined(tempArray) && tempArray.length > 1) {
-            valueWithNumbers = _.filter(tempArray, function (val) {
+            valueWithNumbers = tempArray.filter(function (val) {
                 var valueArray = val.name.split(",")[0].split(" ");
 
                 return !_.isNaN(parseInt(valueArray[valueArray.length - 1], 10));
@@ -174,8 +202,8 @@ const SearchbarModel = Backbone.Model.extend({
 
     /**
      * Removes all hits with the given filter
-     * @param  {[type]} attribute Name of the object to be filtered
-     * @param  {[type]} filter Filter parameters
+     * @param  {string} attribute object to be filtered
+     * @param  {object[]} filter filter parameters
      * @return {Void} Nothing
      */
     removeHits: function (attribute, filter) {
@@ -200,9 +228,9 @@ const SearchbarModel = Backbone.Model.extend({
 
     /**
      * changes the filename extension of given filepath
-     * @param  {[type]} src [description]
-     * @param  {[type]} ext     [description]
-     * @return {[type]}         [description]
+     * @param  {String} src source string
+     * @param  {String} ext file extension
+     * @return {String} file extension
      */
     changeFileExtension: function (src, ext) {
         if (_.isUndefined(src)) {
@@ -216,9 +244,9 @@ const SearchbarModel = Backbone.Model.extend({
 
     /**
      * crops names of hits to length zeichen
-     * @param  {[type]} s [the search result]
-     * @param  {[type]} length  [name length]
-     * @returns {string} s
+     * @param  {String} s todo
+     * @param  {number} length todo
+     * @returns {string} s todo
      */
     shortenString: function (s, length) {
         if (_.isUndefined(s)) {
@@ -231,9 +259,11 @@ const SearchbarModel = Backbone.Model.extend({
     },
 
     /**
-     * Erzeuge eine Liste mit Treffern der einzelnen Suchalgorithmen.
-     * @param {String} triggeredBy Aufrufender Suchalgorithmus
-     * @returns {Void} Kein Rückgabewert
+     * Generate a list with hits of the individual search algorithms.
+     * @param {String} triggeredBy Calling search algorithm
+     * @fires Searchbar#RadioTriggerSearchbarCheckInitialSearch
+     * @fires ViewZoom#RadioTriggerViewZoomHitSelected
+     * @returns {void}
      */
     createRecommendedList: function (triggeredBy) {
         var max = this.get("recommendedListLength"),
@@ -284,22 +314,55 @@ const SearchbarModel = Backbone.Model.extend({
         }
         this.set("recommendedList", _.sortBy(recommendedList, "name"));
         this.trigger("renderRecommendedList");
+
+        if (triggeredBy === "initialSearchFinished" && hitList.length === 1) {
+            Radio.trigger("ViewZoom", "hitSelected");
+        }
     },
 
+    /**
+     * Setter for "tempCounter"
+     * @param {String} value tempCounter
+     * @returns {void}
+     */
     setTempCounter: function (value) {
         this.set("tempCounter", value);
     },
 
+    /**
+     * Setter for "eventType"
+     * @param {String} value eventType
+     * @returns {void}
+     */
     setEventType: function (value) {
         this.set("eventType", value);
     },
 
+    /**
+     * Setter for "searchFieldisSelected"
+     * @param {String} value searchFieldisSelected
+     * @returns {void}
+     */
     setSearchFieldisSelected: function (value) {
         this.set("searchFieldisSelected", value);
     },
 
+    /**
+     * Setter for "quickHelp"
+     * @param {String} value quickHelp
+     * @returns {void}
+     */
     setQuickHelp: function (value) {
         this.set("quickHelp", value);
+    },
+
+    /**
+     * Setter for "hitIsClick"
+     * @param {String} value hitIsClick
+     * @returns {void}
+     */
+    setHitIsClick: function (value) {
+        this.set("hitIsClick", value);
     }
 });
 

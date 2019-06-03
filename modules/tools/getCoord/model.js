@@ -15,13 +15,25 @@ const CoordPopup = Tool.extend({
         renderToWindow: true,
         glyphicon: "glyphicon-screenshot"
     }),
+
     initialize: function () {
         this.superInitialize();
         this.listenTo(this, {
-            "change:isActive": function () {
+            "change:isActive": function (model, value) {
                 Radio.trigger("MapMarker", "hideMarker");
+                if (value) {
+                    this.listenTo(Radio.channel("Map"), {
+                        "clickedWindowPosition": function (evt) {
+                            this.positionClicked(evt.coordinate);
+                        }
+                    });
+                }
+                else {
+                    this.stopListening(Radio.channel("Map", "clickedWindowPosition"));
+                }
             }
         });
+
     },
 
     createInteraction: function () {
@@ -45,7 +57,8 @@ const CoordPopup = Tool.extend({
     },
 
     checkPosition: function (position) {
-        if (this.get("updatePosition") === true) {
+        if (this.get("updatePosition")) {
+            Radio.trigger("MapMarker", "showMarker", position);
             this.setPositionMapProjection(position);
         }
     },
@@ -56,21 +69,7 @@ const CoordPopup = Tool.extend({
 
         this.setPositionMapProjection(position);
         this.setUpdatePosition(!updatePosition);
-        this.toggleMapMarker(position, updatePosition, isViewMobile);
-    },
-
-    /**
-     * Shows the map marker when the coordinate is frozen.
-     * Otherwise, the MapMarker hide
-     * @param {array} position at which was clicked
-     * @param {boolean} updatePosition display of the position is frozen
-     * @param {boolean} isViewMobile is portal in view or desktop version
-     * @returns {void}
-     */
-    toggleMapMarker: function (position, updatePosition, isViewMobile) {
-        var showHideMarker = updatePosition || isViewMobile ? "showMarker" : "hideMarker";
-
-        Radio.trigger("MapMarker", showHideMarker, position);
+        Radio.trigger("MapMarker", "showMarker", position);
     },
 
     returnTransformedPosition: function (targetProjection) {

@@ -101,9 +101,106 @@ Wir unterscheiden Fehlermeldungen in:
 var html = "<div id='my-id'></div>";
 ```
 
-#### Kommentare
-* Mehrzeilige Kommentare sind gut
-* Funktionen werden, wenn überhaupt, immer im JSDoc Style kommentiert.
+#### Kommentare / JSDOC
+* Mehrzeilige Kommentare innerhalb der Funktionen sind gut
+* Module werden im JSDoc beschrieben (Namespaces, Events, Class)
+* Funktionen werden immer mit validem! JSDoc beschrieben.
+* Sprache ist Englisch
+
+#### Kommentare / JSDOC: Bei Refactorings/Erweiterungen ist pro Datei mindestens folgendes auszuführen:
+* Klasse und Namespace im JSDoc beschreiben, falls noch nciht vorhanden
+* Die refactorten/erweiterten Funktionen per JSDoc beschreiben
+* Übrige Funktionen beschreiben oder mit einem JSDoc-Todo markieren, damit alle Funktionen schonmal im JSDoc sind!
+
+```javascript
+/**
+* todo
+* @returns {*} todo
+*/
+functionWithoutParams: function () {...}
+```
+
+```javascript
+/**
+* todo
+* @param {*} param1 todo
+* @returns {*} todo
+*/
+functionWithParams: function (param1) {...}
+```
+### Kommentare / JSDOC: Events
+Folgende Code-Convention gilt für das Dokumentieren von Events
+
+* Events werden in CamelCase geschrieben.
+* Events sollten nach Möglichkeit im Namespace (Modulname) definiert werden.
+* Ist dies nicht möglich, so ist das Event an die Klasse zu hängen
+* Alle Events werden in der devtool/jsdoc/events.js beschrieben
+
+Event Radio.Trigger
+```javascript
+Radio.trigger("Channel", "Event")
+/**
+ * @event Namespace#RadioTriggerChannelEvent
+ * @description FooBar.
+ * @example Radio.trigger("Channel", "Event")
+ */
+
+Radio.trigger("Channel", "EventWithData", data)
+/**
+ * @event Namespace#RadioTriggerChannelEventWithData
+ * @description FooBar.
+ * @param {*} data Data to be sent with the event
+ * @example Radio.trigger("Channel", "Event", data)
+ */
+```
+
+Event Radio.Request
+```javascript
+Radio.request("Channel", "Event");
+/**
+ * @event Namespace#RadioRequestChannelEvent
+ * @description FooBar.
+ * @returns {*} - Response of this event
+ * @example Radio.request("Channel", "Event")
+ */
+
+Radio.request("Channel", "EventWithData", data);
+/**
+ * @event Namespace#RadioRequestChannelEventWithData
+ * @description FooBar.
+ * @param {*} data Data to be sent with the event
+ * @returns {*} - Response of this evennt
+ * @example Radio.request("Channel", "Event", data)
+ */
+```
+
+Event Model.trigger
+```javascript
+Model.trigger("myTrigger");
+/**
+ * @event Namespace#MyTrigger
+ * @description FooBar.
+ */
+
+Model.trigger("myTriggerWithData", data);
+/**
+ * @event Namespace#MyTriggerWithData
+ * @param {*} data Data to be sent with the event
+ * @description FooBar.
+ */
+```
+
+Event Model.change
+```javascript
+this.listenTo(this, {
+    "change:attributeOne": this.doSomething
+})
+/**
+ * @event Namespace#changeAttributeOne
+ * @description FooBar.
+ */
+```
+
 
 #### Try-Catch-Blöcke
 * Try-Catch-Blöcke nach Möglichkeit vermeiden
@@ -180,6 +277,22 @@ CSS-Code gehört nur in LESS-Dateien und in keine HTML-Dokumente oder CSS-Dateie
 ### Commits
 * Der Changelog liest nur Merge-Commits mit prefix "add" oder "fix" (intern auch "hotfix") aus. Daher Merge-Commits entsprechend benennen.
 * Sprache der Commits: Deutsch oder Englisch
+
+
+###Unit-Testing
+* Es ist für jede JavaScript-Datei eine TestDatei unter ./test/unittests/ anzulegen. Die Struktur im unittests-Ordner enstpricht der Struktur im Projekt.
+* Der Dateiname der Test-datei ist identisch zu der Datei die zu testen ist.
+* Die Dateiendung lautet ".test.js" (Es werden nur Dateien für die tests herangezogen die auf ".test.js" enden)
+* Per import-statement wird der/die/das Model/View/Collection/... importiert und instanziiert. Danach werden die Unittest definiert.
+* Jede Funktion soll getestet werden. (Ausnahme: Setter-Funktionen).
+* Orientiert werden soll sich an der Datei "./test/unittests/example.test.js"
+
+Gestestet werden kann per npm script "npm run test" oder beim committen.
+
+Per Console wird der normale commit ausgeführt.
+Der pre-commit-hook von [husky](https://www.npmjs.com/package/husky) startet das Unit-Testing.
+Erst wenn das Unit-Testing erfolgreich durchgelaufen ist, wird der commit durchgeführt. 
+
 
 ### Konfigurations-Änderungen
 Werden Änderungen im Code durchgeführt wodurch sich Konfigurationsparameter ändern, so ist sicherzustellen, dass der Code auch abwärts kompatibel ist.

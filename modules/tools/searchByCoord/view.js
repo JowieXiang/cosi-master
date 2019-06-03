@@ -19,6 +19,7 @@ const SearchByCoordView = Backbone.View.extend({
             this.delegateEvents();
         }
         else {
+            Radio.trigger("MapMarker", "hideMarker");
             this.undelegateEvents();
         }
         return this;
@@ -34,7 +35,7 @@ const SearchByCoordView = Backbone.View.extend({
     },
     setFocusToCoordSystemInput: function () {
         this.$("#coordSystemField").focus();
-        this.render();
+        this.render(this.model, true);
     },
     validateCoords: function () {
         this.model.validateCoordinates();

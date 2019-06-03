@@ -1,4 +1,3 @@
-
 import DefaultThemeView from "./default/view";
 import DefaultTheme from "./default/model";
 import Buildings3dThemeView from "./buildings3d/view";
@@ -19,11 +18,12 @@ import VerkehrsStaerkenTheme from "./verkehrsstaerken/model";
 import VerkehrsStaerkenThemeView from "./verkehrsstaerken/view";
 import SchulInfoTheme from "./schulinfo/model";
 import SchulInfoThemeView from "./schulinfo/view";
-import VerkehrsStaerkenRadTheme from "./verkehrsstaerken_rad/model";
-import VerkehrsStaerkenRadThemeView from "./verkehrsstaerken_rad/view";
+import ContinuousCountingBikeTheme from "./continuousCountingBike/model";
+import ContinuousCountingBikeThemeView from "./continuousCountingBike/view";
 import ItGbmTheme from "./itgbm/model";
 import ItGbmThemeView from "./itgbm/view";
 import DipasThemeView from "./dipas/view";
+import DipasTheme from "./dipas/model";
 import FlaecheninfoTheme from "./flaecheninfo/model";
 import FlaecheninfoThemeView from "./flaecheninfo/view";
 import ElektroladesaeulenThemeView from "./elektroladesaeulen/view";
@@ -33,7 +33,15 @@ import ActiveCityMapsTheme from "./activeCityMaps/model";
 import CosiTheme from "./cosi/model";
 
 
-const ThemeList = Backbone.Collection.extend({
+const ThemeList = Backbone.Collection.extend(/** @lends ThemeList.prototype */{
+    /**
+     * @class ThemeList
+     * @extends Tools.GFI
+     * @memberof Tools.GFI.Themes
+     * @constructs
+     * @listens gfiList#RadioTriggerRedraw
+     * @fires MouseHover#RadioTriggerMouseHoverHide
+     */
     model: function (attrs, options) {
         var gfiTheme = attrs.gfiTheme,
             theme;
@@ -45,6 +53,9 @@ const ThemeList = Backbone.Collection.extend({
 
         if (attrs.gfiTheme === "table") {
             theme = new TableTheme(attrs, options);
+        }
+        else if (attrs.gfiTheme === "dipas") {
+            theme = new DipasTheme(attrs, options);
         }
         else if (attrs.gfiTheme === "reisezeiten") {
             theme = new ReisezeitenTheme(attrs, options);
@@ -67,8 +78,8 @@ const ThemeList = Backbone.Collection.extend({
         else if (attrs.gfiTheme === "schulinfo") {
             theme = new SchulInfoTheme(attrs, options);
         }
-        else if (attrs.gfiTheme === "verkehrsstaerken_rad") {
-            theme = new VerkehrsStaerkenRadTheme(attrs, options);
+        else if (attrs.gfiTheme === "continuousCountingBike") {
+            theme = new ContinuousCountingBikeTheme(attrs, options);
         }
         else if (attrs.gfiTheme === "itgbm") {
             theme = new ItGbmTheme(attrs, options);
@@ -165,8 +176,8 @@ const ThemeList = Backbone.Collection.extend({
                 new SchulInfoThemeView({model: model});
                 break;
             }
-            case "verkehrsstaerken_rad": {
-                new VerkehrsStaerkenRadThemeView({model: model});
+            case "continuousCountingBike": {
+                new ContinuousCountingBikeThemeView({model: model});
                 break;
             }
             case "itgbm": {

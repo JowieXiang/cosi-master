@@ -31,7 +31,7 @@ const Gfi = Tool.extend({
         rotateAngle: 0,
         glyphicon: "glyphicon-info-sign",
         isMapMarkerVisible: true,
-        deactivateGFI: false
+        unlisten: false
     }),
     initialize: function () {
         var channel = Radio.channel("GFI");
@@ -46,9 +46,7 @@ const Gfi = Tool.extend({
             "setIsVisible": this.setIsVisible,
             "layerAtPosition": this.setGfiOfLayerAtPosition,
             "changeFeature": this.changeFeature,
-            "isMapMarkerVisible": this.setIsMapMarkerVisible,
-            "activate": this.activateGFI,
-            "deactivate": this.deactivateGFI
+            "isMapMarkerVisible": this.setIsMapMarkerVisible
         }, this);
 
         channel.reply({
@@ -86,9 +84,11 @@ const Gfi = Tool.extend({
             "change:isActive": function (model, value) {
                 if (value) {
                     this.listenToThemeList();
+                    this.listen();
                 }
                 else {
                     this.stopListening(this.get("themeList"));
+                    this.unlisten();
                 }
             }
         });
@@ -100,12 +100,19 @@ const Gfi = Tool.extend({
 
         this.listenTo(Radio.channel("Map"), {
             "isReady": function () {
-                this.activateGFI();
+                this.setIsActive(true);
+                this.listen();
                 if (this.get("desktopViewType") === "attached" && Radio.request("Util", "isViewMobile") === false) {
                     Radio.trigger("Map", "addOverlay", this.get("overlay"));
                 }
             }
         }, this);
+
+        this.listenTo(Radio.channel("VisibleVector"), {
+            "gfiOnClick": function (hit) {
+                this.setGfiOfFeature(hit);
+            }
+        });
 
         this.initView();
     },
@@ -144,17 +151,15 @@ const Gfi = Tool.extend({
             }
         }
     },
-    activateGFI: function () {
+    listen: function () {
         this.setClickEventKey(Radio.request("Map", "registerListener", "click", this.setGfiParams.bind(this)));
         this.listenTo(Radio.channel("Map"), {
             "clickedWindowPosition": this.setGfiParams
         }, this);
-        this.setIsActive(true);
     },
-    deactivateGFI: function () {
+    unlisten: function () {
         Radio.trigger("Map", "unregisterListener", this.get("clickEventKey"));
         this.stopListening(Radio.channel("Map"), "clickedWindowPosition");
-        this.setIsActive(false);
     },
 
     /**
@@ -195,11 +200,10 @@ const Gfi = Tool.extend({
             gfiParamsList = this.getGFIParamsList(visibleLayerList),
             visibleWMSLayerList = gfiParamsList.wmsLayerList,
             visibleVectorLayerList = gfiParamsList.vectorLayerList,
-            eventPixel = Radio.request("Map", "getEventPixel", evt.originalEvent),
-            vectorGFIParams,
-            wmsGFIParams,
+            vectorGFIParams = [],
+            wmsGFIParams = [],
             GFIParams3d = [],
-            unionParams;
+            unionParams = [];
 
         Radio.trigger("ClickCounter", "gfi");
         if (Radio.request("Map", "isMap3d")) {
@@ -208,18 +212,19 @@ const Gfi = Tool.extend({
         // für detached MapMarker
         this.setCoordinate(evt.coordinate);
         // Vector
-        vectorGFIParams = this.getVectorGFIParams(visibleVectorLayerList, eventPixel);
+        vectorGFIParams = this.getVectorGFIParams(visibleVectorLayerList, evt.map.getEventPixel(evt.originalEvent));
         // WMS
         wmsGFIParams = this.getWMSGFIParams(visibleWMSLayerList);
 
         this.setThemeIndex(0);
-        unionParams = _.union(vectorGFIParams, wmsGFIParams, GFIParams3d);
-        if (_.isEmpty(unionParams)) {
+        unionParams = vectorGFIParams.concat(wmsGFIParams, GFIParams3d);
+
+        if (unionParams.length === 0) {
             this.setIsVisible(false);
         }
         else {
             this.get("overlay").setPosition(evt.coordinate);
-            this.get("themeList").reset(_.union(vectorGFIParams, wmsGFIParams, GFIParams3d));
+            this.get("themeList").reset(unionParams);
         }
     },
 
@@ -231,7 +236,8 @@ const Gfi = Tool.extend({
         _.each(features, function (feature) {
             var properties = {},
                 propertyNames,
-                modelattributes,
+                modelAttributes,
+                layerModel,
                 olFeature,
                 layer;
 
@@ -243,14 +249,27 @@ const Gfi = Tool.extend({
                 if (properties.attributes && properties.id) {
                     properties.attributes.gmlid = properties.id;
                 }
-                modelattributes = {
-                    attributes: properties.attributes ? properties.attributes : properties,
-                    gfiAttributes: {"roofType": "Dachtyp", "measuredHeight": "Dachhöhe", "function": "Objektart"},
-                    typ: "Cesium3DTileFeature",
-                    gfiTheme: "buildings_3d",
-                    name: "Buildings"
-                };
-                gfiParams3d.push(modelattributes);
+                if (feature.tileset && feature.tileset.layerReferenceId) {
+                    layerModel = Radio.request("ModelList", "getModelByAttributes", {id: feature.tileset.layerReferenceId});
+                    if (layerModel) {
+                        modelAttributes = _.pick(layerModel.attributes, "name", "gfiAttributes", "typ", "gfiTheme", "routable", "id", "isComparable");
+                    }
+
+                }
+                if (!modelAttributes) {
+                    modelAttributes = {
+                        attributes: properties.attributes ? properties.attributes : properties,
+                        gfiAttributes: {"roofType": "Dachtyp", "measuredHeight": "Dachhöhe", "function": "Objektart"},
+                        typ: "Cesium3DTileFeature",
+                        gfiTheme: "buildings_3d",
+                        name: "Buildings"
+                    };
+                }
+                else {
+                    modelAttributes.attributes = properties.attributes ? properties.attributes : properties;
+                    modelAttributes.typ = "Cesium3DTileFeature";
+                }
+                gfiParams3d.push(modelAttributes);
             }
             else if (feature.primitive) {
                 olFeature = feature.primitive.olFeature;
@@ -314,32 +333,45 @@ const Gfi = Tool.extend({
                     layerFilter: function (layer) {
                         return layer.get("name") === vectorLayer.get("name");
                     },
-                    hitTolerance: 0
+                    hitTolerance: vectorLayer.get("hitTolerance")
                 }),
                 modelAttributes = _.pick(vectorLayer.attributes, "name", "gfiAttributes", "typ", "gfiTheme", "routable", "id", "isComparable");
-
-            modelAttributes.gfiFeatureList = [];
 
             _.each(features, function (featureAtPixel) {
                 // Feature
                 if (_.has(featureAtPixel.getProperties(), "features") === false) {
-                    modelAttributes.gfiFeatureList.push(featureAtPixel);
-                    modelAttributes.feature = featureAtPixel;
+                    vectorGfiParams.push(this.prepareVectorGfiParam(modelAttributes, featureAtPixel));
                 }
                 // Cluster Feature
                 else {
                     _.each(featureAtPixel.get("features"), function (feature) {
-                        modelAttributes.gfiFeatureList.push(feature);
-                        modelAttributes.feature = feature;
-                    });
+                        vectorGfiParams.push(this.prepareVectorGfiParam(modelAttributes, feature));
+                    }, this);
                 }
             }, this);
-            if (!_.isEmpty(modelAttributes.gfiFeatureList)) {
-                vectorGfiParams.push(modelAttributes);
-            }
         }, this);
 
         return vectorGfiParams;
+    },
+
+    /**
+     * Adds gfifeatureList and feature to model attributes.
+     * Manipulates the model id which is a DIRTY HACK until gfi gets completely refactored!
+     * we are resetting the gfitheme-list. and for each model there must be a unique id
+     * now if we have a cluster feature with 2 features. the layer ids are the same, and only one layer gets added to the themelist
+     * that is why we add "_[uniqueId]", so that the gfiTheme-list contains two options theme models
+     * @param {Object} modelAttributes Model attributes needed for gfi
+     * @param {ol.feature} feature Vector feature that was found on click event
+     * @returns {Object} Prepared vector gfi param
+     */
+    prepareVectorGfiParam: function (modelAttributes, feature) {
+        const clonedModelAttributes = _.clone(modelAttributes);
+
+        clonedModelAttributes.gfiFeatureList = [feature];
+        clonedModelAttributes.feature = feature;
+        clonedModelAttributes.themeId = clonedModelAttributes.id;
+        clonedModelAttributes.id += _.uniqueId("_");
+        return clonedModelAttributes;
     },
 
     /**
@@ -416,6 +448,36 @@ const Gfi = Tool.extend({
 
             this.get("themeList").reset(_.union(vectorGFIParams, wmsGFIParams));
         }
+    },
+
+    /**
+     * Generates a GFI when the feature layer is clicked
+     * @param {object} hit   Feature Object
+     * @returns {void}
+     */
+    setGfiOfFeature: function (hit) {
+        var vectorGFIParams = {},
+            coordinate = Radio.request("Map", "getMap").getPixelFromCoordinate(hit.coordinate),
+            model = Radio.request("ModelList", "getModelByAttributes", {id: hit.layer_id});
+
+        Radio.trigger("ClickCounter", "gfi");
+        this.setCoordinate(coordinate);
+
+        // Vector
+        vectorGFIParams = {
+            feature: hit.feature,
+            gfiAttributes: hit.gfiAttributes,
+            gfiTheme: model.get("gfiTheme"),
+            id: model.get("id"),
+            themeId: model.get("id"),
+            name: model.get("name"),
+            typ: model.get("typ"),
+            gfiFeatureList: [hit.feature]
+        };
+
+        this.setThemeIndex(0);
+        this.get("themeList").reset(vectorGFIParams);
+        Radio.trigger("MapMarker", "zoomTo", hit, 5000);
     },
 
     // Setter
