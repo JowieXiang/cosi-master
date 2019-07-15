@@ -138,13 +138,19 @@ const DefaultTreeParser = Parser.extend(/** @lends DefaultTreeParser.prototype *
             isVisibleInTree = isMobile ? "false" : "true";
 
         _.each(layerList, function (layer) {
-            this.addItem(_.extend({type: "layer", parentId: "3d_daten", level: 0, isVisibleInTree: isVisibleInTree}, layer));
+            this.addItem(_.extend({
+                type: "layer",
+                parentId: "3d_daten",
+                level: 0,
+                isVisibleInTree: isVisibleInTree
+            }, layer));
         }, this);
     },
 
     /**
-     * todo
-     * @param {*} layerList - todo
+     * Creates the base layer items. "newLayer" may be undefined if its id gets removed by function deleteLayersIncludeCache.
+     * Then the configured id is not found.
+     * @param {Object[]} layerList Layers
      * @returns {void}
      */
     createBaselayer: function (layerList) {
@@ -157,7 +163,19 @@ const DefaultTreeParser = Parser.extend(/** @lends DefaultTreeParser.prototype *
             else {
                 newLayer = _.extend(_.findWhere(layerList, {id: layer.id}), _.omit(layer, "id"));
             }
-            this.addItem(_.extend({type: "layer", parentId: "Baselayer", level: 0, isVisibleInTree: "true"}, newLayer));
+
+            if (_.isUndefined(newLayer)) {
+                console.error("Layer with id: " + layer.id + " cannot be found in layerlist. Possible error: layer got removed in function 'deleteLayersIncludeCache'.");
+            }
+            else {
+                this.addItem(_.extend({
+                    isBaseLayer: true,
+                    isVisibleInTree: true,
+                    level: 0,
+                    parentId: "Baselayer",
+                    type: "layer"
+                }, newLayer));
+            }
         }, this);
     },
 
@@ -246,27 +264,38 @@ const DefaultTreeParser = Parser.extend(/** @lends DefaultTreeParser.prototype *
             parentId: "Overlayer",
             level: 0,
             isInThemen: true,
-            isVisibleInTree: "true",
+            isVisibleInTree: true,
             glyphicon: "glyphicon-plus-sign"
         });
         _.each(tree, function (category) {
             // Unterordner erzeugen
-            this.addItems(category.folder, {type: "folder",
-                parentId: category.id,
+            this.addItems(category.folder, {
+                glyphicon: "glyphicon-plus-sign",
+                isFolderSelectable: this.get("isFolderSelectable"),
+                isInThemen: true,
                 isLeafFolder: true,
                 level: 1,
-                isInThemen: true,
-                glyphicon: "glyphicon-plus-sign",
-                isFolderSelectable: this.get("isFolderSelectable")
+                parentId: category.id,
+                type: "folder"
             });
             _.each(category.layer, function (layer) {
                 layer.name = layer.datasets[0].md_name;
             });
             // Layer dirket in Kategorien
-            this.addItems(category.layer, {type: "layer", parentId: category.id, level: 1});
+            this.addItems(category.layer, {
+                isBaseLayer: false,
+                level: 1,
+                parentId: category.id,
+                type: "layer"
+            });
             _.each(category.folder, function (folder) {
                 // Layer in der untertesten Ebene erzeugen
-                this.addItems(folder.layer, {type: "layer", parentId: folder.id, level: 2});
+                this.addItems(folder.layer, {
+                    isBaseLayer: false,
+                    level: 2,
+                    parentId: folder.id,
+                    type: "layer"
+                });
             }, this);
         }, this);
     }

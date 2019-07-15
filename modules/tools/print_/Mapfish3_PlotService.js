@@ -33,7 +33,7 @@ const PrintModel = Tool.extend(/** @lends PrintModel.prototype */{
         // true if the current layout supports legend
         isLegendAvailable: false,
         // true if the legend is to be printed
-        isLegendSelected: true,
+        isLegendSelected: false,
         // true if the current layout supports scale
         isScaleAvailable: false,
         // the id from the rest services json for the plot app
@@ -43,13 +43,15 @@ const PrintModel = Tool.extend(/** @lends PrintModel.prototype */{
         DOTS_PER_INCH: 72,
         INCHES_PER_METER: 39.37,
         glyphicon: "glyphicon-print",
-        eventListener: {}
+        eventListener: {},
+        legendText: "Mit Legende",
+        dpiForPdf: 200
     }),
 
     /**
      * @class PrintModel
      * @extends Tool
-     * @memberof print_
+     * @memberof Tools.Print
      * @constructs
      * @property {String} filename="report" - Output filename
      * @property {undefined} mapfishServiceId=undefined - id from rest service json for mapfish app
@@ -74,14 +76,12 @@ const PrintModel = Tool.extend(/** @lends PrintModel.prototype */{
      * @property {Number} INCHES_PER_METER=39.37 - todo
      * @property {String} glyphicon="glyphicon-print" - Icon for the print button
      * @property {Object} eventListener={} - todo
+     * @property {Boolean} printLegend=false Flag if checkbox to print legend should be activated.
+     * @property {String} legendText="Mit legende" Label text for print legend checkbox
      * @listens Print#ChangeIsActive
-     * @description todo
      * @listens MapView#RadioTriggerMapViewChangedOptions
-     * @description todo
      * @listens GFI#RadioTriggerGFIIsVisible
-     * @description todo
      * @listens Print#CreatePrintJob
-     * @description todo
      */
     initialize: function () {
         var channel = Radio.channel("Print");
@@ -121,8 +121,6 @@ const PrintModel = Tool.extend(/** @lends PrintModel.prototype */{
     /**
      * todo
      * @param {*} id - todo
-     * @fires todo
-     * @description todo
      * @returns {void}
      */
     createMapFishServiceUrl: function (id) {
@@ -135,8 +133,6 @@ const PrintModel = Tool.extend(/** @lends PrintModel.prototype */{
      * Gets the capabilities for a specific print configuration
      * @param {Backbone.Model} model - this
      * @param {boolean} value - is this tool activated or not
-     * @fires todo
-     * @description todo
      * @returns {void}
      */
     getCapabilites: function (model, value) {
@@ -148,10 +144,6 @@ const PrintModel = Tool.extend(/** @lends PrintModel.prototype */{
                 this.setMapfishServiceUrl(serviceUrl);
                 this.sendRequest(serviceUrl + this.get("printAppId") + "/capabilities.json", "GET", this.parseMapfishCapabilities);
             }
-            // if (this.get("plotServiceId") !== undefined) {
-            //     serviceUrl = Radio.request("RestReader", "getServiceById", this.get("plotServiceId")).get("url");
-            //     this.sendRequest();
-            // }
         }
     },
 
@@ -176,18 +168,6 @@ const PrintModel = Tool.extend(/** @lends PrintModel.prototype */{
 
     /**
      * todo
-     * @fires todo
-     * @description todo
-     * @fires todo
-     * @description todo
-     * @fires todo
-     * @description todo
-     * @fires todo
-     * @description todo
-     * @fires todo
-     * @description todo
-     * @fires todo
-     * @description todo
      * @returns {void}
      */
     print: function () {
@@ -201,7 +181,7 @@ const PrintModel = Tool.extend(/** @lends PrintModel.prototype */{
                 "attributes": {
                     "title": this.get("title"),
                     "map": {
-                        "dpi": 96,
+                        "dpi": this.get("dpiForPdf"),
                         "projection": Radio.request("MapView", "getProjection").getCode(),
                         "center": Radio.request("MapView", "getCenter"),
                         "scale": this.get("currentScale")
@@ -258,8 +238,6 @@ const PrintModel = Tool.extend(/** @lends PrintModel.prototype */{
      * @param {string} printAppId - id of the print configuration
      * @param {string} payload - POST body
      * @param {string} format - print job output format
-     * @fires todo
-     * @description todo
      * @returns {void}
      */
     createPrintJob: function (printAppId, payload, format) {
@@ -272,8 +250,6 @@ const PrintModel = Tool.extend(/** @lends PrintModel.prototype */{
     /**
      * sends a request to get the status for a print job until it is finished
      * @param {JSON} response - todo
-     * @fires todo
-     * @description todo
      * @returns {void}
      */
     waitForPrintJob: function (response) {
@@ -296,12 +272,6 @@ const PrintModel = Tool.extend(/** @lends PrintModel.prototype */{
      * a callback function is registered to the postcompose event of the map
      * @param {Backbone.Model} model - this
      * @param {boolean} value - is this tool activated or not
-     * @fires todo
-     * @description todo
-     * @fires todo
-     * @description todo
-     * @fires todo
-     * @description todo
      * @returns {void}
      */
     togglePostcomposeListener: function (model, value) {
@@ -485,8 +455,6 @@ const PrintModel = Tool.extend(/** @lends PrintModel.prototype */{
      * @param {string} requestType - GET || POST
      * @param {function} successCallback - called if the request succeeds
      * @param {JSON} data - payload
-     * @fires todo
-     * @description todo
      * @returns {void}
      */
     sendRequest: function (serviceUrl, requestType, successCallback, data) {

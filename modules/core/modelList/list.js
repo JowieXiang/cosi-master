@@ -14,7 +14,7 @@ import Tool from "./tool/model";
 import StaticLink from "./staticlink/model";
 import Legend from "../../legend/model";
 import Filter from "../../tools/filter/model";
-import Print from "../../tools/print_/Mapfish3_PlotServicel";
+import Print from "../../tools/print_/Mapfish3_PlotService";
 import HighResolutionPrint from "../../tools/print_/HighResolution_PlotService";
 import Measure from "../../tools/measure/model";
 import Draw from "../../tools/draw/model";
@@ -75,15 +75,16 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
      * @listens ModelList#ChangeIsSelected
      * @listens ModelList#ChangeTransparency
      * @listens ModelList#ChangeSelectionIDX
-     * @fires ModelList#RadioTriggerModelListUpdateVisibleInMapList
-     * @fires ModelList#RadioTriggerModelListUpdatedSelectedLayerList
-     * @fires ModelList#updateOverlayerView
+     *
      * @fires Map#RadioRequestMapGetMapMode
+     * @fires Map#RadioTriggerMapAddLayerToIndex
+     * @fires ModelList#RadioTriggerModelListUpdatedSelectedLayerList
+     * @fires ModelList#RadioTriggerModelListUpdateVisibleInMapList
+     * @fires ModelList#RenderTree
+     * @fires ModelList#TraverseTree
+     * @fires ModelList#updateOverlayerView
      * @fires ModelList#UpdateOverlayerView
      * @fires ModelList#UpdateSelection
-     * @fires ModelList#TraverseTree
-     * @fires ModelList#RenderTree
-     *
      */
     initialize: function () {
         var channel = Radio.channel("ModelList");
@@ -125,10 +126,9 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
             "change:isVisibleInMap": function () {
                 channel.trigger("updateVisibleInMapList");
                 channel.trigger("updatedSelectedLayerList", this.where({isSelected: true, type: "layer"}));
-                this.sortLayersVisually();
             },
             "change:isExpanded": function (model) {
-                this.trigger("updateOverlayerView", model.get("id"));
+                this.trigger("updateOverlayerView", model);
                 if (model.get("id") === "SelectedLayer") {
                     this.trigger("updateSelection", model);
                 }
@@ -136,9 +136,16 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
                 this.trigger("traverseTree", model);
                 channel.trigger("updatedSelectedLayerList", this.where({isSelected: true, type: "layer"}));
             },
-            "change:isSelected": function (model) {
+            "change:isSelected": function (model, value) {
                 if (model.get("type") === "layer") {
-                    model.setIsVisibleInMap(model.get("isSelected"));
+                    // Only reset Indeces in Custom Tree, because Light Tree Layers always keep their
+                    // positions regardless of active or not
+                    if (Radio.request("Parser", "getTreeType") !== "light") {
+                        model.resetSelectionIDX();
+                    }
+
+                    model.setIsVisibleInMap(value);
+                    this.updateLayerView();
                 }
                 this.trigger("updateSelection");
                 channel.trigger("updatedSelectedLayerList", this.where({isSelected: true, type: "layer"}));
@@ -414,10 +421,20 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
      * @return {void}
      */
     setIsSelectedOnChildLayers: function (model) {
-        var childModels = this.add(Radio.request("Parser", "getItemsByAttributes", {parentId: model.get("id")})),
-            sortChildModels = this.sortLayers(childModels, "name").reverse();
+        var descendantModels = this.add(Radio.request("Parser", "getItemsByAttributes", {parentId: model.get("id")}));
 
-        _.each(sortChildModels, function (childModel) {
+        // Layers in default tree are always sorted alphabetically while in other tree types, layers are
+        // displayed in the order taken from config.json.
+        if (Radio.request("Parser", "getTreeType") === "default") {
+            descendantModels = this.sortLayers(descendantModels, "name");
+        }
+
+        // Since each layer will be put into selected layers list seperately, their order changes because we
+        // shift the layers from one stack to another. So just revert the stack order first.
+        descendantModels = descendantModels.reverse();
+
+        // Setting each layer as selected will trigger rerender of OL canvas and displayed selected layers.
+        _.each(descendantModels, function (childModel) {
             childModel.setIsSelected(model.get("isSelected"));
         });
     },
@@ -501,179 +518,152 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
     },
 
     /**
-     * Initializes selectionIDX property if not properly set yet.
-     * @param {layer} model the layer model to this property on
-     * @return {integer} the index number, which has been associated to the model
-     */
-    initModelIndex: function (model) {
-        var aLayerModels = this.where({type: "layer"}),
-            iResultIndex = 0,
-            iMaxIndex = 0;
-
-        if (_.isNumber(model.get("selectionIDX")) && model.get("selectionIDX") >= 0) {
-            return model.get("selectionIDX");
-        }
-
-        _.each(aLayerModels, function (oLayerModel) {
-            if (oLayerModel.get("selectionIDX") > iMaxIndex) {
-                iMaxIndex = oLayerModel.get("selectionIDX");
-            }
-        }, this);
-
-        iResultIndex = iMaxIndex + 1;
-
-        model.setSelectionIDX(iResultIndex);
-
-        return iResultIndex;
-    },
-
-    /**
-     * Moves layer in selection one index down
-     * @param {Layer} model Layer model to be pulled down
-     * @fires Map#RadioRequestMapGetMapMode
-     * @fires ModelList#UpdateSelection
-     * @fires ModelList#UpdateLightTree
-     * @fires ModelList#ChangeSelectedList
-     * @return {void}
-     */
-    moveModelDown: function (model) {
-        var oldIDX = model.get("selectionIDX"),
-            visibleLayerModels = this.where({type: "layer"}),
-            newIDX = false,
-            iMin = 0,
-            affectedModel;
-
-        // find next index and layer to swap with
-        _.each(visibleLayerModels, function (modelTemp) {
-            if (modelTemp.get("selectionIDX") < oldIDX && (oldIDX - modelTemp.get("selectionIDX") < iMin || newIDX === false)) {
-                newIDX = modelTemp.get("selectionIDX");
-                iMin = oldIDX - newIDX;
-            }
-        }, this);
-
-        if (newIDX === false) {
-            return;
-        }
-
-        affectedModel = this.where({selectionIDX: newIDX})[0];
-
-        // swap layers
-        affectedModel.setSelectionIDX(oldIDX);
-        model.setSelectionIDX(newIDX);
-
-        // in case the other layer is one of the following special ones (in 2D mode), skip it
-        if (Radio.request("Map", "getMapMode") === "2D"
-            &&
-            (
-                affectedModel.get("typ") === "Terrain3D"
-                ||
-                affectedModel.get("typ") === "Oblique"
-                ||
-                affectedModel.get("typ") === "TileSet3D"
-            )
-        ) {
-            this.moveModelDown(model);
-            return;
-        }
-
-        this.trigger("updateSelection");
-        this.trigger("updateLightTree");
-        // Trigger for mobile
-        this.trigger("changeSelectedList");
-
-        this.sortLayersVisually();
-    },
-
-    /**
-     * Sorts map layers (in map) according to their selectionIDX property values. Actually this should be
-     * done using open layers layer zIndex property.
-     * @todo use open layers zIndex prop instead
-     * @return {void}
-     */
-    sortLayersVisually: function () {
-        var layers = this.where({type: "layer"}),
-            layersCopy = layers.slice().sort(function (layer1, layer2) {
-                return layer1.get("selectionIDX") > layer2.get("selectionIDX") ? 1 : -1;
-            });
-
-        _.each(layersCopy, function (layer) {
-            if (_.isUndefined(layer.get("layer")) === false) {
-                Radio.trigger("Map", "addLayerToIndex", [layer.get("layer"), layer.get("selectionIDX")]);
-            }
-        }, this);
-    },
-
-    /**
-     * Moves layer in selection one index up
+     * Moves layer in Tree and accordingly changes drawing index. Always swaps index with target Layer.
+     * If no target layer is found, the action is aborted.
      * @param  {Layer} model Layer model to be pulled up
-     * @fires Map#RadioRequestMapGetMapMode
+     * @param  {Integer} movement Direction and range to move
      * @fires ModelList#UpdateSelection
      * @fires ModelList#UpdateLightTree
      * @fires ModelList#ChangeSelectedList
      * @return {void}
      */
-    moveModelUp: function (model) {
-        var oldIDX = model.get("selectionIDX"),
-            visibleLayerModels = this.where({type: "layer"}),
-            newIDX = false,
-            iMin = 0,
-            affectedModel;
+    moveModelInTree: function (model, movement) {
+        var currentSelectionIdx = model.get("selectionIDX"),
+            modelToSwap = this.where({selectionIDX: currentSelectionIdx + movement});
 
-        // find next index and layer to swap with
-        _.each(visibleLayerModels, function (modelTemp) {
-            if (modelTemp.get("selectionIDX") > oldIDX && (modelTemp.get("selectionIDX") - oldIDX < iMin || newIDX === false)) {
-                newIDX = modelTemp.get("selectionIDX");
-                iMin = newIDX - oldIDX;
-            }
-        }, this);
-
-        if (newIDX === false) {
+        if (!modelToSwap || modelToSwap.length === 0) {
             return;
         }
 
-        affectedModel = this.where({selectionIDX: newIDX})[0];
+        modelToSwap = modelToSwap[0];
 
-        // swap layers
-        affectedModel.setSelectionIDX(oldIDX);
-        model.setSelectionIDX(newIDX);
+        model.setSelectionIDX(modelToSwap.get("selectionIDX"));
+        modelToSwap.setSelectionIDX(currentSelectionIdx);
 
-        // in case the other layer is one of the following special ones (in 2D mode), skip it
-        if (Radio.request("Map", "getMapMode") === "2D"
-            &&
-            (
-                affectedModel.get("typ") === "Terrain3D"
-                ||
-                affectedModel.get("typ") === "Oblique"
-                ||
-                affectedModel.get("typ") === "TileSet3D"
-            )
-        ) {
-            this.moveModelUp(model);
-            return;
-        }
+        this.updateLayerView();
 
         this.trigger("updateSelection");
         this.trigger("updateLightTree");
         // Trigger for mobile
         this.trigger("changeSelectedList");
-
-        this.sortLayersVisually();
     },
 
     /**
-     * Iterates over the models in the selection index and sets the attribute selectionIDX
-     * for each model based on their index in the array
+     * Sets Layer indeces initially. Background layers are treatet seperatly from normal layers to ensure
+     * they will be put into background.
      * @return {void}
      */
-    initModelIndeces: function () {
-        var aLayerModels = this.where({type: "layer"});
+    initLayerIndeces: function () {
+        var allLayerModels = this.getTreeLayers(),
+            baseLayerModels = allLayerModels.filter(layerModel => layerModel.get("isBaseLayer") === true),
+            layerModels = allLayerModels.filter(layerModel => layerModel.get("isBaseLayer") !== true),
+            initialLayers = [];
 
-        _.each(aLayerModels, function (oLayerModel, iIndex) {
-            if (_.isUndefined(oLayerModel.get("layer")) === false) {
-                oLayerModel.setSelectionIDX(iIndex);
-            }
+        initialLayers = baseLayerModels.concat(layerModels);
+
+        this.resetLayerIndeces(initialLayers);
+    },
+
+    /**
+     * Sets Layer indeces initially. Background layers are treatet seperatly from normal layers to ensure
+     * they will be put into background.
+     * @param  {array} layers Array of layers to have their indeces reset
+     * @return {array} Layers with fresh new indeces
+     */
+    resetLayerIndeces: function (layers) {
+        // we start indexing at 1 because 0 is defined as newly selected layer
+        _.each(layers, function (oLayerModel, newSelectionIndex) {
+            oLayerModel.setSelectionIDX(newSelectionIndex + 1);
         }, this);
-        this.sortLayersVisually();
+        return layers;
+    },
+
+    /**
+     * Fetches all selected layers. For light tree, these are all layers of the tree. for custom tree, these
+     * are only the ones listed under selected layers.
+     * @fires Parser#RadioRequestParserGetTreeType
+     * @return {array} Selected Layers
+     */
+    getTreeLayers: function () {
+        var treeType = Radio.request("Parser", "getTreeType"),
+            allLayerModels = this.where({type: "layer"});
+
+        // we dont want to see these layers in the tree
+        allLayerModels = allLayerModels.filter(layerModel => {
+            return ["Oblique", "TileSet3D", "Terrain3D"].indexOf(layerModel.get("typ")) === -1;
+        });
+
+        // in custom tree, only selected layers are sortable, thus only those may get an index
+        if (treeType !== "light") {
+            allLayerModels = allLayerModels.filter(layerModel => {
+                return layerModel.get("isSelected");
+            });
+        }
+
+        return allLayerModels;
+    },
+
+    /**
+     * Fetches and sorts all selected layers by their indeces. Layers with an initial index of 0 will be put
+     * on top in case of normal layer of on top of the first background layer in case of background layer.
+     * This behaviour is needed to prevent newly selected background layers from being put on top of all
+     * other layers.
+     * @return {array} Sorted selected Layers
+     */
+    getSortedTreeLayers: function () {
+        var combinedLayers = this.getTreeLayers(),
+            firstBaseLayerIndex,
+            // we need to devide current layers from newly added ones to be able to put the latter ones in
+            // at a nice position
+            currentLayers = combinedLayers.filter(layer => layer.get("selectionIDX") !== 0),
+            newLayers = combinedLayers.filter(layer => layer.get("selectionIDX") === 0);
+
+        // first just sort all current layers
+        currentLayers.sort(function (layer1, layer2) {
+            return layer1.get("selectionIDX") > layer2.get("selectionIDX") ? 1 : -1;
+        });
+
+        // following 3 steps must be done seperately because during this process, number of array entries
+        // and therefore its indeces will be changing
+        // ---
+        // 1: push all new normal layers, so they will be displayed on top
+        newLayers.forEach(newLayer => {
+            if (!newLayer.get("isBaseLayer")) {
+                currentLayers.push(newLayer);
+            }
+        });
+        // 2: now find the index, at which background layers should be inserted
+        currentLayers.forEach((currentLayer, currentIndex) => {
+            if (currentLayer.get("isBaseLayer")) {
+                firstBaseLayerIndex = currentIndex;
+            }
+        });
+        // 3: push all new background layers
+        newLayers.forEach(newLayer => {
+            if (newLayer.get("isBaseLayer")) {
+                currentLayers.splice(firstBaseLayerIndex + 1, 0, newLayer);
+            }
+        });
+
+        // finally, reset all layer indeces, so that the new layers also become part of this nice layer stack
+        currentLayers = this.resetLayerIndeces(currentLayers);
+
+        return currentLayers;
+    },
+
+    /**
+     * Forces rerendering of all layers. Layers are sorted before rerender.
+     * @fires Map#RadioTriggerMapAddLayerToIndex
+     * @return {array} Sorted selected Layers
+     */
+    updateLayerView: function () {
+        var sortedLayers = this.getSortedTreeLayers();
+
+        _.each(sortedLayers, function (layer) {
+            Radio.trigger("Map", "addLayerToIndex", [layer.get("layer"), layer.get("selectionIDX")]);
+        }, this);
+
+        return sortedLayers;
     },
 
     /**
@@ -739,7 +729,8 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
             this.addModelsByAttributes({typ: "Oblique"});
         }
 
-        this.initModelIndeces();
+        this.initLayerIndeces();
+        this.updateLayerView();
     },
 
     /**
@@ -793,6 +784,7 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
         var lightModels = Radio.request("Parser", "getItemsByAttributes", attrs);
 
         this.add(lightModels);
+        this.updateLayerView();
     },
 
     /**
@@ -916,6 +908,7 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
         var model = this.get(id);
 
         this.remove(model);
+        this.updateLayerView();
     },
 
     /**

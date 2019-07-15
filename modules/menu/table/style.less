@@ -133,12 +133,13 @@ a {
 .table-tools-menu {
     background-color: @background_color_1;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.5);
-    width: 250px;
+    width: 268px;
     display: none;
     position: absolute;
     bottom: 50px;
     left: -52px;
     padding: 12px;
+    margin-left: -149px;
     &:after {
         top: 100%;
         left: 72px;
@@ -159,10 +160,13 @@ a {
     }
     #funnel {
         bottom: 0px;
-        left: 26px;
+        margin-left: 165px;
         #middle-funnel {
-            width: 24px;
+            width: 20px;
         }
+    }
+    #ObliqueTable > a > #ObliqueTable_title{
+        padding-left: 5px;
     }
 }
 .table-tools-active {
@@ -223,10 +227,10 @@ a {
     margin-bottom: 70px;
     position: absolute;
     margin-top: -88px;
-    margin-left: -6px;
     width: 320px;
     bottom: -20px;
     display: none;
+    margin-left: -227px;
     div > div.detailview-head {
         display: none;
     }
@@ -236,11 +240,17 @@ a {
     div > div.checkbox-container{
         display: none;
     }
+    #funnel {
+        margin-left: 221px;
+    }
     #left-funnel-corner {
         margin-left: 0px;
     }
     #middle-funnel {
         width: 20px;
+    }
+    .multicheckbox-label{
+        vertical-align: text-bottom;
     }
 }
 .table-layer-list {

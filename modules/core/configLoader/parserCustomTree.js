@@ -23,6 +23,9 @@ const CustomTreeParser = Parser.extend(/** @lends CustomTreeParser.prototype */{
      * @returns {void}
      */
     parseTree: function (object, parentId, level) {
+        // TODO: This value is NOT reliable when using simple tree!
+        var isBaseLayer = Boolean(parentId === "Baselayer" || parentId === "tree");
+
         if (_.has(object, "Layer")) {
             _.each(object.Layer, function (layer) {
                 var objFromRawList,
@@ -30,7 +33,7 @@ const CustomTreeParser = Parser.extend(/** @lends CustomTreeParser.prototype */{
                     layerExtended = layer,
                     mergedObjsFromRawList;
 
-                // Für Singel-Layer (ol.layer.Layer)
+                // Für Single-Layer (ol.layer.Layer)
                 // z.B.: {id: "5181", visible: false}
 
                 if (!_.has(layerExtended, "children") && _.isString(layerExtended.id)) {
@@ -83,27 +86,30 @@ const CustomTreeParser = Parser.extend(/** @lends CustomTreeParser.prototype */{
                 }
 
                 // HVV :(
+
                 if (_.has(layerExtended, "styles") && layerExtended.styles.length >= 1) {
                     _.each(layerExtended.styles, function (style, index) {
                         this.addItem(_.extend({
-                            type: "layer",
-                            parentId: parentId,
-                            name: layerExtended.name[index],
                             id: layerExtended.id + style,
-                            styles: layerExtended.styles[index],
+                            isBaseLayer: isBaseLayer,
+                            isVisibleInTree: this.getIsVisibleInTree(level, "layer", layerExtended.visibility),
                             legendURL: layerExtended.legendURL[index],
                             level: level,
-                            isVisibleInTree: this.getIsVisibleInTree(level, "folder", true)
+                            name: layerExtended.name[index],
+                            parentId: parentId,
+                            styles: layerExtended.styles[index],
+                            type: "layer"
                         }, _.omit(layerExtended, "id", "name", "styles", "legendURL")));
                     }, this);
                 }
                 else {
                     this.addItem(_.extend({
-                        type: "layer",
-                        parentId: parentId,
-                        level: level,
                         format: "image/png",
-                        isVisibleInTree: this.getIsVisibleInTree(level, "folder", true)
+                        isBaseLayer: isBaseLayer,
+                        isVisibleInTree: this.getIsVisibleInTree(level, "layer", layerExtended.visibility),
+                        level: level,
+                        parentId: parentId,
+                        type: "layer"
                     }, layerExtended));
                 }
             }, this);
@@ -151,9 +157,12 @@ const CustomTreeParser = Parser.extend(/** @lends CustomTreeParser.prototype */{
      * @returns {Boolean} - Flag if layer is visible in layertree
      */
     getIsVisibleInTree: function (level, type, isInThemen) {
-        var isInThemenBool = _.isUndefined(isInThemen) ? false : isInThemen;
+        var treeType = Radio.request("Parser", "getTreeType"),
+            isInThemenBool = _.isUndefined(isInThemen) ? false : isInThemen;
 
-        return level === 0 && ((type === "layer") || (type === "folder" && isInThemenBool));
+        return (type === "layer" && (isInThemenBool || treeType === "light"))
+            ||
+            (level === 0 && type === "folder" && isInThemenBool);
     }
 });
 

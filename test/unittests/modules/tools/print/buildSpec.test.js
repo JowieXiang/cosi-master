@@ -263,6 +263,27 @@ describe("tools/print_/buildSpec", function () {
         });
 
     });
+    describe("inInScaleRange", function () {
+        it("Should return false if current resolution is higher than layer max resolution", function () {
+            expect(buildSpecModel.isInScaleRange(1000, 5000, 10000)).to.be.false;
+        });
+        it("Should return false if current resolution is lower than layer min resolution", function () {
+            expect(buildSpecModel.isInScaleRange(2500, 5000, 1000)).to.be.false;
+        });
+        it("Should return true if current resolution is lower than layer max resolution and higher than layer min resolution", function () {
+            expect(buildSpecModel.isInScaleRange(0, Infinity, 10000)).to.be.true;
+        });
+        it("Should return true if current resolution is lower than layer max resolution and higher than layer min resolution", function () {
+            expect(buildSpecModel.isInScaleRange(0, 10000, 5000)).to.be.true;
+        });
+        it("Should return true if current resolution the layer max resolution", function () {
+            expect(buildSpecModel.isInScaleRange(0, 5000, 5000)).to.be.true;
+        });
+        it("Should return true if current resolution the layer min resolution", function () {
+            expect(buildSpecModel.isInScaleRange(1000, 5000, 1000)).to.be.true;
+        });
+
+    });
     describe("addZero", function () {
         it("should create hex string part with leading 0 if input length === 1", function () {
             expect(buildSpecModel.addZero("A")).to.deep.include("0A");
@@ -276,10 +297,10 @@ describe("tools/print_/buildSpec", function () {
             expect(buildSpecModel.rgbArrayToHex([255, 255, 255])).to.deep.include("#ffffff");
         });
         it("should create default hex string from empty rgbArray", function () {
-            expect(buildSpecModel.rgbArrayToHex([])).to.deep.include("#000000");
+            expect(buildSpecModel.rgbArrayToHex([])).to.deep.include("#3399CC");
         });
         it("should create default hex string from undefined rgbArray", function () {
-            expect(buildSpecModel.rgbArrayToHex(undefined)).to.deep.include("#000000");
+            expect(buildSpecModel.rgbArrayToHex(undefined)).to.deep.include("#3399CC");
         });
         it("should create hex string from rgbArray with transparency", function () {
             expect(buildSpecModel.rgbArrayToHex([255, 0, 0, 1])).to.deep.include("#ff0000");
@@ -903,6 +924,20 @@ describe("tools/print_/buildSpec", function () {
                 style = buildSpecModel.getFeatureStyle(pointFeatures[0], vectorLayer)[0];
 
             expect(buildSpecModel.getImageName(style.getImage().getSrc())).to.equal("/krankenhaus.png");
+        });
+    });
+    describe("rgbStringToRgbArray", function () {
+        it("should turn \"rgb(0,12,345)\" into [0,12,345]", function () {
+            expect(buildSpecModel.rgbStringToRgbArray("rgb(0,12,345)")).to.deep.equal([0, 12, 345]);
+        });
+        it("should turn \"rgba(0,12,345,1)\" into [0,12,345,1]", function () {
+            expect(buildSpecModel.rgbStringToRgbArray("rgb(0,12,345,1)")).to.deep.equal([0, 12, 345, 1]);
+        });
+        it("should turn \"rgba(0,12,345,.1)\" into [0,12,345,.1]", function () {
+            expect(buildSpecModel.rgbStringToRgbArray("rgb(0,12,345,.1)")).to.deep.equal([0, 12, 345, 0.1]);
+        });
+        it("should turn \"rgba(0,12,345,0.1)\" into [0,12,345,01]", function () {
+            expect(buildSpecModel.rgbStringToRgbArray("rgb(0,12,345,0.1)")).to.deep.equal([0, 12, 345, 0.1]);
         });
     });
 });

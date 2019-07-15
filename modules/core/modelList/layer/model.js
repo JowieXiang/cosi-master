@@ -3,21 +3,21 @@ import Item from ".././item";
 const Layer = Item.extend(/** @lends Layer.prototype */{
     defaults: {
         channel: Radio.channel("Layer"),
-        isVisibleInMap: false,
+        hitTolerance: 0,
+        isNeverVisibleInTree: false,
+        isRemovable: false,
         isSelected: false,
         isSettingVisible: false,
-        transparency: 0,
-        selectionIDX: 0,
+        isVisibleInMap: false,
         layerInfoClicked: false,
-        minScale: "0",
-        maxScale: "1000000",
         legendURL: "",
-        supported: ["2D"],
+        maxScale: "1000000",
+        minScale: "0",
+        selectionIDX: 0,
         showSettings: true,
-        hitTolerance: 0,
         styleable: false,
-        isNeverVisibleInTree: false,
-        isRemovable: false
+        supported: ["2D"],
+        transparency: 0
     },
     /**
      * @class Layer
@@ -140,14 +140,14 @@ const Layer = Item.extend(/** @lends Layer.prototype */{
         });
         this.listenTo(this, {
             "change:isVisibleInMap": function () {
-                this.collection.initModelIndex(this);
-
                 // triggert das Ein- und Ausschalten von Layern
                 Radio.trigger("ClickCounter", "layerVisibleChanged");
                 Radio.trigger("Layer", "layerVisibleChanged", this.get("id"), this.get("isVisibleInMap"));
-                this.toggleLayerOnMap();
                 this.toggleWindowsInterval();
                 this.toggleAttributionsInterval();
+            },
+            "change:isSelected": function () {
+                this.toggleLayerOnMap();
             },
             "change:transparency": this.updateLayerTransparency
         });
@@ -241,6 +241,7 @@ const Layer = Item.extend(/** @lends Layer.prototype */{
             this.setIsVisibleInMap(false);
         }
         else {
+            this.setIsSelected(true);
             this.setIsVisibleInMap(true);
         }
     },
@@ -362,7 +363,7 @@ const Layer = Item.extend(/** @lends Layer.prototype */{
      * @return {void}
      */
     moveDown: function () {
-        this.collection.moveModelDown(this);
+        this.collection.moveModelInTree(this, -1);
     },
 
     /**
@@ -370,7 +371,7 @@ const Layer = Item.extend(/** @lends Layer.prototype */{
      * @return {void}
      */
     moveUp: function () {
-        this.collection.moveModelUp(this);
+        this.collection.moveModelInTree(this, 1);
     },
 
     /**
@@ -380,6 +381,15 @@ const Layer = Item.extend(/** @lends Layer.prototype */{
      */
     setSelectionIDX: function (value) {
         this.set("selectionIDX", value);
+    },
+
+    /**
+     * Resets selectionIDX property; 0 is defined as initial value and the layer will be acknowledged as
+     * newly added for the sake of initial positioning
+     * @returns {void}
+     */
+    resetSelectionIDX: function () {
+        this.set("selectionIDX", 0);
     },
 
     /**
