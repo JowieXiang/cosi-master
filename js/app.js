@@ -58,6 +58,7 @@ import CosiTouchScreenView from "../modules/cosi/touchScreen/view";
 import CosiInfosSreenView from "../modules/cosi/infoScreen/view";
 import CosiSelectAreaView from "../modules/cosi/infoScreen/selectArea/view";
 import LocalStorageView from "../modules/localStorage/view";
+import CosiCalculatorView from "../modules/tools/cosiCalculator/view"
 import DataMenuView from "../modules/charting/dataMenu/view";
 import ChartPanelView from "../modules/charting/chartPanel/view";
 import PieView from "../modules/charting/chartRenderer/pie/view";
@@ -458,6 +459,7 @@ function loadApp () {
 
         if (!_.has(Config.cosiMode, "isInfoscreen")) {
             new CosiTouchScreenView(Config);
+            new CosiCalculatorView();
         }
 
         if (_.has(Config.cosiMode, "isInfoscreen")) {
