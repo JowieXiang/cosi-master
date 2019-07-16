@@ -1,4 +1,5 @@
 import CalcTemplate from "text-loader!./template.html";
+import CosiCalculatorModel from "./model";
 
 const CosiCalculatorView = Backbone.View.extend({
 
