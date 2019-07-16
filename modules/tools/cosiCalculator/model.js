@@ -1,33 +1,9 @@
+const CosiCalculatorModel = Backbone.Model.extend({
 
-
-const CosiCalculator = Tool.extend({
-    defaults: _.extend({}, Tool.prototype.defaults, {
-
-    }),
-
-    /**
-     * create a DrawTool instance
-     * @return {void}
-     */
+    // wird aufgerufen wenn das Model erstellt wird
     initialize: function () {
-        const channel = Radio.channel("cosiCalc");
 
-        this.superInitialize();
-
-        channel.reply({
-            "getLayer": function () {
-                return this.get("layer");
-            }
-        }, this);
-
-        channel.on({
-        }, this);
-
-        this.listenTo(this, {
-
-        });
-    },
-
+    }
 });
 
-export default CosiCalculator;
+export default CosiCalculatorModel;
