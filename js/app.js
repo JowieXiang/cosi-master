@@ -59,8 +59,6 @@ import CosiInfosSreenView from "../modules/cosi/infoScreen/view";
 import CosiSelectAreaView from "../modules/cosi/infoScreen/selectArea/view";
 import LocalStorageView from "../modules/localStorage/view";
 import CosiCalculatorView from "../modules/tools/cosiCalculator/view"
-import DataMenuView from "../modules/charting/dataMenu/view";
-import ChartPanelView from "../modules/charting/chartPanel/view";
 import PieView from "../modules/charting/chartRenderer/pie/view";
 import BarView from "../modules/charting/chartRenderer/bar-line/view";
 import ChartUtil from "../modules/charting/chartRenderer/util/util";
@@ -477,8 +475,6 @@ function loadApp () {
         /*
         *   Charting so far only used in the context of CoSI
         */
-        new DataMenuView();
-        new ChartPanelView();
         new PieView();
         new BarView();
         new ChartUtil();
