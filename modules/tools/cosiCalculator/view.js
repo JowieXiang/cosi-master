@@ -1,4 +1,4 @@
-
+import CalcTemplate from "text-loader!./template.html";
 
 const CosiCalculatorView = Backbone.View.extend({
     events: {
@@ -15,7 +15,7 @@ const CosiCalculatorView = Backbone.View.extend({
 
     },
 
-    template: _.template(DrawTemplate),
+    template: _.template(CalcTemplate),
 
     /**
      * render the cosi calculator
