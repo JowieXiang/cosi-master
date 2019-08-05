@@ -12,8 +12,6 @@ const DatepickerView = Backbone.View.extend(/** @lends DatepickerView.prototype 
     events: {
         "changeDate": "changeDate"
     },
-
-    template: _.template(Template),
     /**
      * Setting listener
      * @returns {void}
@@ -24,6 +22,7 @@ const DatepickerView = Backbone.View.extend(/** @lends DatepickerView.prototype 
             "removeView": this.remove
         }, this);
     },
+    template: _.template(Template),
 
     /**
      * render methode
@@ -48,7 +47,12 @@ const DatepickerView = Backbone.View.extend(/** @lends DatepickerView.prototype 
             language: "de",
             defaultViewDate: date.get("date"),
             startDate: date.get("startDate"),
-            endDate: date.get("endDate")
+            endDate: date.get("endDate"),
+            maxViewMode: "days",
+            templates: {
+                leftArrow: "<i class=\"glyphicon glyphicon-triangle-left\"></i>",
+                rightArrow: "<i class=\"glyphicon glyphicon-triangle-right\"></i>"
+            }
         });
         this.$el.find(".datepicker-container").datepicker("setDate", date.get("date"));
     },

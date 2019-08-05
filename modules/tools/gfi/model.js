@@ -203,14 +203,27 @@ const Gfi = Tool.extend({
             vectorGFIParams = [],
             wmsGFIParams = [],
             GFIParams3d = [],
-            unionParams = [];
+            unionParams = [],
+            coordinate = [];
 
         Radio.trigger("ClickCounter", "gfi");
         if (Radio.request("Map", "isMap3d")) {
             GFIParams3d = this.setGfiParams3d(evt);
         }
         // für detached MapMarker
-        this.setCoordinate(evt.coordinate);
+        const feature = evt.map.forEachFeatureAtPixel(evt.pixel, function (feat) {
+            return feat;
+        });
+
+        if (feature === null || feature === undefined) {
+            coordinate = evt.coordinate;
+        }
+        else {
+            coordinate = feature.getGeometry().getCoordinates();
+        }
+
+        this.setCoordinate(coordinate);
+
         // Vector
         vectorGFIParams = this.getVectorGFIParams(visibleVectorLayerList, evt.map.getEventPixel(evt.originalEvent));
         // WMS
@@ -531,11 +544,11 @@ const Gfi = Tool.extend({
     },
 
     /**
-    * Prüft, ob clickpunkt in RemoveIcon und liefert true/false zurück.
-    * @param  {integer} top Pixelwert
-    * @param  {integer} left Pixelwert
-    * @return {undefined}
-    */
+     * Prüft, ob clickpunkt in RemoveIcon und liefert true/false zurück.
+     * @param  {integer} top Pixelwert
+     * @param  {integer} left Pixelwert
+     * @return {undefined}
+     */
     checkInsideSearchMarker: function (top, left) {
         var button = Radio.request("MapMarker", "getCloseButtonCorners"),
             bottomSM = button.bottom,

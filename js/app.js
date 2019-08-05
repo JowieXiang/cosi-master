@@ -1,3 +1,4 @@
+import Alert from "../modules/alerting/model";
 import RestReaderList from "../modules/restReader/collection";
 import Autostarter from "../modules/core/autostarter";
 import Util from "../modules/core/util";
@@ -62,6 +63,11 @@ import CosiCalculatorView from "../modules/tools/cosiCalculator/view"
 import PieView from "../modules/charting/chartRenderer/pie/view";
 import BarView from "../modules/charting/chartRenderer/bar-line/view";
 import ChartUtil from "../modules/charting/chartRenderer/util/util";
+// @deprecated in version 3.0.0
+// remove "version" in doc and config.
+// rename "print_" to "print"
+// only load PrintView
+import PrintView2 from "../modules/tools/print/view";
 // controls
 import ControlsView from "../modules/controls/view";
 import ZoomControlView from "../modules/controls/zoom/view";
@@ -84,12 +90,17 @@ import "es6-promise/auto";
 
 var sbconfig, controls, controlsView;
 
+/**
+ * load the configuration of master portal
+ * @return {void}.
+ */
 function loadApp () {
 
     // Prepare config for Utils
     var utilConfig = {},
         layerInformationModelSettings = {},
-        cswParserSettings = {};
+        cswParserSettings = {},
+        alertingConfig = Config.alerting ? Config.alerting : {};
 
     if (_.has(Config, "uiStyle")) {
         utilConfig.uiStyle = Config.uiStyle.toUpperCase();
@@ -110,7 +121,8 @@ function loadApp () {
         new QuickHelpView(Config.quickHelp);
     }
 
-   // Core laden
+    // Core laden
+    new Alert(alertingConfig);
     new Autostarter();
     new Util(utilConfig);
     // Pass null to create an empty Collection with options
@@ -213,7 +225,16 @@ function loadApp () {
                 break;
             }
             case "print": {
-                new PrintView({model: tool});
+                // @deprecated in version 3.0.0
+                // remove "version" in doc and config.
+                // rename "print_" to "print"
+                // only load correct view
+                if (tool.has("version") && (tool.get("version") === "mapfish_print_3" || tool.get("version") === "HighResolutionPlotService")) {
+                    new PrintView({model: tool});
+                }
+                else {
+                    new PrintView2({model: tool});
+                }
                 break;
             }
             case "parcelSearch": {
@@ -297,7 +318,8 @@ function loadApp () {
         controlsView = new ControlsView();
 
         _.each(controls, function (control) {
-            var element;
+            var element,
+                orientationConfigAttr = _.isString(control.attr) ? {zoomMode: control.attr} : control;
 
             switch (control.id) {
                 case "zoom": {
@@ -308,8 +330,6 @@ function loadApp () {
                     break;
                 }
                 case "orientation": {
-                    var orientationConfigAttr =_.isString(control.attr) ? {zoomMode: control.attr} : control;
-
                     element = controlsView.addRowTR(control.id, true);
                     orientationConfigAttr.epsg = Radio.request("MapView", "getProjection").getCode();
                     new OrientationView({el: element, config: orientationConfigAttr});
@@ -357,7 +377,7 @@ function loadApp () {
                  * backforward
                  * @deprecated in 3.0.0
                  */
-                case "backforward" : {
+                case "backforward": {
                     if (control.attr === true || _.isObject(control.attr)) {
                         console.warn("'backforward' is deprecated. Please use 'backForward' instead");
                         element = controlsView.addRowTR(control.id, false);
@@ -365,7 +385,7 @@ function loadApp () {
                     }
                     break;
                 }
-                case "backForward" : {
+                case "backForward": {
                     if (control.attr === true || _.isObject(control.attr)) {
                         element = controlsView.addRowTR(control.id, false);
                         new BackForwardView({el: element});
@@ -440,15 +460,20 @@ function loadApp () {
     new HighlightFeature();
 
     // Variable CUSTOMMODULE wird im webpack.DefinePlugin gesetzt
+    /* eslint-disable no-undef */
     if (CUSTOMMODULE !== "") {
-        return import(/* webpackMode: "eager" */ CUSTOMMODULE)
-        .then(module => {
-            new module.default;
-        })
-        .catch(error => {
-            Radio.trigger("Alert", "alert", "Entschuldigung, diese Anwendung konnte nicht vollständig geladen werden. Bitte wenden sie sich an den Administrator.");
-        });
+        // DO NOT REMOVE [webpackMode: "eager"] comment, its needed.
+        import(/* webpackMode: "eager" */CUSTOMMODULE)
+            .then(module => {
+                /* eslint-disable new-cap */
+                new module.default();
+            })
+            .catch(error => {
+                console.error(error);
+                Radio.trigger("Alert", "alert", "Entschuldigung, diese Anwendung konnte nicht vollständig geladen werden. Bitte wenden sie sich an den Administrator.");
+            });
     }
+    /* eslint-enable no-undef */
 
     if (_.has(Config, "cosiMode")) {
         if (_.has(Config, "mouseHover")) {

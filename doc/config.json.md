@@ -5,7 +5,7 @@
 ***
 
 # config.json
-Die *config.json* enthält die gesamte Konfiguration der Portal-Oberfläche. In ihr wird geregelt welche Elemente sich wo in der Menüleiste befinden, worauf die Karte zentriert werden soll und welche Layer geladen werden sollen. Hier geht es zu einem [Beispiel](https://bitbucket.org/lgv-g12/lgv/src/stable/portal/master/config.json).
+Die *config.json* enthält die gesamte Konfiguration der Portal-Oberfläche. In ihr wird geregelt welche Elemente sich wo in der Menüleiste befinden, worauf die Karte zentriert werden soll und welche Layer geladen werden sollen. Hier geht es zu einem [Beispiel](https://bitbucket.org/geowerkstatt-hamburg/masterportal/src/stable/portal/master/config.json).
 Die config.json besteht aus der [Portalconfig](#markdown-header-Portalconfig) und der [Themenconfig](#markdown-header-Themenconfig)
 ```
 {
@@ -718,6 +718,8 @@ Ein Ordner-Object wird dadurch definiert, dass es neben "name" und "glyphicon" n
 
 [type:filter]: # (Portalconfig.menu.tool.filter)
 
+[type:shadow]: # (Portalconfig.menu.tool.shadow)
+
 Liste aller konfigurierbaren Werkzeuge. Jedes Werkzeug erbt von [tool](#markdown-header-portalconfigmenutool) und kann/muss somit auch die dort angegebenen attribute konfiguiert bekommen.
 
 |Name|Verpflichtend|Typ|Default|Beschreibung|Expert|
@@ -746,6 +748,9 @@ Liste aller konfigurierbaren Werkzeuge. Jedes Werkzeug erbt von [tool](#markdown
 |contact|nein|[contact](#markdown-header-portalconfigmenutoolcontact)||Kontaktformular. Stellt dem User eine Möglichkeit zur Verfügung, mit dem einem Konfigurierten Postfach in Verbindung zu treten um Fehler zu melden oder Wünsche und Anregungen zu äußern.|false|
 |schulwegrouting|nein|[schulwegrouting](#markdown-header-portalconfigmenutoolschulwegrouting)||Schulwegrouting.|true|
 |filter|nein|[filter](#markdown-header-portalconfigmenutoolfilter)||Neues Filtermodul.|false|
+|virtualcity|nein|[virtualcity](#markdown-header-portalconfigmenutoolvirtualcity)||virtualcityPLANNER planning Viewer|
+|shadow|nein|[shadow](#markdown-header-portalconfigmenutoolshadow)||Konfigurationsobjekt für die Schattenzeit im 3D-Modus.|
+
 
 ***
 
@@ -785,6 +790,7 @@ Einwohnerabfrage für Hamburg und die MRH (Metropolregion Hamburg).
 |name|ja|String||Name des Werkzeuges im Menu.|false|
 |glyphicon|nein|String||CSS Klasse des Glyphicons, das vor dem Toolnamen im Menu angezeigt wird.|false|
 |onlyDesktop|nein|Boolean|false|Flag ob das Werkzeug nur im Desktop Modus sichtbar sein soll.|false|
+|populationReqServiceId|ja|String|"2"|In rest-services.[...].js konfigurierte Service-ID|false|
 
 **Beispiel Einwohnerabfrage**
 ```
@@ -1402,6 +1408,57 @@ Definiert einen Layer für den Layerslider.
 }
 ```
 
+
+#### Portalconfig.menu.tool.virtualcity
+
+[inherits]: # (Portalconfig.menu.tool)
+
+Das virtualcity Tool bietet die Möglichkeit die Planungen von einem virtualcityPLANNER Dienst im Masterportal anzuzeigen. 
+Die Planungen müssen im virtualcityPLANNER auf Öffentlich gesetzt sein, dann können sie über dieses Tool angezeigt werden
+
+
+|Name|Verpflichtend|Typ|Default|Beschreibung|
+|----|-------------|---|-------|------------|
+|serviceId|ja|String||Id des services. Wird aufgelöst in der [rest-services.json](rest-services.json.md).|
+
+**Beispiel**
+```
+#!json
+{
+  "title": "virtualcityPLANNER",
+  "serviceId": "1"
+}
+```
+
+
+#### Portalconfig.menu.tool.shadow
+
+[inherits]: # (Portalconfig.menu.tool)
+
+Das ShadowTool bietet eine Oberfläche zur Definition einer Zeitangabe. Über Slider und Datepicker können Zeitangaben in einem 30-Minuten Raster angegeben werden. Die ausgewählte Zeitangabe dient dem Rendern der Schatten aller 3D-Objekte im 3D-Modus, indem der Sonnenstand simuliert wird. Durch Ziehen des Sliders oder Auswahl eines neuen Datums wird unmittelbar ein neuer Sonnenstand simuliert. Per default startet das Tool mit der aktuellen Zeitangabe, die über Parameter überschrieben werden kann.
+
+
+|Name|Verpflichtend|Typ|Default|Beschreibung|
+|----|-------------|---|-------|------------|
+|shadowTime|nein|Object|Now()|Default-Zeitangabe, mit der das ShadowTool startet. Erkennt "month", "day", "hour", "minute"|
+|isShadowEnabled|nein|Boolean|false|Default Shadow-Wert. True um unmittelbar Shadow einzuschalten. False zum manuellen bestätigen.|
+
+
+**Beispiel**
+```
+#!json
+{
+    "shadowTime": {
+        "month": "6",
+        "day": "20",
+        "hour": "13",
+        "minute": "0"
+    },
+    "isShadowEnabled": true
+}
+```
+
+
 ***
 
 #### Portalconfig.menu.staticlinks
@@ -1702,7 +1759,6 @@ Neben diesen Attributen gibt es auch Typ-spezifische Attribute für [WMS](#markd
 |visibility|nein|Boolean|false|Sichtbarkeit des Layers.|false|
 |supported|nein|String[]|["2D", "3D"]|Gibt die Modi an in denen der Layer verwendet werden kann.|false|
 |extent|nein|[Extent](#markdown-header-datatypesextent)|[454591, 5809000, 700000, 6075769]|Ausdehnung des Layers.|false|
-|displayInTree|nein|Boolean|false|Gibt an ob der Layer im Themenbaum angezeigt werden soll.|false|
 |gfiTheme|nein|String|"default"|Wert aus [services.json](services.json.md). Gibt an welches theme für die GetFeatureInfo (gfi) verwendet werden soll.|true|
 |layerAttribution|nein|String||Wert aus [services.json](services.json.md). HTML String. Dieser wird angezeigt sobald der Layer aktiv ist.|false|
 |legendURL|nein|String||Wert aus [services.json](services.json.md). Url die verwendet wird um die Legende anzufragen.|false|
@@ -1749,7 +1805,6 @@ Neben diesen Attributen gibt es auch Typ-spezifische Attribute für [WMS](#markd
 |visibility|nein|Boolean|false|Sichtbarkeit des Layers.|false|
 |supported|nein|String[]|["2D", "3D"]|Gibt die Modi an in denen der Layer verwendet werden kann.|false|
 |extent|nein|[Extent](#markdown-header-datatypesextent)|[454591, 5809000, 700000, 6075769]|Ausdehnung des Layers.|false|
-|displayInTree|nein|Boolean|false|Gibt an ob der Layer im Themenbaum angezeigt werden soll.|false|
 |gfiTheme|nein|String|"default"|Wert aus [services.json](services.json.md). Gibt an welches theme für die GetFeatureInfo (gfi) verwendet werden soll.|true|
 |layerAttribution|nein|String||Wert aus [services.json](services.json.md). HTML String. Dieser wird angezeigt sobald der Layer aktiv ist.|false|
 |legendURL|nein|String||Wert aus [services.json](services.json.md). Url die verwendet wird um die Legende anzufragen.|false|
@@ -1803,7 +1858,6 @@ Hier werde WMS typische Attribute aufgelistet.
     "visibility": true,
     "supported": ["2D"],
     "extent": [454591, 5809000, 700000, 6075769],
-    "displayInTree": true,
     "gfiTheme": "default",
     "layerAttribution": "MyBoldAttribution for layer 123456",
     "legendURL": "https://myServer/myService/legend.pdf",
@@ -1879,7 +1933,6 @@ Hier werden Vector typische Attribute aufgelistet. Vector Layer sind WFS, GeoJSO
     "visibility": true,
     "supported": ["2D"],
     "extent": [454591, 5809000, 700000, 6075769],
-    "displayInTree": true,
     "gfiTheme": "default",
     "layerAttribution": "MyBoldAttribution for layer 123456",
     "legendURL": "https://myServer/myService/legend.pdf",

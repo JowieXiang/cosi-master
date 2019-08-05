@@ -63,7 +63,7 @@ const View = Backbone.View.extend({
     },
     render: function () {
         let attr = this.model.toJSON();
-        $(".lgv-container").append(this.$el.html(this.template(attr)));
+        $(".masterportal-container").append(this.$el.html(this.template(attr)));
     },
 
     /*

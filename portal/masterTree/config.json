@@ -136,8 +136,8 @@
             },
             {
               "layerId": "1711",
-              "isActive": true,
-              "isSelected": true,
+              "isActive": false,
+              "isSelected": false,
               "name": "Krankenhäuser",
               "predefinedRules": [],
               "attributeWhiteList": ["teilnahme_geburtsklinik", "teilnahme_notversorgung"]
@@ -156,7 +156,7 @@
             "glyphicon": "glyphicon-search",
             "serviceId": "6",
             "storedQueryID": "Flurstueck",
-            "configJSON": "/lgv-config/gemarkungen_hh.json",
+            "configJSON": "https://geofos.fhhnet.stadt.hamburg.de/lgv-config/gemarkungen_hh.json",
             "parcelDenominator": false
           },
           "measure":
@@ -318,7 +318,7 @@
       "overviewMap":
       {
         "resolution": 611.4974492763076,
-        "baseLayer": "452"
+        "layerId": "452"
       },
       "mousePosition": true,
       "buttonOblique": true,
@@ -687,7 +687,6 @@
             }
          ]
       },
-
       {
         "Titel": "Gruppenlayer",
         "Layer":
@@ -703,11 +702,12 @@
                       "id": "1731"
                     }
                ],
-              "visibility": true,
+              "visibility": false,
               "name": "Kita und Krankenhäuser"
             },
             {
               "id": "schUk",
+              "layerAttribution": "<span>Attributierung für Gruppenlayer</span>",
               "children":
                 [
                     {
@@ -745,7 +745,8 @@
                       "additionalInfoField": "adresse_strasse_hausnr"
                     }
               ],
-              "name": "Krankenhäuser und Schulen"
+              "name": "Krankenhäuser und Schulen",
+              "visibility": true
             }
           ]
         }

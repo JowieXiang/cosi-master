@@ -4,7 +4,7 @@
 
 # config.js #
 Die *config.js* enthält die Konfigurationsoptionen für das Masterportal, die sich nicht auf die Portal-Oberfläche oder die dargestellten Layer beziehen, z.B. Pfade zu weiteren Konfigurationsdateien. Die *config.js* liegt im Regelfall neben der index.html und neben der *config.json*.
-Im Folgenden werden die einzelnen Konfigurationsoptionen beschrieben. Darüber hinaus gibt es für die Konfigurationen vom Typ *object* weitere Optionen, diese Konfigurationen sind verlinkt und werden im Anschluss an die folgende Tabelle jeweils genauer erläutert. Hier geht es zu einem [Beispiel](https://bitbucket.org/lgv-g12/lgv/src/stable/portal/master/config.js).
+Im Folgenden werden die einzelnen Konfigurationsoptionen beschrieben. Darüber hinaus gibt es für die Konfigurationen vom Typ *object* weitere Optionen, diese Konfigurationen sind verlinkt und werden im Anschluss an die folgende Tabelle jeweils genauer erläutert. Hier geht es zu einem [Beispiel](https://bitbucket.org/geowerkstatt-hamburg/masterportal/src/stable/portal/master/config.js).
 
 |Name|Verpflichtend|Typ|Default|Beschreibung|Beispiel|
 |----|-------------|---|-------|------------|--------|
@@ -24,7 +24,7 @@ Im Folgenden werden die einzelnen Konfigurationsoptionen beschrieben. Darüber h
 |proxyHost|nein|String||Hostname eines remote Proxy (dort muss CORS aktiviert sein)|`"https://proxy.example.com"`|
 |proxy|nein|Boolean|true|Gibt an ob bei URLs Punkte durch Unterstriche ersetzt werden sollen. Dadurch werden CORS-Fehler verhindert. Achtung: Es muss serverseitig ein Reverse-Proxy eingerichtet werden.||
 |quickHelp|nein|Boolean|false|Aktiviert das QuickHelp-Modul. Dieses zeigt kontextsensitive Hilfe für die verfügbaren Funktionen an (bisher verfügbar für: Themenbaum und Suche).|`true`|
-|portalConf|nein|String|"config.json"|Pfad zur config.json des Portals. Es kann auch ein Knotenpunkt angegeben werden. Der Weiterführende Pfad wird dann über den URL-Parameter "config" gesteuert.|"../../portal/master/". Zusätzlich muss dann in der URL der Parameter "config=config.json" stehen.|
+|portalConf|nein|String|"config.json"|Pfad zur config.json des Portals. Es kann auch ein Knotenpunkt angegeben werden. Der Weiterführende Pfad wird dann über den URL-Parameter "config" gesteuert.|Direkter Pfad: "../masterTree/config.json"; Knotenpunkt: "../../portal/master/". Zusätzlich muss dann in der URL der Parameter "config=config.json" stehen.|
 |restConf|ja|String||Pfad zur [rest-services.json](rest-services.json.md), die weitere, verfügbare Dienste enthält (z.B. Druckdienst, WPS, CSW). Der Pfad ist relativ zu js/main.js.|`"../components/lgv-config/rest-services-fhhnet.json"`|
 |scaleLine|nein|Boolean|false|Steuert, ob eine Maßstabsleiste unten rechts auf der Karte angezeigt wird.|`true`|
 |simpleMap|nein|Boolean|false|Fügt dem *„Auswahl speichern“-Dialog* eine SimpleMap-URL hinzu (ohne Menüleiste, Layerbau, Map Controls). Nicht für Portale mit Baumtyp: *„light“*.|`false`|
@@ -42,7 +42,7 @@ Im Folgenden werden die einzelnen Konfigurationsoptionen beschrieben. Darüber h
 |[cesiumParameter](#markdown-header-cesiumParameter)|nein|Object||Cesium Flags||
 |[remoteInterface](#markdown-header-remoteInterface)|nein|object||Optionale Konfiguration für das remoteInterface.||
 |defaultToolId|nein|String|"gfi"|Id des Tools, das immer an sein soll, wenn kein anderes Tool aktiv ist.|"filter"|
-|shadowTime|nein|Object||Konfigurationsobjekt für die Schattenzeit im 3D-Modus.|"{ year: "2014", month: "6", day: "20", hour: "13", minute: "0", second: "0", millisecond: "0" }"|
+|[alerting](#markdown-header-alerting)|nein|Object|{"category": "alert-info", "isDismissable": true, "isConfirmable": false, "position": "top-center", "fadeOut": null}|Konfigurationsobjekt zum Überschreiben der default Werte des Alerting Moduls.|{fadeOut: 6000}|
 
 ******
 ## mouseHover ##
@@ -93,7 +93,7 @@ mobil: "http://static.hamburg.de/countframes/verkehrskarte-mobil_count.html"
 |Name|Verpflichtend|Typ|Default|Beschreibung|
 |----|-------------|---|-------|------------|
 |[urls](#markdown-header-footerurls)|nein|Array[Object]||Array von URL-Konfigurationsobjekten. Auch hier existieren wiederum mehrere Konfigurationsmöglichkeiten, welche in der folgenden Tabelle aufgezeigt werden.|
-|version|nein|Array[Object]||Array von Versionsnummerobjekten. Erstes Objekt im Array ist ein Boolean, der angibt ob die Versionsnummern angezeigt werden sollen oder nicht. Bei allen anderen Objekten wird der Wert beim build-Prozess aus der package.json in die config.js geschrieben und vom Footer aus der config.js ausgelesen. Bei einem bereist gebauten Portal, kann die Vserionsnummer direkt angegben werden.|
+|showVersion|nein|Boolean|false|Flag, ob die Versionsnummer des Masterportals im Footer angezeigt werden soll.|
 
 ******
 ### footer.urls ###
@@ -129,10 +129,7 @@ footer: {
             "alias": "Kartenunstimmigkeit"
         }
     ],
-    version: {
-        "showVersion": true,
-        "MasterportalVersion": "$Version"
-    }
+    "showVersion": true
 }
 ```
 *********
@@ -219,5 +216,15 @@ zoomtofeature: {
 
 
 [fog]: https://cesiumjs.org/Cesium/Build/Documentation/Fog.html
+
+********
+## alerting ##
+|Name|Verpflichtend|Typ|Default|Beschreibung|
+|----|-------------|---|-------|------------|
+|category|nein|String|"alert-info"|Bestimmt das Layout des Bootstrap-Alerts. Siehe [Bootstrap](https://getbootstrap.com/docs/3.3/components/#alerts)|
+|isDismissable|nein|Boolean|true|Legt fest, ob der Alarm weggeklickt werden kann, indem eine weitere Bootstrap-Class am alert gesetzt wird .|
+|isConfirmable|nein|Boolean|false|Flag ob alert bestätigt werden muss.|
+|position|nein|String|"top-center"|Position des Alerts (Bootstrap-Class)|
+|fadeOut|nein|Integer|null|Milliseconds bis zum automatischen fade-out des alerts|
 
 >Zurück zur [Dokumentation Masterportal](doc.md).

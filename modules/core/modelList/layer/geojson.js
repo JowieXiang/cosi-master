@@ -30,6 +30,9 @@ const GeoJSONLayer = Layer.extend(/** @lends GeoJSONLayer.prototype */{
      * @returns {void}
      */
     initialize: function () {
+
+        this.checkForScale(Radio.request("MapView", "getOptions"));
+
         if (!this.get("isChildLayer")) {
             Layer.prototype.initialize.apply(this);
         }
@@ -104,6 +107,39 @@ const GeoJSONLayer = Layer.extend(/** @lends GeoJSONLayer.prototype */{
      * @param  {boolean} [showLoader=false] shows loader div
      * @returns {void}
      */
+/*    updateSource: function (showLoader) {
+        const typ = this.get("typ"),
+            url = Radio.request("Util", "getProxyURL", this.get("url")),
+            xhr = new XMLHttpRequest(),
+            that = this;
+
+        let paramUrl;
+
+        if (typ === "WFS") {
+            paramUrl = url + "?REQUEST=GetFeature&SERVICE=WFS&TYPENAME=" + this.get("featureType") + "&OUTPUTFORMAT=application/geo%2Bjson&VERSION=" + this.get("version");
+        }
+        else if (typ === "GeoJSON") {
+            paramUrl = url;
+        }
+
+        if (showLoader) {
+            Radio.trigger("Util", "showLoader");
+        }
+
+        xhr.open("GET", paramUrl, true);
+        xhr.timeout = 10000;
+        xhr.onload = function (event) {
+            that.handleResponse(event.currentTarget.responseText, xhr.status, showLoader);
+        };
+        xhr.ontimeout = function () {
+            that.handleResponse({}, "timeout", showLoader);
+        };
+        xhr.onabort = function () {
+            that.handleResponse({}, "abort", showLoader);
+        };
+        xhr.send();
+    },*/
+
     updateSource: function (showLoader) {
         var params = {
             request: "GetFeature",
@@ -137,6 +173,29 @@ const GeoJSONLayer = Layer.extend(/** @lends GeoJSONLayer.prototype */{
                 }
             }
         });
+    },
+
+    /**
+     * Handles the xhr response
+     * @fires MapView#RadioRequestGetProjection
+     * @fires Alerting#RadioTriggerAlertAlert
+     * @fires Util#RadioTriggerUtilHideLoader
+     * @param {string} responseText response as GeoJson
+     * @param {integer|string} status status of xhr-request
+     * @param {boolean} [showLoader=false] Flag to show Loader
+     * @returns {void}
+     */
+    handleResponse: function (responseText, status, showLoader) {
+        if (status === 200) {
+            this.handleData(responseText, Radio.request("MapView", "getProjection").getCode());
+        }
+        else {
+            Radio.trigger("Alert", "alert", "Datenabfrage fehlgeschlagen. (Technische Details: " + status + ")");
+        }
+
+        if (showLoader) {
+            Radio.trigger("Util", "hideLoader");
+        }
     },
 
     /**
@@ -284,20 +343,6 @@ const GeoJSONLayer = Layer.extend(/** @lends GeoJSONLayer.prototype */{
                 return null;
             });
         }, this);
-    },
-
-    /**
-     * Sets inside or outside of scale range
-     * @param {object} options scale options
-     * @returns {void}
-     */
-    checkForScale: function (options) {
-        if (parseFloat(options.scale, 10) <= this.get("maxScale") && parseFloat(options.scale, 10) >= this.get("minScale")) {
-            this.setIsOutOfRange(false);
-        }
-        else {
-            this.setIsOutOfRange(true);
-        }
     },
 
     /**
