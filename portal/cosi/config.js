@@ -56,7 +56,7 @@ const Config = {
     isLocalStorage: true,
 
     portalConf: "./",
-    layerConf: "../../portal/cosi/services.json",
+    layerConf: "https://geoportal-hamburg.de/lgv-config/services-internet.json",
     restConf: "../../portal/cosi/rest-services.json",
     styleConf: "../../portal/cosi/style.json",
     proxyURL: "/cgi-bin/proxy.cgi",
