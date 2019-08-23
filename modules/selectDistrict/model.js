@@ -1,4 +1,4 @@
-import {Fill, Stroke, Style} from "ol/style.js";
+import {Circle, Fill, Stroke, Style} from "ol/style.js";
 
 
 const SelectDistrict = Backbone.Model.extend({
@@ -48,9 +48,9 @@ const SelectDistrict = Backbone.Model.extend({
 
         // change feature fill color
         const style = new Style({
-            fill: new Fill({color: "#000"}),
-            stroke: new Stroke({color: "#000"})
+            fill: new Fill({color: "rgba(255,255,255,0.8)"})
         });
+
         features[0].setStyle(style);
         // push selected district to selectedDistricts
         this.pushSelectedDistrict(features[0]);
@@ -59,12 +59,27 @@ const SelectDistrict = Backbone.Model.extend({
 
     resetSelectedDistricts: function () {
         _.each(this.get("selectedDistricts"), function (feature) {
-            const style = new Style({
-                fill: new Fill({color: "#FFFFFF"}),
-                stroke: new Stroke({color: "#FFFFFF"})
-            });
+            // default ol style http://geoadmin.github.io/ol3/apidoc/ol.style.html
+            const fill = new Fill({
+                    color: "rgba(255,255,255,0.4)"
+                }),
+                stroke = new Stroke({
+                    color: "#3399CC",
+                    width: 1.25
+                }),
+                styles = [
+                    new Style({
+                        image: new Circle({
+                            fill: fill,
+                            stroke: stroke,
+                            radius: 5
+                        }),
+                        fill: fill,
+                        stroke: stroke
+                    })
+                ];
 
-            feature.setStyle(style);
+            feature.setStyle(styles);
         });
         this.set("selectedDistricts", []);
     },

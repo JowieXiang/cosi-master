@@ -7,6 +7,7 @@ const SelectDistrictView = Backbone.View.extend({
     },
     initialize: function () {
         const channel = Radio.channel("SelectDistrict");
+
         channel.reply({
             "getSelectedDistricts": this.getSelectedDistricts
         }, this);
@@ -17,6 +18,7 @@ const SelectDistrictView = Backbone.View.extend({
 
     render: function () {
         var attr = this.model.toJSON();
+
         $(".masterportal-container").append(this.$el.html(this.template(attr)));
         return this;
     },
