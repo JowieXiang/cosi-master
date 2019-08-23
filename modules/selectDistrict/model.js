@@ -45,14 +45,12 @@ const SelectDistrict = Backbone.Model.extend({
                 },
                 hitTolerance: districtLayer.get("hitTolerance")
             });
-            console.log(districtLayer.getStyle());
 
         // change feature fill color
         const style = new Style({
             fill: new Fill({color: "#000"}),
             stroke: new Stroke({color: "#000"})
         });
-        // console.log(features[0].getProperties());
         features[0].setStyle(style);
         // push selected district to selectedDistricts
         this.pushSelectedDistrict(features[0]);
