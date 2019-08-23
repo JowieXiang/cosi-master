@@ -205,5 +205,70 @@
         "polygonStrokeColor": [106, 90, 205, 1]
       }
     ]
+  },
+  {
+    "layerId": "1534",
+    "class": "POLYGON",
+    "subClass": "CUSTOM",
+    "styleField": "gruenart",
+    "styleFieldValues": [
+        {
+          "styleFieldValue": "Parkanlage",
+          "polygonFillColor": [229, 245, 224, 0.6],
+          "polygonStrokeColor": [229, 245, 224, 1],
+          "polygonStrokeWidth": 1
+        },
+        {
+          "styleFieldValue": "Spielplatz",
+          "polygonFillColor": [199, 233, 192, 0.6],
+          "polygonStrokeColor": [199, 233, 192, 1],
+          "polygonStrokeWidth": 1
+        },
+        {
+          "styleFieldValue": "Grün an Kleingärten",
+          "polygonFillColor": [161, 217, 155, 0.6],
+          "polygonStrokeColor": [161, 217, 155, 1],
+          "polygonStrokeWidth": 1
+        },
+        {
+          "styleFieldValue": "Schutzgruen",
+          "polygonFillColor": [116, 196, 118, 0.6],
+          "polygonStrokeColor": [116, 196, 118, 1],
+          "polygonStrokeWidth": 1
+        },
+        {
+          "styleFieldValue": "Dauerkleingarten",
+          "polygonFillColor": [65, 171, 93, 0.6],
+          "polygonStrokeColor": [65, 171, 93, 1],
+          "polygonStrokeWidth": 1
+        },
+        {
+          "styleFieldValue": "Kleingarten",
+          "polygonFillColor": [35, 139, 69, 0.6],
+          "polygonStrokeColor": [35, 139, 69, 1],
+          "polygonStrokeWidth": 1
+        },
+        {
+          "styleFieldValue": "Friedhof",
+          "polygonFillColor": [0, 109, 44, 0.6],
+          "polygonStrokeColor": [0, 109, 44, 1],
+          "polygonStrokeWidth": 1
+        },
+        {
+          "styleFieldValue": "anderweitige Nutzung",
+          "polygonFillColor": [0, 68, 27, 0.6],
+          "polygonStrokeColor": [0, 68, 27, 1],
+          "polygonStrokeWidth": 1
+        }
+    ]
+  },
+  {
+    "layerId": "753",
+    "class": "POINT",
+    "subClass": "CIRCLE",
+    "circleRadius": 7,
+    "circleFillColor": [227, 26, 28, 1],
+    "circleStrokeColor": [30, 144, 255, 1],
+    "circleStrokeWidth": 1.5
   }
 ]
