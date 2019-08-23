@@ -103,7 +103,9 @@ const WFSLayer = Layer.extend(/** @lends WFSLayer.prototype */{
             altitudeMode: "clampToGround"
         }));
 
-        this.updateSource(true);
+        if (this.get("isSelected")) {
+            this.updateSource(true);
+        }
     },
 
     /**
