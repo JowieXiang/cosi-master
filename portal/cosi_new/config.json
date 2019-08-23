@@ -196,9 +196,52 @@
             "topic": "gruenflaechen",
             "isDefaultVisible": true,
             "gfiTheme": "cosi"
+          },
+          {
+            "id": "gruenflaechen",
+            "styleId": "gruenflaechen",
+            "topic": "gruenflaechen",
+            "isDefaultVisible": true,
+            "gfiTheme": "cosi"
+          },
+          {
+            "id": "12868",
+            "visibility": false,
+            "topic": "basic"
+          },
+          {
+            "id": "1534",
+            "styleId": "1534",
+            "visibility": false,
+            "topic": "basic"
+          },
+          {
+            "id": "753",
+            "styleId": "753",
+            "visibility": false,
+            "topic": "basic"
+          },
+          {
+            "id": "2763",
+            "visibility": false,
+            "topic": "basic"
+          },
+          {
+            "id": "2768",
+            "visibility": false,
+            "topic": "basic"
+          },
+          {
+            "id": "2769",
+            "visibility": false,
+            "topic": "basic"
+          },
+          {
+            "id": "2771",
+            "visibility": false,
+            "topic": "basic"
           }
         ]
       }
     }
   }
-  
