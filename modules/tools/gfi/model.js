@@ -17,7 +17,7 @@ const Gfi = Tool.extend({
         // uiStyle DEFAULT | TABLE | SIMPLE
         uiStyle: "DEFAULT",
         // ol.Overlay für attached
-        overlay: new Overlay({element: undefined}),
+        overlay: new Overlay({ element: undefined }),
         // desktop/attached/view.js | desktop/detached/view.js | mobile/view.js
         currentView: undefined,
         // Koordinate für das attached Popover und den Marker
@@ -187,7 +187,7 @@ const Gfi = Tool.extend({
         else {
             CurrentView = DesktopDetachedView;
         }
-        this.setCurrentView(new CurrentView({model: this}));
+        this.setCurrentView(new CurrentView({ model: this }));
     },
 
     /**
@@ -196,7 +196,7 @@ const Gfi = Tool.extend({
      * @return {undefined}
      */
     setGfiParams: function (evt) {
-        var visibleLayerList = Radio.request("ModelList", "getModelsByAttributes", {isVisibleInMap: true, isOutOfRange: false}),
+        var visibleLayerList = Radio.request("ModelList", "getModelsByAttributes", { isVisibleInMap: true, isOutOfRange: false }),
             gfiParamsList = this.getGFIParamsList(visibleLayerList),
             visibleWMSLayerList = gfiParamsList.wmsLayerList,
             visibleVectorLayerList = gfiParamsList.vectorLayerList,
@@ -216,10 +216,16 @@ const Gfi = Tool.extend({
         });
 
         if (feature === null || feature === undefined) {
+            this.setIsMapMarkerVisible(false);
             coordinate = evt.coordinate;
         }
-        else {
+        else if (feature.getGeometry().getType() === "Point") {
+            this.setIsMapMarkerVisible(true);
             coordinate = feature.getGeometry().getCoordinates();
+        } else {
+            this.setIsMapMarkerVisible(false);
+            var map = Radio.request("Map", "getMap");
+            coordinate = map.getView().getCenter();
         }
 
         this.setCoordinate(coordinate);
@@ -263,7 +269,7 @@ const Gfi = Tool.extend({
                     properties.attributes.gmlid = properties.id;
                 }
                 if (feature.tileset && feature.tileset.layerReferenceId) {
-                    layerModel = Radio.request("ModelList", "getModelByAttributes", {id: feature.tileset.layerReferenceId});
+                    layerModel = Radio.request("ModelList", "getModelByAttributes", { id: feature.tileset.layerReferenceId });
                     if (layerModel) {
                         modelAttributes = _.pick(layerModel.attributes, "name", "gfiAttributes", "typ", "gfiTheme", "routable", "id", "isComparable");
                     }
@@ -272,7 +278,7 @@ const Gfi = Tool.extend({
                 if (!modelAttributes) {
                     modelAttributes = {
                         attributes: properties.attributes ? properties.attributes : properties,
-                        gfiAttributes: {"roofType": "Dachtyp", "measuredHeight": "Dachhöhe", "function": "Objektart"},
+                        gfiAttributes: { "roofType": "Dachtyp", "measuredHeight": "Dachhöhe", "function": "Objektart" },
                         typ: "Cesium3DTileFeature",
                         gfiTheme: "buildings_3d",
                         name: "Buildings"
@@ -343,11 +349,11 @@ const Gfi = Tool.extend({
 
         _.each(layerlist, function (vectorLayer) {
             var features = Radio.request("Map", "getFeaturesAtPixel", eventPixel, {
-                    layerFilter: function (layer) {
-                        return layer.get("name") === vectorLayer.get("name");
-                    },
-                    hitTolerance: vectorLayer.get("hitTolerance")
-                }),
+                layerFilter: function (layer) {
+                    return layer.get("name") === vectorLayer.get("name");
+                },
+                hitTolerance: vectorLayer.get("hitTolerance")
+            }),
                 modelAttributes = _.pick(vectorLayer.attributes, "name", "gfiAttributes", "typ", "gfiTheme", "routable", "id", "isComparable");
 
             _.each(features, function (featureAtPixel) {
@@ -393,7 +399,7 @@ const Gfi = Tool.extend({
      * @return {void}
      */
     getVectorGfiParams3d: function (featureAtPixel, olLayer) {
-        var model = Radio.request("ModelList", "getModelByAttributes", {id: olLayer.get("id")}),
+        var model = Radio.request("ModelList", "getModelByAttributes", { id: olLayer.get("id") }),
             modelAttributes;
 
         if (_.isUndefined(model) === false) {
@@ -440,7 +446,7 @@ const Gfi = Tool.extend({
      * @returns {void}
      */
     setGfiOfLayerAtPosition: function (layerId, coordinate) {
-        var layerList = Radio.request("ModelList", "getModelsByAttributes", {id: layerId}),
+        var layerList = Radio.request("ModelList", "getModelsByAttributes", { id: layerId }),
             gfiParamsList = this.getGFIParamsList(layerList),
             visibleWMSLayerList = gfiParamsList.wmsLayerList,
             visibleVectorLayerList = gfiParamsList.vectorLayerList,
@@ -471,7 +477,7 @@ const Gfi = Tool.extend({
     setGfiOfFeature: function (hit) {
         var vectorGFIParams = {},
             coordinate = Radio.request("Map", "getMap").getPixelFromCoordinate(hit.coordinate),
-            model = Radio.request("ModelList", "getModelByAttributes", {id: hit.layer_id});
+            model = Radio.request("ModelList", "getModelByAttributes", { id: hit.layer_id });
 
         Radio.trigger("ClickCounter", "gfi");
         this.setCoordinate(coordinate);
@@ -540,7 +546,7 @@ const Gfi = Tool.extend({
     },
 
     getVisibleTheme: function () {
-        return this.get("themeList").findWhere({isVisible: true});
+        return this.get("themeList").findWhere({ isVisible: true });
     },
 
     /**
