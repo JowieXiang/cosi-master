@@ -36,11 +36,12 @@ const Config = {
     uiStyle: "DEFAULT",
     attributions: true,
     scaleLine: true,
-    mouseHover:
-        {
-            numFeaturesToShow: 2,
-            infoText: "(weitere Objekte. Bitte zoomen.)"
-        },
+    // mouseHover:
+    // {
+    //     numFeaturesToShow: 2,
+    //     infoText: "(weitere Objekte. Bitte zoomen.)"
+    // },
+    mouseHover_bev: true,
     isMenubarVisible: true,
     geoAPI: false,
     clickCounter: {},
