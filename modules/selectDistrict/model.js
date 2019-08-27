@@ -1,5 +1,5 @@
 import { Circle, Fill, Stroke, Style } from "ol/style.js";
-
+import GeometryCollection from 'ol/geom/GeometryCollection';
 
 const SelectDistrict = Backbone.Model.extend({
     defaults: {
@@ -40,6 +40,7 @@ const SelectDistrict = Backbone.Model.extend({
         // check if layer is visible
         let visibleWFSLayers = Radio.request("ModelList", "getModelsByAttributes", { isVisibleInMap: true, typ: "WFS" });
         let districtLayer = Radio.request("ModelList", "getModelByAttributes", { "name": "Stadtteile" });
+
         if (visibleWFSLayers.includes(districtLayer)) {
             var features = Radio.request("Map", "getFeaturesAtPixel", evt.map.getEventPixel(evt.originalEvent), {
                     layerFilter: function (layer) {
@@ -55,6 +56,8 @@ const SelectDistrict = Backbone.Model.extend({
             features[0].setStyle(style);
             // push selected district to selectedDistricts
             this.pushSelectedDistrict(features[0]);
+            features[0].setStyle(style);
+            this.setBboxGeometryToLayer(Radio.request("ModelList", "getModelsByAttributes", { typ: "WFS" }));
         }
     },
     pushSelectedDistrict: function (feature) {
@@ -97,7 +100,7 @@ const SelectDistrict = Backbone.Model.extend({
     setClickEventKey: function (value) {
         this.set("clickEventKey", value);
     },
-    
+
     getIsActive: function () {
         return this.get("isActive");
     },
@@ -108,6 +111,30 @@ const SelectDistrict = Backbone.Model.extend({
         if (!this.get("isActive")) {
             this.resetSelectedDistricts();
         }
+    },
+
+    /**
+     * sets the bbox geometry for all vector layers
+     * @param {Backbone.Model[]} vectorLayerList
+     */
+    setBboxGeometryToLayer: function (vectorLayerList) {
+        vectorLayerList.forEach(function (layer) {
+            layer.set("bboxGeometry", this.getSelectedGeometries());
+        }, this);
+    },
+
+    /**
+     * returns all selected geometries
+     * @return ol.geom.GeometryCollection - an array of ol.geom.Geometry objects
+     */
+    getSelectedGeometries: function () {
+        const geometries = [];
+
+        this.get("selectedDistricts").forEach(function (feature) {
+            geometries.push(feature.getGeometry());
+        });
+
+        return new GeometryCollection(geometries);
     }
 });
 

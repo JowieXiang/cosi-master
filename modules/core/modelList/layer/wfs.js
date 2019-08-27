@@ -130,7 +130,9 @@ const WFSLayer = Layer.extend(/** @lends WFSLayer.prototype */{
             SERVICE: "WFS",
             SRSNAME: Radio.request("MapView", "getProjection").getCode(),
             TYPENAME: this.get("featureType"),
-            VERSION: this.get("version")
+            VERSION: this.get("version"),
+            // loads only the features in the extent of this geometry
+            BBOX: this.get("bboxGeometry") ? this.get("bboxGeometry").getExtent().toString() : undefined
         };
 
         $.ajax({
@@ -161,10 +163,28 @@ const WFSLayer = Layer.extend(/** @lends WFSLayer.prototype */{
     handleResponse: function (data) {
         var features = this.getFeaturesFromData(data);
 
+        features = this.getFeaturesIntersectsGeometry(this.get("bboxGeometry"), features);
         this.get("layerSource").clear(true);
         this.get("layerSource").addFeatures(features);
         this.styling();
         this.featuresLoaded(features);
+    },
+
+    /**
+     * returns the features that intersect the given geometries
+     * @param {ol.geom.Geometry[]} geometries - GeometryCollection with one or more geometry
+     * @param {ol.Feature[]} features
+     * @returns {ol.Feature[]} filtered features
+     */
+    getFeaturesIntersectsGeometry(geometries, features) {
+        if (geometries) {
+            features = features.filter(function (feature) {
+                // test if the geometry and the passed extent intersect
+                return geometries.intersectsExtent(feature.getGeometry().getExtent());
+            });
+        }
+
+        return features;
     },
 
     /**
