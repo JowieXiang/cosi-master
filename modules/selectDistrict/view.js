@@ -3,7 +3,7 @@ import Template from "text-loader!./template.html";
 
 const SelectDistrictView = Backbone.View.extend({
     events: {
-        "click #select-district": "toggleIsActive"
+        "click button": "toggleIsActive"
     },
     initialize: function () {
         this.listenTo(this.model, {
@@ -32,12 +32,6 @@ const SelectDistrictView = Backbone.View.extend({
     },
 
     toggleIsActive: function () {
-        if (!this.model.getIsActive()) {
-            this.$("#select-district").css({"background-color": "#808080"});
-        }
-        else {
-            this.$("#select-district").css({"background-color": "white"});
-        }
         this.model.toggleIsActive();
     }
 

@@ -18,6 +18,7 @@ const SelectDistrict = Tool.extend({
                 }
                 else {
                     this.unlisten();
+                    this.resetSelectedDistricts();
                 }
             }
         });
