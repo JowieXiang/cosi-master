@@ -17,6 +17,7 @@ const SelectDistrict = Tool.extend({
                     this.listen();
                 }
                 else {
+                    Radio.trigger("Map", "zoomToExtent", this.getSelectedGeometries().getExtent());
                     this.unlisten();
                     this.resetSelectedDistricts();
                 }
