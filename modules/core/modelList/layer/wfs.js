@@ -173,12 +173,12 @@ const WFSLayer = Layer.extend(/** @lends WFSLayer.prototype */{
     /**
      * returns the features that intersect the given geometries
      * @param {ol.geom.Geometry[]} geometries - GeometryCollection with one or more geometry
-     * @param {ol.Feature[]} features
+     * @param {ol.Feature[]} features - all features in the geometry extent
      * @returns {ol.Feature[]} filtered features
      */
-    getFeaturesIntersectsGeometry(geometries, features) {
+    getFeaturesIntersectsGeometry: function (geometries, features) {
         if (geometries) {
-            features = features.filter(function (feature) {
+            return features.filter(function (feature) {
                 // test if the geometry and the passed extent intersect
                 return geometries.intersectsExtent(feature.getGeometry().getExtent());
             });
