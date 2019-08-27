@@ -1,18 +1,16 @@
 import {Circle, Fill, Stroke, Style} from "ol/style.js";
 import GeometryCollection from "ol/geom/GeometryCollection";
+import Tool from "../core/modelList/tool/model";
 
-const SelectDistrict = Backbone.Model.extend({
-    defaults: {
+const SelectDistrict = Tool.extend({
+    defaults: _.extend({}, Tool.prototype.defaults, {
         selectedDistricts: [],
-        isActive: false,
-        districtLayer: Radio.request("ModelList", "getModelByAttributes", {"name": "Stadtteile"})
-    },
+        districtLayer: Radio.request("ModelList", "getModelByAttributes", {"name": "Stadtteile"}),
+        deactivateGFI: true,
+    }),
     initialize: function () {
-        this.listenTo(Radio.channel("Map"), {
-            "isReady": function () {
-                // on map ready
-            }
-        }, this);
+        this.superInitialize();
+
         this.listenTo(this, {
             "change:isActive": function (model, value) {
                 if (value) {

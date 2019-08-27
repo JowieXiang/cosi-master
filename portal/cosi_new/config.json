@@ -37,6 +37,12 @@
               "name": "Strecke / Fläche messen",
               "glyphicon": "icon-measuredistance"
             },
+            "selectDistrict": {
+              "name": "Gebiet auswählen",
+              "glyphicon": "glyphicon-picture",
+              "isInitOpen": true,
+              "isActive": true
+            },
             "gfi": {
               "name": "Informationen abfragen",
               "glyphicon": "glyphicon-info-sign",
@@ -50,12 +56,6 @@
           "glyphicon": "glyphicon-book"
         }
       },
-      "controls": {
-        "totalview": false,
-        "fullScreen": false,
-        "freeze": true
-      },
-      "isShowCategoryMenu": false,
       "scaleLine": false,
       "treeType": "light"
     },

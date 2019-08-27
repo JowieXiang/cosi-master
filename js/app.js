@@ -55,7 +55,7 @@ import Formular from "../modules/formular/view";
 import FeatureLister from "../modules/featurelister/view";
 import PrintView from "../modules/tools/print_/view";
 //CoSI
-import SelectDistrictModel from "../modules/selectDistrict/view"
+import SelectDistrictView from "../modules/selectDistrict/view"
 import CosiTouchScreenView from "../modules/cosi/touchScreen/view";
 import CosiInfosSreenView from "../modules/cosi/infoScreen/view";
 import CosiSelectAreaView from "../modules/cosi/infoScreen/selectArea/view";
@@ -306,6 +306,9 @@ function loadApp () {
                 new LayerSliderView({model: tool});
                 break;
             }
+            case "selectDistrict": {
+                new SelectDistrictView({model: tool});
+            }
             default: {
                 break;
             }
@@ -506,8 +509,7 @@ function loadApp () {
         new ChartUtil();
 
     }
-    new SelectDistrictModel();
-    
+
     Radio.trigger("Util", "hideLoader");
 }
 
