@@ -33,13 +33,15 @@ const Config = {
     restConf: "../../portal/cosi/rest-services.json",
     styleConf: "../../portal/cosi/style.json",
     proxyURL: "/cgi-bin/proxy.cgi",
+    uiStyle: "DEFAULT",
     attributions: true,
     scaleLine: true,
-    mouseHover:
-        {
-            numFeaturesToShow: 2,
-            infoText: "(weitere Objekte. Bitte zoomen.)"
-        },
+    // mouseHover:
+    // {
+    //     numFeaturesToShow: 2,
+    //     infoText: "(weitere Objekte. Bitte zoomen.)"
+    // },
+    mouseHover_bev: true,
     isMenubarVisible: true,
     geoAPI: false,
     clickCounter: {},

@@ -3,23 +3,27 @@ import Template from "text-loader!./template.html";
 
 const SelectDistrictView = Backbone.View.extend({
     events: {
-        "click #select-district": "toggleIsActive"
+        "click button": "toggleIsActive"
     },
     initialize: function () {
-        const channel = Radio.channel("SelectDistrict");
+        this.listenTo(this.model, {
+            "change:isActive": this.render
+        });
 
-        channel.reply({
-            "getSelectedDistricts": this.getSelectedDistricts
-        }, this);
-        this.render();
+        if (this.model.get("isActive") === true) {
+            this.render(this.model, true);
+        }
     },
     model: new SelectDistrictModel(),
     template: _.template(Template),
 
-    render: function () {
+    render: function (model, value) {
         var attr = this.model.toJSON();
 
-        $(".masterportal-container").append(this.$el.html(this.template(attr)));
+        if (value) {
+            this.setElement(document.getElementsByClassName("win-body")[0]);
+            this.$el.html(this.template(attr));
+        }
         return this;
     },
 
@@ -29,12 +33,6 @@ const SelectDistrictView = Backbone.View.extend({
     },
 
     toggleIsActive: function () {
-        if (!this.model.getIsActive()) {
-            this.$("#select-district").css({"background-color": "#808080"});
-        }
-        else {
-            this.$("#select-district").css({"background-color": "white"});
-        }
         this.model.toggleIsActive();
     }
 

@@ -30,6 +30,7 @@ import SearchByCoord from "../../tools/searchByCoord/model";
 import SaveSelection from "../../tools/saveSelection/model";
 import KmlImport from "../../tools/kmlimport/model";
 import Routing from "../../tools/viomRouting/model";
+import SelectDistrict from "../../selectDistrict/model";
 import WfsFeatureFilter from "../../wfsfeaturefilter/model";
 import TreeFilter from "../../treefilter/model";
 import ExtendedFilter from "../../tools/extendedFilter/model";
@@ -309,6 +310,9 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
             }
             else if (attrs.id === "layerSlider") {
                 return new LayerSliderModel(attrs, options);
+            }
+            else if (attrs.id === "selectDistrict") {
+                return new SelectDistrict(attrs, options);
             }
             return new Tool(attrs, options);
         }

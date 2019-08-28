@@ -1,25 +1,28 @@
-import { Circle, Fill, Stroke, Style } from "ol/style.js";
+import {Circle, Fill, Stroke, Style} from "ol/style.js";
+import GeometryCollection from "ol/geom/GeometryCollection";
+import Tool from "../core/modelList/tool/model";
 
-
-const SelectDistrict = Backbone.Model.extend({
-    defaults: {
+const SelectDistrict = Tool.extend({
+    defaults: _.extend({}, Tool.prototype.defaults, {
         selectedDistricts: [],
-        isActive: false,
-        districtLayer: Radio.request("ModelList", "getModelByAttributes", { "name": "Stadtteile" })
-    },
+        districtLayer: Radio.request("ModelList", "getModelByAttributes", {"name": "Stadtteile"}),
+        deactivateGFI: true,
+    }),
     initialize: function () {
-        this.listenTo(Radio.channel("Map"), {
-            "isReady": function () {
-                // on map ready
-            }
-        }, this);
+        this.superInitialize();
+
         this.listenTo(this, {
             "change:isActive": function (model, value) {
                 if (value) {
                     this.listen();
                 }
                 else {
+                    if (this.get("selectedDistricts").length > 0) {
+                        Radio.trigger("Map", "zoomToExtent", this.getSelectedGeometries().getExtent());
+                        this.setBboxGeometryToLayer(Radio.request("ModelList", "getModelsByAttributes", {typ: "WFS", isVisibleInTree: true}));
+                    }
                     this.unlisten();
+                    this.resetSelectedDistricts();
                 }
             }
         });
@@ -38,25 +41,29 @@ const SelectDistrict = Backbone.Model.extend({
     // select districts on click
     select: function (evt) {
         // check if layer is visible
-        let visibleWFSLayers = Radio.request("ModelList", "getModelsByAttributes", { isVisibleInMap: true, typ: "WFS" });
-        let districtLayer = Radio.request("ModelList", "getModelByAttributes", { "name": "Stadtteile" });
+        const visibleWFSLayers = Radio.request("ModelList", "getModelsByAttributes", {isVisibleInMap: true, typ: "WFS"}),
+            districtLayer = Radio.request("ModelList", "getModelByAttributes", {"name": "Stadtteile"});
+
         if (visibleWFSLayers.includes(districtLayer)) {
-            var features = Radio.request("Map", "getFeaturesAtPixel", evt.map.getEventPixel(evt.originalEvent), {
+            const features = Radio.request("Map", "getFeaturesAtPixel", evt.map.getEventPixel(evt.originalEvent), {
                     layerFilter: function (layer) {
                         return layer.get("name") === districtLayer.get("name");
                     },
                     hitTolerance: districtLayer.get("hitTolerance")
+                }),
+                style = new Style({
+                    fill: new Fill({color: "rgba(255,255,255,0.8)"})
                 });
-            console.log()
+
             // change feature fill color
-            const style = new Style({
-                fill: new Fill({ color: "rgba(255,255,255,0.8)" })
-            });
             features[0].setStyle(style);
+
             // push selected district to selectedDistricts
             this.pushSelectedDistrict(features[0]);
+            features[0].setStyle(style);
         }
     },
+
     pushSelectedDistrict: function (feature) {
         this.set({
             "selectedDistricts": this.get("selectedDistricts").concat(feature)
@@ -67,8 +74,8 @@ const SelectDistrict = Backbone.Model.extend({
         _.each(this.get("selectedDistricts"), function (feature) {
             // default ol style http://geoadmin.github.io/ol3/apidoc/ol.style.html
             const fill = new Fill({
-                color: "rgba(255,255,255,0.4)"
-            }),
+                    color: "rgba(255,255,255,0.4)"
+                }),
                 stroke = new Stroke({
                     color: "#3399CC",
                     width: 1.25
@@ -97,17 +104,48 @@ const SelectDistrict = Backbone.Model.extend({
     setClickEventKey: function (value) {
         this.set("clickEventKey", value);
     },
-    
+
     getIsActive: function () {
         return this.get("isActive");
     },
 
     toggleIsActive: function () {
         const newState = !this.getIsActive();
+
         this.set("isActive", newState);
         if (!this.get("isActive")) {
             this.resetSelectedDistricts();
         }
+    },
+
+    /**
+     * sets the bbox geometry for all vector layers and updates already loaded layers
+     * @param {Backbone.Model[]} vectorLayerList - all available vector layers
+     * @returns {void}
+     */
+    setBboxGeometryToLayer: function (vectorLayerList) {
+        vectorLayerList.forEach(function (layer) {
+            layer.set("bboxGeometry", this.getSelectedGeometries());
+
+            // updates layers that have already been loaded
+            if (layer.get("layer").getSource().getFeatures().length > 0) {
+                layer.updateSource();
+            }
+        }, this);
+    },
+
+    /**
+     * returns all selected geometries
+     * @returns {ol.geom.GeometryCollection} an array of ol.geom.Geometry objects
+     */
+    getSelectedGeometries: function () {
+        const geometries = [];
+
+        this.get("selectedDistricts").forEach(function (feature) {
+            geometries.push(feature.getGeometry());
+        });
+
+        return new GeometryCollection(geometries);
     }
 });
 
