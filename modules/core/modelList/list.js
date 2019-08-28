@@ -31,6 +31,7 @@ import SaveSelection from "../../tools/saveSelection/model";
 import KmlImport from "../../tools/kmlimport/model";
 import Routing from "../../tools/viomRouting/model";
 import SelectDistrict from "../../selectDistrict/model";
+import AgeSlider from "../../ageSlider/model";
 import WfsFeatureFilter from "../../wfsfeaturefilter/model";
 import TreeFilter from "../../treefilter/model";
 import ExtendedFilter from "../../tools/extendedFilter/model";
@@ -309,6 +310,9 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
             }
             else if (attrs.id === "selectDistrict") {
                 return new SelectDistrict(attrs, options);
+            }
+            else if (attrs.id === "ageSlider") {
+                return new AgeSlider(attrs, options);
             }
             return new Tool(attrs, options);
         }

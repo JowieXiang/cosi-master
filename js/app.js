@@ -56,6 +56,7 @@ import Formular from "../modules/formular/view";
 import FeatureLister from "../modules/featurelister/view";
 import PrintView from "../modules/tools/print_/view";
 //CoSI
+import AgeSliderView from "../modules/ageSlider/view"
 import SelectDistrictView from "../modules/selectDistrict/view"
 import CosiTouchScreenView from "../modules/cosi/touchScreen/view";
 import CosiInfosSreenView from "../modules/cosi/infoScreen/view";
@@ -312,6 +313,11 @@ function loadApp() {
             }
             case "selectDistrict": {
                 new SelectDistrictView({ model: tool });
+                break;
+            }
+            case "ageSlider": {
+                new AgeSliderView({ model: tool });
+                break;
             }
             default: {
                 break;
