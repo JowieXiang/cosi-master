@@ -61,7 +61,7 @@
       }
     },
     "scaleLine": false,
-    "treeType": "light"
+    "treeType": "custom"
   },
   "Themenconfig": {
     "Hintergrundkarten": {
@@ -227,61 +227,69 @@
           "styleId": "753",
           "visibility": false,
           "topic": "basic"
-        },
+        }
+      ],
+      "Ordner": [
         {
-          "name": "Bevölkerungsdaten zu Stadtteilen in Hamburg",
-          "id": "2763",
-          "visibility": false,
-          "mouseHoverField": [
-            "aerz_prz",
-            "afd15",
-            "alleinerz",
-            "bev",
-            "cdu15",
-            "e_ha",
-            "eph",
-            "fdp15",
-            "gruene15",
-            "haushgr",
-            "hhki",
-            "linke15",
-            "spd15",
-            "stadtteil",
-            "stadtteil_1",
-            "svpbs_prz",
-            "wbt15",
-            "wg_efg",
-            "wg_efg_prz",
-            "wgm2"
-          ],
-          "topic": "basic"
-        },
-        {
-          "name": "Unter 18 Jährige mit Migrationshintergrund in Prozent 31.12.2014",
-          "id": "2768",
-          "visibility": false,
-          "mouseHoverField": [
-            "bu18_prz"
-          ],
-          "topic": "basic"
-        },
-        {
-          "name": "65 Jahre und älter in Prozent 31.12.2014",
-          "id": "2769",
-          "visibility": false,
-          "mouseHoverField": [
-            "b65_prz"
-          ],
-          "topic": "basic"
-        },
-        {
-          "name": "Arbeitslose in Prozent 31.12.2014",
-          "id": "2771",
-          "visibility": false,
-          "mouseHoverField": [
-            "al_prz"
-          ],
-          "topic": "basic"
+          "Titel": "Bevölkerungsdaten",
+          "isFolderSelectable": true,
+          "Layer": [
+            {
+              "name": "Bevölkerungsdaten zu Stadtteilen in Hamburg",
+              "id": "2763",
+              "visibility": false,
+              "mouseHoverField": [
+                "aerz_prz",
+                "afd15",
+                "alleinerz",
+                "bev",
+                "cdu15",
+                "e_ha",
+                "eph",
+                "fdp15",
+                "gruene15",
+                "haushgr",
+                "hhki",
+                "linke15",
+                "spd15",
+                "stadtteil",
+                "stadtteil_1",
+                "svpbs_prz",
+                "wbt15",
+                "wg_efg",
+                "wg_efg_prz",
+                "wgm2"
+              ],
+              "topic": "basic"
+            },
+            {
+              "name": "Unter 18 Jährige mit Migrationshintergrund in Prozent 31.12.2014",
+              "id": "2768",
+              "visibility": false,
+              "mouseHoverField": [
+                "bu18_prz"
+              ],
+              "topic": "basic"
+            },
+            {
+              "name": "65 Jahre und älter in Prozent 31.12.2014",
+              "id": "2769",
+              "visibility": false,
+              "mouseHoverField": [
+                "b65_prz"
+              ],
+              "topic": "basic"
+            },
+            {
+              "name": "Arbeitslose in Prozent 31.12.2014",
+              "id": "2771",
+              "visibility": false,
+              "mouseHoverField": [
+                "al_prz"
+              ],
+              "topic": "basic"
+            }
+          ]
         }
       ]
     }
