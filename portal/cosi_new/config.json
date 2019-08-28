@@ -77,7 +77,8 @@
           "id": "1694",
           "name": "Stadtteile",
           "visibility": true,
-          "topic": "basic"
+          "topic": "basic",
+          "gfiAttributes": "ignore"
         },
         {
           "id": "453",
@@ -204,12 +205,12 @@
         },
         {
           "id": "12868",
-          "visibility": false,
+          "styleId": "12868",
+          "visibility": true,
           "mouseHoverField": [
             "aerz_prz"
           ],
-          "topic": "basic",
-          "gfiAttributes": "ignore"
+          "topic": "basic"
         },
         {
           "id": "1534",

@@ -263,6 +263,153 @@
     ]
   },
   {
+    "layerId": "12868",
+    "class": "POINT",
+    "subClass": "CUSTOM",
+    "styleField": "typ_zusammen",
+    "imageWidth": 40,
+    "imageHeight": 40,
+    "imageScale": "0.7",
+    "styleFieldValues": [
+        {
+            "styleFieldValue": "Golfplatz",
+            "imageName": "golfplatz.svg"
+        },
+        {
+          "styleFieldValue": "Wassersportanlage",
+          "imageName": "wassersportanlage.svg"
+        },
+        {
+          "styleFieldValue": "Sportplatz",
+          "imageName": "sportplatz.svg"
+        },
+        {
+          "styleFieldValue": "Baseball",
+          "imageName": "baseball.svg"
+        },
+        {
+          "styleFieldValue": "Cricket",
+          "imageName": "cricket.svg"
+        },
+        {
+          "styleFieldValue": "Tennisanlage",
+          "imageName": "tennisanlage.svg"
+        },
+        {
+          "styleFieldValue": "Skateanlage",
+          "imageName": "skateanlage.svg"
+        },
+        {
+          "styleFieldValue": "Beachanlage",
+          "imageName": "beachanlage.svg"
+        },
+        {
+          "styleFieldValue": "Base-/Softballanlage",
+          "imageName": "baseball.svg"
+        },
+        {
+          "styleFieldValue": "Schwimmbad",
+          "imageName": "hallenbad.svg"
+        },
+        {
+          "styleFieldValue": "Zweifeldhalle",
+          "imageName": "zweifeldhalle.svg"
+        },
+        {
+          "styleFieldValue": "Vereinssportzentrum",
+          "imageName": "vereinssport.svg"
+        },
+        {
+          "styleFieldValue": "Schießsportanlage",
+          "imageName": "schiesssportanlage.svg"
+        },
+        {
+          "styleFieldValue": "Rugbyanlage",
+          "imageName": "rugby.svg"
+        },
+        {
+          "styleFieldValue": "Reitsportanlage",
+          "imageName": "reitsportanlage.svg"
+        },
+        {
+          "styleFieldValue": "Radsport",
+          "imageName": "radsport.svg"
+        },
+        {
+          "styleFieldValue": "Polofeld",
+          "imageName": "polofeld.svg"
+        },
+        {
+          "styleFieldValue": "Olympiastandort",
+          "imageName": "olympiastandort.svg"
+        },
+        {
+          "styleFieldValue": "Leichtathletikanlage",
+          "imageName": "leichtathletikanlage.svg"
+        },
+        {
+          "styleFieldValue": "Kletteranlage",
+          "imageName": "kletteranlage.svg"
+        },
+        {
+          "styleFieldValue": "Kleinspielfeld",
+          "imageName": "kleinfeld.svg"
+        },
+        {
+          "styleFieldValue": "Hockeyanlage",
+          "imageName": "hockeyanlage.svg"
+        },
+        {
+          "styleFieldValue": "Gymnastikhalle",
+          "imageName": "gymnastikhalle.svg"
+        },
+        {
+          "styleFieldValue": "Grosssporthalle",
+          "imageName": "grosssporthalle.svg"
+        },
+        {
+          "styleFieldValue": "Eissport",
+          "imageName": "eissport.svg"
+        },
+        {
+          "styleFieldValue": "Einfeldhalle",
+          "imageName": "einfeldhalle.svg"
+        },
+        {
+          "styleFieldValue": "Dreifeldhalle",
+          "imageName": "dreifeldhalle.svg"
+        },
+        {
+          "styleFieldValue": "Cricket",
+          "imageName": "cricket.svg"
+        },
+        {
+          "styleFieldValue": "Beachanlage",
+          "imageName": "beachanlage.svg"
+        },
+        {
+          "styleFieldValue": "American Football-Anlage",
+          "imageName": "football.svg"
+        },
+        {
+          "styleFieldValue": "BewegteKita",
+          "imageName": "bewegungskita.svg"
+        },
+        {
+          "styleFieldValue": "Bewegungskita+",
+          "imageName": "bewegungskita_plus.svg"
+        },
+        {
+          "styleFieldValue": "Bewegungsinsel",
+          "imageName": "bewegungsinsel.svg"
+        },
+        {
+          "styleFieldValue": "Curling-Anlage",
+          "imageName": "curling.svg"
+        }
+    ]
+  },
+  {
     "layerId": "753",
     "class": "POINT",
     "subClass": "CIRCLE",
