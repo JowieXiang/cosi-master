@@ -271,7 +271,11 @@
             "wgm2"
           ],
           "topic": "basic",
-          "isDemographic": true
+          "isDemographic": true,
+          "correlationsField": {
+            "type": "abs",
+            "field": "bev"
+          }
         },
         {
           "name": "Unter 18 Jährige mit Migrationshintergrund in Prozent 31.12.2014",

@@ -1,6 +1,6 @@
 import Template from "text-loader!./selectTemplate.html";
 import SnippetDropdownView from "../../snippets/dropdown/view";
-import SnippetCheckBoxView from "../../snippets/checkbox/view";
+import ResultView from "./resultView";
 
 const SelectView = Backbone.View.extend({
     events: {
@@ -10,7 +10,8 @@ const SelectView = Backbone.View.extend({
         this.listenTo(this.model, {
             "change:isActive": this.render,
             "renderResult": this.renderResult,
-            "updateDropdownMenus": this.render
+            "updateDropdownMenus": this.render,
+            "renderResults": this.renderResult
         });
         this.numDropdownView = new SnippetDropdownView({model: this.model.get("numDropdownModel")});
         this.denDropdownView = new SnippetDropdownView({model: this.model.get("denDropdownModel")});
@@ -36,7 +37,8 @@ const SelectView = Backbone.View.extend({
         return this;
     },
     renderResult: function () {
-        console.log(this.model.result);
+        this.$el.find(".result").html("");
+        this.$el.find(".result").append(new ResultView({model: this.model}).render().el);
     },
     calculateRatios: function () {
         this.model.getFeatureValues();
