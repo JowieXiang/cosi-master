@@ -217,6 +217,7 @@ const Gfi = Tool.extend({
 
         if (feature === null || feature === undefined) {
             this.setIsMapMarkerVisible(false);
+            Radio.trigger("MapMarker", "hideMarker");
             coordinate = evt.coordinate;
         }
         else if (feature.getGeometry().getType() === "Point") {
@@ -224,6 +225,7 @@ const Gfi = Tool.extend({
             coordinate = feature.getGeometry().getCoordinates();
         } else {
             this.setIsMapMarkerVisible(false);
+            Radio.trigger("MapMarker", "hideMarker");
             var map = Radio.request("Map", "getMap");
             coordinate = map.getView().getCenter();
         }
