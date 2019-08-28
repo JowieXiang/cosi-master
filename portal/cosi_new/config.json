@@ -208,7 +208,8 @@
           "mouseHoverField": [
             "aerz_prz"
           ],
-          "topic": "basic"
+          "topic": "basic",
+          "gfiAttributes": "ignore"
         },
         {
           "id": "1534",
@@ -217,7 +218,8 @@
             "aerz_prz"
           ],
           "visibility": false,
-          "topic": "basic"
+          "topic": "basic",
+          "name": "Grünflächen"
         },
         {
           "id": "753",
