@@ -55,7 +55,8 @@ import Formular from "../modules/formular/view";
 import FeatureLister from "../modules/featurelister/view";
 import PrintView from "../modules/tools/print_/view";
 //CoSI
-import SelectDistrictModel from "../modules/selectDistrict/view"
+import SelectDistrictView from "../modules/selectDistrict/view";
+import CalculateRatioView from "../modules/tools/calculateRatio/selectView";
 import CosiTouchScreenView from "../modules/cosi/touchScreen/view";
 import CosiInfosSreenView from "../modules/cosi/infoScreen/view";
 import CosiSelectAreaView from "../modules/cosi/infoScreen/selectArea/view";
@@ -185,6 +186,10 @@ function loadApp () {
 
     _.each(Radio.request("ModelList", "getModelsByAttributes", {type: "tool"}), function (tool) {
         switch (tool.id) {
+            case "calculateRatio": {
+                new CalculateRatioView({model: tool});
+                break;
+            }
             case "compareFeatures": {
                 new CompareFeaturesView({model: tool});
                 break;
@@ -506,7 +511,7 @@ function loadApp () {
         new ChartUtil();
 
     }
-    new SelectDistrictModel();
+    new SelectDistrictView();
     
     Radio.trigger("Util", "hideLoader");
 }

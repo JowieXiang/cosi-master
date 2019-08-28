@@ -42,6 +42,10 @@
             "glyphicon": "glyphicon-info-sign",
             "isActive": false,
             "isVisibleInMenu": false
+          },
+          "calculateRatio": {
+            "name": "Angebotsdeckung ermitteln",
+            "glyphicon": "glyphicon-info-sign"
           }
         }
       },
@@ -107,7 +111,8 @@
           "isDefaultVisible": true,
           "stageId": "kita_orte",
           "layerStage": "before",
-          "gfiTheme": "cosi"
+          "gfiTheme": "cosi",
+          "isFacility": true
         },
         {
           "id": "kitas_after",
@@ -116,7 +121,8 @@
           "isVisibleInTree": false,
           "stageId": "kita_orte",
           "layerStage": "after",
-          "gfiTheme": "cosi"
+          "gfiTheme": "cosi",
+          "isFacility": true
         },
         {
           "id": "einwohner_before",
@@ -125,7 +131,8 @@
           "isDefaultVisible": true,
           "stageId": "kita_einwohner",
           "layerStage": "before",
-          "gfiTheme": "cosi"
+          "gfiTheme": "cosi",
+          "isDemographic": true
         },
         {
           "id": "einwohner_after",
@@ -134,7 +141,8 @@
           "isVisibleInTree": false,
           "stageId": "kita_einwohner",
           "layerStage": "after",
-          "gfiTheme": "cosi"
+          "gfiTheme": "cosi",
+          "isDemographic": true
         },
         {
           "id": "stadtteileKitaplaetze_before",
@@ -169,16 +177,16 @@
         {
           "id": "apotheken",
           "styleId": "apotheken",
-          "topic": "nahversorgung",
+          "topic": "basic",
           "isDefaultVisible": true,
-          "gfiTheme": "cosi"
+          "isFacility": true
         },
         {
           "id": "supermaerkte",
           "styleId": "supermaerkte",
-          "topic": "nahversorgung",
+          "topic": "basic",
           "isDefaultVisible": true,
-          "gfiTheme": "cosi"
+          "isFacility": true
         },
         {
           "id": "7567",
@@ -193,46 +201,62 @@
         {
           "id": "gruenflaechen",
           "styleId": "gruenflaechen",
-          "topic": "gruenflaechen",
+          "name": "Grünflächen",
+          "topic": "basic",
           "isDefaultVisible": true,
-          "gfiTheme": "cosi"
+          "gfiTheme": "cosi",
+          "isFacility": true
         },
         {
           "id": "12868",
+          "name": "Sportstätten",
           "visibility": false,
-          "topic": "basic"
+          "topic": "basic",
+          "isFacility": true
         },
         {
           "id": "1534",
+          "name": "Grünflächen",
           "styleId": "1534",
           "visibility": false,
-          "topic": "basic"
+          "topic": "basic",
+          "isFacility": true
         },
         {
           "id": "753",
+          "name": "Kindertagesstätten",
           "styleId": "753",
           "visibility": false,
-          "topic": "basic"
+          "topic": "basic",
+          "isFacility": true
         },
         {
           "id": "2763",
+          "name": "Gesamtbevölkerung",
           "visibility": false,
-          "topic": "basic"
+          "topic": "basic",
+          "isDemographic": true
         },
         {
           "id": "2768",
+          "name": "Bevölkerung unter 18",
           "visibility": false,
-          "topic": "basic"
+          "topic": "basic",
+          "isDemographic": true
         },
         {
           "id": "2769",
+          "name": "Bevölkerung über 65",
           "visibility": false,
-          "topic": "basic"
+          "topic": "basic",
+          "isDemographic": true
         },
         {
           "id": "2771",
+          "name": "Arbeitslose (%)",
           "visibility": false,
-          "topic": "basic"
+          "topic": "basic",
+          "isDemographic": true
         }
       ]
     }

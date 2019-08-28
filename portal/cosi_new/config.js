@@ -33,7 +33,6 @@ const Config = {
     restConf: "../../portal/cosi/rest-services.json",
     styleConf: "../../portal/cosi/style.json",
     proxyURL: "/cgi-bin/proxy.cgi",
-    uiStyle: "table",
     attributions: true,
     scaleLine: true,
     mouseHover:

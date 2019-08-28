@@ -24,6 +24,7 @@ const SelectDistrictView = Backbone.View.extend({
     },
 
     getSelectedDistricts: function () {
+        console.log(this.model.getSelectedDistricts());
         return this.model.getSelectedDistricts();
     },
 
