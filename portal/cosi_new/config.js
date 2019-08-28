@@ -2,7 +2,7 @@ const Config = {
     ignoredKeys: ["BOUNDEDBY", "SHAPE", "SHAPE_LENGTH", "SHAPE_AREA", "OBJECTID", "GLOBALID", "GEOMETRY", "SHP", "SHP_AREA", "SHP_LENGTH", "GEOM"],
     gfiWindow: "detached",
     simpleMap: false,
-    wfsImgPath: "../portal/cosi/assets/",
+    wfsImgPath: "../cosi_new/assets/",
     allowParametricURL: true,
     namedProjections: [
         // GK DHDN
@@ -31,7 +31,7 @@ const Config = {
     portalConf: "./",
     layerConf: "https://geoportal-hamburg.de/lgv-config/services-internet.json",
     restConf: "../../portal/cosi/rest-services.json",
-    styleConf: "../../portal/cosi/style.json",
+    styleConf: "../../portal/cosi_new/style.json",
     proxyURL: "/cgi-bin/proxy.cgi",
     uiStyle: "DEFAULT",
     attributions: true,
