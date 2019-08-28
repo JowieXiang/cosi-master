@@ -17,7 +17,10 @@ const SelectDistrict = Tool.extend({
                     this.listen();
                 }
                 else {
-                    Radio.trigger("Map", "zoomToExtent", this.getSelectedGeometries().getExtent());
+                    if (this.get("selectedDistricts").length > 0) {
+                        Radio.trigger("Map", "zoomToExtent", this.getSelectedGeometries().getExtent());
+                        this.setBboxGeometryToLayer(Radio.request("ModelList", "getModelsByAttributes", {typ: "WFS", isVisibleInTree: true}));
+                    }
                     this.unlisten();
                     this.resetSelectedDistricts();
                 }
@@ -58,7 +61,6 @@ const SelectDistrict = Tool.extend({
             // push selected district to selectedDistricts
             this.pushSelectedDistrict(features[0]);
             features[0].setStyle(style);
-            this.setBboxGeometryToLayer(Radio.request("ModelList", "getModelsByAttributes", {typ: "WFS"}));
         }
     },
 
@@ -117,13 +119,18 @@ const SelectDistrict = Tool.extend({
     },
 
     /**
-     * sets the bbox geometry for all vector layers
+     * sets the bbox geometry for all vector layers and updates already loaded layers
      * @param {Backbone.Model[]} vectorLayerList - all available vector layers
      * @returns {void}
      */
     setBboxGeometryToLayer: function (vectorLayerList) {
         vectorLayerList.forEach(function (layer) {
             layer.set("bboxGeometry", this.getSelectedGeometries());
+
+            // updates layers that have already been loaded
+            if (layer.get("layer").getSource().getFeatures().length > 0) {
+                layer.updateSource();
+            }
         }, this);
     },
 
