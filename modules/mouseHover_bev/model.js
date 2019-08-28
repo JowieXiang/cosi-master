@@ -293,7 +293,7 @@ const MouseHoverPopupModel = Backbone.Model.extend(/** @lends MouseHoverPopupMod
                     cssClass = "title";
                 }
 
-                pickedString = featureProperties[element];
+                pickedString = element + ": " + featureProperties[element];
                 if (!_.isString(pickedString)) {
                     console.error("Parameter \"mouseHoverField\" in config.json mit Wert \"" + element + "\" gibt keinen String zurück!");
                     return;

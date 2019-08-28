@@ -41,6 +41,12 @@
             "isInitOpen": true,
             "isActive": true
           },
+          "ageSlider": {
+            "name": "Altersgruppen-Schieberegler",
+            "glyphicon": "glyphicon-picture",
+            "isInitOpen": false,
+            "isActive": false
+          },
           "gfi": {
             "name": "Informationen abfragen",
             "glyphicon": "glyphicon-info-sign",
