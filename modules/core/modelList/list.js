@@ -48,6 +48,7 @@ import StyleWMS from "../../tools/styleWMS/model";
 import LayerSliderModel from "../../tools/layerSlider/model";
 import GFI from "../../tools/gfi/model";
 import Viewpoint from "./viewpoint/model";
+import CalcuateRatio from "../../tools/calculateRatio/model";
 
 const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
     /**
@@ -296,6 +297,9 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
             }
             else if (attrs.id === "formular") {
                 return new Formular(attrs, options);
+            }
+            else if (attrs.id === "calculateRatio") {
+                return new CalcuateRatio(attrs, options);
             }
             /**
              * layerslider

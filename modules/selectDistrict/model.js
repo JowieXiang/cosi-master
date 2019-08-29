@@ -7,6 +7,7 @@ const SelectDistrict = Tool.extend({
         selectedDistricts: [],
         districtLayer: Radio.request("ModelList", "getModelByAttributes", {"name": "Stadtteile"}),
         deactivateGFI: true,
+        channel: Radio.channel("SelectDistrict")
     }),
     initialize: function () {
         this.superInitialize();
@@ -22,10 +23,14 @@ const SelectDistrict = Tool.extend({
                         this.setBboxGeometryToLayer(Radio.request("ModelList", "getModelsByAttributes", {typ: "WFS", isNeverVisibleInTree: false}));
                     }
                     this.unlisten();
-                    this.resetSelectedDistricts();
+                    // this.resetSelectedDistricts();
                 }
             }
         });
+
+        this.get("channel").reply({
+            "getSelectedDistricts": this.getSelectedDistricts
+        }, this);
     },
 
     // listen  to click event and trigger setGfiParams
@@ -113,9 +118,9 @@ const SelectDistrict = Tool.extend({
         const newState = !this.getIsActive();
 
         this.set("isActive", newState);
-        if (!this.get("isActive")) {
-            this.resetSelectedDistricts();
-        }
+        // if (!this.get("isActive")) {
+        //     this.resetSelectedDistricts();
+        // }
     },
 
     /**

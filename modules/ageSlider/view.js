@@ -10,6 +10,16 @@ const AgeSliderView = Backbone.View.extend({
             "change:isActive": this.render
         });
 
+        this.listenTo(this.model, {
+            "change:isActive": function () {
+                var slider = document.getElementById("myRange");
+                var output = document.getElementById("age-group");
+                // Update the current slider value (each time you drag the slider handle)
+                slider.oninput = function () {
+                    output.innerHTML = this.value;
+                }
+            }
+        });
         if (this.model.get("isActive") === true) {
             this.render(this.model, true);
         }

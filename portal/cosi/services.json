@@ -48,7 +48,7 @@
     "tilesize": "512",
     "gutter": "20",
     "minScale": "0",
-    "maxScale": "2500000",
+    "maxScale": "2500000", 
     "gfiAttributes": "showAll",
     "gfiTheme": "cosi",
     "gfiComplex": true,
