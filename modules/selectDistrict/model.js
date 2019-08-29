@@ -1,4 +1,4 @@
-import {Circle, Fill, Stroke, Style} from "ol/style.js";
+import {Fill, Stroke, Style} from "ol/style.js";
 import GeometryCollection from "ol/geom/GeometryCollection";
 import Tool from "../core/modelList/tool/model";
 
@@ -7,6 +7,25 @@ const SelectDistrict = Tool.extend({
         selectedDistricts: [],
         districtLayer: Radio.request("ModelList", "getModelByAttributes", {"name": "Stadtteile"}),
         deactivateGFI: true,
+        // default ol style http://geoadmin.github.io/ol3/apidoc/ol.style.html
+        defaultStyle: new Style({
+            fill: new Fill({
+                color: "rgba(255, 255, 255, 0.4)"
+            }),
+            stroke: new Stroke({
+                color: "#3399CC",
+                width: 1.25
+            })
+        }),
+        selectedStyle: new Style({
+            fill: new Fill({
+                color: "rgba(255, 255, 255, 0)"
+            }),
+            stroke: new Stroke({
+                color: "#3399CC",
+                width: 3
+            })
+        }),
         channel: Radio.channel("SelectDistrict")
     }),
     initialize: function () {
@@ -20,10 +39,9 @@ const SelectDistrict = Tool.extend({
                 else {
                     if (this.get("selectedDistricts").length > 0) {
                         Radio.trigger("Map", "zoomToExtent", this.getSelectedGeometries().getExtent());
-                        this.setBboxGeometryToLayer(Radio.request("ModelList", "getModelsByAttributes", {typ: "WFS", isNeverVisibleInTree: false}));
+                        this.setBboxGeometryToLayer(Radio.request("ModelList", "getCollection"), Radio.request("Parser", "getItemsByAttributes", {typ: "WFS", isBaseLayer: false}));
                     }
                     this.unlisten();
-                    // this.resetSelectedDistricts();
                 }
             }
         });
@@ -35,6 +53,7 @@ const SelectDistrict = Tool.extend({
 
     // listen  to click event and trigger setGfiParams
     listen: function () {
+        this.resetSelectedDistricts();
         this.setClickEventKey(Radio.request("Map", "registerListener", "click", this.select.bind(this)));
     },
 
@@ -56,16 +75,20 @@ const SelectDistrict = Tool.extend({
                     },
                     hitTolerance: districtLayer.get("hitTolerance")
                 }),
-                style = new Style({
-                    fill: new Fill({color: "rgba(255,255,255,0.8)"})
+                isFeatureSelected = this.getSelectedDistricts().find(function (feature) {
+                    return feature.getId() === features[0].getId();
                 });
 
-            // change feature fill color
-            features[0].setStyle(style);
-
+            // if already selected remove district from selectedDistricts
+            if (isFeatureSelected) {
+                this.removeSelectedDistrict(features[0], this.getSelectedDistricts());
+                features[0].setStyle(this.get("defaultStyle"));
+            }
             // push selected district to selectedDistricts
-            this.pushSelectedDistrict(features[0]);
-            features[0].setStyle(style);
+            else {
+                this.pushSelectedDistrict(features[0]);
+                features[0].setStyle(this.get("selectedStyle"));
+            }
         }
     },
 
@@ -75,11 +98,24 @@ const SelectDistrict = Tool.extend({
         });
     },
 
+    /**
+     * removes a district from the selected district list
+     * @param {ol.Feature} feature - selected district
+     * @param {ol.Feature[]} selectedFeatures - all selected districts
+     * @returns {void}
+     */
+    removeSelectedDistrict: function (feature, selectedFeatures) {
+        const index = selectedFeatures.indexOf(feature);
+
+        this.set({
+            "selectedDistricts": selectedFeatures.splice(index, 1)
+        });
+    },
+
     resetSelectedDistricts: function () {
         _.each(this.get("selectedDistricts"), function (feature) {
-            // set to default ol style
-            feature.setStyle(Radio.request("StyleList","getDefaultStyle"));
-        });
+            feature.setStyle(this.get("defaultStyle"));
+        }, this);
         this.set("selectedDistricts", []);
     },
 
@@ -96,26 +132,30 @@ const SelectDistrict = Tool.extend({
     },
 
     toggleIsActive: function () {
-        const newState = !this.getIsActive();
-
-        this.set("isActive", newState);
-        // if (!this.get("isActive")) {
-        //     this.resetSelectedDistricts();
-        // }
+        this.set("isActive", !this.getIsActive());
     },
 
     /**
      * sets the bbox geometry for all vector layers and updates already loaded layers
-     * @param {Backbone.Model[]} vectorLayerList - all available vector layers
+     * @param {Backbone.Collection} modelList - the whole model list
+     * @param {Object[]} itemList - all available vector layers(WFS)
      * @returns {void}
      */
-    setBboxGeometryToLayer: function (vectorLayerList) {
-        vectorLayerList.forEach(function (layer) {
-            layer.set("bboxGeometry", this.getSelectedGeometries());
+    setBboxGeometryToLayer: function (modelList, itemList) {
+        itemList.forEach(function (item) {
+            const model = modelList.get(item.id);
 
-            // updates layers that have already been loaded
-            if (layer.get("layer").getSource().getFeatures().length > 0) {
-                layer.updateSource();
+            // layer already exists in the model list
+            if (model) {
+                model.set("bboxGeometry", this.getSelectedGeometries());
+                // updates layers that have already been loaded
+                if (model.has("layer") && model.get("layer").getSource().getFeatures().length > 0) {
+                    model.updateSource();
+                }
+            }
+            // for layers that are not yet in the model list
+            else {
+                item.bboxGeometry = this.getSelectedGeometries();
             }
         }, this);
     },

@@ -417,5 +417,14 @@
     "circleFillColor": [227, 26, 28, 1],
     "circleStrokeColor": [30, 144, 255, 1],
     "circleStrokeWidth": 1.5
+  },
+  {
+    "layerId":"1711",
+    "class":"POINT",
+    "subClass":"SIMPLE",
+    "imageName":"krankenhaus.svg",
+    "imageWidth": 40,
+    "imageHeight": 40,
+    "imageScale": "0.7"
   }
 ]
