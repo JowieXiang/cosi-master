@@ -46,6 +46,7 @@ import Einwohnerabfrage_HH from "../../tools/einwohnerabfrage_hh/model";
 import ParcelSearch from "../../tools/parcelSearch/model";
 import StyleWMS from "../../tools/styleWMS/model";
 import LayerSliderModel from "../../tools/layerSlider/model";
+import AgeGroupSliderModel from "../../tools/ageGroupSlider/model";
 import GFI from "../../tools/gfi/model";
 import Viewpoint from "./viewpoint/model";
 import CalcuateRatio from "../../tools/calculateRatio/model";
@@ -311,6 +312,9 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
             }
             else if (attrs.id === "layerSlider") {
                 return new LayerSliderModel(attrs, options);
+            }
+            else if(attrs.id==="ageGroupSlider"){
+                return new AgeGroupSliderModel(attrs,options);
             }
             else if (attrs.id === "selectDistrict") {
                 return new SelectDistrict(attrs, options);

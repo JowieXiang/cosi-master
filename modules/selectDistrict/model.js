@@ -77,27 +77,8 @@ const SelectDistrict = Tool.extend({
 
     resetSelectedDistricts: function () {
         _.each(this.get("selectedDistricts"), function (feature) {
-            // default ol style http://geoadmin.github.io/ol3/apidoc/ol.style.html
-            const fill = new Fill({
-                    color: "rgba(255,255,255,0.4)"
-                }),
-                stroke = new Stroke({
-                    color: "#3399CC",
-                    width: 1.25
-                }),
-                styles = [
-                    new Style({
-                        image: new Circle({
-                            fill: fill,
-                            stroke: stroke,
-                            radius: 5
-                        }),
-                        fill: fill,
-                        stroke: stroke
-                    })
-                ];
-
-            feature.setStyle(styles);
+            // set to default ol style
+            feature.setStyle(Radio.request("StyleList","getDefaultStyle"));
         });
         this.set("selectedDistricts", []);
     },

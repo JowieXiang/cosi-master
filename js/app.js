@@ -42,6 +42,8 @@ import FilterView from "../modules/tools/filter/view";
 import SaveSelectionView from "../modules/tools/saveSelection/view";
 import StyleWMSView from "../modules/tools/styleWMS/view";
 import LayerSliderView from "../modules/tools/layerSlider/view";
+import AgeGroupSliderView from "../modules/tools/ageGroupSlider/view";
+
 import CompareFeaturesView from "../modules/tools/compareFeatures/view";
 import EinwohnerabfrageView from "../modules/tools/einwohnerabfrage_hh/selectView";
 import ImportView from "../modules/tools/kmlimport/view";
@@ -192,7 +194,7 @@ function loadApp() {
     _.each(Radio.request("ModelList", "getModelsByAttributes", { type: "tool" }), function (tool) {
         switch (tool.id) {
             case "calculateRatio": {
-                new CalculateRatioView({model: tool});
+                new CalculateRatioView({ model: tool });
                 break;
             }
             case "compareFeatures": {
@@ -314,6 +316,10 @@ function loadApp() {
             }
             case "layerSlider": {
                 new LayerSliderView({ model: tool });
+                break;
+            }
+            case "ageGroupSlider": {
+                new AgeGroupSliderView({ model: tool });
                 break;
             }
             case "selectDistrict": {
@@ -524,7 +530,7 @@ function loadApp() {
         new ChartUtil();
 
     }
-    
+
     Radio.trigger("Util", "hideLoader");
 }
 
