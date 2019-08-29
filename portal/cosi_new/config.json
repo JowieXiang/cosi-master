@@ -261,7 +261,7 @@
               "name": "Bevölkerungsdaten zu Stadtteilen in Hamburg",
               "id": "2763",
               "visibility": false,
-              "isNeverVisibleInTree": true,
+              "isNeverVisibleInTree": false,
               "mouseHoverField": [
                 "aerz_prz",
                 "afd15",
@@ -299,7 +299,11 @@
                 "bu18_prz"
               ],
               "topic": "basic",
-              "isDemographic": true
+              "isDemographic": true,
+              "correlationsField": {
+                "type": "rel",
+                "field": "bu_18_prz"
+              }
             },
             {
               "name": "65 Jahre und älter in Prozent 31.12.2014",
@@ -309,7 +313,11 @@
                 "b65_prz"
               ],
               "topic": "basic",
-              "isDemographic": true
+              "isDemographic": true,
+              "correlationsField": {
+                "type": "rel",
+                "field": "b65_prz"
+              }
             },
             {
               "name": "Arbeitslose in Prozent 31.12.2014",
@@ -320,6 +328,10 @@
               ],
               "topic": "basic",
               "isDemographic": true,
+              "correlationsField": {
+                "type": "rel",
+                "field": "al_prz"
+              }
             },
             {
               "id": "2797"

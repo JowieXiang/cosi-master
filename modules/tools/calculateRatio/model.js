@@ -13,18 +13,20 @@ const CalculateRatioModel = Tool.extend({
         isCurrentWin: undefined,
         tooltipMessage: "Gebiete zum Starten auswählen",
         data: {},
-        result: {},
+        results: {},
         area: {},
+        initialDemographicLayers: [],
         numerators: {},
         denominators: {},
         numDropdownModel: {},
         numValues: {},
         denDropdownModel: {},
         denValues: {},
+        message: ""
     }),
     initialize: function () {
         this.superInitialize();
-        this.getActiveLayersWithValues();
+
         this.setDropdownSnippets({
             numerators: new SnippetDropdownModel({
                 name: "Einrichtungen",
@@ -45,8 +47,6 @@ const CalculateRatioModel = Tool.extend({
                 preselectedValues: _.allKeys(this.get("denValues"))[0]
             })
         });
-        this.setNumerators();
-        this.setDenominators();
 
         this.listenTo(this.get("numDropdownModel"), {
             "valuesChanged": this.setNumerators
@@ -57,64 +57,98 @@ const CalculateRatioModel = Tool.extend({
         this.listenTo(Radio.channel("Layer"), {
             "layerVisibleChanged": this.getActiveLayersWithValues
         });
+        this.listenTo(Radio.channel("Map"), {
+            "isReady": function () {
+                this.getActiveLayersWithValues();
+                // this.getInitialDemographicLayers();
+                this.updateDropdownMenus();
+            }
+        }, this);
         this.on({
             "change:denValues": this.updateDropdownMenus,
             "change:numValues": this.updateDropdownMenus
         }, this);
     },
-    getFeatureValues: function () {
+    getRatiosForSelectedFeatures: function () {
         this.resetResults();
 
         const selectedDistricts = Radio.request("SelectDistrict", "getSelectedDistricts");
         let facilities,
             demographics,
-            ratio;
+            ratio,
+            totalFacilities = 0,
+            totalDemographics = 0,
+            totalRatio;
 
-        if (selectedDistricts) {
+        if (selectedDistricts.length > 0) {
             _.each(selectedDistricts, (district) => {
+                // get the facilities and demographics for each district
                 facilities = this.getFacilitiesInDistrict(district);
                 demographics = this.getTargetDemographicsInDistrict(district);
 
-                if (demographics >= 0) {
-                    ratio = facilities.length / demographics;
-                }
-                else {
-                    console.error("In dem ausgewählten Gebiet ist keine Population der Zielgruppe vorhanden");
-                }
+                // add up all demographics and facilities for all selected districts
+                totalFacilities += facilities.length;
+                totalDemographics += demographics;
+
+                // calculate Ratio for district
+                ratio = this.calculateRatio(facilities.length, demographics, district.getProperties().stadtteil);
                 this.setResultForDistrict(district.getProperties().stadtteil, ratio);
             });
+            // Calculate total value and add it to results
+            totalRatio = this.calculateRatio(totalFacilities, totalDemographics);
+            this.setResultForDistrict("Gesamt", totalRatio);
         }
         else {
-            alert("Bitte wählen Sie mindestens einen Stadtteil aus.");
+            this.setMessage("Bitte wählen Sie mindestens einen Stadtteil aus.");
         }
 
         this.trigger("renderResults");
+    },
+    calculateRatio (facilities, demographics, area = "allen Unterschungsgebieten") {
+        if (demographics >= 0) {
+            return facilities / demographics;
+        }
+        this.setMessage(`In ${area} ist keine Population der Zielgruppe vorhanden. Daher können keine Ergebnisse angezeigt werden.`);
+        return "n/a";
     },
     getTargetDemographicsInDistrict: function (district) {
         const districtGeometry = district.getGeometry();
         let targetPopulation = 0;
 
-        _.each(this.getDenominators(), (den) => {
-            const layerId = this.get("denValues")[den],
-                layer = Radio.request("ModelList", "getModelByAttributes", {id: layerId}),
-                features = layer.get("layerSource").getFeatures(),
-                featureInDistrict = features.filter((feature) => {
-                    return Extent.containsExtent(Extent.buffer(districtGeometry.getExtent(), 10), feature.getGeometry().getExtent());
+        if (typeof this.getDenominators() !== undefined) {
+            if (this.getDenominators().length > 0) {
+                _.each(this.getDenominators(), (den) => {
+                    const layerId = this.get("denValues")[den],
+                        layer = Radio.request("ModelList", "getModelByAttributes", {id: layerId}),
+                        features = layer.get("layerSource").getFeatures(),
+                        featureInDistrict = features.filter((feature) => {
+                            return Extent.containsExtent(Extent.buffer(districtGeometry.getExtent(), 10), feature.getGeometry().getExtent());
+                        });
+        
+                    if (layer.get("correlationsField")) {
+                        switch (layer.get("correlationsField").type) {
+                            case "abs":
+                                targetPopulation += parseInt(featureInDistrict[0].getProperties()[layer.get("correlationsField").field], 10);
+                                break;
+                            case "rel":
+                                alert("Feature not yet implemented for relative Values");
+                                break;
+                            default:
+                                this.setMessage("Entschuldigung! Der zu prüfende Layer besitzt keine gültige Spalte für Verhältnisanalysen. Bitte wählen Sie einen anderen Layer aus.");
+                        }
+                    }
+                    else {
+                        this.setMessage("Entschuldigung! Der zu prüfende Layer besitzt keine gültige Spalte für Verhältnisanalysen. Bitte wählen Sie einen anderen Layer aus.");
+                    }
                 });
-
-            if (layer.get("correlationsField")) {
-                switch (layer.get("correlationsField").type) {
-                    case "abs":
-                        targetPopulation += parseInt(featureInDistrict[0].getProperties()[layer.get("correlationsField").field], 10);
-                        break;
-                    case "rel":
-                        alert("Feature not yet implemented");
-                        break;
-                    default:
-                        alert("Entschuldigung! Der zu prüfende Layer besitzt keine gültige Spalte für Verhältsanalysen! Bitte wählen Sie einen anderen Layer aus!");
-                }
             }
-        });
+            else {
+                this.setMessage("Bitte wählen Sie eine demografische Zielgruppe aus.");
+            }
+        }
+        else {
+            this.setMessage("Bitte wählen Sie eine demografische Zielgruppe aus.");
+        }
 
         return targetPopulation;
     },
@@ -122,19 +156,30 @@ const CalculateRatioModel = Tool.extend({
         const districtGeometry = district.getGeometry(),
             featuresInDistrict = [];
 
-        _.each(this.getNumerators(), (num) => {
-            const layerId = this.get("numValues")[num],
-                features = Radio.request("ModelList", "getModelByAttributes", {id: layerId}).get("layerSource").getFeatures();
+        if (typeof this.getNumerators() !== undefined) {
+            if (this.getNumerators().length > 0) {
+                _.each(this.getNumerators(), (num) => {
+                    const layerId = this.get("numValues")[num],
+                        features = Radio.request("ModelList", "getModelByAttributes", {id: layerId}).get("layerSource").getFeatures();
+        
+                    _.each(features, (feature) => {
+                        const geometry = feature.getGeometry(),
+                            coordinate = geometry.getType() === "Point" ? geometry.getCoordinates() : Extent.getCenter(geometry.getExtent()); // Remove later for more reliable fallback
+        
+                        if (districtGeometry.intersectsCoordinate(coordinate)) {
+                            featuresInDistrict.push(feature);
+                        }
+                    });
+                });
+            }
+            else {
+                this.setMessage("Bitte wählen Sie einen Einrichtungstyp aus.");
+            }
+        }
+        else {
+            this.setMessage("Bitte wählen Sie einen Einrichtungstyp aus.");
+        }
 
-            _.each(features, (feature) => {
-                const geometry = feature.getGeometry(),
-                    coordinate = geometry.getType() === "Point" ? geometry.getCoordinates() : Extent.getCenter(geometry.getExtent()); // Remove later for more reliable fallback
-
-                if (districtGeometry.intersectsCoordinate(coordinate)) {
-                    featuresInDistrict.push(feature);
-                }
-            });
-        });
         return featuresInDistrict;
     },
     getActiveLayersWithValues: function () {
@@ -144,6 +189,9 @@ const CalculateRatioModel = Tool.extend({
 
         this.setDropdownValues(possibleNumerators, "numValues");
         this.setDropdownValues(possibleDenominators, "denValues");
+    },
+    getInitialDemographicLayers: function () {
+
     },
     setDropdownValues: function (models, field) {
         const values = this.remapModelsToValues(models);
@@ -189,13 +237,17 @@ const CalculateRatioModel = Tool.extend({
         return this.get("denominators").values;
     },
     setResultForDistrict: function (district, ratio) {
-        this.get("result")[district] = ratio;
+        this.get("results")[district] = ratio;
     },
     resetResults: function () {
-        this.set("result", {});
+        this.set("results", {});
+        this.set("message", "");
     },
     getResults: function () {
-        return this.get("result");
+        return this.get("results");
+    },
+    setMessage: function (message) {
+        this.set("message", message);
     }
 });
 

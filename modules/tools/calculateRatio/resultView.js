@@ -12,7 +12,7 @@ const ResultView = Backbone.View.extend({
         
         if (results !== {}) {
             for (const district in results) {
-                currentResult = `<tr><th>${district}</th><td>${results[district].toFixed(4)}</td></tr>`;
+                currentResult = `<tr><th>${district}</th><td>${(1000 * results[district]).toFixed(2)}</td></tr>`;
                 this.$el.find(".table").append(currentResult);
             }
         }

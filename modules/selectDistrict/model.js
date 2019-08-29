@@ -7,7 +7,23 @@ const SelectDistrict = Tool.extend({
         selectedDistricts: [],
         districtLayer: Radio.request("ModelList", "getModelByAttributes", {"name": "Stadtteile"}),
         deactivateGFI: true,
-        channel: Radio.channel("SelectDistrict")
+        channel: Radio.channel("SelectDistrict"),
+        selectedStyle: new Style({
+            fill: new Fill({color: "rgba(255,255,255,0)"}),
+            stroke: new Stroke({
+                color: "#3399CC",
+                width: 3
+            })
+        }),
+        deselectedStyle: new Style({
+            fill: new Fill({
+                color: "rgba(255,255,255,0.4)"
+            }),
+            stroke: new Stroke({
+                color: "#3399CC",
+                width: 1.25
+            })
+        })
     }),
     initialize: function () {
         this.superInitialize();
@@ -25,7 +41,7 @@ const SelectDistrict = Tool.extend({
 
                     }
                     this.unlisten();
-                    this.resetSelectedDistricts();
+                    // this.resetSelectedDistricts(); // We want to store the selected districts so that we can reuse the selection or modify it later!
                 }
             }
         });
@@ -53,28 +69,39 @@ const SelectDistrict = Tool.extend({
 
         if (visibleWFSLayers.includes(districtLayer)) {
             const features = Radio.request("Map", "getFeaturesAtPixel", evt.map.getEventPixel(evt.originalEvent), {
-                    layerFilter: function (layer) {
-                        return layer.get("name") === districtLayer.get("name");
-                    },
-                    hitTolerance: districtLayer.get("hitTolerance")
-                }),
-                style = new Style({
-                    fill: new Fill({color: "rgba(255,255,255,0)"}),
-                    stroke: new Stroke({
-                        color: "#3399CC",
-                        width: 3
-                    })
-                });
+                layerFilter: function (layer) {
+                    return layer.get("name") === districtLayer.get("name");
+                },
+                hitTolerance: districtLayer.get("hitTolerance")
+            });
 
-            // change feature fill color
-            features[0].setStyle(style);
+            // check if any feature was selected at pixel
+            if (features) {
+                // check if the feature is already in the list, then deselect
+                if (this.getSelectedDistricts().includes(features[0])) {
+                    // change feature style
+                    features[0].setStyle(this.getDeselectedStyle());
 
-            // push selected district to selectedDistricts
-            this.pushSelectedDistrict(features[0]);
-            features[0].setStyle(style);
+                    // remove selected district from selectedDistricts
+                    this.removeSelectedDistrict(features[0]);
+                }
+                else {
+                    // change feature style
+                    features[0].setStyle(this.getSelectedStyle());
+
+                    // push selected district to selectedDistricts
+                    this.pushSelectedDistrict(features[0]);
+                }
+            }
         }
     },
-
+    removeSelectedDistrict: function (feature) {
+        this.set({
+            "selectedDistricts": this.get("selectedDistricts").filter((featureInArray) => {
+                return featureInArray !== feature;
+            })
+        });
+    },
     pushSelectedDistrict: function (feature) {
         this.set({
             "selectedDistricts": this.get("selectedDistricts").concat(feature)
@@ -84,26 +111,7 @@ const SelectDistrict = Tool.extend({
     resetSelectedDistricts: function () {
         _.each(this.get("selectedDistricts"), function (feature) {
             // default ol style http://geoadmin.github.io/ol3/apidoc/ol.style.html
-            const fill = new Fill({
-                    color: "rgba(255,255,255,0.4)"
-                }),
-                stroke = new Stroke({
-                    color: "#3399CC",
-                    width: 1.25
-                }),
-                styles = [
-                    new Style({
-                        image: new Circle({
-                            fill: fill,
-                            stroke: stroke,
-                            radius: 5
-                        }),
-                        fill: fill,
-                        stroke: stroke
-                    })
-                ];
-
-            feature.setStyle(styles);
+            feature.setStyle(this.getDeselectedStyle());
         });
         this.set("selectedDistricts", []);
     },
@@ -161,6 +169,12 @@ const SelectDistrict = Tool.extend({
         });
 
         return new GeometryCollection(geometries);
+    },
+    getSelectedStyle () {
+        return this.get("selectedStyle");
+    },
+    getDeselectedStyle () {
+        return this.get("deselectedStyle");
     }
 });
 
