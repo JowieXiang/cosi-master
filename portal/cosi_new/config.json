@@ -84,7 +84,8 @@
           "name": "Stadtteile",
           "visibility": true,
           "topic": "basic",
-          "gfiAttributes": "ignore"
+          "gfiAttributes": "ignore",
+          "isNeverVisibleInTree": true
         },
         {
           "id": "453",

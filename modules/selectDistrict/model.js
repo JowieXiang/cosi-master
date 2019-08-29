@@ -19,7 +19,7 @@ const SelectDistrict = Tool.extend({
                 else {
                     if (this.get("selectedDistricts").length > 0) {
                         Radio.trigger("Map", "zoomToExtent", this.getSelectedGeometries().getExtent());
-                        this.setBboxGeometryToLayer(Radio.request("ModelList", "getModelsByAttributes", {typ: "WFS", isVisibleInTree: true}));
+                        this.setBboxGeometryToLayer(Radio.request("ModelList", "getModelsByAttributes", {typ: "WFS", isNeverVisibleInTree: false}));
                     }
                     this.unlisten();
                     this.resetSelectedDistricts();
