@@ -20,10 +20,12 @@ const SelectDistrict = Tool.extend({
                 else {
                     if (this.get("selectedDistricts").length > 0) {
                         Radio.trigger("Map", "zoomToExtent", this.getSelectedGeometries().getExtent());
-                        this.setBboxGeometryToLayer(Radio.request("ModelList", "getModelsByAttributes", {typ: "WFS", isNeverVisibleInTree: false}));
+                        this.setBboxGeometryToLayer(Radio.request("ModelList", "getCollection"), Radio.request("Parser", "getItemsByAttributes", {typ: "WFS", isBaseLayer: false}));
+
+
                     }
                     this.unlisten();
-                    // this.resetSelectedDistricts();
+                    this.resetSelectedDistricts();
                 }
             }
         });
@@ -57,7 +59,11 @@ const SelectDistrict = Tool.extend({
                     hitTolerance: districtLayer.get("hitTolerance")
                 }),
                 style = new Style({
-                    fill: new Fill({color: "rgba(255,255,255,0.8)"})
+                    fill: new Fill({color: "rgba(255,255,255,0)"}),
+                    stroke: new Stroke({
+                        color: "#3399CC",
+                        width: 3
+                    })
                 });
 
             // change feature fill color
@@ -115,28 +121,32 @@ const SelectDistrict = Tool.extend({
     },
 
     toggleIsActive: function () {
-        const newState = !this.getIsActive();
-
-        this.set("isActive", newState);
-        // if (!this.get("isActive")) {
-        //     this.resetSelectedDistricts();
-        // }
+        this.set("isActive", !this.getIsActive());
     },
 
     /**
      * sets the bbox geometry for all vector layers and updates already loaded layers
-     * @param {Backbone.Model[]} vectorLayerList - all available vector layers
+     * @param {Backbone.Collection} modelList - the whole model list
+     * @param {Object[]} itemList - all available vector layers(WFS)
      * @returns {void}
      */
-    setBboxGeometryToLayer: function (vectorLayerList) {
-        vectorLayerList.forEach(function (layer) {
-            layer.set("bboxGeometry", this.getSelectedGeometries());
+    setBboxGeometryToLayer: function (modelList, itemList) {
+        itemList.forEach(function (item) {
+            const model = modelList.get(item.id);
 
-            // updates layers that have already been loaded
-            if (layer.get("layer").getSource().getFeatures().length > 0) {
-                layer.updateSource();
+            // layer already exists in the model list
+            if (model) {
+                model.set("bboxGeometry", this.getSelectedGeometries());
+                // updates layers that have already been loaded
+                if (model.has("layer") && model.get("layer").getSource().getFeatures().length > 0) {
+                    model.updateSource();
+                }
             }
-        }, this);
+            // for layers that are not yet in the model list
+            else {
+                item.bboxGeometry = this.getSelectedGeometries();
+            }
+        }, this)
     },
 
     /**
