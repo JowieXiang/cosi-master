@@ -84,11 +84,9 @@
           "topic": "basic"
         },
         {
-          "id": "1694",
-          "name": "Stadtteile",
-          "visibility": true,
-          "topic": "basic",
-          "gfiAttributes": "ignore"
+          "id": "94",
+          "name": "Luftbilder DOP 20",
+          "topic": "basic"
         },
         {
           "id": "453",
@@ -97,13 +95,13 @@
           "topic": "basic"
         },
         {
-          "id": "94",
-          "name": "Luftbilder DOP 20",
-          "topic": "basic"
-        },
-        {
-          "id": "osm",
-          "topic": "basic"
+          "id": "1694",
+          "name": "Stadtteile",
+          "visibility": true,
+          "topic": "basic",
+          "gfiAttributes": "ignore",
+          "isNeverVisibleInTree": true,
+          "alwaysOnTop": true
         }
       ]
     },
@@ -221,14 +219,14 @@
         },
         {
           "id": "12868",
-          "styleId": "12868",
           "name": "Sportstätten",
           "visibility": true,
           "mouseHoverField": [
             "aerz_prz"
           ],
-          "topic": "basic",
-          "isFacility": true
+          "isFacility": true,
+          "styleId": "12868",
+          "topic": "basic"
         },
         {
           "id": "1534",
@@ -243,8 +241,15 @@
           "name": "Kindertagesstätten",
           "styleId": "753",
           "visibility": false,
-          "topic": "basic",
-          "isFacility": true
+          "isFacility": true,
+          "topic": "basic"
+        },
+        {
+          "id": "14111"
+        },
+        {
+          "id": "1711",
+          "styleId": "1711"
         }
       ],
       "Ordner": [
@@ -256,6 +261,7 @@
               "name": "Bevölkerungsdaten zu Stadtteilen in Hamburg",
               "id": "2763",
               "visibility": false,
+              "isNeverVisibleInTree": true,
               "mouseHoverField": [
                 "aerz_prz",
                 "afd15",
@@ -313,7 +319,10 @@
                 "al_prz"
               ],
               "topic": "basic",
-              "isDemographic": true
+              "isDemographic": true,
+            },
+            {
+              "id": "2797"
             }
           ]
         }

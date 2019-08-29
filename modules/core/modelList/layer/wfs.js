@@ -100,7 +100,8 @@ const WFSLayer = Layer.extend(/** @lends WFSLayer.prototype */{
             gfiTheme: this.get("gfiTheme"),
             id: this.get("id"),
             hitTolerance: this.get("hitTolerance"),
-            altitudeMode: "clampToGround"
+            altitudeMode: "clampToGround",
+            alwaysOnTop: this.get("alwaysOnTop")
         }));
 
         if (this.get("isSelected")) {

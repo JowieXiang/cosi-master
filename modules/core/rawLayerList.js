@@ -64,7 +64,44 @@ const RawLayerList = Backbone.Collection.extend({
      */
     parse: function (response) {
         var rawLayerArray = response;
-
+        // temporär für Sprint Review
+        rawLayerArray.push( {
+            "id": "14111",
+            "name": "Gehzeit zum nächsten Krankenhaus",
+            "url": "https://geodienste.hamburg.de/MRH_WMS_Erreichbarkeitsanalysen_Gesundheit",
+            "typ": "WMS",
+            "layers": "minfuss_kh100",
+            "format": "image/png",
+            "version": "1.3.0",
+            "singleTile": false,
+            "transparent": true,
+            "transparency": 0,
+            "tilesize": "256",
+            "gutter": "0",
+            "minScale": "0",
+            "maxScale": "2500000",
+            "infoFormat": "text/xml",
+            "gfiAttributes": "ignore",
+            "gfiTheme": "default",
+            "layerAttribution": "nicht vorhanden",
+            "legendURL": "",
+            "cache": false,
+            "featureCount": 1,
+            "datasets": [
+              {
+                "md_id": "B6054CC5-25A4-4237-BDEB-974A0C25051E",
+                "rs_id": "https://registry.gdi-de.org/id/de.hh/317239cc-0994-407b-b8ed-762c0e97a294",
+                "bbox": "461468.97,5916367.23,587010.91,5980347.76",
+                "kategorie_opendata": [
+                  "Sonstiges"
+                ],
+                "kategorie_inspire": [
+                  ""
+                ],
+                "kategorie_organisation": "Landesbetrieb Geoinformation und Vermessung"
+            }
+        ]
+      })
         // Es gibt Layer in einem Dienst, die für unterschiedliche Portale unterschiedliche Daten/GFIs liefern --> z.B. Hochwasserrisikomanagement
         // Da alle Layer demselben Metadatensatz zugordnet sind, werden sie über die Id gelöscht
         if (_.has(Config.tree, "layerIDsToIgnore")) {
