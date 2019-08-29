@@ -41,11 +41,25 @@
             "isInitOpen": true,
             "isActive": true
           },
-          "ageSlider": {
+          "ageGroupSlider": {
             "name": "Altersgruppen-Schieberegler",
-            "glyphicon": "glyphicon-picture",
-            "isInitOpen": false,
-            "isActive": false
+            "glyphicon": "glyphicon-film",
+            "title": "Simulation von Beispiel-WMS",
+            "timeInterval": 2000,
+            "layerIds": [
+              {
+                "title": "Unter 18 Jährige mit Migrationshintergrund in Prozent",
+                "layerId": "2769"
+              },
+              {
+                "title": "65 Jahre und älter in Prozent",
+                "layerId": "2768"
+              },
+              {
+                "title": "Arbeitslose in Prozent",
+                "layerId": "2771"
+              }
+            ]
           },
           "gfi": {
             "name": "Informationen abfragen",
@@ -261,7 +275,6 @@
               "name": "Bevölkerungsdaten zu Stadtteilen in Hamburg",
               "id": "2763",
               "visibility": false,
-              "isNeverVisibleInTree": false,
               "mouseHoverField": [
                 "aerz_prz",
                 "afd15",
@@ -335,6 +348,15 @@
             },
             {
               "id": "2797"
+            },
+            {
+              "id": "2784"
+            },
+            {
+              "id": "2792"
+            },
+            {
+              "id": "2795"
             }
           ]
         }

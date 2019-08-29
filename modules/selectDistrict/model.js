@@ -1,4 +1,4 @@
-import {Circle, Fill, Stroke, Style} from "ol/style.js";
+import {Fill, Stroke, Style} from "ol/style.js";
 import GeometryCollection from "ol/geom/GeometryCollection";
 import Tool from "../core/modelList/tool/model";
 
@@ -7,23 +7,26 @@ const SelectDistrict = Tool.extend({
         selectedDistricts: [],
         districtLayer: Radio.request("ModelList", "getModelByAttributes", {"name": "Stadtteile"}),
         deactivateGFI: true,
-        channel: Radio.channel("SelectDistrict"),
-        selectedStyle: new Style({
-            fill: new Fill({color: "rgba(255,255,255,0)"}),
-            stroke: new Stroke({
-                color: "#3399CC",
-                width: 3
-            })
-        }),
-        deselectedStyle: new Style({
+        // default ol style http://geoadmin.github.io/ol3/apidoc/ol.style.html
+        defaultStyle: new Style({
             fill: new Fill({
-                color: "rgba(255,255,255,0.4)"
+                color: "rgba(255, 255, 255, 0.4)"
             }),
             stroke: new Stroke({
                 color: "#3399CC",
                 width: 1.25
             })
-        })
+        }),
+        selectedStyle: new Style({
+            fill: new Fill({
+                color: "rgba(255, 255, 255, 0)"
+            }),
+            stroke: new Stroke({
+                color: "#3399CC",
+                width: 3
+            })
+        }),
+        channel: Radio.channel("SelectDistrict")
     }),
     initialize: function () {
         this.superInitialize();
@@ -37,11 +40,8 @@ const SelectDistrict = Tool.extend({
                     if (this.get("selectedDistricts").length > 0) {
                         Radio.trigger("Map", "zoomToExtent", this.getSelectedGeometries().getExtent());
                         this.setBboxGeometryToLayer(Radio.request("ModelList", "getCollection"), Radio.request("Parser", "getItemsByAttributes", {typ: "WFS", isBaseLayer: false}));
-
-
                     }
                     this.unlisten();
-                    // this.resetSelectedDistricts(); // We want to store the selected districts so that we can reuse the selection or modify it later!
                 }
             }
         });
@@ -53,6 +53,7 @@ const SelectDistrict = Tool.extend({
 
     // listen  to click event and trigger setGfiParams
     listen: function () {
+        this.resetSelectedDistricts();
         this.setClickEventKey(Radio.request("Map", "registerListener", "click", this.select.bind(this)));
     },
 
@@ -69,38 +70,26 @@ const SelectDistrict = Tool.extend({
 
         if (visibleWFSLayers.includes(districtLayer)) {
             const features = Radio.request("Map", "getFeaturesAtPixel", evt.map.getEventPixel(evt.originalEvent), {
-                layerFilter: function (layer) {
-                    return layer.get("name") === districtLayer.get("name");
-                },
-                hitTolerance: districtLayer.get("hitTolerance")
-            });
+                    layerFilter: function (layer) {
+                        return layer.get("name") === districtLayer.get("name");
+                    },
+                    hitTolerance: districtLayer.get("hitTolerance")
+                }),
+                isFeatureSelected = this.getSelectedDistricts().find(function (feature) {
+                    return feature.getId() === features[0].getId();
+                });
 
-            // check if any feature was selected at pixel
-            if (features) {
-                // check if the feature is already in the list, then deselect
-                if (this.getSelectedDistricts().includes(features[0])) {
-                    // change feature style
-                    features[0].setStyle(this.getDeselectedStyle());
-
-                    // remove selected district from selectedDistricts
-                    this.removeSelectedDistrict(features[0]);
-                }
-                else {
-                    // change feature style
-                    features[0].setStyle(this.getSelectedStyle());
-
-                    // push selected district to selectedDistricts
-                    this.pushSelectedDistrict(features[0]);
-                }
+            // if already selected remove district from selectedDistricts
+            if (isFeatureSelected) {
+                this.removeSelectedDistrict(features[0], this.getSelectedDistricts());
+                features[0].setStyle(this.get("defaultStyle"));
+            }
+            // push selected district to selectedDistricts
+            else {
+                this.pushSelectedDistrict(features[0]);
+                features[0].setStyle(this.get("selectedStyle"));
             }
         }
-    },
-    removeSelectedDistrict: function (feature) {
-        this.set({
-            "selectedDistricts": this.get("selectedDistricts").filter((featureInArray) => {
-                return featureInArray !== feature;
-            })
-        });
     },
     pushSelectedDistrict: function (feature) {
         this.set({
@@ -108,11 +97,24 @@ const SelectDistrict = Tool.extend({
         });
     },
 
+    /**
+     * removes a district from the selected district list
+     * @param {ol.Feature} feature - selected district
+     * @param {ol.Feature[]} selectedFeatures - all selected districts
+     * @returns {void}
+     */
+    removeSelectedDistrict: function (feature, selectedFeatures) {
+        const index = selectedFeatures.indexOf(feature);
+
+        this.set({
+            "selectedDistricts": selectedFeatures.splice(index, 1)
+        });
+    },
+
     resetSelectedDistricts: function () {
         _.each(this.get("selectedDistricts"), function (feature) {
-            // default ol style http://geoadmin.github.io/ol3/apidoc/ol.style.html
-            feature.setStyle(this.getDeselectedStyle());
-        });
+            feature.setStyle(this.get("defaultStyle"));
+        }, this);
         this.set("selectedDistricts", []);
     },
 
@@ -154,7 +156,7 @@ const SelectDistrict = Tool.extend({
             else {
                 item.bboxGeometry = this.getSelectedGeometries();
             }
-        }, this)
+        }, this);
     },
 
     /**
