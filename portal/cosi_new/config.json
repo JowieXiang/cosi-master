@@ -84,12 +84,9 @@
           "topic": "basic"
         },
         {
-          "id": "1694",
-          "name": "Stadtteile",
-          "visibility": true,
-          "topic": "basic",
-          "gfiAttributes": "ignore",
-          "isNeverVisibleInTree": true
+          "id": "94",
+          "name": "Luftbilder DOP 20",
+          "topic": "basic"
         },
         {
           "id": "453",
@@ -98,13 +95,13 @@
           "topic": "basic"
         },
         {
-          "id": "94",
-          "name": "Luftbilder DOP 20",
-          "topic": "basic"
-        },
-        {
-          "id": "osm",
-          "topic": "basic"
+          "id": "1694",
+          "name": "Stadtteile",
+          "visibility": true,
+          "topic": "basic",
+          "gfiAttributes": "ignore",
+          "isNeverVisibleInTree": true,
+          "alwaysOnTop": true
         }
       ]
     },
@@ -222,19 +219,14 @@
         },
         {
           "id": "12868",
-<<<<<<< HEAD
           "name": "Sportstätten",
           "visibility": false,
           "mouseHoverField": [
             "aerz_prz"
           ],
-          "topic": "basic",
-          "isFacility": true
-=======
+          "isFacility": true,
           "styleId": "12868",
-          "visibility": true,
           "topic": "basic"
->>>>>>> origin/cosi-dev
         },
         {
           "id": "1534",
@@ -242,87 +234,12 @@
           "styleId": "1534",
           "visibility": false,
           "topic": "basic",
-<<<<<<< HEAD
           "isFacility": true
-=======
-          "name": "Grünflächen"
->>>>>>> origin/cosi-dev
         },
         {
           "id": "753",
           "name": "Kindertagesstätten",
           "styleId": "753",
-<<<<<<< HEAD
-          "mouseHoverField": [
-            "aerz_prz"
-          ],
-          "visibility": false,
-          "topic": "basic",
-          "isFacility": true
-        },
-        {
-          "name": "Bevölkerungsdaten zu Stadtteilen in Hamburg",
-          "id": "2763",
-          "visibility": false,
-          "mouseHoverField": [
-            "aerz_prz",
-            "afd15",
-            "alleinerz",
-            "bev",
-            "cdu15",
-            "e_ha",
-            "eph",
-            "fdp15",
-            "gruene15",
-            "haushgr",
-            "hhki",
-            "linke15",
-            "spd15",
-            "stadtteil",
-            "stadtteil_1",
-            "svpbs_prz",
-            "wbt15",
-            "wg_efg",
-            "wg_efg_prz",
-            "wgm2"
-          ],
-          "topic": "basic",
-          "isDemographic": true,
-          "correlationsField": {
-            "type": "abs",
-            "field": "bev"
-          }
-        },
-        {
-          "name": "Unter 18 Jährige mit Migrationshintergrund in Prozent 31.12.2014",
-          "id": "2768",
-          "visibility": false,
-          "mouseHoverField": [
-            "bu18_prz"
-          ],
-          "topic": "basic",
-          "isDemographic": true
-        },
-        {
-          "name": "65 Jahre und älter in Prozent 31.12.2014",
-          "id": "2769",
-          "visibility": false,
-          "mouseHoverField": [
-            "b65_prz"
-          ],
-          "topic": "basic",
-          "isDemographic": true
-        },
-        {
-          "name": "Arbeitslose in Prozent 31.12.2014",
-          "id": "2771",
-          "visibility": false,
-          "mouseHoverField": [
-            "al_prz"
-          ],
-          "topic": "basic",
-          "isDemographic": true
-=======
           "visibility": false,
           "topic": "basic"
         }
@@ -388,7 +305,6 @@
               "topic": "basic"
             }
           ]
->>>>>>> origin/cosi-dev
         }
       ]
     }
