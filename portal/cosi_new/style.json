@@ -426,5 +426,13 @@
     "imageWidth": 40,
     "imageHeight": 40,
     "imageScale": "0.7"
+  },
+  {
+    "layerId":"2797",
+    "class": "POLYGON",
+    "subClass": "SIMPLE",
+    "polygonFillColor": [255, 0, 0, 0.5],
+    "polygonStrokeColor": [255, 144, 255, 0.5],
+    "polygonStrokeWidth": 30
   }
 ]

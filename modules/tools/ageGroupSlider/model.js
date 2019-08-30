@@ -6,7 +6,7 @@ const AgeGroupSliderModel = Tool.extend({
         timeInterval: 2000,
         title: null,
         progressBarWidth: 10,
-        activeLayer: {layerId: ""},
+        activeLayer: { layerId: "" },
         windowsInterval: null,
         renderToWindow: true,
         glyphicon: "glyphicon-film"
@@ -26,6 +26,28 @@ const AgeGroupSliderModel = Tool.extend({
             "change:isActive": function (model, value) {
                 if (value) {
                     this.checkIfLayermodelExist(this.get("layerIds"));
+                    _.each(this.get("layerIds"), function (layer) {
+                        var layers = Radio.request("Parser", "getItemsByAttributes", {type: "layer"})
+                        console.log(layers);
+                        let layerModel = Radio.request("ModelList", "getModelsByAttributes", { id: layer.layerId });
+                        layerModel[0].get("layer").getSource().on('change', function (evt) {
+                            const source = evt.target;
+                            if (source.getState() === 'ready') {
+                                const thisLayer = layerModel[0].get("layer");
+                                const stylelistmodel = Radio.request("StyleList", "returnModelById", thisLayer.getProperties().id);
+                                var styleFunction = function (feature) {
+                                    return stylelistmodel.createStyle(feature, false);
+                                };
+                                // console.log(thisLayer.getSource().getFeatures()[0] ? layerModel[0].get("layer").getSource().getFeatures()[0].getProperties().bu18_prz : "not ready");
+                                // layerModel[0].get("layer").setStyle(styleFunction);
+                                // console.log("one layer is ready")
+                            }
+                        });
+                    });
+                } else {
+                    /**
+                     * change back to original style
+                     */
                 }
             }
         });
@@ -33,7 +55,7 @@ const AgeGroupSliderModel = Tool.extend({
 
     reset: function () {
         this.stopInterval();
-        this.set("activeLayer", {layerId: ""});
+        this.set("activeLayer", { layerId: "" });
     },
 
     /**
@@ -43,7 +65,7 @@ const AgeGroupSliderModel = Tool.extend({
      */
     checkIfLayermodelExist: function (layerIds) {
         _.each(layerIds, function (layer) {
-            if (Radio.request("ModelList", "getModelsByAttributes", {id: layer.layerId}).length === 0) {
+            if (Radio.request("ModelList", "getModelsByAttributes", { id: layer.layerId }).length === 0) {
                 this.addLayerModel(layer.layerId);
             }
         }, this);
@@ -55,7 +77,7 @@ const AgeGroupSliderModel = Tool.extend({
      * @returns {void}
      */
     addLayerModel: function (layerId) {
-        Radio.trigger("ModelList", "addModelsByAttributes", {id: layerId});
+        Radio.trigger("ModelList", "addModelsByAttributes", { id: layerId });
         this.sendModification(layerId, true);
         this.sendModification(layerId, false);
     },
@@ -185,8 +207,8 @@ const AgeGroupSliderModel = Tool.extend({
 
         layers.forEach(function (layerObject) {
             if (
-                !Radio.request("RawLayerList", "getLayerAttributesWhere", {id: layerObject.layerId}) ||
-                !Radio.request("Parser", "getItemByAttributes", {id: layerObject.layerId})
+                !Radio.request("RawLayerList", "getLayerAttributesWhere", { id: layerObject.layerId }) ||
+                !Radio.request("Parser", "getItemByAttributes", { id: layerObject.layerId })
             ) {
                 invalidLayers.push(layerObject.layerId);
             }
