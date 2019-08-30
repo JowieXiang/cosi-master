@@ -14,6 +14,7 @@ import RemoteInterface from "../modules/remoteInterface/model";
 import CswParserModel from "../modules/cswParser/model";
 import WFSTransactionModel from "../modules/wfsTransaction/model";
 import GraphModel from "../modules/tools/graph/model";
+import ColorScale from "../modules/tools/colorScale/model";
 import MenuLoader from "../modules/menu/menuLoader";
 import ZoomToGeometry from "../modules/zoomToGeometry/model";
 import ZoomToFeature from "../modules/zoomtofeature/model";
@@ -151,6 +152,7 @@ function loadApp() {
     new WFSTransactionModel();
     new MenuLoader();
     new ZoomToGeometry();
+    new ColorScale();
 
 
     if (_.has(Config, "zoomToFeature")) {

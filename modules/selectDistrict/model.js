@@ -79,15 +79,17 @@ const SelectDistrict = Tool.extend({
                     return feature.getId() === features[0].getId();
                 });
 
-            // if already selected remove district from selectedDistricts
-            if (isFeatureSelected) {
-                this.removeSelectedDistrict(features[0], this.getSelectedDistricts());
-                features[0].setStyle(this.get("defaultStyle"));
-            }
-            // push selected district to selectedDistricts
-            else {
-                this.pushSelectedDistrict(features[0]);
-                features[0].setStyle(this.get("selectedStyle"));
+            if (features) {
+                // if already selected remove district from selectedDistricts
+                if (isFeatureSelected) {
+                    this.removeSelectedDistrict(features[0], this.getSelectedDistricts());
+                    features[0].setStyle(this.get("defaultStyle"));
+                }
+                // push selected district to selectedDistricts
+                else {
+                    this.pushSelectedDistrict(features[0]);
+                    features[0].setStyle(this.get("selectedStyle"));
+                }
             }
         }
     },

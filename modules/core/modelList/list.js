@@ -50,6 +50,7 @@ import AgeGroupSliderModel from "../../tools/ageGroupSlider/model";
 import GFI from "../../tools/gfi/model";
 import Viewpoint from "./viewpoint/model";
 import CalcuateRatio from "../../tools/calculateRatio/model";
+import ColorScale from "../../tools/colorScale/model";
 
 const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
     /**
@@ -302,6 +303,9 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
             else if (attrs.id === "calculateRatio") {
                 return new CalcuateRatio(attrs, options);
             }
+            else if (attrs.id === "colorScale") {
+                return new ColorScale(attrs, options);
+            }
             /**
              * layerslider
              * @deprecated in 3.0.0
@@ -313,8 +317,8 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
             else if (attrs.id === "layerSlider") {
                 return new LayerSliderModel(attrs, options);
             }
-            else if(attrs.id==="ageGroupSlider"){
-                return new AgeGroupSliderModel(attrs,options);
+            else if (attrs.id === "ageGroupSlider") {
+                return new AgeGroupSliderModel(attrs, options);
             }
             else if (attrs.id === "selectDistrict") {
                 return new SelectDistrict(attrs, options);

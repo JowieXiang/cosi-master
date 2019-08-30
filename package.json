@@ -27,6 +27,7 @@
     "bootstrap-toggle": "2.x.x",
     "cesium": "1.50.0",
     "d3": "4.9.x",
+    "d3-scale-chromatic": "^1.5.0",
     "dom-parser": "^0.1.5",
     "highcharts": "^6.0.7",
     "jquery": "^3.4.1",
