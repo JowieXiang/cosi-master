@@ -134,6 +134,7 @@ const SelectDistrict = Tool.extend({
 
     toggleIsActive: function () {
         this.set("isActive", !this.getIsActive());
+        this.get("channel").trigger("districtSelectionChanged", this.getSelectedDistricts());
     },
 
     /**

@@ -19,7 +19,16 @@ const ColorScale = Backbone.Model.extend({
             }
         }, this);
     },
-    generateColorScale (values = [0, 1], colorspace = ["blue", "red"], type = "sequential") {
+
+    /**
+     * generates a function to use for color generation from values
+     * @param {number[]} values - Array of all values to build the scale from. Default: [0, 1]
+     * @param {d3.interpolator or color[]} colorspace - colorspace of the scale, either 2 values for linearScale or d3.interpolator from d3-scale-chromatic. Default: "interpolateSpectral"
+     * @param {string} type - type of the scale. Possbile values: "sequential", "linear".
+     * @returns {function}
+     */
+
+    generateColorScale (values = [0, 1], colorspace = Chromatic.interpolateSpectral, type = "sequential") {
         var minValue = Math.min(...values),
             maxValue = Math.max(...values),
             scale;
@@ -32,7 +41,7 @@ const ColorScale = Backbone.Model.extend({
                 break;
             default:
                 scale = scaleSequential()
-                    .interpolator(Chromatic.interpolateSpectral)
+                    .interpolator(colorspace)
                     .domain([minValue, maxValue]);
                 break;
         }

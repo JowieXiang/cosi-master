@@ -23,8 +23,8 @@
         "glyphicon": "glyphicon-list",
         "isInitOpen": false
       },
-      "dataVisualisation": {
-        "name": "Daten",
+      "dashboard": {
+        "name": "Dashboard",
         "glyphicon": "glyphicon-stats"
       },
       "tools": {
@@ -70,6 +70,9 @@
           "calculateRatio": {
             "name": "Angebotsdeckung ermitteln",
             "glyphicon": "glyphicon-info-sign"
+          },
+          "compareFeatures": {
+            "name": "Gebiete vergleichen"
           }
         }
       },

@@ -1,7 +1,6 @@
 import ResultTemplate from "text-loader!./resultTemplate.html";
-import VectorLayer from 'ol/layer/Vector';
-import VectorSource from 'ol/source/Vector';
-import {Fill, Stroke, Style, Text} from 'ol/style.js';
+import VectorSource from "ol/source/Vector";
+import {Fill, Stroke, Style, Text} from "ol/style.js";
 
 
 const ResultView = Backbone.View.extend({
@@ -16,7 +15,7 @@ const ResultView = Backbone.View.extend({
         let currentResult;
 
         this.$el.html(this.template(attr));
-        
+
         if (results !== {}) {
             for (const district in results) {
                 currentResult = `<tr><th>${district}</th><td>${(1000 * results[district]).toFixed(2)}</td></tr>`;
@@ -28,6 +27,12 @@ const ResultView = Backbone.View.extend({
 
         return this;
     },
+
+    /**
+     * creates TextLabels on a new ol.layer on the map
+     * @param {Object} results - results as "stadtteil": value pairs.
+     * @returns {void}
+     */
     createTextLabels: function (results) {
         var layer = Radio.request("Map", "createLayerIfNotExists", "ratio_info_layer"),
             source = new VectorSource(),
