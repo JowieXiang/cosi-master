@@ -70,6 +70,7 @@ import CosiCalculatorView from "../modules/tools/cosiCalculator/view"
 import PieView from "../modules/charting/chartRenderer/pie/view";
 import BarView from "../modules/charting/chartRenderer/bar-line/view";
 import ChartUtil from "../modules/charting/chartRenderer/util/util";
+import DashboardView from "../modules/dashboard/view";
 // @deprecated in version 3.0.0
 // remove "version" in doc and config.
 // rename "print_" to "print"
@@ -185,6 +186,10 @@ function loadApp() {
 
     if (_.has(Config, "scaleLine") && Config.scaleLine === true) {
         new ScaleLineView();
+    }
+
+    if (_.has(Config, "dashboard")) {
+        new DashboardView(Config.dashboard);
     }
 
     new WindowView();

@@ -3,8 +3,7 @@ import Template from "text-loader!./template.html";
 
 const SelectDistrictView = Backbone.View.extend({
     events: {
-        "click button": "toggleIsActive",
-        "click span": "test"
+        "click button": "toggleIsActive"
     },
     initialize: function () {
         this.listenTo(this.model, {
@@ -34,11 +33,7 @@ const SelectDistrictView = Backbone.View.extend({
 
     toggleIsActive: function () {
         this.model.toggleIsActive();
-    },
-    test: function () {
-        console.log(this.getSelectedDistricts());
     }
-
 });
 
 export default SelectDistrictView;

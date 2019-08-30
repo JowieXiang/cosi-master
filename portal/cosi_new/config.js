@@ -47,5 +47,13 @@ const Config = {
     clickCounter: {},
     remoteInterface: {
         postMessageUrl: "http://localhost:9001"
+    },
+    dashboard: {
+        propertyTree: {
+            "2763": [],
+            "2769": [],
+            "2768": [],
+            "2771": []
+        }
     }
 };
