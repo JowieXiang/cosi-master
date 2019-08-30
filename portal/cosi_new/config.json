@@ -234,7 +234,7 @@
         {
           "id": "12868",
           "name": "Sportstätten",
-          "visibility": false,
+          "visibility": true,
           "mouseHoverField": [
             "aerz_prz"
           ],
@@ -255,6 +255,7 @@
           "name": "Kindertagesstätten",
           "styleId": "753",
           "visibility": false,
+          "isFacility": true,
           "topic": "basic"
         },
         {
@@ -296,7 +297,12 @@
                 "wg_efg_prz",
                 "wgm2"
               ],
-              "topic": "basic"
+              "topic": "basic",
+              "isDemographic": true,
+              "correlationsField": {
+                "type": "abs",
+                "field": "bev"
+              }
             },
             {
               "name": "Unter 18 Jährige mit Migrationshintergrund in Prozent 31.12.2014",
@@ -305,8 +311,12 @@
               "mouseHoverField": [
                 "bu18_prz"
               ],
-              "isNeverVisibleInTree": true,
-              "topic": "basic"
+              "topic": "basic",
+              "isDemographic": true,
+              "correlationsField": {
+                "type": "rel",
+                "field": "bu_18_prz"
+              }
             },
             {
               "name": "65 Jahre und älter in Prozent 31.12.2014",
@@ -315,8 +325,12 @@
               "mouseHoverField": [
                 "b65_prz"
               ],
-              "isNeverVisibleInTree": true,
-              "topic": "basic"
+              "topic": "basic",
+              "isDemographic": true,
+              "correlationsField": {
+                "type": "rel",
+                "field": "b65_prz"
+              }
             },
             {
               "name": "Arbeitslose in Prozent 31.12.2014",
@@ -325,8 +339,12 @@
               "mouseHoverField": [
                 "al_prz"
               ],
-              "isNeverVisibleInTree": true,
-              "topic": "basic"
+              "topic": "basic",
+              "isDemographic": true,
+              "correlationsField": {
+                "type": "rel",
+                "field": "al_prz"
+              }
             },
             {
               "id": "2797",

@@ -41,7 +41,7 @@ const SelectView = Backbone.View.extend({
         this.$el.find(".result").append(new ResultView({model: this.model}).render().el);
     },
     calculateRatios: function () {
-        this.model.getFeatureValues();
+        this.model.getRatiosForSelectedFeatures();
     }
 });
 

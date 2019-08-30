@@ -1,3 +1,8 @@
 <!DOCTYPE html>
-<div class="heading">Versorgungsschlüssel (Einrichtungen pro Einwohner der gewählten Zielgruppen:</div></div>
-<table class="table"></table>
+<% if (Object.getOwnPropertyNames(results).length > 0) { %>
+    <div class="heading">Versorgungsschlüssel <br />(Einrichtungen pro Tsd. Einwohner der gewählten Zielgruppen):</div>
+    <table class="table"></table>
+<% } %>
+<% if (message !== "") { %>
+    <div class="message"><%=message%></div>
+<% } %>
