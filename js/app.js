@@ -61,7 +61,6 @@ import PrintView from "../modules/tools/print_/view";
 //CoSI
 import SelectDistrictView from "../modules/selectDistrict/view";
 import CalculateRatioView from "../modules/tools/calculateRatio/selectView";
-import AgeSliderView from "../modules/ageSlider/view";
 import CosiTouchScreenView from "../modules/cosi/touchScreen/view";
 import CosiInfosSreenView from "../modules/cosi/infoScreen/view";
 import CosiSelectAreaView from "../modules/cosi/infoScreen/selectArea/view";
@@ -326,10 +325,6 @@ function loadApp() {
             }
             case "selectDistrict": {
                 new SelectDistrictView({ model: tool });
-                break;
-            }
-            case "ageSlider": {
-                new AgeSliderView({ model: tool });
                 break;
             }
             default: {

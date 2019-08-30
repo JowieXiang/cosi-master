@@ -1,4 +1,6 @@
 import Tool from "../../core/modelList/tool/model";
+import VectorSource from 'ol/source/Vector';
+import { Fill, Stroke, Style } from 'ol/style.js';
 
 const AgeGroupSliderModel = Tool.extend({
     defaults: _.extend({}, Tool.prototype.defaults, {
@@ -9,7 +11,8 @@ const AgeGroupSliderModel = Tool.extend({
         activeLayer: { layerId: "" },
         windowsInterval: null,
         renderToWindow: true,
-        glyphicon: "glyphicon-film"
+        glyphicon: "glyphicon-film",
+        currentLayer: null
     }),
 
     initialize: function () {
@@ -26,28 +29,55 @@ const AgeGroupSliderModel = Tool.extend({
             "change:isActive": function (model, value) {
                 if (value) {
                     this.checkIfLayermodelExist(this.get("layerIds"));
-                    _.each(this.get("layerIds"), function (layer) {
-                        var layers = Radio.request("Parser", "getItemsByAttributes", {type: "layer"})
-                        console.log(layers);
-                        let layerModel = Radio.request("ModelList", "getModelsByAttributes", { id: layer.layerId });
-                        layerModel[0].get("layer").getSource().on('change', function (evt) {
-                            const source = evt.target;
+                    _.each(this.get("layerIds"), layer => {
+                        var populationLayer = Radio.request("ModelList", "getModelsByAttributes", { id: layer.layerId })[0];
+                        var mouseHoverField = Radio.request("Parser", "getItemsByAttributes", { id: layer.layerId })[0].mouseHoverField;
+                        var selectedDistricts = Radio.request("SelectDistrict", "getSelectedDistricts").map(feature => feature.getProperties().stadtteil);
+
+                        populationLayer.get("layer").getSource().on('change', function (evt) {
+                            let source = evt.target;
                             if (source.getState() === 'ready') {
-                                const thisLayer = layerModel[0].get("layer");
-                                const stylelistmodel = Radio.request("StyleList", "returnModelById", thisLayer.getProperties().id);
-                                var styleFunction = function (feature) {
-                                    return stylelistmodel.createStyle(feature, false);
-                                };
-                                // console.log(thisLayer.getSource().getFeatures()[0] ? layerModel[0].get("layer").getSource().getFeatures()[0].getProperties().bu18_prz : "not ready");
-                                // layerModel[0].get("layer").setStyle(styleFunction);
-                                // console.log("one layer is ready")
+                                var selectedFeatures = source.getFeatures().filter(feature => {
+                                    return _.contains(selectedDistricts, feature.getProperties().stadtteil)
+                                });
+                                if (selectedFeatures.length > 0) {
+                                    var newLayer = Radio.request("Map", "createLayerIfNotExists", layer.layerId + "_layer");
+                                    var newSource = new VectorSource();
+                                    var values = selectedFeatures.map(feature => parseFloat(feature.getProperties()[mouseHoverField])),
+                                        colorScale = Radio.request("ColorScale", "getColorScaleByValues", values);
+                                    var newFeatures = [];
+                                    _.each(selectedFeatures, feature => newFeatures.push(feature.clone()));
+                                    _.each(newFeatures, (feature) => {
+                                        feature.setStyle(new Style({
+                                            fill: new Fill({
+                                                color: colorScale(parseFloat(feature.getProperties()[mouseHoverField])),
+                                            }),
+                                            stroke: new Stroke({
+                                                color: colorScale(parseFloat(feature.getProperties()[mouseHoverField])),
+                                                width: 3
+                                            })
+                                        }));
+                                    });
+                                    newSource.addFeatures(newFeatures);
+                                    newLayer.setSource(newSource);
+                                    newLayer.setVisible(false);
+                                }
                             }
+
                         });
                     });
-                } else {
-                    /**
-                     * change back to original style
-                     */
+                }
+            },
+
+            "change:activeLayer": function (model, value) {
+                _.each(this.get("layerIds"), layer => {
+                    let thisLayer = Radio.request("Map", "getLayerByName", layer.layerId + "_layer");
+                    thisLayer.setVisible(false);
+                });
+                if (this.get("activeLayer") != undefined) {
+                    // for each of the timeline layers
+                    let currentLayer = Radio.request("Map", "getLayerByName", this.get("activeLayer").layerId + "_layer");;
+                    currentLayer.setVisible(true);
                 }
             }
         });

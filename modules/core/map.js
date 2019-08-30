@@ -43,7 +43,8 @@ const map = Backbone.Model.extend({
             "isMap3d": this.isMap3d,
             "getMap3d": this.getMap3d,
             "getMapMode": this.getMapMode,
-            "getFeatures3dAtPosition": this.getFeatures3dAtPosition
+            "getFeatures3dAtPosition": this.getFeatures3dAtPosition,
+            "getLayerByName": this.getLayerByName
         }, this);
 
         channel.on({
