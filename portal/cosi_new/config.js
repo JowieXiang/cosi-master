@@ -30,7 +30,7 @@ const Config = {
 
     portalConf: "./",
     layerConf: "https://geoportal-hamburg.de/lgv-config/services-internet.json",
-    restConf: "../../portal/cosi/rest-services.json",
+    restConf: "https://geoportal-hamburg.de/lgv-config/rest-services-internet.json",
     styleConf: "../../portal/cosi_new/style.json",
     proxyURL: "/cgi-bin/proxy.cgi",
     uiStyle: "DEFAULT",
