@@ -11,9 +11,8 @@ const DashboardView = Backbone.View.extend({
         });
 
         this.listenTo(this.model, {
-            "change:isActive": function () {
-                this.render();
-            }
+            "change:isActive": this.render,
+            "change:tableView": this.render
         });
 
         if (this.model.get("isActive") === true) {
@@ -25,8 +24,22 @@ const DashboardView = Backbone.View.extend({
     render: function () {
         var attr = this.model.toJSON();
 
-        this.setElement(document.getElementById("map").append("<div class='dashboard'></div>"));
         this.$el.html(this.template(attr));
+        $(".masterportal-container").append(this.$el.html(this.template(attr)));
+
+        // for (const prop in firstCol) {
+        //     const row = "<tr></tr>";
+
+        //     row.append(`<th>${prop}</th>`);
+
+        //     for (const district in tableView) {
+        //         console.log(tableView[district][prop]);
+        //         row.append(`<td>${tableView[district][prop]}</td>`);
+        //     }
+
+        //     console.log(row);
+        //     this.$el.find("table").append(row);
+        // }
 
         return this;
     },

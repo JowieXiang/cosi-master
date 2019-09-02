@@ -1,3 +1,19 @@
+<!DOCTYPE html>
 <div class="dashboard-wrapper">
-        <button type="button" id="test" class="btn btn-lgv-grey col-xs-6">Test</button>
+        <table>
+                <tr>
+                        <th>Wert</th>
+                <% for (const dist in tableView) { %>
+                        <th><%= dist %></th>
+                <% } %>
+                </tr>
+                <% for (const prop in tableView[Object.keys(tableView)[0]]) { %>
+                <tr>
+                        <th><%= prop %></th>
+                        <% for (const dist in tableView) { %>
+                        <th><%= tableView[dist][prop] %></th>
+                <% } %>
+                </tr>
+                <% } %>
+        </table>
 </div>
