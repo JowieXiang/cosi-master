@@ -96,7 +96,6 @@ import Orientation3DView from "../modules/controls/orientation3d/view";
 import BackForwardView from "../modules/controls/backforward/view";
 import "es6-promise/auto";
 
-import WsClientView from "../modules/wsClient/view";
 var sbconfig, controls, controlsView;
 
 /**
@@ -537,7 +536,6 @@ function loadApp() {
         new BarView();
         new ChartUtil();
     }
-    new WsClientView();
 
     Radio.trigger("Util", "hideLoader");
 }

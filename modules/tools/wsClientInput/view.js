@@ -13,12 +13,17 @@ const WsClientInputView = Backbone.View.extend({
         if (this.model.get("isActive") === true) {
             this.render(this.model, true);
         }
+
+        this.model.getConnection().onmessage = (event) => {
+            alert(event.data);
+        };
     },
     model: new WsClientInputModel(),
     template: _.template(WsClientInputTemplate),
 
     render: function (model, value) {
         var attr = this.model.toJSON();
+
         if (value) {
             this.setElement(document.getElementsByClassName("win-body")[0]);
             this.$el.html(this.template(attr));
@@ -26,20 +31,16 @@ const WsClientInputView = Backbone.View.extend({
         return this;
     },
     wsSend: function () {
-        const host = "ws://cosiwebsocket.herokuapp.com/";
-        const connection = new WebSocket(host);
+        const connection = this.model.getConnection();
 
-        connection.onopen = () => {
-            connection.send(this.model.get("text"));
-        }
-
+        connection.send(this.model.get("text"));
     },
     textChange: function (evt) {
         var text = $(evt.target).val();
-        this.model.set('text', text);
-        console.log(text);
-    },
 
+        this.model.set("text", text);
+        // console.log(text);
+    }
 });
 
 
