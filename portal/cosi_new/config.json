@@ -6,6 +6,15 @@
       "tooltip": "Landesbetrieb Geoinformation und Vermessung"
     },
     "searchBar": {
+      "gazetteer": {
+        "minChars": 3,
+        "serviceId": "8",
+        "searchStreets": true,
+        "searchHouseNumbers": true,
+        "searchDistricts": true,
+        "searchParcels": true,
+        "searchStreetKey": true
+      },
       "tree": {
         "minChars": 3
       }
@@ -241,7 +250,7 @@
         {
           "id": "12868",
           "name": "Sportstätten",
-          "visibility": true,
+          "visibility": false,
           "mouseHoverField": [
             "aerz_prz"
           ],

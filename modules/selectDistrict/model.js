@@ -108,8 +108,9 @@ const SelectDistrict = Tool.extend({
     removeSelectedDistrict: function (feature, selectedFeatures) {
         const index = selectedFeatures.indexOf(feature);
 
+        selectedFeatures.splice(index, 1);
         this.set({
-            "selectedDistricts": selectedFeatures.splice(index, 1)
+            "selectedDistricts": selectedFeatures
         });
     },
 
