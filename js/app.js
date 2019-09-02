@@ -70,6 +70,7 @@ import PieView from "../modules/charting/chartRenderer/pie/view";
 import BarView from "../modules/charting/chartRenderer/bar-line/view";
 import ChartUtil from "../modules/charting/chartRenderer/util/util";
 import DashboardView from "../modules/dashboard/view";
+import WsClientInputView from "../modules/tools/wsClientInput/view"
 // @deprecated in version 3.0.0
 // remove "version" in doc and config.
 // rename "print_" to "print"
@@ -95,6 +96,7 @@ import Orientation3DView from "../modules/controls/orientation3d/view";
 import BackForwardView from "../modules/controls/backforward/view";
 import "es6-promise/auto";
 
+import WsClientView from "../modules/wsClient/view";
 var sbconfig, controls, controlsView;
 
 /**
@@ -328,6 +330,10 @@ function loadApp() {
                 new AgeGroupSliderView({ model: tool });
                 break;
             }
+            case "wsClientInput": {
+                new WsClientInputView({ model: tool });
+                break;
+            }
             case "selectDistrict": {
                 new SelectDistrictView({ model: tool });
                 break;
@@ -530,8 +536,8 @@ function loadApp() {
         new PieView();
         new BarView();
         new ChartUtil();
-
     }
+    new WsClientView();
 
     Radio.trigger("Util", "hideLoader");
 }

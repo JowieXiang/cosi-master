@@ -41,6 +41,10 @@
             "isInitOpen": true,
             "isActive": true
           },
+          "wsClientInput":{
+            "name": "websocket",
+            "glyphicon": "glyphicon-picture"
+          },
           "ageGroupSlider": {
             "name": "Altersgruppen-Schieberegler",
             "glyphicon": "glyphicon-film",
