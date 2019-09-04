@@ -9,7 +9,10 @@ const DashboardModel = Tool.extend({
         propertyTree: {},
         dashboardLayers: [],
         activeFeatures: {},
-        tableView: {}
+        tableView: [],
+        name: "",
+        glyphicon: "",
+        width: "60%"
     }),
 
     /**
@@ -41,14 +44,12 @@ const DashboardModel = Tool.extend({
         }, this);
     },
     setupTable: function (selectedDistricts) {
-        const newTable = {};
+        const cleanTable = [];
 
-        _.each(selectedDistricts, (feature) => {
-            const districtName = feature.getProperties().stadtteil;
-
-            newTable[districtName] = {};
+        _.forEach(selectedDistricts, (district) => {
+            cleanTable.push({stadtteil: district.getProperties().stadtteil});
         });
-        this.set("tableView", newTable);
+        this.set("tableView", cleanTable);
     },
     updateTable: function () {
         const currentTable = this.get("tableView");
@@ -56,16 +57,31 @@ const DashboardModel = Tool.extend({
         _.each(this.get("activeFeatures"), (feature) => {
             const properties = feature.getProperties();
 
-            for (const property in properties) {
-                currentTable[properties.stadtteil][property] = properties[property];
-            }
-
-            this.set("tableView", currentTable);
+            _.each(currentTable, (column) => {
+                if (properties.stadtteil === column.stadtteil) {
+                    Object.assign(column, properties);
+                }
+            });
         });
+        this.set("tableView", this.filterTable(currentTable));
+        this.trigger("tableReady");
+    },
+    filterTable: function (table) {
+        _.each(table, (col) => {
+            for (const prop in col) {
+                _.each(this.getPropertyTree().exclude, (exclude) => {
+                    if (exclude === prop) {
+                        delete col[prop];
+                    }
+                });
+            }
+        });
+
+        return table;
     },
     updateDistricts: function (selectedDistricts) {
         this.setupTable(selectedDistricts);
-        _.each(_.allKeys(this.getPropertyTree()), (layerId) => {
+        _.each(this.getPropertyTree().layerIds, (layerId) => {
             this.addLayerModel(layerId);
             this.pushDashboardLayer(Radio.request("ModelList", "getModelByAttributes", {id: layerId}));
 

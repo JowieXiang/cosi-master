@@ -3,16 +3,20 @@ import DashboardModel from "./model";
 
 const DashboardView = Backbone.View.extend({
     events: {
-        "click #test": "test"
+        "click #test": "test",
+        "click .map": "close",
+        "hover .table": "test"
     },
     initialize: function (config) {
         this.model = new DashboardModel({
-            propertyTree: config.propertyTree
+            propertyTree: config.propertyTree,
+            name: config.name,
+            glyphicon: config.glyphicon
         });
 
         this.listenTo(this.model, {
             "change:isActive": this.render,
-            "change:tableView": this.render
+            "tableReady": this.render
         });
 
         if (this.model.get("isActive") === true) {
@@ -21,30 +25,21 @@ const DashboardView = Backbone.View.extend({
     },
     model: {},
     template: _.template(Template),
-    render: function () {
+    render: async function () {
         var attr = this.model.toJSON();
 
         this.$el.html(this.template(attr));
-        $(".masterportal-container").append(this.$el.html(this.template(attr)));
 
-        // for (const prop in firstCol) {
-        //     const row = "<tr></tr>";
-
-        //     row.append(`<th>${prop}</th>`);
-
-        //     for (const district in tableView) {
-        //         console.log(tableView[district][prop]);
-        //         row.append(`<td>${tableView[district][prop]}</td>`);
-        //     }
-
-        //     console.log(row);
-        //     this.$el.find("table").append(row);
-        // }
+        Radio.trigger("Sidebar", "append", this.$el);
+        Radio.trigger("Sidebar", "toggle", true, this.model.get("width"));
 
         return this;
     },
+    close: function () {
+        Radio.trigger("Sidebar", "toggle", false);
+    },
     test: function () {
-        console.log(this.model);
+        console.log("test");
     }
 });
 

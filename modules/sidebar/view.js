@@ -22,7 +22,6 @@ const SidebarView = Backbone.View.extend(/** @lends SidebarView.prototype */{
         });
         $("#map").after(this.$el);
     },
-
     /**
      * Creates the class name.
      * @returns {string} ClassName
