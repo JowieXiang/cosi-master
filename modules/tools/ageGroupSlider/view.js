@@ -11,11 +11,13 @@ const AgeGroupSliderView = Backbone.View.extend({
         this.listenTo(this.model, {
             "change:isActive": function () {
                 this.render();
+                console.log("rerendering")
             },
             "change:activeLayer": this.layerSwitched
         });
         if (this.model.get("isActive") === true) {
             this.render();
+            console.log("rerendering")
         }
     },
     className: "layerslider",
