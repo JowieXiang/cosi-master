@@ -6,6 +6,14 @@ import {Vector as VectorLayer} from "ol/layer.js";
 import VectorSource from "ol/source/Vector.js";
 
 const ZoomToFeature = Backbone.Model.extend({
+
+    /**
+     * @class ZoomToFeature
+     * @description Sets BBox initially
+     * @extends Backbone.Collection
+     * @constructs
+     */
+
     defaults: {
         ids: [],
         attribute: "flaechenid",

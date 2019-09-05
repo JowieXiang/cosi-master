@@ -16,7 +16,7 @@
                                                 <th scope="row"><%= prop %></th>
                                                 <% _.each(tableView, (dist) => { %>
                                                         <% if (prop === "stadtteil") { %>
-                                                                <th scope="col"><%= dist[prop] %></th>
+                                                                <th scope="col" class="district"><%= dist[prop] %></th>
                                                         <% } else { %>
                                                                 <td><%= dist[prop] %></td>
                                                         <% } %>

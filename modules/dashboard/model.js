@@ -6,6 +6,7 @@ import VectorSource from "ol/source/Vector";
 const DashboardModel = Tool.extend({
     defaults: _.extend({}, Tool.prototype.defaults, {
         graphModels: [],
+        districtsLayer: {},
         propertyTree: {},
         dashboardLayers: [],
         activeFeatures: {},
@@ -64,7 +65,6 @@ const DashboardModel = Tool.extend({
             });
         });
         this.set("tableView", this.filterTable(currentTable));
-        this.trigger("tableReady");
     },
     filterTable: function (table) {
         _.each(table, (col) => {
@@ -125,6 +125,16 @@ const DashboardModel = Tool.extend({
             this.set("activeFeatures", features);
         });
     },
+    zoomAndHighlightFeature: function (scope) {
+        let extent;
+
+        _.each(this.get("activeFeatures"), (feature) => {
+            if (feature.getProperties().stadtteil === scope) {
+                extent = feature.getGeometry().getExtent();
+            }
+        });
+        Radio.trigger("Map", "zoomToExtent", extent, {padding: [20, 20, 20, 20]});
+    },
     getPropertyTree: function () {
         return this.get("propertyTree");
     },
@@ -142,8 +152,8 @@ const DashboardModel = Tool.extend({
             return dashboardLayer !== model;
         }));
     },
-    test: function () {
-        console.log("gfi updated");
+    setIsActive: function (state) {
+        this.set("isActive", state);
     }
 });
 

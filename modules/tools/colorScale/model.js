@@ -28,7 +28,7 @@ const ColorScale = Backbone.Model.extend({
      * @returns {function}
      */
 
-    generateColorScale (values = [0, 1], colorspace = Chromatic.interpolateSpectral, type = "sequential") {
+    generateColorScale (values = [0, 1], colorspace = Chromatic.interpolateRdYlGn, type = "sequential") {
         var minValue = Math.min(...values),
             maxValue = Math.max(...values),
             scale;
