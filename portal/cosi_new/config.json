@@ -374,6 +374,15 @@
             },
             {
               "id": "2795"
+            },
+            {
+              "id": "bev_gesamt"
+            },
+            {
+              "id": "bev_maennlich"
+            },
+            {
+              "id": "bev_weiblich"
             }
           ]
         }

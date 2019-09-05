@@ -101,7 +101,61 @@ const RawLayerList = Backbone.Collection.extend({
                 "kategorie_organisation": "Landesbetrieb Geoinformation und Vermessung"
             }
         ]
-      })
+      },
+      {
+        "id": "bev_gesamt",
+        "name": "Bevölkerung gesamt",
+        "url": "./portal/cosi_new/assets/bev.json",
+        "typ": "GeoJSON",
+        "format": "text/html; charset=utf-8",
+        "version": "1.0",
+        "minScale": "0",
+        "maxScale": "2500000",
+        "gfiAttributes": "showAll",
+        "gfiTheme": {
+        "name": "mml",
+            "params": null
+        },
+        "layerAttribution": "nicht vorhanden",
+        "legendURL": "",
+        "datasets": []
+    },
+    {
+      "id": "bev_maennlich",
+      "name": "Bevölkerung maennlich",
+      "url": "./portal/cosi_new/assets/bev_maennlich.json",
+      "typ": "GeoJSON",
+      "format": "text/html; charset=utf-8",
+      "version": "1.0",
+      "minScale": "0",
+      "maxScale": "2500000",
+      "gfiAttributes": "showAll",
+      "gfiTheme": {
+      "name": "mml",
+          "params": null
+      },
+      "layerAttribution": "nicht vorhanden",
+      "legendURL": "",
+      "datasets": []
+  },
+  {
+    "id": "bev_weiblich",
+    "name": "Bevölkerung weiblich",
+    "url": "./portal/cosi_new/assets/bev_weiblich.json",
+    "typ": "GeoJSON",
+    "format": "text/html; charset=utf-8",
+    "version": "1.0",
+    "minScale": "0",
+    "maxScale": "2500000",
+    "gfiAttributes": "showAll",
+    "gfiTheme": {
+    "name": "mml",
+        "params": null
+    },
+    "layerAttribution": "nicht vorhanden",
+    "legendURL": "",
+    "datasets": []
+})
         // Es gibt Layer in einem Dienst, die für unterschiedliche Portale unterschiedliche Daten/GFIs liefern --> z.B. Hochwasserrisikomanagement
         // Da alle Layer demselben Metadatensatz zugordnet sind, werden sie über die Id gelöscht
         if (_.has(Config.tree, "layerIDsToIgnore")) {

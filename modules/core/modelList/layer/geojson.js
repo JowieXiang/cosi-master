@@ -107,7 +107,7 @@ const GeoJSONLayer = Layer.extend(/** @lends GeoJSONLayer.prototype */{
      * @param  {boolean} [showLoader=false] shows loader div
      * @returns {void}
      */
-/*    updateSource: function (showLoader) {
+    updateSource: function (showLoader) {
         const typ = this.get("typ"),
             url = Radio.request("Util", "getProxyURL", this.get("url")),
             xhr = new XMLHttpRequest(),
@@ -138,42 +138,42 @@ const GeoJSONLayer = Layer.extend(/** @lends GeoJSONLayer.prototype */{
             that.handleResponse({}, "abort", showLoader);
         };
         xhr.send();
-    },*/
-
-    updateSource: function (showLoader) {
-        var params = {
-            request: "GetFeature",
-            service: "WFS",
-            typeName: this.get("featureType"),
-            outputFormat: "application/json",
-            version: this.get("version")
-        };
-
-        $.ajax({
-            beforeSend: function () {
-                if (showLoader) {
-                    Radio.trigger("Util", "showLoader");
-                }
-            },
-            url: this.isUseProxy() === true ? Radio.request("Util", "getProxyURL", this.get("url")) : this.get("url"),
-            data: params,
-            async: true,
-            type: "GET",
-            context: this,
-            success: function (data) {
-                this.handleData(data, Radio.request("MapView", "getProjection").getCode());
-                // Create associated heatmaps - as in the SenrosrThings layer, should be included in the model
-                if (this.get("hasHeatmap")) {
-                    Radio.trigger("HeatmapLayer", "loadInitialData", this.get("id"), this.get("layerSource").getFeatures());
-                }
-            },
-            complete: function () {
-                if (showLoader) {
-                    Radio.trigger("Util", "hideLoader");
-                }
-            }
-        });
     },
+
+    // updateSource: function (showLoader) {
+    //     var params = {
+    //         request: "GetFeature",
+    //         service: "WFS",
+    //         typeName: this.get("featureType"),
+    //         outputFormat: "application/json",
+    //         version: this.get("version")
+    //     };
+
+    //     $.ajax({
+    //         beforeSend: function () {
+    //             if (showLoader) {
+    //                 Radio.trigger("Util", "showLoader");
+    //             }
+    //         },
+    //         url: this.isUseProxy() === true ? Radio.request("Util", "getProxyURL", this.get("url")) : this.get("url"),
+    //         data: params,
+    //         async: true,
+    //         type: "GET",
+    //         context: this,
+    //         success: function (data) {
+    //             this.handleData(data, Radio.request("MapView", "getProjection").getCode());
+    //             // Create associated heatmaps - as in the SenrosrThings layer, should be included in the model
+    //             if (this.get("hasHeatmap")) {
+    //                 Radio.trigger("HeatmapLayer", "loadInitialData", this.get("id"), this.get("layerSource").getFeatures());
+    //             }
+    //         },
+    //         complete: function () {
+    //             if (showLoader) {
+    //                 Radio.trigger("Util", "hideLoader");
+    //             }
+    //         }
+    //     });
+    // },
 
     /**
      * Handles the xhr response
@@ -214,15 +214,16 @@ const GeoJSONLayer = Layer.extend(/** @lends GeoJSONLayer.prototype */{
         if (!features) {
             return;
         }
-        else if (jsonCrs !== mapCrs) {
-            features = this.transformFeatures(features, jsonCrs, mapCrs);
-        }
+        // else if (jsonCrs !== mapCrs) {
+        //     features = this.transformFeatures(features, jsonCrs, mapCrs);
+        // }
 
         features.forEach(function (feature) {
             var id = feature.get("id") || _.uniqueId();
 
             feature.setId(id);
         });
+
         this.get("layerSource").clear(true);
         this.get("layerSource").addFeatures(features);
         this.get("layer").setStyle(this.get("styleFunction"));
