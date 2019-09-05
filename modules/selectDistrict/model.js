@@ -29,6 +29,8 @@ const SelectDistrict = Tool.extend({
         channel: Radio.channel("SelectDistrict")
     }),
     initialize: function () {
+        var channel = Radio.channel("SelectDistrict");
+
         this.superInitialize();
 
         this.listenTo(this, {
@@ -41,6 +43,7 @@ const SelectDistrict = Tool.extend({
                         Radio.trigger("Map", "zoomToExtent", this.getSelectedGeometries().getExtent());
                         this.setBboxGeometryToLayer(Radio.request("ModelList", "getCollection"), Radio.request("Parser", "getItemsByAttributes", {typ: "WFS", isBaseLayer: false}));
                     }
+                    this.get("channel").trigger("selectionChanged");
                     this.unlisten();
                 }
             }

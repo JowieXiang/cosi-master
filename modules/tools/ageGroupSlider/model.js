@@ -1,6 +1,7 @@
 import Tool from "../../core/modelList/tool/model";
-import VectorSource from 'ol/source/Vector';
-import { Fill, Stroke, Style } from 'ol/style.js';
+import VectorSource from "ol/source/Vector";
+import { Fill, Stroke, Style } from "ol/style.js";
+import { unByKey as unlistenByKey } from "ol/Observable.js";
 
 const AgeGroupSliderModel = Tool.extend({
     defaults: _.extend({}, Tool.prototype.defaults, {
@@ -12,7 +13,8 @@ const AgeGroupSliderModel = Tool.extend({
         windowsInterval: null,
         renderToWindow: true,
         glyphicon: "glyphicon-film",
-        currentLayer: null
+        currentLayer: null,
+        features: null
     }),
 
     initialize: function () {
@@ -20,73 +22,160 @@ const AgeGroupSliderModel = Tool.extend({
 
         this.superInitialize();
         this.setProgressBarWidth(this.get("layerIds"));
-
         if (invalidLayerIds.length > 0) {
             Radio.trigger("Alert", "alert", "Konfiguration des Werkzeuges: " + this.get("name") + " fehlerhaft. <br>Bitte prüfen Sie folgende LayerIds: " + invalidLayerIds + "!");
         }
+        this.listenTo(Radio.channel("Map"), {
+            "isReady": function () {
+                this.initializeSource();
+            }
+        });
+        this.listenTo(Radio.channel("SelectDistrict"), {
+            "selectionChanged": function () {
+                this.clearColorCodeLayers();
+                this.createColorCodeLayers();
+                this.addFeaturesToColorCodeLayers();
+            }
+        });
 
         this.listenTo(this, {
             "change:isActive": function (model, value) {
                 if (value) {
-                    this.checkIfLayermodelExist(this.get("layerIds"));
-                    if (Radio.request("SelectDistrict", "getSelectedDistricts").length > 0) {
-                        _.each(this.get("layerIds"), layer => {
-                            var populationLayer = Radio.request("ModelList", "getModelsByAttributes", { id: layer.layerId })[0];
-                            var mouseHoverField = Radio.request("Parser", "getItemsByAttributes", { id: layer.layerId })[0].mouseHoverField;
-                            var selectedDistricts = Radio.request("SelectDistrict", "getSelectedDistricts").map(feature => feature.getProperties().stadtteil);
-
-                            populationLayer.get("layer").getSource().on('change', function (evt) {
-                                let source = evt.target;
-                                if (source.getState() === 'ready') {
-                                    var selectedFeatures = source.getFeatures().filter(feature => {
-                                        return _.contains(selectedDistricts, feature.getProperties().stadtteil)
-                                    });
-                                    if (selectedFeatures.length > 0) {
-                                        var newLayer = Radio.request("Map", "createLayerIfNotExists", layer.layerId + "_layer");
-                                        var newSource = new VectorSource();
-                                        var values = selectedFeatures.map(feature => parseFloat(feature.getProperties()[mouseHoverField])),
-                                            colorScale = Radio.request("ColorScale", "getColorScaleByValues", values);
-                                        var newFeatures = [];
-                                        _.each(selectedFeatures, feature => newFeatures.push(feature.clone()));
-                                        _.each(newFeatures, (feature) => {
-                                            feature.setStyle(new Style({
-                                                fill: new Fill({
-                                                    color: colorScale(parseFloat(feature.getProperties()[mouseHoverField])),
-                                                }),
-                                                stroke: new Stroke({
-                                                    color: colorScale(parseFloat(feature.getProperties()[mouseHoverField])),
-                                                    width: 3
-                                                })
-                                            }));
-                                        });
-                                        newSource.addFeatures(newFeatures);
-                                        newLayer.setSource(newSource);
-                                        newLayer.setVisible(false);
-                                    }
-                                }
-
-                            });
-                        });
-                    }
+                    this.selectDistrictReminder();
                 }
             },
 
-            "change:activeLayer": function (model, value) {
+            "change:activeLayer": function () {
                 if (Radio.request("SelectDistrict", "getSelectedDistricts").length > 0) {
-                    //set all layer invisible
-                    _.each(this.get("layerIds"), layer => {
-                        let thisLayer = Radio.request("Map", "getLayerByName", layer.layerId + "_layer");
-                        thisLayer.setVisible(false);
-                    });
+                    this.setAllColorCodeLayerInvisible();
                     if (this.get("activeLayer").layerId !== "") {
-                        // for each of the timeline layers
-                        let currentLayer = Radio.request("Map", "getLayerByName", this.get("activeLayer").layerId + "_layer");;
-                        currentLayer.setVisible(true);
-                    } 
+                        this.showActiveColorCodeLayer();
+                    }
                 }
-                // else {
-                //     alert("please first select features")
-                // }
+            }
+        });
+    },
+    initializeSource: function () {
+        var featureArray = [],
+            that = this;
+        this.checkIfLayermodelExist(this.get("layerIds"));
+        // var source = Radio.request("ModelList", "getModelByAttributes", {"name": "Stadtteile"}).get("layer").getSource();
+        // var features = source.getFeatures();
+        // console.log(features);
+        _.each(this.get("layerIds"), layer => {
+            const dataLayer = Radio.request("ModelList", "getModelByAttributes", { id: layer.layerId });
+            var source = dataLayer.get("layer").getSource();
+            var listenerKey = source.on("change", function (evt) {
+                var source = evt.target;
+                console.log(source);
+                var featureArrayLength = 0;
+                if (source.getState() === "ready" && source.getFeatures().length >= 99) {
+                    // if (source.getFeatures().length > featureArrayLength) {
+                    //     featureArrayLength = source.getFeatures().length;
+                        console.log(source.getState());
+                        var features = source.getFeatures();
+                        featureArray.push({
+                            "layerId": layer.layerId,
+                            "features": features
+                        });
+                        that.set("features", featureArray);
+                        unlistenByKey(listenerKey);
+                    // }
+                }
+            });
+        });
+
+    },
+    // reminds user to select district before using the ageGroup slider
+    selectDistrictReminder: function () {
+        const selectedDistricts = Radio.request("SelectDistrict", "getSelectedDistricts");
+
+        if (selectedDistricts.length === 0) {
+            Radio.trigger("Alert", "alert", {
+                text: "<strong> Bitte wählen Sie zuerst die Bezirke mit 'Gebiet wählen' im Werkzeugmenü aus</strong>",
+                kategorie: "alert-warning"
+            });
+        }
+    },
+    // set active color-code layer visible
+    showActiveColorCodeLayer: function () {
+        const activeLayer = Radio.request("Map", "getLayerByName", this.get("activeLayer").layerId + "_colorcoded");
+
+        if (activeLayer != undefined) {
+            const currentLayer = Radio.request("Map", "getLayerByName", this.get("activeLayer").layerId + "_colorcoded");
+            currentLayer.setVisible(true);
+        }
+    },
+    //  hide all color-code layers
+    setAllColorCodeLayerInvisible: function () {
+        _.each(this.get("layerIds"), layer => {
+            if (Radio.request("Map", "getLayerByName", layer.layerId + "_colorcoded")) {
+                const thisLayer = Radio.request("Map", "getLayerByName", layer.layerId + "_colorcoded");
+                thisLayer.setVisible(false);
+            }
+        });
+    },
+    // clear all features from color-code layers
+    clearColorCodeLayers: function () {
+        _.each(this.get("layerIds"), layer => {
+            var colorCodeLayer = Radio.request("Map", "getLayerByName", layer.layerId + "_colorcoded");
+
+            if (colorCodeLayer != undefined) {
+                colorCodeLayer.getSource().clear();
+            }
+        });
+        const map = Radio.request("Map", "getMap");
+
+        map.getLayers().getArray().forEach(layer => {
+            console.log(layer.getProperties().name);
+        });
+    },
+    createColorCodeLayers: function () {
+        _.each(this.get("layerIds"), layer => {
+            if (Radio.request("Map", "getLayerByName", layer.layerId + "_colorcoded") === undefined) {
+                var newLayer = Radio.request("Map", "createLayerIfNotExists", layer.layerId + "_colorcoded"),
+                    newSource = new VectorSource();
+                newLayer.setSource(newSource);
+                newLayer.setVisible(false);
+                console.log("created: " + newLayer.getProperties().name);
+            }
+        });
+    },
+    // clear all features from color-code layers
+    addFeaturesToColorCodeLayers: function () {
+        // make sure timeline layers are loaded in the map
+        const districtNames = Radio.request("SelectDistrict", "getSelectedDistricts").map(feature => feature.getProperties().stadtteil);
+        console.log(districtNames.length);
+
+        _.each(this.get("layerIds"), layer => {
+            const featureArray = this.get("features").filter(featureLayer => {
+                return featureLayer.layerId === layer.layerId;
+            })[0],
+                valueField = Radio.request("Parser", "getItemsByAttributes", { id: layer.layerId })[0].mouseHoverField;
+            var colorCodeLayer = Radio.request("Map", "getLayerByName", layer.layerId + "_colorcoded");
+            var selectedFeatures = featureArray.features.filter(feature => {
+                return _.contains(districtNames, feature.getProperties().stadtteil);
+            });
+            if (selectedFeatures.length > 0) {
+                var values = selectedFeatures.map(feature => parseFloat(feature.getProperties()[valueField])),
+                    newFeatures = [];
+                // push selected features to the new layer
+                _.each(selectedFeatures, feature => newFeatures.push(feature.clone()));
+                console.log(newFeatures.length);
+                var colorScale = Radio.request("ColorScale", "getColorScaleByValues", values);
+                // set new feature style
+                _.each(newFeatures, (feature) => {
+                    feature.setStyle(new Style({
+                        fill: new Fill({
+                            color: colorScale(parseFloat(feature.getProperties()[valueField]))
+                        }),
+                        stroke: new Stroke({
+                            color: colorScale(parseFloat(feature.getProperties()[valueField])),
+                            width: 3
+                        })
+                    }));
+                });
+                colorCodeLayer.getSource().addFeatures(newFeatures);
             }
         });
     },
