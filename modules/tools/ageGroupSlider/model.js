@@ -1,7 +1,6 @@
 import Tool from "../../core/modelList/tool/model";
 import VectorSource from "ol/source/Vector";
 import { Fill, Stroke, Style } from "ol/style.js";
-import { unByKey as unlistenByKey } from "ol/Observable.js";
 
 const AgeGroupSliderModel = Tool.extend({
     defaults: _.extend({}, Tool.prototype.defaults, {
