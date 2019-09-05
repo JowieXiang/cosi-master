@@ -188,9 +188,9 @@ function loadApp() {
         new ScaleLineView();
     }
 
-    if (_.has(Config, "dashboard")) {
-        new DashboardView(Config.dashboard);
-    }
+    // if (_.has(Config, "dashboard")) {
+    //     new DashboardView(Config.dashboard);
+    // }
 
     new WindowView();
     // Module laden
@@ -200,6 +200,10 @@ function loadApp() {
 
     _.each(Radio.request("ModelList", "getModelsByAttributes", { type: "tool" }), function (tool) {
         switch (tool.id) {
+            case "dashboard": {
+                new DashboardView({ model: tool });
+                break;
+            }
             case "calculateRatio": {
                 new CalculateRatioView({ model: tool });
                 break;

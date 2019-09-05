@@ -34,7 +34,11 @@
       },
       "dashboard": {
         "name": "Dashboard",
-        "glyphicon": "glyphicon-stats"
+        "glyphicon": "glyphicon-stats",
+        "propertyTree": {
+          "layerIds": ["2763", "2769", "2768", "2771"],
+          "exclude": ["geom", "stadtteil_1"]
+        }
       },
       "tools": {
         "name": "Werkzeuge",

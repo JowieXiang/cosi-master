@@ -7,13 +7,7 @@ const DashboardView = Backbone.View.extend({
         "click .map": "close",
         "hover .table": "test"
     },
-    initialize: function (config) {
-        this.model = new DashboardModel({
-            propertyTree: config.propertyTree,
-            name: config.name,
-            glyphicon: config.glyphicon
-        });
-
+    initialize: function () {
         this.listenTo(this.model, {
             "change:isActive": this.render,
             "tableReady": this.render

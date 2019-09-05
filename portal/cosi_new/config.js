@@ -47,39 +47,5 @@ const Config = {
     clickCounter: {},
     remoteInterface: {
         postMessageUrl: "http://localhost:9001"
-    },
-    dashboard: {
-        name: "Dashboard",
-        glyphicon: "glyphicon-stats",
-        propertyTree: {
-            layerIds: ["2763", "2769", "2768", "2771"],
-            exclude: ["geom", "stadtteil_1"]
-        }
-        // propertyTree: {
-        //     "2763": {
-        //         exclude: [
-        //             "geom",
-        //             "stadtteil_1"
-        //         ]
-        //     },
-        //     "2769": {
-        //         exclude: [
-        //             "geom",
-        //             "stadtteil_1"
-        //         ]
-        //     },
-        //     "2768": {
-        //         exclude: [
-        //             "geom",
-        //             "stadtteil_1"
-        //         ]
-        //     },
-        //     "2771": {
-        //         exclude: [
-        //             "geom",
-        //             "stadtteil_1"
-        //         ]
-        //     }
-        // }
     }
 };
