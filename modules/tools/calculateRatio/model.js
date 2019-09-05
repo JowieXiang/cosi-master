@@ -1,5 +1,6 @@
 import Tool from "../../core/modelList/tool/model";
 import SnippetDropdownModel from "../../snippets/dropdown/model";
+import AdjustParameterView from "../../snippets/adjustParameter/view";
 import Geometry from "ol/geom/Geometry";
 import Feature from "ol/Feature";
 import * as Extent from "ol/extent";
@@ -22,7 +23,8 @@ const CalculateRatioModel = Tool.extend({
         numValues: {},
         denDropdownModel: {},
         denValues: {},
-        message: ""
+        message: "",
+        adjustParameterViews: []
     }),
     initialize: function () {
         this.superInitialize();
@@ -53,6 +55,9 @@ const CalculateRatioModel = Tool.extend({
         });
         this.listenTo(this.get("denDropdownModel"), {
             "valuesChanged": this.setDenominators
+        });
+        this.listenTo(this, {
+            "change:numerators": this.updateModifiers
         });
         this.listenTo(Radio.channel("Layer"), {
             "layerVisibleChanged": this.getActiveLayersWithValues
@@ -161,11 +166,11 @@ const CalculateRatioModel = Tool.extend({
                 _.each(this.getNumerators(), (num) => {
                     const layerId = this.get("numValues")[num],
                         features = Radio.request("ModelList", "getModelByAttributes", {id: layerId}).get("layerSource").getFeatures();
-        
+
                     _.each(features, (feature) => {
                         const geometry = feature.getGeometry(),
                             coordinate = geometry.getType() === "Point" ? geometry.getCoordinates() : Extent.getCenter(geometry.getExtent()); // Remove later for more reliable fallback
-        
+
                         if (districtGeometry.intersectsCoordinate(coordinate)) {
                             featuresInDistrict.push(feature);
                         }
@@ -223,6 +228,52 @@ const CalculateRatioModel = Tool.extend({
         if (values.denominators) {
             this.set("denDropdownModel", values.denominators);
         }
+    },
+    getNumericalFeatureProperties: function (num) {
+        const layerId = this.get("numValues")[num],
+            layer = Radio.request("ModelList", "getModelByAttributes", {id: layerId});
+        let properties,
+            propObj;
+
+        if (typeof layer.get("numericalProperties") !== "undefined") {
+            if (!layer.get("numericalProperties")) {
+                properties = [];
+            }
+            else {
+                properties = layer.get("numericalProperties");
+            }
+        }
+        else {
+            propObj = layer.get("layerSource").getFeatures()[0].getProperties();
+
+            for (const prop in propObj) {
+                if (isNaN(parseFloat(propObj[prop]))) {
+                    delete propObj[prop];
+                }
+            }
+            properties = _.allKeys(propObj);
+        }
+
+        return properties;
+    },
+    updateModifiers: function () {
+        // check if modifier already exists
+        _.each(this.getNumerators(), (numerator) => {
+            if (!this.get("adjustParameterViews").find(modifier => modifier.model.get("layerName") === numerator)) {
+                this.createModifier(numerator);
+            }
+        });
+        // delete models that are unchecked
+        this.set("adjustParameterViews", this.get("adjustParameterViews").filter((modifier) => {
+            return this.getNumerators().includes(modifier.model.get("layerName"));
+        }));
+    },
+    createModifier: function (layerId) {
+        this.get("adjustParameterViews").push(new AdjustParameterView({
+            layerName: layerId,
+            numericalValues: this.getNumericalFeatureProperties(layerId)
+        }));
+        this.trigger("change:adjustParameterViews");
     },
     setNumerators: function () {
         this.set("numerators", this.get("numDropdownModel").getSelectedValues());

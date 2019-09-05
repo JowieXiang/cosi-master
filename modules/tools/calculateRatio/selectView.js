@@ -11,7 +11,8 @@ const SelectView = Backbone.View.extend({
             "change:isActive": this.render,
             "renderResult": this.renderResult,
             "updateDropdownMenus": this.render,
-            "renderResults": this.renderResult
+            "renderResults": this.renderResult,
+            "change:adjustParameterViews": this.renderModifiers
         });
         this.numDropdownView = new SnippetDropdownView({model: this.model.get("numDropdownModel")});
         this.denDropdownView = new SnippetDropdownView({model: this.model.get("denDropdownModel")});
@@ -39,6 +40,14 @@ const SelectView = Backbone.View.extend({
     renderResult: function () {
         this.$el.find(".result").html("");
         this.$el.find(".result").append(new ResultView({model: this.model}).render().el);
+    },
+    renderModifiers: function () {
+        console.log(this.model.get("adjustParameterViews"));
+        this.$el.find(".modifiers").html("");
+
+        _.each(this.model.get("adjustParameterViews"), (modifier) => {
+            this.$el.find(".modifiers").append(modifier.render().el);
+        });
     },
     calculateRatios: function () {
         this.model.getRatiosForSelectedFeatures();
