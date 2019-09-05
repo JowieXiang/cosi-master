@@ -1,3 +1,30 @@
-<div class="dashboard-wrapper">
-        <button type="button" id="test" class="btn btn-lgv-grey col-xs-6">Test</button>
+<!DOCTYPE html>
+<div class="dashboard">
+        <div class="btn-group header">
+                <span class="glyphicon <%=glyphicon%>"></span>
+                <span class="tool-name"><%= name %></span>
+                <% if (isVisibleInMenu === true) { %>
+                        <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <% } %>
+                </div>
+                <div class="simple-views-container">
+                        <div class="figure">
+                                <span class="figure-name">Übersicht</span>
+                                <table class="table">
+                                        <% _.each(_.allKeys(tableView[0]), (prop) => { %>
+                                        <tr>
+                                                <th scope="row"><%= prop %></th>
+                                                <% _.each(tableView, (dist) => { %>
+                                                        <% if (prop === "stadtteil") { %>
+                                                                <th scope="col"><%= dist[prop] %></th>
+                                                        <% } else { %>
+                                                                <td><%= dist[prop] %></td>
+                                                        <% } %>
+                                                <% }); %>
+                                        </tr>
+                                        <% }); %>
+                                </table>
+                        </div>
+                </div>
+                <div class="detail-view-container"></div>
 </div>

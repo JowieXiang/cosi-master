@@ -3,17 +3,20 @@ import DashboardModel from "./model";
 
 const DashboardView = Backbone.View.extend({
     events: {
-        "click #test": "test"
+        "click #test": "test",
+        "click .map": "close",
+        "hover .table": "test"
     },
     initialize: function (config) {
         this.model = new DashboardModel({
-            propertyTree: config.propertyTree
+            propertyTree: config.propertyTree,
+            name: config.name,
+            glyphicon: config.glyphicon
         });
 
         this.listenTo(this.model, {
-            "change:isActive": function () {
-                this.render();
-            }
+            "change:isActive": this.render,
+            "tableReady": this.render
         });
 
         if (this.model.get("isActive") === true) {
@@ -22,16 +25,21 @@ const DashboardView = Backbone.View.extend({
     },
     model: {},
     template: _.template(Template),
-    render: function () {
+    render: async function () {
         var attr = this.model.toJSON();
 
-        this.setElement(document.getElementById("map").append("<div class='dashboard'></div>"));
         this.$el.html(this.template(attr));
+
+        Radio.trigger("Sidebar", "append", this.$el);
+        Radio.trigger("Sidebar", "toggle", true, this.model.get("width"));
 
         return this;
     },
+    close: function () {
+        Radio.trigger("Sidebar", "toggle", false);
+    },
     test: function () {
-        console.log(this.model);
+        console.log("test");
     }
 });
 
