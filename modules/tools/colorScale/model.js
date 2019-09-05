@@ -25,13 +25,17 @@ const ColorScale = Backbone.Model.extend({
      * @param {number[]} values - Array of all values to build the scale from. Default: [0, 1]
      * @param {d3.interpolator or color[]} colorspace - colorspace of the scale, either 2 values for linearScale or d3.interpolator from d3-scale-chromatic. Default: "interpolateSpectral"
      * @param {string} type - type of the scale. Possbile values: "sequential", "linear".
-     * @returns {function}
+     * @returns {function, object} - returns both the scale function and a legend with value/color-pairs for visualization.
      */
 
     generateColorScale (values = [0, 1], colorspace = Chromatic.interpolateRdYlGn, type = "sequential") {
         var minValue = Math.min(...values),
             maxValue = Math.max(...values),
-            scale;
+            scale,
+            legend = {
+                values: [],
+                colors: []
+            };
 
         switch (type) {
             case "linear":
@@ -46,7 +50,29 @@ const ColorScale = Backbone.Model.extend({
                 break;
         }
 
-        return scale;
+        legend.values = this.interpolateValues(minValue, maxValue);
+        legend.colors = this.createLegendValues(scale, legend.values);
+
+        return {scale, legend};
+    },
+    interpolateValues: function (min, max, steps = 5) {
+        var values = [min],
+            step = (max - min) / (steps - 1);
+
+        for (let i = 0; i < steps - 1; i++) {
+            values.push(values[i] + step);
+        }
+
+        return values;
+    },
+    createLegendValues: function (scale, values) {
+        var colors = [];
+
+        values.forEach((val) => {
+            colors.push(scale(val));
+        });
+
+        return colors;
     }
 });
 
