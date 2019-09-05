@@ -1,6 +1,6 @@
 import Tool from "../../core/modelList/tool/model";
 import VectorSource from "ol/source/Vector";
-import { Fill, Stroke, Style } from "ol/style.js";
+import {Fill, Stroke, Style} from "ol/style.js";
 
 const AgeGroupSliderModel = Tool.extend({
     defaults: _.extend({}, Tool.prototype.defaults, {
@@ -8,7 +8,7 @@ const AgeGroupSliderModel = Tool.extend({
         timeInterval: 2000,
         title: null,
         progressBarWidth: 10,
-        activeLayer: { layerId: "" },
+        activeLayer: {layerId: ""},
         windowsInterval: null,
         renderToWindow: true,
         glyphicon: "glyphicon-film",
@@ -35,6 +35,7 @@ const AgeGroupSliderModel = Tool.extend({
             "featuresLoaded": function (layerId, features) {
                 const timeLineLayerIds = this.get("layerIds").map(layer => layer.layerId),
                     currentLayerIds = this.get("featureCollections").map(collection => collection.layerId);
+
                 if (_.contains(timeLineLayerIds, layerId) && !_.contains(currentLayerIds, layerId)) {
                     this.pushFeatureCollection(layerId, features);
                 }
@@ -69,6 +70,7 @@ const AgeGroupSliderModel = Tool.extend({
     // push feature collection to this model
     pushFeatureCollection: function (layerId, features) {
         var featureCollections = this.get("featureCollections");
+
         featureCollections.push({
             "layerId": layerId,
             "collection": features
@@ -79,6 +81,7 @@ const AgeGroupSliderModel = Tool.extend({
     // reminds user to select district before using the ageGroup slider
     selectDistrictReminder: function () {
         const selectedDistricts = Radio.request("SelectDistrict", "getSelectedDistricts");
+
         if (selectedDistricts.length === 0) {
             Radio.trigger("Alert", "alert", {
                 text: "<strong> Bitte wählen Sie zuerst die Bezirke mit 'Gebiet wählen' im Werkzeugmenü aus</strong>",
@@ -89,7 +92,8 @@ const AgeGroupSliderModel = Tool.extend({
     // set active color-code layer visible
     showActiveColorCodeLayer: function () {
         const activeLayer = Radio.request("Map", "getLayerByName", this.get("activeLayer").layerId + "_colorcoded");
-        if (activeLayer != undefined) {
+
+        if (activeLayer !== undefined) {
             activeLayer.setVisible(true);
         }
     },
@@ -98,6 +102,7 @@ const AgeGroupSliderModel = Tool.extend({
         _.each(this.get("layerIds"), layer => {
             if (Radio.request("Map", "getLayerByName", layer.layerId + "_colorcoded")) {
                 const thisLayer = Radio.request("Map", "getLayerByName", layer.layerId + "_colorcoded");
+
                 thisLayer.setVisible(false);
             }
         });
@@ -107,41 +112,41 @@ const AgeGroupSliderModel = Tool.extend({
         _.each(this.get("layerIds"), layer => {
             var colorCodeLayer = Radio.request("Map", "getLayerByName", layer.layerId + "_colorcoded");
 
-            if (colorCodeLayer != undefined) {
+            if (colorCodeLayer !== undefined) {
                 colorCodeLayer.getSource().clear();
             }
         });
-        const map = Radio.request("Map", "getMap");
 
-        map.getLayers().getArray().forEach(layer => {
-            console.log(layer.getProperties().name);
-        });
     },
 
     createColorCodeLayers: function () {
         _.each(this.get("layerIds"), layer => {
             if (Radio.request("Map", "getLayerByName", layer.layerId + "_colorcoded") === undefined) {
-                var newLayer = Radio.request("Map", "createLayerIfNotExists", layer.layerId + "_colorcoded"),
+                const newLayer = Radio.request("Map", "createLayerIfNotExists", layer.layerId + "_colorcoded"),
                     newSource = new VectorSource();
+
                 newLayer.setSource(newSource);
                 newLayer.setVisible(false);
-                console.log("created: " + newLayer.getProperties().name);
             }
         });
     },
 
     addFeaturesToColorCodeLayers: function () {
         const districtNames = Radio.request("SelectDistrict", "getSelectedDistricts").map(feature => feature.getProperties().stadtteil);
+        var newFeatures = [];
+
         _.each(this.get("layerIds"), layer => {
             const featureCollection = this.get("featureCollections").filter(collection => collection.layerId === layer.layerId)[0],
-                field = Radio.request("Parser", "getItemsByAttributes", { id: layer.layerId })[0].mouseHoverField;
-            var colorCodeLayer = Radio.request("Map", "getLayerByName", layer.layerId + "_colorcoded");
-            var selectedFeatures = featureCollection.collection.filter(feature => _.contains(districtNames, feature.getProperties().stadtteil));
+                field = Radio.request("Parser", "getItemsByAttributes", {id: layer.layerId})[0].mouseHoverField;
+
+            var colorCodeLayer = Radio.request("Map", "getLayerByName", layer.layerId + "_colorcoded"),
+                selectedFeatures = featureCollection.collection.filter(feature => _.contains(districtNames, feature.getProperties().stadtteil));
+
             if (selectedFeatures.length > 0) {
-                const values = selectedFeatures.map(feature => parseFloat(feature.getProperties()[field]));
-                var newFeatures = [];
+                const values = selectedFeatures.map(feature => parseFloat(feature.getProperties()[field])),
+                    colorScale = Radio.request("ColorScale", "getColorScaleByValues", values);
+
                 _.each(selectedFeatures, feature => newFeatures.push(feature.clone()));
-                var colorScale = Radio.request("ColorScale", "getColorScaleByValues", values);
                 _.each(newFeatures, (feature) => {
                     feature.setStyle(new Style({
                         fill: new Fill({
@@ -160,7 +165,7 @@ const AgeGroupSliderModel = Tool.extend({
 
     reset: function () {
         this.stopInterval();
-        this.set("activeLayer", { layerId: "" });
+        this.set("activeLayer", {layerId: ""});
     },
 
     /**
@@ -170,7 +175,7 @@ const AgeGroupSliderModel = Tool.extend({
      */
     checkIfLayermodelExist: function (layerIds) {
         _.each(layerIds, function (layer) {
-            if (Radio.request("ModelList", "getModelsByAttributes", { id: layer.layerId }).length === 0) {
+            if (Radio.request("ModelList", "getModelsByAttributes", {id: layer.layerId}).length === 0) {
                 this.addLayerModel(layer.layerId);
             }
         }, this);
@@ -182,7 +187,7 @@ const AgeGroupSliderModel = Tool.extend({
      * @returns {void}
      */
     addLayerModel: function (layerId) {
-        Radio.trigger("ModelList", "addModelsByAttributes", { id: layerId });
+        Radio.trigger("ModelList", "addModelsByAttributes", {id: layerId});
         this.sendModification(layerId, true);
         this.sendModification(layerId, false);
     },
@@ -312,8 +317,8 @@ const AgeGroupSliderModel = Tool.extend({
 
         layers.forEach(function (layerObject) {
             if (
-                !Radio.request("RawLayerList", "getLayerAttributesWhere", { id: layerObject.layerId }) ||
-                !Radio.request("Parser", "getItemByAttributes", { id: layerObject.layerId })
+                !Radio.request("RawLayerList", "getLayerAttributesWhere", {id: layerObject.layerId}) ||
+                !Radio.request("Parser", "getItemByAttributes", {id: layerObject.layerId})
             ) {
                 invalidLayers.push(layerObject.layerId);
             }
