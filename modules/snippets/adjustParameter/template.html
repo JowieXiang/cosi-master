@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<div class="input-group mb-3">
+    <div class="input-group-prepend">
+      <label class="input-group-text" for="parameter-select"><%= layerName %></label>
+    </div>
+    <select class="form-control custom-select" id="parameter-select">
+        <option value="count">Anzahl</option>
+        <% _.each(numericalValues, (value) => { %>
+            <option value="<%= value %>"><%= value %></option>
+        <% }) %>
+    </select>
+    <input class="form-control" type="number" value="1.00" id="modifier-input" step=".1">
+    <div class="input-group-append">
+        <label class="input-group-text" for="modifier-input">Gewichtung</label>
+    </div>
+</div>
