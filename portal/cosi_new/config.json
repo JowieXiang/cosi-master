@@ -60,6 +60,9 @@
             "name": "Worksession erstellen",
             "glyphicon": "glyphicon-picture"
           },
+          "compareDistricts":{
+            "name": "Bezirksvergleich"
+          },
           "ageGroupSlider": {
             "name": "Altersgruppen-Schieberegler",
             "glyphicon": "glyphicon-film",
