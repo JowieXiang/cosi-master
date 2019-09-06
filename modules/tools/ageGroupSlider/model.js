@@ -1,6 +1,7 @@
 import Tool from "../../core/modelList/tool/model";
 import VectorSource from "ol/source/Vector";
-import {Fill, Stroke, Style} from "ol/style.js";
+import { Fill, Stroke, Style } from "ol/style.js";
+import * as Chromatic from "d3-scale-chromatic";
 
 const AgeGroupSliderModel = Tool.extend({
     defaults: _.extend({}, Tool.prototype.defaults, {
@@ -8,12 +9,17 @@ const AgeGroupSliderModel = Tool.extend({
         timeInterval: 2000,
         title: null,
         progressBarWidth: 10,
-        activeLayer: {layerId: ""},
+        activeLayer: { layerId: "" },
         windowsInterval: null,
         renderToWindow: true,
         glyphicon: "glyphicon-film",
         currentLayer: null,
-        featureCollections: []
+        featureCollections: [],
+        style: {
+            chromaticScheme: Chromatic.interpolateBlues,
+            opacity: 0.8
+        }
+
     }),
 
     initialize: function () {
@@ -133,18 +139,18 @@ const AgeGroupSliderModel = Tool.extend({
 
     addFeaturesToColorCodeLayers: function () {
         const districtNames = Radio.request("SelectDistrict", "getSelectedDistricts").map(feature => feature.getProperties().stadtteil);
-        var newFeatures = [];
 
         _.each(this.get("layerIds"), layer => {
             const featureCollection = this.get("featureCollections").filter(collection => collection.layerId === layer.layerId)[0],
-                field = Radio.request("Parser", "getItemsByAttributes", {id: layer.layerId})[0].mouseHoverField;
+                field = Radio.request("Parser", "getItemsByAttributes", { id: layer.layerId })[0].mouseHoverField;
 
             var colorCodeLayer = Radio.request("Map", "getLayerByName", layer.layerId + "_colorcoded"),
                 selectedFeatures = featureCollection.collection.filter(feature => _.contains(districtNames, feature.getProperties().stadtteil));
 
             if (selectedFeatures.length > 0) {
                 const values = selectedFeatures.map(feature => parseFloat(feature.getProperties()[field])),
-                    colorScale = Radio.request("ColorScale", "getColorScaleByValues", values);
+                    colorScale = Radio.request("ColorScale", "getColorScaleByValues", values, this.get("style").chromaticScheme).scale,
+                    newFeatures = [];
 
                 _.each(selectedFeatures, feature => newFeatures.push(feature.clone()));
                 _.each(newFeatures, (feature) => {
@@ -159,13 +165,14 @@ const AgeGroupSliderModel = Tool.extend({
                     }));
                 });
                 colorCodeLayer.getSource().addFeatures(newFeatures);
+                colorCodeLayer.setOpacity(this.get("style").opacity);
             }
         });
     },
 
     reset: function () {
         this.stopInterval();
-        this.set("activeLayer", {layerId: ""});
+        this.set("activeLayer", { layerId: "" });
     },
 
     /**
@@ -175,7 +182,7 @@ const AgeGroupSliderModel = Tool.extend({
      */
     checkIfLayermodelExist: function (layerIds) {
         _.each(layerIds, function (layer) {
-            if (Radio.request("ModelList", "getModelsByAttributes", {id: layer.layerId}).length === 0) {
+            if (Radio.request("ModelList", "getModelsByAttributes", { id: layer.layerId }).length === 0) {
                 this.addLayerModel(layer.layerId);
             }
         }, this);
@@ -187,7 +194,7 @@ const AgeGroupSliderModel = Tool.extend({
      * @returns {void}
      */
     addLayerModel: function (layerId) {
-        Radio.trigger("ModelList", "addModelsByAttributes", {id: layerId});
+        Radio.trigger("ModelList", "addModelsByAttributes", { id: layerId });
         this.sendModification(layerId, true);
         this.sendModification(layerId, false);
     },
@@ -317,8 +324,8 @@ const AgeGroupSliderModel = Tool.extend({
 
         layers.forEach(function (layerObject) {
             if (
-                !Radio.request("RawLayerList", "getLayerAttributesWhere", {id: layerObject.layerId}) ||
-                !Radio.request("Parser", "getItemByAttributes", {id: layerObject.layerId})
+                !Radio.request("RawLayerList", "getLayerAttributesWhere", { id: layerObject.layerId }) ||
+                !Radio.request("Parser", "getItemByAttributes", { id: layerObject.layerId })
             ) {
                 invalidLayers.push(layerObject.layerId);
             }

@@ -190,13 +190,10 @@ function loadApp() {
         new ScaleLineView();
     }
 
-<<<<<<< HEAD
-=======
     // if (_.has(Config, "dashboard")) {
     //     new DashboardView(Config.dashboard);
     // }
 
->>>>>>> ageGroupFix
     new WindowView();
     // Module laden
     // Tools
