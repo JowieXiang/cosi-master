@@ -190,6 +190,10 @@ function loadApp() {
         new ScaleLineView();
     }
 
+    // if (_.has(Config, "dashboard")) {
+    //     new DashboardView(Config.dashboard);
+    // }
+
     new WindowView();
     // Module laden
     // Tools
