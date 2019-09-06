@@ -38,7 +38,7 @@ const ColorScale = Backbone.Model.extend({
             };
 
         // Check if more than one value has been submitted
-        if (values.length > 1) {
+        if (minValue !== maxValue) {
             switch (type) {
                 case "linear":
                     scale = scaleLinear()

@@ -5,7 +5,10 @@ import {select, event} from "d3-selection";
 import "d3-transition";
 
 const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
-    defaults: {},
+    defaults: {
+        maxValue: 0,
+        minValue: 0
+    },
 
     /**
      * @class GraphModel
@@ -56,13 +59,14 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
         if (data !== undefined && attrToShowArray !== undefined) {
             data.forEach(function (obj) {
                 attrToShowArray.forEach(function (attrToShow) {
-                    if (obj[attrToShow] > maxValue) {
+                    if (obj[attrToShow] - maxValue > 0) {
                         maxValue = obj[attrToShow];
                     }
                 });
             });
         }
 
+        console.log(maxValue, "final");
         return maxValue;
     },
 
@@ -731,6 +735,9 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             .enter()
             .append("rect")
             .attr("class", "bar" + selector.split(".")[1])
+            .attr("fill", function (d) {
+                return Radio.request("ColorScale", "getColorScaleByValues", y.domain()).scale(d[attrToShowArray[0]]);
+            })
             .attr("x", function (d) {
                 return x(d[xAttr]);
             })

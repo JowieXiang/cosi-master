@@ -98,11 +98,19 @@ const CalculateRatioModel = Tool.extend({
 
                 // calculate Ratio for district
                 ratio = this.calculateRatio(facilities, demographics, district.getProperties().stadtteil);
-                this.setResultForDistrict(district.getProperties().stadtteil, ratio);
+                this.setResultForDistrict(district.getProperties().stadtteil, {
+                    ratio: ratio,
+                    facilities: facilities,
+                    demographics: demographics
+                });
             });
             // Calculate total value and add it to results
             totalRatio = this.calculateRatio(totalFacilities, totalDemographics);
-            this.setResultForDistrict("Gesamt", totalRatio);
+            this.setResultForDistrict("Gesamt", {
+                ratio: totalRatio,
+                facilities: totalFacilities,
+                demographics: totalDemographics
+            });
         }
         else {
             this.setMessage("Bitte wählen Sie mindestens einen Stadtteil aus.");
@@ -159,7 +167,7 @@ const CalculateRatioModel = Tool.extend({
         return targetPopulation;
     },
     addFeatureModifier: function (feature, layer) {
-        const modifier = this.get("adjustParameterViews").find((modifier) => modifier.model.get("layerId") === layer.get("id")).model.getSelectedOption(),
+        const modifier = this.get("adjustParameterViews").find((currentModifier) => currentModifier.model.get("layerId") === layer.get("id")).model.getSelectedOption(),
             featureProperties = feature.getProperties();
 
         return typeof featureProperties[modifier[0]] === "undefined" ? 1 : featureProperties[modifier[0]] * modifier[1];
@@ -204,9 +212,6 @@ const CalculateRatioModel = Tool.extend({
 
         this.setDropdownValues(possibleNumerators, "numValues");
         this.setDropdownValues(possibleDenominators, "denValues");
-    },
-    getInitialDemographicLayers: function () {
-
     },
     setDropdownValues: function (models, field) {
         const values = this.remapModelsToValues(models);

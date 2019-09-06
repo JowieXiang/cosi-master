@@ -1,5 +1,5 @@
 import Tool from "../core/modelList/tool/model";
-import GraphModel from "../tools/graph/model";
+// import GraphModel from "../tools/graph/model";
 import {TileLayer, VectorLayer} from "ol/layer";
 import VectorSource from "ol/source/Vector";
 
@@ -124,6 +124,62 @@ const DashboardModel = Tool.extend({
 
             this.set("activeFeatures", features);
         });
+    },
+    createChart (props) {
+        Radio.trigger("Graph", "createGraph", {
+            graphType: "BarGraph",
+            selector: ".dashboard-graph",
+            scaleTypeX: "ordinal",
+            scaleTypeY: "linear",
+            data: this.get("tableView"),
+            attrToShowArray: props,
+            xAttr: "stadtteil",
+            xAxisLabel: "Stadtteil",
+            yAxisLabel: props[0],
+            margin: {
+                left: 40,
+                top: 25,
+                right: 20,
+                bottom: 40
+            },
+            width: $(window).width() * 0.6,
+            height: $(window).height() * 0.4,
+            svgClass: "dashboard-grapg-svg"
+        });
+
+        /**
+         * GraphConfig Options:
+         * graphType = graphConfig.graphType,
+         * selector = graphConfig.selector,
+         * scaleTypeX = graphConfig.scaleTypeX,
+         * scaleTypeY = graphConfig.scaleTypeY,
+         * data = graphConfig.data,
+         * xAttr = graphConfig.xAttr,
+         * xAxisLabel = graphConfig.xAxisLabel
+         * yAxisLabel = graphConfig.yAxisLabel
+         * attrToShowArray = graphConfig.attrToShowArray,
+         * margin = graphConfig.margin,
+         * width = graphConfig.width
+         * height = graphConfig.height
+         * xAxisTicks = graphConfig.xAxisTicks,
+         * yAxisTicks = graphConfig.yAxisTicks,
+         * svgClass = graphConfig.svgClass,
+        */
+    },
+    getChartData (props) {
+        const data = this.get("tableView").map((district) => {
+            const districtDataToGraph = district;
+
+            for (const prop in districtDataToGraph) {
+                if (!props.includes(prop) && prop !== "stadtteil") {
+                    delete districtDataToGraph[prop];
+                }
+            }
+
+            return districtDataToGraph;
+        });
+
+        return data;
     },
     zoomAndHighlightFeature: function (scope) {
         let extent;

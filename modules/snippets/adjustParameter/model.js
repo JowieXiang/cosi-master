@@ -63,9 +63,6 @@ const AdjustParameterModel = SnippetModel.extend({
     },
     getSelectedOption: function () {
         return this.get("selectedOption");
-    },
-    test: function () {
-        console.log(this.get("selectedOption"), "changed");
     }
 });
 
