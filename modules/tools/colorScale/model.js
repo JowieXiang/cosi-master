@@ -28,7 +28,7 @@ const ColorScale = Backbone.Model.extend({
      * @returns {function, object} - returns both the scale function and a legend with value/color-pairs for visualization.
      */
 
-    generateColorScale (values = [0, 1], colorspace = Chromatic.interpolateRdYlGn, type = "sequential") {
+    generateColorScale (values = [0, 1], colorspace = Chromatic.interpolateRdYlGn, type = "sequential", defaultColor = "#3399CC") {
         var minValue = Math.min(...values),
             maxValue = Math.max(...values),
             scale,
@@ -37,21 +37,32 @@ const ColorScale = Backbone.Model.extend({
                 colors: []
             };
 
-        switch (type) {
-            case "linear":
-                scale = scaleLinear()
-                    .range(colorspace)
-                    .domain([minValue, maxValue]);
-                break;
-            default:
-                scale = scaleSequential()
-                    .interpolator(colorspace)
-                    .domain([minValue, maxValue]);
-                break;
+        // Check if more than one value has been submitted
+        if (minValue !== maxValue) {
+            switch (type) {
+                case "linear":
+                    scale = scaleLinear()
+                        .range(colorspace)
+                        .domain([minValue, maxValue]);
+                    break;
+                default:
+                    scale = scaleSequential()
+                        .interpolator(colorspace)
+                        .domain([minValue, maxValue]);
+                    break;
+            }
+
+            legend.values = this.interpolateValues(minValue, maxValue);
+            legend.colors = this.createLegendValues(scale, legend.values);
         }
 
-        legend.values = this.interpolateValues(minValue, maxValue);
-        legend.colors = this.createLegendValues(scale, legend.values);
+        // return default color if not
+        else {
+            scale = function () {
+                return defaultColor;
+            };
+            legend = null;
+        }
 
         return {scale, legend};
     },

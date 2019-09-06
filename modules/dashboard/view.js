@@ -3,7 +3,8 @@ import Template from "text-loader!./template.html";
 const DashboardView = Backbone.View.extend({
     events: {
         "click .close": "close",
-        "click .district": "zoomToFeature"
+        "click .district": "zoomToFeature",
+        "click .row": "createChart"
     },
     initialize: function () {
         this.listenTo(this.model, {
@@ -42,6 +43,29 @@ const DashboardView = Backbone.View.extend({
         const scope = event.target.innerHTML;
 
         this.model.zoomAndHighlightFeature(scope);
+    },
+    createChart (event) {
+        this.clearChart();
+
+        const row = this.$(event.target).parent("tr"),
+            firstValue = row.find("td").first().html();
+
+        if (!isNaN(parseFloat(firstValue))) {
+            this.model.createChart([row.find("th.prop").html()]);
+
+            // Highlight the selected row
+            row.parent("tbody").find("tr").css("background", "transparent");
+            row.css({
+                background: "#3399CC"
+            });
+
+            // Add Header
+            this.$el.find(".basic-graph-header").html(`Diagramm: ${row.find("th.prop").html()}`);
+        }
+    },
+    clearChart () {
+        this.$el.find(".basic-graph-title").html("");
+        this.$el.find(".dashboard-graph").empty();
     },
     close: function () {
         this.model.setIsActive(false);

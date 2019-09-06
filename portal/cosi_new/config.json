@@ -195,7 +195,8 @@
           "topic": "basic",
           "isFacility": true,
           "numericalProperties": [
-            "flaeche_qm"
+            "flaeche_qm",
+            "flaeche_ha"
           ]
         },
         {
@@ -204,7 +205,8 @@
           "styleId": "753",
           "visibility": false,
           "isFacility": true,
-          "topic": "basic"
+          "topic": "basic",
+          "defaultProperty": "Einrichtungen"
         },
         {
           "id": "14111",

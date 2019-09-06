@@ -4,7 +4,8 @@ import ResultView from "./resultView";
 
 const SelectView = Backbone.View.extend({
     events: {
-        "click #submit": "calculateRatios"
+        "click #submit": "calculateRatios",
+        "change #resolution-input": "setResolution"
     },
     initialize: function () {
         this.listenTo(this.model, {
@@ -42,7 +43,6 @@ const SelectView = Backbone.View.extend({
         this.$el.find(".result").append(new ResultView({model: this.model}).render().el);
     },
     renderModifiers: function () {
-        console.log(this.model.get("adjustParameterViews"));
         this.$el.find(".modifiers").html("");
 
         _.each(this.model.get("adjustParameterViews"), (modifier) => {
@@ -51,6 +51,9 @@ const SelectView = Backbone.View.extend({
     },
     calculateRatios: function () {
         this.model.getRatiosForSelectedFeatures();
+    },
+    setResolution: function (evt) {
+        this.model.set("resolution", parseInt(evt.target.value, 10));
     }
 });
 
