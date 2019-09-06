@@ -50,7 +50,7 @@ const ResultView = Backbone.View.extend({
                         color: colorScale.scale(results[feature.getProperties().stadtteil]),
                         width: 3
                     }),
-                    text: (1000 * results[feature.getProperties().stadtteil]).toFixed(2)
+                    text: (results[feature.getProperties().stadtteil]).toFixed(2)
                 })
             }));
         });

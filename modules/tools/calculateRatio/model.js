@@ -19,6 +19,7 @@ const CalculateRatioModel = Tool.extend({
         initialDemographicLayers: [],
         numerators: {},
         denominators: {},
+        resolution: 1000,
         numDropdownModel: {},
         numValues: {},
         denDropdownModel: {},
@@ -92,11 +93,11 @@ const CalculateRatioModel = Tool.extend({
                 demographics = this.getTargetDemographicsInDistrict(district);
 
                 // add up all demographics and facilities for all selected districts
-                totalFacilities += facilities.length;
+                totalFacilities += facilities;
                 totalDemographics += demographics;
 
                 // calculate Ratio for district
-                ratio = this.calculateRatio(facilities.length, demographics, district.getProperties().stadtteil);
+                ratio = this.calculateRatio(facilities, demographics, district.getProperties().stadtteil);
                 this.setResultForDistrict(district.getProperties().stadtteil, ratio);
             });
             // Calculate total value and add it to results
@@ -111,7 +112,7 @@ const CalculateRatioModel = Tool.extend({
     },
     calculateRatio (facilities, demographics, area = "allen Unterschungsgebieten") {
         if (demographics >= 0) {
-            return facilities / demographics;
+            return (this.get("resolution") * facilities) / demographics;
         }
         this.setMessage(`In ${area} ist keine Population der Zielgruppe vorhanden. Daher können keine Ergebnisse angezeigt werden.`);
         return "n/a";
@@ -157,15 +158,23 @@ const CalculateRatioModel = Tool.extend({
 
         return targetPopulation;
     },
+    addFeatureModifier: function (feature, layer) {
+        const modifier = this.get("adjustParameterViews").find((modifier) => modifier.model.get("layerId") === layer.get("id")).model.getSelectedOption(),
+            featureProperties = feature.getProperties();
+
+        return typeof featureProperties[modifier[0]] === "undefined" ? 1 : featureProperties[modifier[0]] * modifier[1];
+    },
     getFacilitiesInDistrict: function (district) {
         const districtGeometry = district.getGeometry(),
             featuresInDistrict = [];
+        let featureCount = 0;
 
         if (typeof this.getNumerators() !== undefined) {
             if (this.getNumerators().length > 0) {
                 _.each(this.getNumerators(), (num) => {
                     const layerId = this.get("numValues")[num],
-                        features = Radio.request("ModelList", "getModelByAttributes", {id: layerId}).get("layerSource").getFeatures();
+                        layer = Radio.request("ModelList", "getModelByAttributes", {id: layerId}),
+                        features = layer.get("layerSource").getFeatures();
 
                     _.each(features, (feature) => {
                         const geometry = feature.getGeometry(),
@@ -173,6 +182,7 @@ const CalculateRatioModel = Tool.extend({
 
                         if (districtGeometry.intersectsCoordinate(coordinate)) {
                             featuresInDistrict.push(feature);
+                            featureCount += this.addFeatureModifier(feature, layer);
                         }
                     });
                 });
@@ -185,7 +195,7 @@ const CalculateRatioModel = Tool.extend({
             this.setMessage("Bitte wählen Sie einen Einrichtungstyp aus.");
         }
 
-        return featuresInDistrict;
+        return featureCount;
     },
     getActiveLayersWithValues: function () {
         const collection = Radio.request("ModelList", "getCollection"),
@@ -229,33 +239,6 @@ const CalculateRatioModel = Tool.extend({
             this.set("denDropdownModel", values.denominators);
         }
     },
-    getNumericalFeatureProperties: function (num) {
-        const layerId = this.get("numValues")[num],
-            layer = Radio.request("ModelList", "getModelByAttributes", {id: layerId});
-        let properties,
-            propObj;
-
-        if (typeof layer.get("numericalProperties") !== "undefined") {
-            if (!layer.get("numericalProperties")) {
-                properties = [];
-            }
-            else {
-                properties = layer.get("numericalProperties");
-            }
-        }
-        else {
-            propObj = layer.get("layerSource").getFeatures()[0].getProperties();
-
-            for (const prop in propObj) {
-                if (isNaN(parseFloat(propObj[prop]))) {
-                    delete propObj[prop];
-                }
-            }
-            properties = _.allKeys(propObj);
-        }
-
-        return properties;
-    },
     updateModifiers: function () {
         // check if modifier already exists
         _.each(this.getNumerators(), (numerator) => {
@@ -268,11 +251,8 @@ const CalculateRatioModel = Tool.extend({
             return this.getNumerators().includes(modifier.model.get("layerName"));
         }));
     },
-    createModifier: function (layerId) {
-        this.get("adjustParameterViews").push(new AdjustParameterView({
-            layerName: layerId,
-            numericalValues: this.getNumericalFeatureProperties(layerId)
-        }));
+    createModifier: function (layerName) {
+        this.get("adjustParameterViews").push(new AdjustParameterView(this.get("numValues")[layerName]));
         this.trigger("change:adjustParameterViews");
     },
     setNumerators: function () {
