@@ -21,10 +21,7 @@
     },
     "mapView": {
       "backgroundImage": "/../../node_modules/lgv-config/img/backgroundCanvas.jpeg",
-      "startCenter": [
-        564959.09,
-        5940777.71
-      ]
+      "startCenter": [565790, 5934262]
     },
     "menu": {
       "tree": {
@@ -71,7 +68,7 @@
             "isSelected": false,
             "name": "Grünflächen",
             "info": "Die Grünflächen sind im aktuellen digitalen Grünplan nur numerisch nach Bezirken und Stadtteilen geordnet. Diese Sortierung wurde aus Verständlichkeitsgründen im Filter deaktiviert.",
-            "attributeWhiteList": ["gruenart", "bezirksnummer", "eigentum", "flaeche_qm"]
+            "attributeWhiteList": ["gruenart", "eigentum", "flaeche_qm"]
           },
           {
             "layerId": "1711",
@@ -135,16 +132,6 @@
           },
           "compareFeatures": {
             "name": "Gebiete vergleichen"
-          },
-          "wfsFeatureFilter": {
-            "name": "Filter",
-            "glyphicon": "glyphicon-filter",
-            "deactivateGFI": false
-          },
-          "extendedFilter": {
-            "name": "Erweiterter Filter",
-            "glyphicon": "glyphicon-filter",
-            "deactivateGFI": false
           }
         }
       },
