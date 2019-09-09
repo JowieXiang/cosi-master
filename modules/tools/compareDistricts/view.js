@@ -8,7 +8,9 @@ const CompareDistrictsView = Backbone.View.extend({
         "click #add-filter": "createFilterModel"
     },
     initialize: function () {
-        this.createFilterModel();
+        this.listenTo(Radio.channel("Map"), {
+            "isReady": this.createFilterModel
+        });
         this.listenTo(this.model, {
             "change:isActive": function () {
                 this.render();
@@ -18,7 +20,6 @@ const CompareDistrictsView = Backbone.View.extend({
             },
             "change filterModels": this.render
         });
-
 
         if (this.model.get("isActive") === true) {
             this.render();
@@ -42,10 +43,11 @@ const CompareDistrictsView = Backbone.View.extend({
         return this;
     },
     createFilterModel: function () {
-        const layers = Radio.request("Parser", "getItemsByAttributes", { typ: "WFS" }),
-            layerNames = layers.map(layer => layer.name),
-            filterModel = new FilterModel({ selectOptions: layerNames });
+        const filterModel = new FilterModel(),
+            layers = Radio.request("Parser", "getItemsByAttributes", { typ: "WFS" }),
+            layerNames = layers.map(layer => layer.name);
 
+        filterModel.setLayerNames(layerNames);
         this.addFilterView(filterModel);
         this.model.pushFilterModel(filterModel);
     },
@@ -56,6 +58,7 @@ const CompareDistrictsView = Backbone.View.extend({
         this.$el.find("#filter-container").append(filterView.render().el.childNodes);
 
     }
+
 
 });
 

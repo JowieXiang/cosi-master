@@ -37,8 +37,16 @@
         "glyphicon": "glyphicon-stats",
         "districtsLayer": "1694",
         "propertyTree": {
-          "layerIds": ["2763", "2769", "2768", "2771"],
-          "exclude": ["geom", "stadtteil_1"]
+          "layerIds": [
+            "2763",
+            "2769",
+            "2768",
+            "2771"
+          ],
+          "exclude": [
+            "geom",
+            "stadtteil_1"
+          ]
         },
         "renderToWindow": false
       },
@@ -56,17 +64,15 @@
             "isInitOpen": true,
             "isActive": true
           },
-          "wsClientInput":{
+          "wsClientInput": {
             "name": "Worksession erstellen",
             "glyphicon": "glyphicon-picture"
           },
-          "compareDistricts":{
+          "compareDistricts": {
             "name": "Bezirksvergleich"
           },
           "ageGroupSlider": {
-            "name": "Altersgruppen-Schieberegler",
-            "glyphicon": "glyphicon-film",
-            "title": "Simulation von Beispiel-WMS",
+            "name": "Übersicht demographischer Daten",
             "timeInterval": 2000,
             "layerIds": [
               {
