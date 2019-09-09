@@ -141,6 +141,15 @@
           "gfiAttributes": "ignore",
           "isNeverVisibleInTree": true,
           "alwaysOnTop": true
+        },
+        {
+          "id": "6071",
+          "name": "Statistische Gebiete",
+          "visibility": true,
+          "topic": "basic",
+          "gfiAttributes": "ignore",
+          "isNeverVisibleInTree": true,
+          "alwaysOnTop": true
         }
       ]
     },
