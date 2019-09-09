@@ -17,7 +17,8 @@ const FilterModel = Tool.extend({
         renderToSidebar: true,
         renderToWindow: false,
         glyphicon: "glyphicon-filter",
-        uiStyle: "DEFAULT"
+        uiStyle: "DEFAULT",
+        uiWidth: "30%"
     }),
     initialize: function () {
         var channel = Radio.channel("Filter");

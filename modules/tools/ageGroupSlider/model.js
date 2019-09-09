@@ -149,17 +149,17 @@ const AgeGroupSliderModel = Tool.extend({
 
             if (selectedFeatures.length > 0) {
                 const values = selectedFeatures.map(feature => parseFloat(feature.getProperties()[field])),
-                    colorScale = Radio.request("ColorScale", "getColorScaleByValues", values, this.get("style").chromaticScheme).scale,
+                    colorScale = Radio.request("ColorScale", "getColorScaleByValues", values, this.get("style").chromaticScheme),
                     newFeatures = [];
 
                 _.each(selectedFeatures, feature => newFeatures.push(feature.clone()));
                 _.each(newFeatures, (feature) => {
                     feature.setStyle(new Style({
                         fill: new Fill({
-                            color: colorScale(parseFloat(feature.getProperties()[field]))
+                            color: colorScale.scale(parseFloat(feature.getProperties()[field]))
                         }),
                         stroke: new Stroke({
-                            color: colorScale(parseFloat(feature.getProperties()[field])),
+                            color: colorScale.scale(parseFloat(feature.getProperties()[field])),
                             width: 3
                         })
                     }));

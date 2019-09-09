@@ -66,7 +66,6 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             });
         }
 
-        console.log(maxValue, "final");
         return maxValue;
     },
 
