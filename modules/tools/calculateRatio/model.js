@@ -145,7 +145,10 @@ const CalculateRatioModel = Tool.extend({
                                 targetPopulation += parseInt(featureInDistrict[0].getProperties()[layer.get("correlationsField").field], 10);
                                 break;
                             case "rel":
-                                alert("Feature not yet implemented for relative Values");
+                                Radio.trigger("Alert", "alert", {
+                                    text: "<strong>Die Berechnung für relative Zielgruppen (in %) ist zur Zeit noch nicht implementiert.</strong>",
+                                    kategorie: "alert-warning"
+                                });
                                 break;
                             default:
                                 this.setMessage("Entschuldigung! Der zu prüfende Layer besitzt keine gültige Spalte für Verhältnisanalysen. Bitte wählen Sie einen anderen Layer aus.");
@@ -170,7 +173,7 @@ const CalculateRatioModel = Tool.extend({
         const modifier = this.get("adjustParameterViews").find((currentModifier) => currentModifier.model.get("layerId") === layer.get("id")).model.getSelectedOption(),
             featureProperties = feature.getProperties();
 
-        return typeof featureProperties[modifier[0]] === "undefined" ? 1 : featureProperties[modifier[0]] * modifier[1];
+        return typeof featureProperties[modifier[0]] === "undefined" ? modifier[1] : featureProperties[modifier[0]] * modifier[1];
     },
     getFacilitiesInDistrict: function (district) {
         const districtGeometry = district.getGeometry(),

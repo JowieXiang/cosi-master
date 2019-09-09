@@ -50,6 +50,46 @@
         },
         "renderToWindow": false
       },
+      "filter": {
+        "name": "Filter",
+        "glyphicon": "glyphicon-filter",
+        "deactivateGFI": false,
+        "isGeneric": false,
+        "isInitOpen": false,
+        "allowMultipleQueriesPerLayer": false,
+        "predefinedQueries": [
+          {
+            "layerId": "12868",
+            "isActive": false,
+            "isSelected": false,
+            "name": "Sportstätten",
+            "info": "Die Filter 'Baujahr' und 'Letzte Generalsanierung' können zu unvollständigen Ergebnissen führen, da diese Daten nicht für alle Einrichtungen vorliegen.",
+            "attributeWhiteList": ["bezirk", "stadtteil", "typ_zusammen", "segmente", "traegergruppe", "baujahr", "letzte_generalsanierung"]
+          },
+          {
+            "layerId": "753",
+            "isActive": false,
+            "isSelected": false,
+            "name": "Kindertagesstätten",
+            "attributeWhiteList": ["Bezirk", "Stadtteil", "Traeger", "Leistungsarten", "Leistungsname"]
+          },
+          {
+            "layerId": "1534",
+            "isActive": false,
+            "isSelected": false,
+            "name": "Grünflächen",
+            "info": "Die Grünflächen sind im aktuellen digitalen Grünplan nur numerisch nach Bezirken und Stadtteilen geordnet. Diese Sortierung wurde aus Verständlichkeitsgründen im Filter deaktiviert.",
+            "attributeWhiteList": ["gruenart", "bezirksnummer", "eigentum", "flaeche_qm"]
+          },
+          {
+            "layerId": "1711",
+            "isActive": false,
+            "isSelected": false,
+            "name": "Krankenhäuser",
+            "attributeWhiteList": ["geburtsklinik_differenziert", "teilnahme_notversorgung", "anzahl_planbetten", "anzahl_plaetze_teilstationaer"]
+          }
+        ]
+      },
       "tools": {
         "name": "Werkzeuge",
         "glyphicon": "glyphicon-wrench",
@@ -101,6 +141,16 @@
           },
           "compareFeatures": {
             "name": "Gebiete vergleichen"
+          },
+          "wfsFeatureFilter": {
+            "name": "Filter",
+            "glyphicon": "glyphicon-filter",
+            "deactivateGFI": false
+          },
+          "extendedFilter": {
+            "name": "Erweiterter Filter",
+            "glyphicon": "glyphicon-filter",
+            "deactivateGFI": false
           }
         }
       },
@@ -142,6 +192,15 @@
         {
           "id": "1694",
           "name": "Stadtteile",
+          "visibility": true,
+          "topic": "basic",
+          "gfiAttributes": "ignore",
+          "isNeverVisibleInTree": true,
+          "alwaysOnTop": true
+        },
+        {
+          "id": "6071",
+          "name": "Statistische Gebiete",
           "visibility": true,
           "topic": "basic",
           "gfiAttributes": "ignore",
@@ -215,13 +274,14 @@
           "defaultProperty": "Einrichtungen"
         },
         {
-          "id": "14111",
+          "id": "1711",
+          "name": "Krankenhäuser",
+          "styleId": "1711",
           "isFacility": true
         },
         {
-          "id": "1711",
-          "styleId": "1711",
-          "isFacility": true
+          "id": "14111",
+          "name": "Gehzeit zur nächsten Krankenhaus"
         }
       ],
       "Ordner": [

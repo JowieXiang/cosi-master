@@ -246,6 +246,7 @@ const Gfi = Tool.extend({
         else {
             this.get("overlay").setPosition(evt.coordinate);
             this.get("themeList").reset(unionParams);
+            console.log(unionParams);
         }
     },
 
@@ -357,7 +358,6 @@ const Gfi = Tool.extend({
                 hitTolerance: vectorLayer.get("hitTolerance")
             }),
                 modelAttributes = _.pick(vectorLayer.attributes, "name", "gfiAttributes", "typ", "gfiTheme", "routable", "id", "isComparable");
-
             _.each(features, function (featureAtPixel) {
                 // Feature
                 if (_.has(featureAtPixel.getProperties(), "features") === false) {
@@ -372,6 +372,7 @@ const Gfi = Tool.extend({
             }, this);
         }, this);
 
+        console.log(vectorGfiParams);
         return vectorGfiParams;
     },
 
