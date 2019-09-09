@@ -75,7 +75,8 @@ const Util = Backbone.Model.extend(/** @lends Util.prototype */{
             "punctuate": this.punctuate,
             "sort": this.sort,
             "convertArrayOfObjectsToCsv": this.convertArrayOfObjectsToCsv,
-            "getPathFromLoader": this.getPathFromLoader
+            "getPathFromLoader": this.getPathFromLoader,
+            "renameKeys": this.renameKeys
         }, this);
 
         channel.on({
@@ -96,6 +97,8 @@ const Util = Backbone.Model.extend(/** @lends Util.prototype */{
 
         $(window).on("resize", _.bind(this.toggleIsViewMobile, this));
         this.parseConfigFromURL();
+        const obj = { name: 'Bobo', job: 'Front-End Master', shoeSize: 100 };
+        this.renameKeys({ name: 'firstName', job: 'passion' }, obj);
     },
 
     /**
@@ -492,6 +495,25 @@ const Util = Backbone.Model.extend(/** @lends Util.prototype */{
         }, this);
 
         return result;
+    },
+
+    /**
+     *
+     * @param {*} keysMap
+     * @param {*} obj
+     */
+    renameKeys: function (keysMap, obj) {
+        const t = Object.keys(obj).reduce(
+            (acc, key) => {
+                return {
+                    ...acc,
+                    ...{ [keysMap[key] || key]: obj[key] }
+                }
+            },
+            {}
+        );
+        console.info(t);
+        return t;
     },
 
     /**
