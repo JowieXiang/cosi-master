@@ -97,8 +97,6 @@ const Util = Backbone.Model.extend(/** @lends Util.prototype */{
 
         $(window).on("resize", _.bind(this.toggleIsViewMobile, this));
         this.parseConfigFromURL();
-        const obj = { name: 'Bobo', job: 'Front-End Master', shoeSize: 100 };
-        this.renameKeys({ name: 'firstName', job: 'passion' }, obj);
     },
 
     /**
@@ -498,22 +496,19 @@ const Util = Backbone.Model.extend(/** @lends Util.prototype */{
     },
 
     /**
-     *
-     * @param {*} keysMap
-     * @param {*} obj
+     * replaces the names of object keys with the values provided.
+     * @param {object} keysMap - keys mapping object
+     * @param {object} obj - the original object
+     * @returns {object} the renamed object
      */
     renameKeys: function (keysMap, obj) {
-        const t = Object.keys(obj).reduce(
-            (acc, key) => {
-                return {
-                    ...acc,
-                    ...{ [keysMap[key] || key]: obj[key] }
-                }
-            },
-            {}
-        );
-        console.info(t);
-        return t;
+        return Object.keys(obj).reduce((acc, key) => {
+            return {
+                ...acc,
+                ...{[keysMap[key] || key]: obj[key]}
+            };
+        },
+        {});
     },
 
     /**

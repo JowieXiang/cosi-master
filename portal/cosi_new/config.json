@@ -264,6 +264,25 @@
               "correlationsField": {
                 "type": "abs",
                 "field": "bev"
+              },
+              "gfiAttributes": {
+                "aerz_prz": "Anteil der Haushalte in denen Alleinerziehende leben an allen Haushalten 31.12.2014",
+                "alleinerz": "Anzahl der Haushalte in denen Alleinerziehende leben 31.12.2014",
+                "al_prz": " Anteil der Arbeitslosen an den Erwerbsfähigen 15 bis unter 65 Jährigen 31.12.2014",
+                "ausl_prz": "Anteil ausländischer Einwohnerinnen und Einwohner an der Gesamtbevölkerung 31.12.2014",
+                "bev": "Anzahl der Einwohnerinnen und Einwohner 31.12.2014",
+                "e_ha": "Einwohnerinnen und Einwohner je ha 31.12.2014",
+                "mig_prz": "Anteil der Einwohnerinnen und Einwohner mit Migrationshintergrund an der Gesamtbevölkerung 31.12.2014",
+                "eph": "Anzahl der Haushalte in denen nur eine Person lebt 31.12.2014",
+                "eph_prz": "Anteil der Haushalte in denen nur eine Person lebt an allen Haushalten 31.12.2014",
+                "p_haush": "Durchschnittliche Anzahl der Personen je Haushalt 31.12.2014",
+                "hhki": "Anzahl der Haushalte in denen Kinder leben 31.12.2014",
+                "hhki_prz": "Anteil der Haushalte in denen Kinder leben an allen Haushalten 31.12.2014",
+                "haushgr": "Durchschnittliche Anzahl der Personen je Haushalt 31.12.2015",
+                "svpbs_prz": "Anteil sozialversicherungspflichtig Beschäftigter am Wohnort an den Erwerbsfähigen 15 bis unter 65-Jährigen 31.12.2014",
+                "mig18prz": "Anteil Kinder und Jugendlicher unter 18 Jahren mit Migrationshintergrund an allen Kindern und Jugendlichen unter 18 Jahren 31.12.2014",
+                "bu18_prz": "Anteil Kinder und Jugendlicher unter 18 Jahren an der Gesamtbevölkerung 31.12.2014",
+                "b65_prz": "Anteil der Einwohnerinnen und Einwohner über 64 Jahre an der Gesamtbevölkerung 31.12.2014"
               }
             },
             {
@@ -279,6 +298,25 @@
               "correlationsField": {
                 "type": "rel",
                 "field": "bu_18_prz"
+              },
+              "gfiAttributes": {
+                "aerz_prz": "Anteil der Haushalte in denen Alleinerziehende leben an allen Haushalten 31.12.2014",
+                "alleinerz": "Anzahl der Haushalte in denen Alleinerziehende leben 31.12.2014",
+                "al_prz": " Anteil der Arbeitslosen an den Erwerbsfähigen 15 bis unter 65 Jährigen 31.12.2014",
+                "ausl_prz": "Anteil ausländischer Einwohnerinnen und Einwohner an der Gesamtbevölkerung 31.12.2014",
+                "bev": "Anzahl der Einwohnerinnen und Einwohner 31.12.2014",
+                "e_ha": "Einwohnerinnen und Einwohner je ha 31.12.2014",
+                "mig_prz": "Anteil der Einwohnerinnen und Einwohner mit Migrationshintergrund an der Gesamtbevölkerung 31.12.2014",
+                "eph": "Anzahl der Haushalte in denen nur eine Person lebt 31.12.2014",
+                "eph_prz": "Anteil der Haushalte in denen nur eine Person lebt an allen Haushalten 31.12.2014",
+                "p_haush": "Durchschnittliche Anzahl der Personen je Haushalt 31.12.2014",
+                "hhki": "Anzahl der Haushalte in denen Kinder leben 31.12.2014",
+                "hhki_prz": "Anteil der Haushalte in denen Kinder leben an allen Haushalten 31.12.2014",
+                "haushgr": "Durchschnittliche Anzahl der Personen je Haushalt 31.12.2015",
+                "svpbs_prz": "Anteil sozialversicherungspflichtig Beschäftigter am Wohnort an den Erwerbsfähigen 15 bis unter 65-Jährigen 31.12.2014",
+                "mig18prz": "Anteil Kinder und Jugendlicher unter 18 Jahren mit Migrationshintergrund an allen Kindern und Jugendlichen unter 18 Jahren 31.12.2014",
+                "bu18_prz": "Anteil Kinder und Jugendlicher unter 18 Jahren an der Gesamtbevölkerung 31.12.2014",
+                "b65_prz": "Anteil der Einwohnerinnen und Einwohner über 64 Jahre an der Gesamtbevölkerung 31.12.2014"
               }
             },
             {
@@ -294,6 +332,26 @@
               "correlationsField": {
                 "type": "rel",
                 "field": "b65_prz"
+              },
+              "gfiAttributes": {
+                "stadtteil": "Stadtteil",
+                "aerz_prz": "Anteil der Haushalte in denen Alleinerziehende leben an allen Haushalten 31.12.2014",
+                "alleinerz": "Anzahl der Haushalte in denen Alleinerziehende leben 31.12.2014",
+                "al_prz": " Anteil der Arbeitslosen an den Erwerbsfähigen 15 bis unter 65 Jährigen 31.12.2014",
+                "ausl_prz": "Anteil ausländischer Einwohnerinnen und Einwohner an der Gesamtbevölkerung 31.12.2014",
+                "bev": "Anzahl der Einwohnerinnen und Einwohner 31.12.2014",
+                "e_ha": "Einwohnerinnen und Einwohner je ha 31.12.2014",
+                "mig_prz": "Anteil der Einwohnerinnen und Einwohner mit Migrationshintergrund an der Gesamtbevölkerung 31.12.2014",
+                "eph": "Anzahl der Haushalte in denen nur eine Person lebt 31.12.2014",
+                "eph_prz": "Anteil der Haushalte in denen nur eine Person lebt an allen Haushalten 31.12.2014",
+                "p_haush": "Durchschnittliche Anzahl der Personen je Haushalt 31.12.2014",
+                "hhki": "Anzahl der Haushalte in denen Kinder leben 31.12.2014",
+                "hhki_prz": "Anteil der Haushalte in denen Kinder leben an allen Haushalten 31.12.2014",
+                "haushgr": "Durchschnittliche Anzahl der Personen je Haushalt 31.12.2015",
+                "svpbs_prz": "Anteil sozialversicherungspflichtig Beschäftigter am Wohnort an den Erwerbsfähigen 15 bis unter 65-Jährigen 31.12.2014",
+                "mig18prz": "Anteil Kinder und Jugendlicher unter 18 Jahren mit Migrationshintergrund an allen Kindern und Jugendlichen unter 18 Jahren 31.12.2014",
+                "bu18_prz": "Anteil Kinder und Jugendlicher unter 18 Jahren an der Gesamtbevölkerung 31.12.2014",
+                "b65_prz": "Anteil der Einwohnerinnen und Einwohner über 64 Jahre an der Gesamtbevölkerung 31.12.2014"
               }
             },
             {
