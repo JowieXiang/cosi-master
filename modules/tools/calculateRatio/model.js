@@ -1,5 +1,6 @@
 import Tool from "../../core/modelList/tool/model";
 import SnippetDropdownModel from "../../snippets/dropdown/model";
+import AdjustParameterView from "../../snippets/adjustParameter/view";
 import Geometry from "ol/geom/Geometry";
 import Feature from "ol/Feature";
 import * as Extent from "ol/extent";
@@ -18,11 +19,13 @@ const CalculateRatioModel = Tool.extend({
         initialDemographicLayers: [],
         numerators: {},
         denominators: {},
+        resolution: 1000,
         numDropdownModel: {},
         numValues: {},
         denDropdownModel: {},
         denValues: {},
-        message: ""
+        message: "",
+        adjustParameterViews: []
     }),
     initialize: function () {
         this.superInitialize();
@@ -53,6 +56,9 @@ const CalculateRatioModel = Tool.extend({
         });
         this.listenTo(this.get("denDropdownModel"), {
             "valuesChanged": this.setDenominators
+        });
+        this.listenTo(this, {
+            "change:numerators": this.updateModifiers
         });
         this.listenTo(Radio.channel("Layer"), {
             "layerVisibleChanged": this.getActiveLayersWithValues
@@ -87,16 +93,24 @@ const CalculateRatioModel = Tool.extend({
                 demographics = this.getTargetDemographicsInDistrict(district);
 
                 // add up all demographics and facilities for all selected districts
-                totalFacilities += facilities.length;
+                totalFacilities += facilities;
                 totalDemographics += demographics;
 
                 // calculate Ratio for district
-                ratio = this.calculateRatio(facilities.length, demographics, district.getProperties().stadtteil);
-                this.setResultForDistrict(district.getProperties().stadtteil, ratio);
+                ratio = this.calculateRatio(facilities, demographics, district.getProperties().stadtteil);
+                this.setResultForDistrict(district.getProperties().stadtteil, {
+                    ratio: ratio,
+                    facilities: facilities,
+                    demographics: demographics
+                });
             });
             // Calculate total value and add it to results
             totalRatio = this.calculateRatio(totalFacilities, totalDemographics);
-            this.setResultForDistrict("Gesamt", totalRatio);
+            this.setResultForDistrict("Gesamt", {
+                ratio: totalRatio,
+                facilities: totalFacilities,
+                demographics: totalDemographics
+            });
         }
         else {
             this.setMessage("Bitte wählen Sie mindestens einen Stadtteil aus.");
@@ -106,7 +120,7 @@ const CalculateRatioModel = Tool.extend({
     },
     calculateRatio (facilities, demographics, area = "allen Unterschungsgebieten") {
         if (demographics >= 0) {
-            return facilities / demographics;
+            return (this.get("resolution") * facilities) / demographics;
         }
         this.setMessage(`In ${area} ist keine Population der Zielgruppe vorhanden. Daher können keine Ergebnisse angezeigt werden.`);
         return "n/a";
@@ -152,22 +166,31 @@ const CalculateRatioModel = Tool.extend({
 
         return targetPopulation;
     },
+    addFeatureModifier: function (feature, layer) {
+        const modifier = this.get("adjustParameterViews").find((currentModifier) => currentModifier.model.get("layerId") === layer.get("id")).model.getSelectedOption(),
+            featureProperties = feature.getProperties();
+
+        return typeof featureProperties[modifier[0]] === "undefined" ? 1 : featureProperties[modifier[0]] * modifier[1];
+    },
     getFacilitiesInDistrict: function (district) {
         const districtGeometry = district.getGeometry(),
             featuresInDistrict = [];
+        let featureCount = 0;
 
         if (typeof this.getNumerators() !== undefined) {
             if (this.getNumerators().length > 0) {
                 _.each(this.getNumerators(), (num) => {
                     const layerId = this.get("numValues")[num],
-                        features = Radio.request("ModelList", "getModelByAttributes", {id: layerId}).get("layerSource").getFeatures();
-        
+                        layer = Radio.request("ModelList", "getModelByAttributes", {id: layerId}),
+                        features = layer.get("layerSource").getFeatures();
+
                     _.each(features, (feature) => {
                         const geometry = feature.getGeometry(),
                             coordinate = geometry.getType() === "Point" ? geometry.getCoordinates() : Extent.getCenter(geometry.getExtent()); // Remove later for more reliable fallback
-        
+
                         if (districtGeometry.intersectsCoordinate(coordinate)) {
                             featuresInDistrict.push(feature);
+                            featureCount += this.addFeatureModifier(feature, layer);
                         }
                     });
                 });
@@ -180,7 +203,7 @@ const CalculateRatioModel = Tool.extend({
             this.setMessage("Bitte wählen Sie einen Einrichtungstyp aus.");
         }
 
-        return featuresInDistrict;
+        return featureCount;
     },
     getActiveLayersWithValues: function () {
         const collection = Radio.request("ModelList", "getCollection"),
@@ -189,9 +212,6 @@ const CalculateRatioModel = Tool.extend({
 
         this.setDropdownValues(possibleNumerators, "numValues");
         this.setDropdownValues(possibleDenominators, "denValues");
-    },
-    getInitialDemographicLayers: function () {
-
     },
     setDropdownValues: function (models, field) {
         const values = this.remapModelsToValues(models);
@@ -223,6 +243,22 @@ const CalculateRatioModel = Tool.extend({
         if (values.denominators) {
             this.set("denDropdownModel", values.denominators);
         }
+    },
+    updateModifiers: function () {
+        // check if modifier already exists
+        _.each(this.getNumerators(), (numerator) => {
+            if (!this.get("adjustParameterViews").find(modifier => modifier.model.get("layerName") === numerator)) {
+                this.createModifier(numerator);
+            }
+        });
+        // delete models that are unchecked
+        this.set("adjustParameterViews", this.get("adjustParameterViews").filter((modifier) => {
+            return this.getNumerators().includes(modifier.model.get("layerName"));
+        }));
+    },
+    createModifier: function (layerName) {
+        this.get("adjustParameterViews").push(new AdjustParameterView(this.get("numValues")[layerName]));
+        this.trigger("change:adjustParameterViews");
     },
     setNumerators: function () {
         this.set("numerators", this.get("numDropdownModel").getSelectedValues());

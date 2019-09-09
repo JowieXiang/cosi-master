@@ -60,9 +60,6 @@
             "name": "Worksession erstellen",
             "glyphicon": "glyphicon-picture"
           },
-          "compareDistricts":{
-            "name": "Bezirksvergleich"
-          },
           "ageGroupSlider": {
             "name": "Altersgruppen-Schieberegler",
             "glyphicon": "glyphicon-film",
@@ -71,11 +68,11 @@
             "layerIds": [
               {
                 "title": "Unter 18 Jährige mit Migrationshintergrund in Prozent",
-                "layerId": "2768"
+                "layerId": "2769"
               },
               {
                 "title": "65 Jahre und älter in Prozent",
-                "layerId": "2769"
+                "layerId": "2768"
               },
               {
                 "title": "Arbeitslose in Prozent",
@@ -147,9 +144,74 @@
     "Fachdaten": {
       "Layer": [
         {
+          "id": "kitas_before",
+          "styleId": "kitas",
+          "topic": "kitas",
+          "isDefaultVisible": true,
+          "stageId": "kita_orte",
+          "layerStage": "before",
+          "gfiTheme": "cosi",
+          "isFacility": true
+        },
+        {
+          "id": "kitas_after",
+          "styleId": "kitas",
+          "topic": "kitas",
+          "isVisibleInTree": false,
+          "stageId": "kita_orte",
+          "layerStage": "after",
+          "gfiTheme": "cosi",
+          "isFacility": true
+        },
+        {
+          "id": "einwohner_before",
+          "styleId": "einwohner",
+          "topic": "kitas",
+          "isDefaultVisible": true,
+          "stageId": "kita_einwohner",
+          "layerStage": "before",
+          "gfiTheme": "cosi",
+          "isDemographic": true
+        },
+        {
+          "id": "einwohner_after",
+          "styleId": "einwohner",
+          "topic": "kitas",
+          "isVisibleInTree": false,
+          "stageId": "kita_einwohner",
+          "layerStage": "after",
+          "gfiTheme": "cosi",
+          "isDemographic": true
+        },
+        {
+          "id": "stadtteileKitaplaetze_before",
+          "styleId": "stadtteileKitaplaetze",
+          "topic": "kitas",
+          "stageId": "kita_stadtteil",
+          "layerStage": "before",
+          "gfiTheme": "cosi"
+        },
+        {
+          "id": "stadtteileKitaplaetze_after",
+          "styleId": "stadtteileKitaplaetze",
+          "topic": "kitas",
+          "isVisibleInTree": false,
+          "stageId": "kita_stadtteil",
+          "layerStage": "after",
+          "gfiTheme": "cosi"
+        },
+        {
           "id": "7484",
           "name": "Gehzeit zur nächsten Kita",
           "topic": "kitas"
+        },
+        {
+          "id": "kitas_heat",
+          "styleId": "kitas",
+          "topic": "kitas",
+          "isVisibleInTree": true,
+          "gfiTheme": "cosi",
+          "dataLayerId": "kitas_before"
         },
         {
           "id": "apotheken",
@@ -176,6 +238,22 @@
           "topic": "nahversorgung"
         },
         {
+          "id": "gruenflaechen",
+          "styleId": "gruenflaechen",
+          "name": "Grünflächen",
+          "topic": "basic",
+          "isDefaultVisible": true,
+          "gfiTheme": "cosi",
+          "isFacility": true
+        },
+        {
+          "id": "gruenflaechen",
+          "styleId": "gruenflaechen",
+          "topic": "gruenflaechen",
+          "isDefaultVisible": true,
+          "gfiTheme": "cosi"
+        },
+        {
           "id": "12868",
           "name": "Sportstätten",
           "visibility": false,
@@ -184,8 +262,7 @@
           ],
           "isFacility": true,
           "styleId": "12868",
-          "topic": "basic",
-          "numericalProperties": false
+          "topic": "basic"
         },
         {
           "id": "1534",
@@ -193,11 +270,7 @@
           "styleId": "1534",
           "visibility": false,
           "topic": "basic",
-          "isFacility": true,
-          "numericalProperties": [
-            "flaeche_qm",
-            "flaeche_ha"
-          ]
+          "isFacility": true
         },
         {
           "id": "753",
@@ -205,28 +278,24 @@
           "styleId": "753",
           "visibility": false,
           "isFacility": true,
-          "topic": "basic",
-          "defaultProperty": "Einrichtungen"
+          "topic": "basic"
         },
         {
-          "id": "14111",
-          "isFacility": true
+          "id": "14111"
         },
         {
           "id": "1711",
-          "styleId": "1711",
-          "isFacility": true
+          "styleId": "1711"
         }
       ],
       "Ordner": [
         {
-          "Titel": "Demografie (Stadtteile)",
+          "Titel": "Bevölkerungsdaten",
           "isFolderSelectable": true,
           "Layer": [
             {
               "name": "Bevölkerungsdaten zu Stadtteilen in Hamburg",
               "id": "2763",
-              "styleId": "unstyled",
               "visibility": false,
               "mouseHoverField": [
                 "aerz_prz",
@@ -260,7 +329,6 @@
             {
               "name": "Unter 18 Jährige mit Migrationshintergrund in Prozent 31.12.2014",
               "id": "2768",
-              "styleId": "unstyled",
               "visibility": false,
               "mouseHoverField": [
                 "bu18_prz"
@@ -275,7 +343,6 @@
             {
               "name": "65 Jahre und älter in Prozent 31.12.2014",
               "id": "2769",
-              "styleId": "unstyled",
               "visibility": false,
               "mouseHoverField": [
                 "b65_prz"
@@ -290,7 +357,6 @@
             {
               "name": "Arbeitslose in Prozent 31.12.2014",
               "id": "2771",
-              "styleId": "unstyled",
               "visibility": false,
               "mouseHoverField": [
                 "al_prz"
@@ -301,27 +367,28 @@
                 "type": "rel",
                 "field": "al_prz"
               }
-            }
-          ]
-        },
-        {
-          "Titel": "Demografie (stat. Gebiete)",
-          "isFolderSelectable": true,
-          "Layer": [
-            {
-              "id": "bev_gesamt",
-              "styleId": "unstyled",
-              "isDemographic": true
             },
             {
-              "id": "bev_maennlich",
-              "styleId": "unstyled",
-              "isDemographic": true
+              "id": "2797",
+              "styleId":"2797"
             },
             {
-              "id": "bev_weiblich",
-              "styleId": "unstyled",
-              "isDemographic": true
+              "id": "2784"
+            },
+            {
+              "id": "2792"
+            },
+            {
+              "id": "2795"
+            },
+            {
+              "id": "bev_gesamt"
+            },
+            {
+              "id": "bev_maennlich"
+            },
+            {
+              "id": "bev_weiblich"
             }
           ]
         }

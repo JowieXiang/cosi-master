@@ -1,5 +1,6 @@
 import {Fill, Stroke, Style} from "ol/style.js";
 import GeometryCollection from "ol/geom/GeometryCollection";
+import Geometry from 'ol/geom/Geometry';
 import Tool from "../core/modelList/tool/model";
 
 const SelectDistrict = Tool.extend({
@@ -23,12 +24,14 @@ const SelectDistrict = Tool.extend({
             }),
             stroke: new Stroke({
                 color: "#3399CC",
-                width: 3
+                width: 5
             })
         }),
         channel: Radio.channel("SelectDistrict")
     }),
     initialize: function () {
+        var channel = Radio.channel("SelectDistrict");
+
         this.superInitialize();
 
         this.listenTo(this, {
@@ -41,6 +44,7 @@ const SelectDistrict = Tool.extend({
                         Radio.trigger("Map", "zoomToExtent", this.getSelectedGeometries().getExtent());
                         this.setBboxGeometryToLayer(Radio.request("ModelList", "getCollection"), Radio.request("Parser", "getItemsByAttributes", {typ: "WFS", isBaseLayer: false}));
                     }
+                    this.get("channel").trigger("selectionChanged");
                     this.unlisten();
                 }
             }

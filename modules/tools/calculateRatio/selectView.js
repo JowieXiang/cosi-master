@@ -4,14 +4,16 @@ import ResultView from "./resultView";
 
 const SelectView = Backbone.View.extend({
     events: {
-        "click #submit": "calculateRatios"
+        "click #submit": "calculateRatios",
+        "change #resolution-input": "setResolution"
     },
     initialize: function () {
         this.listenTo(this.model, {
             "change:isActive": this.render,
             "renderResult": this.renderResult,
             "updateDropdownMenus": this.render,
-            "renderResults": this.renderResult
+            "renderResults": this.renderResult,
+            "change:adjustParameterViews": this.renderModifiers
         });
         this.numDropdownView = new SnippetDropdownView({model: this.model.get("numDropdownModel")});
         this.denDropdownView = new SnippetDropdownView({model: this.model.get("denDropdownModel")});
@@ -40,8 +42,18 @@ const SelectView = Backbone.View.extend({
         this.$el.find(".result").html("");
         this.$el.find(".result").append(new ResultView({model: this.model}).render().el);
     },
+    renderModifiers: function () {
+        this.$el.find(".modifiers").html("");
+
+        _.each(this.model.get("adjustParameterViews"), (modifier) => {
+            this.$el.find(".modifiers").append(modifier.render().el);
+        });
+    },
     calculateRatios: function () {
         this.model.getRatiosForSelectedFeatures();
+    },
+    setResolution: function (evt) {
+        this.model.set("resolution", parseInt(evt.target.value, 10));
     }
 });
 

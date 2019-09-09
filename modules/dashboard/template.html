@@ -6,25 +6,32 @@
                 <% if (isVisibleInMenu === true) { %>
                         <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <% } %>
-                </div>
-                <div class="simple-views-container">
-                        <div class="figure">
-                                <span class="figure-name">Übersicht</span>
-                                <table class="table">
-                                        <% _.each(_.allKeys(tableView[0]), (prop) => { %>
-                                        <tr>
-                                                <th scope="row"><%= prop %></th>
-                                                <% _.each(tableView, (dist) => { %>
-                                                        <% if (prop === "stadtteil") { %>
-                                                                <th scope="col"><%= dist[prop] %></th>
-                                                        <% } else { %>
-                                                                <td><%= dist[prop] %></td>
-                                                        <% } %>
-                                                <% }); %>
-                                        </tr>
+        </div>
+        <div class="simple-views-container">
+                <div class="figure">
+                        <span class="figure-name">Übersicht</span>
+                        <table class="table">
+                                <% _.each(_.allKeys(tableView[0]), (prop) => { %>
+                                <tr class="row">
+                                        <th class="prop" scope="row"><%= prop %></th>
+                                        <% _.each(tableView, (dist) => { %>
+                                                <% if (prop === "stadtteil") { %>
+                                                        <th scope="col" class="district"><%= dist[prop] %></th>
+                                                <% } else { %>
+                                                        <td><%= dist[prop] %></td>
+                                                <% } %>
                                         <% }); %>
-                                </table>
-                        </div>
+                                </tr>
+                                <% }); %>
+                        </table>
                 </div>
-                <div class="detail-view-container"></div>
+        </div>
+        <div class="detail-view-container">
+                <div class="basic-graph">
+                        <div class="btn-group header">
+                                <span class="basic-graph-header"></span>
+                        </div>
+                        <svg class="dashboard-graph"></svg>
+                </div>
+        </div>
 </div>

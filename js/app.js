@@ -21,6 +21,7 @@ import ZoomToFeature from "../modules/zoomtofeature/model";
 import SliderView from "../modules/snippets/slider/view";
 import SliderRangeView from "../modules/snippets/slider/range/view";
 import DropdownView from "../modules/snippets/dropdown/view";
+import AdjustParamterView from "../modules/snippets/adjustParameter/view";
 import LayerinformationModel from "../modules/layerinformation/model";
 import FooterView from "../modules/footer/view";
 import ClickCounterModel from "../modules/ClickCounter/model";
@@ -70,7 +71,9 @@ import PieView from "../modules/charting/chartRenderer/pie/view";
 import BarView from "../modules/charting/chartRenderer/bar-line/view";
 import ChartUtil from "../modules/charting/chartRenderer/util/util";
 import DashboardView from "../modules/dashboard/view";
-import WsClientInputView from "../modules/tools/wsClientInput/view"
+import WsClientInputView from "../modules/tools/wsClientInput/view";
+import CompareDistrictsView from "../modules/tools/compareDistricts/view";
+
 // @deprecated in version 3.0.0
 // remove "version" in doc and config.
 // rename "print_" to "print"
@@ -163,6 +166,7 @@ function loadApp() {
     new SliderView();
     new SliderRangeView();
     new DropdownView();
+    new AdjustParamterView();
 
     if (_.has(Config, "metaDataCatalogueId")) {
         layerInformationModelSettings.metaDataCatalogueId = Config.metaDataCatalogueId;
@@ -188,9 +192,9 @@ function loadApp() {
         new ScaleLineView();
     }
 
-    if (_.has(Config, "dashboard")) {
-        new DashboardView(Config.dashboard);
-    }
+    // if (_.has(Config, "dashboard")) {
+    //     new DashboardView(Config.dashboard);
+    // }
 
     new WindowView();
     // Module laden
@@ -200,6 +204,10 @@ function loadApp() {
 
     _.each(Radio.request("ModelList", "getModelsByAttributes", { type: "tool" }), function (tool) {
         switch (tool.id) {
+            case "dashboard": {
+                new DashboardView({ model: tool });
+                break;
+            }
             case "calculateRatio": {
                 new CalculateRatioView({ model: tool });
                 break;
@@ -331,6 +339,10 @@ function loadApp() {
             }
             case "wsClientInput": {
                 new WsClientInputView({ model: tool });
+                break;
+            }
+            case "compareDistricts": {
+                new CompareDistrictsView({ model: tool });
                 break;
             }
             case "selectDistrict": {
