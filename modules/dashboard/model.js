@@ -9,7 +9,6 @@ const DashboardModel = Tool.extend({
         districtsLayer: {},
         propertyTree: {},
         dashboardLayers: [],
-        activeFeatures: {},
         tableView: [],
         name: "",
         glyphicon: "",
@@ -44,26 +43,24 @@ const DashboardModel = Tool.extend({
             }
         }, this);
 
-        this.listenTo(this, {
-            "change:activeFeatures": this.updateTable
-        }, this);
     },
     setupTable: function (selectedDistricts) {
         const cleanTable = [];
 
         _.forEach(selectedDistricts, (district) => {
-            cleanTable.push({stadtteil: district.getProperties().stadtteil});
+            cleanTable.push({Stadtteil: district.getProperties().stadtteil});
         });
         this.set("tableView", cleanTable);
     },
-    updateTable: function () {
+    updateTable: function (features, layer) {
         const currentTable = this.get("tableView");
 
-        _.each(this.get("activeFeatures"), (feature) => {
-            const properties = feature.getProperties();
+        _.each(features, (feature) => {
+            let properties = Radio.request("Util", "renameKeys", layer.get("gfiAttributes"), feature.getProperties());
 
+            properties = Radio.request("Util", "pickKeyValuePairs", properties, Object.values(layer.get("gfiAttributes")));
             _.each(currentTable, (column) => {
-                if (properties.stadtteil === column.stadtteil) {
+                if (properties.Stadtteil === column.Stadtteil) {
                     Object.assign(column, properties);
                 }
             });
@@ -130,7 +127,7 @@ const DashboardModel = Tool.extend({
                 return isSelected;
             });
 
-            this.set("activeFeatures", features);
+            this.updateTable(features, layer);
         });
     },
     createChart (props) {

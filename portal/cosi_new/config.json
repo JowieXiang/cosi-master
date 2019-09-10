@@ -259,16 +259,6 @@
           "isFacility": true,
           "topic": "basic",
           "defaultProperty": "Einrichtungen"
-        },
-        {
-          "id": "1711",
-          "name": "Krankenhäuser",
-          "styleId": "1711",
-          "isFacility": true
-        },
-        {
-          "id": "14111",
-          "name": "Gehzeit zur nächsten Krankenhaus"
         }
       ],
       "Ordner": [
@@ -308,6 +298,17 @@
               "correlationsField": {
                 "type": "abs",
                 "field": "bev"
+              },
+              "gfiAttributes": {
+                "stadtteil": "Stadtteil",
+                "aerz_prz": "Anteil der Haushalte in denen Alleinerziehende leben an allen Haushalten 31.12.2014",
+                "alleinerz": "Anzahl der Haushalte in denen Alleinerziehende leben 31.12.2014",
+                "bev": "Anzahl der Einwohnerinnen und Einwohner 31.12.2014",
+                "e_ha": "Einwohnerinnen und Einwohner je ha 31.12.2014",
+                "eph": "Anzahl der Haushalte in denen nur eine Person lebt 31.12.2014",
+                "hhki": "Anzahl der Haushalte in denen Kinder leben 31.12.2014",
+                "haushgr": "Durchschnittliche Anzahl der Personen je Haushalt 31.12.2015",
+                "svpbs_prz": "Anteil sozialversicherungspflichtig Beschäftigter am Wohnort an den Erwerbsfähigen 15 bis unter 65-Jährigen 31.12.2014"
               }
             },
             {
@@ -323,6 +324,17 @@
               "correlationsField": {
                 "type": "rel",
                 "field": "bu_18_prz"
+              },
+              "gfiAttributes": {
+                "stadtteil": "Stadtteil",
+                "aerz_prz": "Anteil der Haushalte in denen Alleinerziehende leben an allen Haushalten 31.12.2014",
+                "alleinerz": "Anzahl der Haushalte in denen Alleinerziehende leben 31.12.2014",
+                "e_ha": "Einwohnerinnen und Einwohner je ha 31.12.2014",
+                "eph": "Anzahl der Haushalte in denen nur eine Person lebt 31.12.2014",
+                "hhki": "Anzahl der Haushalte in denen Kinder leben 31.12.2014",
+                "haushgr": "Durchschnittliche Anzahl der Personen je Haushalt 31.12.2015",
+                "svpbs_prz": "Anteil sozialversicherungspflichtig Beschäftigter am Wohnort an den Erwerbsfähigen 15 bis unter 65-Jährigen 31.12.2014",
+                "bu18_prz": "Anteil Kinder und Jugendlicher unter 18 Jahren an der Gesamtbevölkerung 31.12.2014"
               }
             },
             {
@@ -338,6 +350,17 @@
               "correlationsField": {
                 "type": "rel",
                 "field": "b65_prz"
+              },
+              "gfiAttributes": {
+                "stadtteil": "Stadtteil",
+                "aerz_prz": "Anteil der Haushalte in denen Alleinerziehende leben an allen Haushalten 31.12.2014",
+                "alleinerz": "Anzahl der Haushalte in denen Alleinerziehende leben 31.12.2014",
+                "e_ha": "Einwohnerinnen und Einwohner je ha 31.12.2014",
+                "eph": "Anzahl der Haushalte in denen nur eine Person lebt 31.12.2014",
+                "hhki": "Anzahl der Haushalte in denen Kinder leben 31.12.2014",
+                "haushgr": "Durchschnittliche Anzahl der Personen je Haushalt 31.12.2015",
+                "svpbs_prz": "Anteil sozialversicherungspflichtig Beschäftigter am Wohnort an den Erwerbsfähigen 15 bis unter 65-Jährigen 31.12.2014",
+                "b65_prz": "Anteil der Einwohnerinnen und Einwohner über 64 Jahre an der Gesamtbevölkerung 31.12.2014"
               }
             },
             {

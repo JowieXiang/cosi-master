@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 
-<div class="form-group form-group-sm">
+<div class="form-group form-group-sm" id="selection-container">
     <div class="col-md-12 col-sm-12 col-xs-12">
-        <select class="form-control input-sm">
+        <select class="form-control input-sm" id="layer-selection">
             <% _.each( layerNames, function (name) { %>
             <option value=<%= name %>><%= name %></option>
             <% }); %>

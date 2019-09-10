@@ -272,37 +272,23 @@ const MouseHoverPopupModel = Backbone.Model.extend(/** @lends MouseHoverPopupMod
 
     /**
      * Return the string for the popup
-     * @param  {String | Array} mouseHoverField Content for popup
-     * @param  {Object} featureProperties       Properties of features
+     * @param  {Object} featureProperties Properties of features
      * @returns {String} value String of popup content
      */
-    pickValue: function (mouseHoverField, featureProperties) {
-        var value = "";
+    pickValue: function (featureProperties) {
+        let popupString = "";
 
-        if (mouseHoverField && _.isString(mouseHoverField)) {
-            if (_.has(featureProperties, mouseHoverField)) {
-                value = value + _.values(_.pick(featureProperties, mouseHoverField))[0];
+        _.each(featureProperties, function (key, value) {
+            const pickedString = value + ": " + key;
+
+            if (!_.isString(pickedString)) {
+                console.error("Parameter \"mouseHoverField\" in config.json mit Wert \"" + key + "\" gibt keinen String zurück!");
+                return;
             }
-        }
-        else if (mouseHoverField && _.isArray(mouseHoverField)) {
-            _.each(mouseHoverField, function (element, index) {
-                var pickedString = "",
-                    cssClass = "";
 
-                if (index === 0) {
-                    cssClass = "title";
-                }
-
-                pickedString = element + ": " + featureProperties[element];
-                if (!_.isString(pickedString)) {
-                    console.error("Parameter \"mouseHoverField\" in config.json mit Wert \"" + element + "\" gibt keinen String zurück!");
-                    return;
-                }
-
-                value = value + "<span class='" + cssClass + "'>" + pickedString + "</span></br>";
-            });
-        }
-        return value;
+            popupString = popupString + "<span>" + pickedString + "</span></br>";
+        });
+        return popupString;
     },
 
     /**
@@ -318,13 +304,14 @@ const MouseHoverPopupModel = Backbone.Model.extend(/** @lends MouseHoverPopupMod
 
         // for each hovered over Feature...
         _.each(featureArray, function (element) {
-            var featureProperties = element.feature.getProperties(),
+            var layer = Radio.request("ModelList", "getModelByAttributes", {id: element.layerId}),
+                featureProperties = Radio.request("Util", "renameKeys", layer.get("gfiAttributes"), element.feature.getProperties()),
                 layerInfos = _.find(mouseHoverInfos, function (mouseHoverInfo) {
                     return mouseHoverInfo.id === element.layerId;
                 });
 
             if (!_.isUndefined(layerInfos)) {
-                textArray.push(this.pickValue(layerInfos.mouseHoverField, featureProperties));
+                textArray.push(this.pickValue(Radio.request("Util", "pickKeyValuePairs", featureProperties, Object.values(layer.get("gfiAttributes")))));
             }
         }, this);
         textArrayCheckedLength = this.checkMaxFeaturesToShow(textArray);

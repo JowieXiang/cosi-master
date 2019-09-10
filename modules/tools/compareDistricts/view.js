@@ -53,10 +53,11 @@ const CompareDistrictsView = Backbone.View.extend({
     },
 
     addFilterView: function (model) {
-        const filterView = new FilterView({ model: model });
+        $(()=> {
+            const filterView = new FilterView({ model: model });
 
-        this.$el.find("#filter-container").append(filterView.render().el.childNodes);
-
+            this.$el.find("#filter-container").append(filterView.render().el.childNodes);
+        });
     }
 
 
