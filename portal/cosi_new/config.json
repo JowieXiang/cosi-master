@@ -259,16 +259,6 @@
           "isFacility": true,
           "topic": "basic",
           "defaultProperty": "Einrichtungen"
-        },
-        {
-          "id": "1711",
-          "name": "Krankenhäuser",
-          "styleId": "1711",
-          "isFacility": true
-        },
-        {
-          "id": "14111",
-          "name": "Gehzeit zur nächsten Krankenhaus"
         }
       ],
       "Ordner": [
