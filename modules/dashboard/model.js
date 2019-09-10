@@ -44,7 +44,7 @@ const DashboardModel = Tool.extend({
         const cleanTable = [];
 
         _.forEach(selectedDistricts, (district) => {
-            cleanTable.push({stadtteil: district.getProperties().stadtteil});
+            cleanTable.push({Stadtteil: district.getProperties().stadtteil});
         });
         this.set("tableView", cleanTable);
     },
@@ -52,10 +52,11 @@ const DashboardModel = Tool.extend({
         const currentTable = this.get("tableView");
 
         _.each(features, (feature) => {
-            const properties = Radio.request("Util", "renameKeys", layer.get("gfiAttributes"), feature.getProperties());
+            let properties = Radio.request("Util", "renameKeys", layer.get("gfiAttributes"), feature.getProperties());
 
+            properties = Radio.request("Util", "pickKeyValuePairs", properties, Object.values(layer.get("gfiAttributes")));
             _.each(currentTable, (column) => {
-                if (properties.stadtteil === column.stadtteil) {
+                if (properties.Stadtteil === column.Stadtteil) {
                     Object.assign(column, properties);
                 }
             });
@@ -104,7 +105,7 @@ const DashboardModel = Tool.extend({
         const source = layer.get("layerSource");
         let features;
 
-        source.on("change", (evt) => {
+        source.on("change", () => {
             features = source.getFeatures();
             features = features.filter(feature => {
                 let isSelected = false;

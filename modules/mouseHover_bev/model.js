@@ -310,10 +310,8 @@ const MouseHoverPopupModel = Backbone.Model.extend(/** @lends MouseHoverPopupMod
                     return mouseHoverInfo.id === element.layerId;
                 });
 
-                console.info(featureProperties);
             if (!_.isUndefined(layerInfos)) {
-                console.info(this.pickValue(featureProperties));
-                textArray.push(this.pickValue(featureProperties));
+                textArray.push(this.pickValue(Radio.request("Util", "pickKeyValuePairs", featureProperties, Object.values(layer.get("gfiAttributes")))));
             }
         }, this);
         textArrayCheckedLength = this.checkMaxFeaturesToShow(textArray);

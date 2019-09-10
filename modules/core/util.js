@@ -76,7 +76,8 @@ const Util = Backbone.Model.extend(/** @lends Util.prototype */{
             "sort": this.sort,
             "convertArrayOfObjectsToCsv": this.convertArrayOfObjectsToCsv,
             "getPathFromLoader": this.getPathFromLoader,
-            "renameKeys": this.renameKeys
+            "renameKeys": this.renameKeys,
+            "pickKeyValuePairs": this.pickKeyValuePairs
         }, this);
 
         channel.on({
@@ -509,6 +510,24 @@ const Util = Backbone.Model.extend(/** @lends Util.prototype */{
             };
         },
         {});
+    },
+
+    /**
+     * picks the key-value pairs corresponding to the given keys from an object.
+     * @param {object} obj - the original object
+     * @param {string[]} keys - the given keys to be returned
+     * @returns {object} the picked object
+     */
+    pickKeyValuePairs: function (obj, keys) {
+        var result = {};
+
+        keys.forEach(function (key) {
+            if (obj.hasOwnProperty(key)) {
+                result[key] = obj[key];
+            }
+        });
+
+        return result;
     },
 
     /**
