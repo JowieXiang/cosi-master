@@ -3,7 +3,7 @@ import SnippetDropdownModel from "../../snippets/dropdown/model";
 
 const CompareDistrictsModel = Tool.extend({
     defaults: _.extend({}, Tool.prototype.defaults, {
-        layerIds: [],
+        selectedLayerIds: [],
         snippetDropdownModelDistrict: {},
         filterModels: []
     }),

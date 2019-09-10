@@ -3,7 +3,8 @@ import ElektroladesaeulenThemeTemplate from "text-loader!./template.html";
 
 const ElektroladesaeulenThemeView = ThemeView.extend({
     tagName: "div",
-    className: "ladesaeulen",
+    className: "form-group form-group-sm",
+    id: "selection-container",
     template: _.template(ElektroladesaeulenThemeTemplate),
     events: {
         "click .tab-toggle": "toggleTab",
