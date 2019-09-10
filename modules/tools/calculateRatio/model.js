@@ -1,6 +1,7 @@
 import Tool from "../../core/modelList/tool/model";
 import SnippetDropdownModel from "../../snippets/dropdown/model";
 import AdjustParameterView from "../../snippets/adjustParameter/view";
+import ExportButtonModel from "../../snippets/exportButton/model";
 import Geometry from "ol/geom/Geometry";
 import Feature from "ol/Feature";
 import * as Extent from "ol/extent";
@@ -25,7 +26,8 @@ const CalculateRatioModel = Tool.extend({
         denDropdownModel: {},
         denValues: {},
         message: "",
-        adjustParameterViews: []
+        adjustParameterViews: [],
+        exportButtonModel: {}
     }),
     initialize: function () {
         this.superInitialize();
@@ -75,6 +77,14 @@ const CalculateRatioModel = Tool.extend({
             "change:numValues": this.updateDropdownMenus
         }, this);
     },
+    generateExport: function () {
+        this.set("exportButtonModel", new ExportButtonModel({
+            tag: "Als CSV herunterladen",
+            rawData: this.get("results"),
+            filename: "CoSI-Angebotsdeckung",
+            fileExtension: "csv"
+        }));
+    },
     getRatiosForSelectedFeatures: function () {
         this.resetResults();
 
@@ -116,6 +126,7 @@ const CalculateRatioModel = Tool.extend({
             this.setMessage("Bitte wählen Sie mindestens einen Stadtteil aus.");
         }
 
+        this.generateExport();
         this.trigger("renderResults");
     },
     calculateRatio (facilities, demographics, area = "allen Unterschungsgebieten") {

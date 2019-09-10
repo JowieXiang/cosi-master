@@ -21,6 +21,7 @@ import ZoomToFeature from "../modules/zoomtofeature/model";
 import SliderView from "../modules/snippets/slider/view";
 import SliderRangeView from "../modules/snippets/slider/range/view";
 import DropdownView from "../modules/snippets/dropdown/view";
+import ExportButtonView from "../modules/snippets/exportButton/view";
 import AdjustParamterView from "../modules/snippets/adjustParameter/view";
 import LayerinformationModel from "../modules/layerinformation/model";
 import FooterView from "../modules/footer/view";
@@ -66,7 +67,6 @@ import CosiTouchScreenView from "../modules/cosi/touchScreen/view";
 import CosiInfosSreenView from "../modules/cosi/infoScreen/view";
 import CosiSelectAreaView from "../modules/cosi/infoScreen/selectArea/view";
 import LocalStorageView from "../modules/localStorage/view";
-import CosiCalculatorView from "../modules/tools/cosiCalculator/view"
 import PieView from "../modules/charting/chartRenderer/pie/view";
 import BarView from "../modules/charting/chartRenderer/bar-line/view";
 import ChartUtil from "../modules/charting/chartRenderer/util/util";
@@ -167,6 +167,7 @@ function loadApp() {
     new SliderRangeView();
     new DropdownView();
     new AdjustParamterView();
+    new ExportButtonView();
 
     if (_.has(Config, "metaDataCatalogueId")) {
         layerInformationModelSettings.metaDataCatalogueId = Config.metaDataCatalogueId;
@@ -526,7 +527,6 @@ function loadApp() {
 
         if (!_.has(Config.cosiMode, "isInfoscreen")) {
             new CosiTouchScreenView(Config);
-            new CosiCalculatorView();
         }
 
         if (_.has(Config.cosiMode, "isInfoscreen")) {
