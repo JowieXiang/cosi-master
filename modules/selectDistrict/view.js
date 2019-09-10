@@ -1,11 +1,15 @@
 import SelectDistrictModel from "./model";
 import Template from "text-loader!./template.html";
+import SnippetValueView from "../snippets/value/view";
+import SnippetDropdownView from "../snippets/dropdown/view";
 
 const SelectDistrictView = Backbone.View.extend({
     events: {
-        "click button": "toggleIsActive"
+        "click button#Submit": "toggleIsActive"
     },
     initialize: function () {
+        this.scopeDropdownView = new SnippetDropdownView({model: this.model.get("scopeDropdownModel")});
+
         this.listenTo(this.model, {
             "change:isActive": this.render
         });
@@ -15,6 +19,7 @@ const SelectDistrictView = Backbone.View.extend({
         }
     },
     model: new SelectDistrictModel(),
+    scopeDropdownView: {},
     template: _.template(Template),
 
     render: function (model, value) {
@@ -23,6 +28,8 @@ const SelectDistrictView = Backbone.View.extend({
         if (value) {
             this.setElement(document.getElementsByClassName("win-body")[0]);
             this.$el.html(this.template(attr));
+
+            this.$el.find(".dropdown").append(this.scopeDropdownView.render().el);
         }
         return this;
     },

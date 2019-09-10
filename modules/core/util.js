@@ -76,7 +76,8 @@ const Util = Backbone.Model.extend(/** @lends Util.prototype */{
             "sort": this.sort,
             "convertArrayOfObjectsToCsv": this.convertArrayOfObjectsToCsv,
             "getPathFromLoader": this.getPathFromLoader,
-            "renameKeys": this.renameKeys
+            "renameKeys": this.renameKeys,
+            "pickKeyValuePairs": this.pickKeyValuePairs
         }, this);
 
         channel.on({
@@ -97,8 +98,6 @@ const Util = Backbone.Model.extend(/** @lends Util.prototype */{
 
         $(window).on("resize", _.bind(this.toggleIsViewMobile, this));
         this.parseConfigFromURL();
-        const obj = { name: 'Bobo', job: 'Front-End Master', shoeSize: 100 };
-        this.renameKeys({ name: 'firstName', job: 'passion' }, obj);
     },
 
     /**
@@ -498,22 +497,37 @@ const Util = Backbone.Model.extend(/** @lends Util.prototype */{
     },
 
     /**
-     *
-     * @param {*} keysMap
-     * @param {*} obj
+     * replaces the names of object keys with the values provided.
+     * @param {object} keysMap - keys mapping object
+     * @param {object} obj - the original object
+     * @returns {object} the renamed object
      */
     renameKeys: function (keysMap, obj) {
-        const t = Object.keys(obj).reduce(
-            (acc, key) => {
-                return {
-                    ...acc,
-                    ...{ [keysMap[key] || key]: obj[key] }
-                }
-            },
-            {}
-        );
-        console.info(t);
-        return t;
+        return Object.keys(obj).reduce((acc, key) => {
+            return {
+                ...acc,
+                ...{[keysMap[key] || key]: obj[key]}
+            };
+        },
+        {});
+    },
+
+    /**
+     * picks the key-value pairs corresponding to the given keys from an object.
+     * @param {object} obj - the original object
+     * @param {string[]} keys - the given keys to be returned
+     * @returns {object} the picked object
+     */
+    pickKeyValuePairs: function (obj, keys) {
+        var result = {};
+
+        keys.forEach(function (key) {
+            if (obj.hasOwnProperty(key)) {
+                result[key] = obj[key];
+            }
+        });
+
+        return result;
     },
 
     /**

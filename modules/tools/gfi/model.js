@@ -246,7 +246,6 @@ const Gfi = Tool.extend({
         else {
             this.get("overlay").setPosition(evt.coordinate);
             this.get("themeList").reset(unionParams);
-            console.log(unionParams);
         }
     },
 
@@ -372,7 +371,6 @@ const Gfi = Tool.extend({
             }, this);
         }, this);
 
-        console.log(vectorGfiParams);
         return vectorGfiParams;
     },
 

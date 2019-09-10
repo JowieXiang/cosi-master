@@ -2,11 +2,18 @@ import {Fill, Stroke, Style} from "ol/style.js";
 import GeometryCollection from "ol/geom/GeometryCollection";
 import Geometry from 'ol/geom/Geometry';
 import Tool from "../core/modelList/tool/model";
+import SnippetDropdownModel from "../snippets/dropdown/model";
 
 const SelectDistrict = Tool.extend({
     defaults: _.extend({}, Tool.prototype.defaults, {
         selectedDistricts: [],
-        districtLayer: Radio.request("ModelList", "getModelByAttributes", {"name": "Stadtteile"}),
+        districtLayerNames: [
+            "Stadtteile",
+            "Statistische Gebiete"
+        ],
+        districtLayersLoaded: [],
+        scopeDropdownModel: {},
+        activeScope: "",
         deactivateGFI: true,
         // default ol style http://geoadmin.github.io/ol3/apidoc/ol.style.html
         defaultStyle: new Style({
@@ -34,6 +41,16 @@ const SelectDistrict = Tool.extend({
 
         this.superInitialize();
 
+        this.set("scopeDropdownModel", new SnippetDropdownModel({
+            name: "Bezugseinheit",
+            type: "string",
+            displayName: "Bezugseinheit auswählen",
+            values: this.get("districtLayerNames"),
+            snippetType: "dropdown",
+            isMultiple: false,
+            preselectedValues: this.get("districtLayerNames")[0]
+        }));
+
         this.listenTo(this, {
             "change:isActive": function (model, value) {
                 if (value) {
@@ -48,6 +65,14 @@ const SelectDistrict = Tool.extend({
                     this.unlisten();
                 }
             }
+        });
+
+        this.listenTo(this.get("scopeDropdownModel"), {
+            "valuesChanged": this.setScope
+        }, this);
+
+        this.listenTo(Radio.channel("Layer"), "featuresLoaded", function (id) {
+            this.checkDistrictLayersLoaded(id);
         });
 
         this.get("channel").reply({
@@ -70,7 +95,7 @@ const SelectDistrict = Tool.extend({
     select: function (evt) {
         // check if layer is visible
         const visibleWFSLayers = Radio.request("ModelList", "getModelsByAttributes", {isVisibleInMap: true, typ: "WFS"}),
-            districtLayer = Radio.request("ModelList", "getModelByAttributes", {"name": "Stadtteile"});
+            districtLayer = Radio.request("ModelList", "getModelByAttributes", {"name": this.getScope()});
 
         if (visibleWFSLayers.includes(districtLayer)) {
             const features = Radio.request("Map", "getFeaturesAtPixel", evt.map.getEventPixel(evt.originalEvent), {
@@ -165,6 +190,41 @@ const SelectDistrict = Tool.extend({
                 item.bboxGeometry = this.getSelectedGeometries();
             }
         }, this);
+    },
+    setScope: function () {
+        const scope = this.get("scopeDropdownModel").getSelectedValues().values[0];
+
+        this.set("activeScope", scope);
+        this.toggleScopeLayers();
+    },
+    getScope: function () {
+        return this.get("activeScope");
+    },
+    toggleScopeLayers: function () {
+        _.each(this.get("districtLayerNames"), (layerName) => {
+            const layer = Radio.request("ModelList", "getModelByAttributes", {"name": layerName});
+
+            if (layerName !== this.getScope()) {
+                layer.setIsVisibleInMap(false);
+            }
+            else {
+                layer.setIsVisibleInMap(true);
+            }
+        });
+    },
+    checkDistrictLayersLoaded (id) {
+        const name = Radio.request("ModelList", "getModelByAttributes", {"id": id}).get("name");
+
+        if (this.get("districtLayerNames").includes(name)) {
+            if (!this.get("districtLayersLoaded").includes(name)) {
+                this.get("districtLayersLoaded").push(name);
+            }
+        }
+
+        if (_.isEqual(this.get("districtLayerNames"), this.get("districtLayersLoaded"))) {
+            this.setScope();
+            this.toggleScopeLayers();
+        }
     },
 
     /**
