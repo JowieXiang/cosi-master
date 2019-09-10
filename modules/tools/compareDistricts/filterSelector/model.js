@@ -1,11 +1,9 @@
 const FilterModel = Backbone.Model.extend({
     defaults: {
         layerNames: [], // all select options (vector layers in the map)
-        selectedLayer: "", // selected option
-        sliderFields: [] // range keys and values
-        /**
-         * sliderFields value : [{key:value},{key,value},...]
-         */
+        selectedLayer: null, // selected option
+        sliderKeys: [] // range keys and values
+
     },
     initialize: function () {
         const layers = Radio.request("Parser", "getItemsByAttributes", { typ: "WFS" }),
@@ -23,6 +21,27 @@ const FilterModel = Backbone.Model.extend({
     },
     setSelectedLayer: function (value) {
         this.set("selectedLayer", value);
+    },
+    setSliderKeys: function (selectedLayerName) {
+        const selectedLayer = Radio.request("ModelList", "getModelByAttributes", { name: selectedLayerName });
+
+        if (typeof selectedLayer.get("numericalProperties") !== "undefined") {
+            if (selectedLayer.get("numericalProperties")) {
+                const fields = [],
+                    numericalProperties = selectedLayer.get("numericalProperties");
+
+                _.each(numericalProperties, (prop) => {
+                    // fields.push({ [prop]: null });
+                    fields.push(prop);
+                });
+
+                this.set("sliderKeys", fields);
+            }
+        }
+    },
+
+    getSliderKeys: function () {
+        return this.get("sliderKeys");
     }
 });
 

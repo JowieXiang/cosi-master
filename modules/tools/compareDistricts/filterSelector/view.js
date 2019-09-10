@@ -1,5 +1,9 @@
 import FilterTemplate from "text-loader!./template.html";
 // import FilterSelectorModel from "./model";
+import FilterSliderList from "./filterSlider/list";
+import FilterSliderModel from "./filterSlider/model";
+import FilterSliderView from "./filterSlider/view";
+
 
 const FilterView = Backbone.View.extend({
     events: {
@@ -7,10 +11,18 @@ const FilterView = Backbone.View.extend({
         "change .slider": "renderValue"
     },
     initialize: function () {
+
+        this.filterSliderList = new FilterSliderList();
+
         this.listenTo(this.model, {
-            "change:selectedFilter": this.resetSliderFields
+            "change:selectedLayer": this.render,
+            "change:sliderKeys": this.setSliders
         });
 
+
+        this.listenTo(this.filterSliderList, {
+            "add": this.addFilterSliderView
+        });
     },
 
     tagName: "div",
@@ -20,9 +32,6 @@ const FilterView = Backbone.View.extend({
     template: _.template(FilterTemplate),
 
     render: function () {
-        if (this.model.changed.id !== undefined) {
-            return;
-        }
 
         this.$el.html(this.template(this.model.toJSON()));
 
@@ -30,10 +39,23 @@ const FilterView = Backbone.View.extend({
     },
     setSelectedLayer: function (evt) {
         this.model.setSelectedLayer(evt.target.value);
+        this.model.setSliderKeys(evt.target.value);
+
     },
-    renderValue: function (evt) {
-        console.log(evt.target.value);
-        this.$(".range-value").html(evt.target.value);
+    setSliders: function () {
+        const keys = this.model.getSliderKeys();
+
+        _.each(keys, key => {
+            const newSliderModel = new FilterSliderModel({ key: key });
+
+            this.filterSliderList.add(newSliderModel);
+        }, this);
+    },
+    addFilterSliderView: function (model) {
+
+        const silderView = new FilterSliderView({ model: model });
+
+        this.$el.find("#filter-slider-container").append(silderView.render().el);
     }
 
 

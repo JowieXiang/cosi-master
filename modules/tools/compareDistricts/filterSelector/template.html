@@ -1,17 +1,13 @@
 <!DOCTYPE html>
 
-    <div class="col-md-12 col-sm-12 col-xs-12">
-        <select class="form-control input-sm" id="layer-selection">
-            <% _.each( layerNames, function (name) { %>
-            <option value=<%= name %>><%= name %></option>
-            <% }); %>
-        </select>
-    </div>
-    <div class="col-md-12 col-sm-12 col-xs-12">
+<div class="col-md-12 col-sm-12 col-xs-12">
+    <select class="form-control input-sm" id="layer-selection">
+        <% _.each( layerNames, function (name) { %>
+        <option value=<%= name %>><%= name %></option>
+        <% }); %>
+    </select>
+</div>
+<div id="filter-slider-container">
 
-        <p>value: <span class="range-value"> </span> %</p>
-    </div>
-    <div class="col-md-12 col-sm-12 col-xs-12">
-        <input type="range" min="0" max="100" value="0" class="slider" id="rang-slider">
-    </div>
+</div>
 
