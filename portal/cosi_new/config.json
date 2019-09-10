@@ -21,10 +21,7 @@
     },
     "mapView": {
       "backgroundImage": "/../../node_modules/lgv-config/img/backgroundCanvas.jpeg",
-      "startCenter": [
-        564959.09,
-        5940777.71
-      ]
+      "startCenter": [565790, 5934262]
     },
     "menu": {
       "tree": {
@@ -37,10 +34,58 @@
         "glyphicon": "glyphicon-stats",
         "districtsLayer": "1694",
         "propertyTree": {
-          "layerIds": ["2763", "2769", "2768", "2771"],
-          "exclude": ["geom", "stadtteil_1"]
+          "layerIds": [
+            "2763",
+            "2769",
+            "2768",
+            "2771"
+          ],
+          "exclude": [
+            "geom",
+            "stadtteil_1"
+          ]
         },
         "renderToWindow": false
+      },
+      "filter": {
+        "name": "Filter",
+        "glyphicon": "glyphicon-filter",
+        "deactivateGFI": false,
+        "isGeneric": false,
+        "isInitOpen": false,
+        "allowMultipleQueriesPerLayer": false,
+        "predefinedQueries": [
+          {
+            "layerId": "12868",
+            "isActive": false,
+            "isSelected": false,
+            "name": "Sportstätten",
+            "info": "Die Filter 'Baujahr' und 'Letzte Generalsanierung' können zu unvollständigen Ergebnissen führen, da diese Daten nicht für alle Einrichtungen vorliegen.",
+            "attributeWhiteList": ["bezirk", "stadtteil", "typ_zusammen", "segmente", "traegergruppe", "baujahr", "letzte_generalsanierung"]
+          },
+          {
+            "layerId": "753",
+            "isActive": false,
+            "isSelected": false,
+            "name": "Kindertagesstätten",
+            "attributeWhiteList": ["Bezirk", "Stadtteil", "Traeger", "Leistungsarten", "Leistungsname"]
+          },
+          {
+            "layerId": "1534",
+            "isActive": false,
+            "isSelected": false,
+            "name": "Grünflächen",
+            "info": "Die Grünflächen sind im aktuellen digitalen Grünplan nur numerisch nach Bezirken und Stadtteilen geordnet. Diese Sortierung wurde aus Verständlichkeitsgründen im Filter deaktiviert.",
+            "attributeWhiteList": ["gruenart", "eigentum", "flaeche_qm"]
+          },
+          {
+            "layerId": "1711",
+            "isActive": false,
+            "isSelected": false,
+            "name": "Krankenhäuser",
+            "attributeWhiteList": ["geburtsklinik_differenziert", "teilnahme_notversorgung", "anzahl_planbetten", "anzahl_plaetze_teilstationaer"]
+          }
+        ]
       },
       "tools": {
         "name": "Werkzeuge",
@@ -56,17 +101,15 @@
             "isInitOpen": true,
             "isActive": true
           },
-          "wsClientInput":{
+          "wsClientInput": {
             "name": "Worksession erstellen",
             "glyphicon": "glyphicon-picture"
           },
-          "compareDistricts":{
+          "compareDistricts": {
             "name": "Bezirksvergleich"
           },
           "ageGroupSlider": {
-            "name": "Altersgruppen-Schieberegler",
-            "glyphicon": "glyphicon-film",
-            "title": "Simulation von Beispiel-WMS",
+            "name": "Übersicht demographischer Daten",
             "timeInterval": 2000,
             "layerIds": [
               {
@@ -218,13 +261,14 @@
           "defaultProperty": "Einrichtungen"
         },
         {
-          "id": "14111",
+          "id": "1711",
+          "name": "Krankenhäuser",
+          "styleId": "1711",
           "isFacility": true
         },
         {
-          "id": "1711",
-          "styleId": "1711",
-          "isFacility": true
+          "id": "14111",
+          "name": "Gehzeit zur nächsten Krankenhaus"
         }
       ],
       "Ordner": [

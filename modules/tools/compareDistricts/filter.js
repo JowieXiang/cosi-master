@@ -1,23 +1,20 @@
 const FilterModel = Backbone.Model.extend({
     defaults: {
-        selectOptions: []
+        layerNames: [], // all select options (vector layers in the map)
+        selectedFilter: [], // selected option
+        sliderFields: [] // range keys and values
+        /**
+         * sliderFields value : [{key:value},{key,value},...]
+         */
     },
-    initialize: function () {
-
-        this.listenTo(Radio.channel("Map"), {
-            "isReady": function () {
-                const layers = Radio.request("Parser", "getItemsByAttributes", { typ: "WFS" }),
-                    layerNames = layers.map(layer => layer.name);
-
-                this.setSelectOptions(layerNames);
-            }
-        });
-
+    onSlide: function (key, value) {
+        /**
+         * reset slider field value on slide
+         */
     },
-    setSelectOptions: function (value) {
-        this.set("selectOptions", value);
+    setLayerNames: function (value) {
+        this.set("layerNames", value);
     }
-
 });
 
 export default FilterModel;
