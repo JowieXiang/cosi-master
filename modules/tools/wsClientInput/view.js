@@ -15,7 +15,10 @@ const WsClientInputView = Backbone.View.extend({
         }
 
         this.model.getConnection().onmessage = (event) => {
-            alert(event.data);
+            Radio.trigger("Alert", "alert", {
+                text: "<strong>" + event.data + "</strong>",
+                kategorie: "alert-warning"
+            });
         };
     },
     model: new WsClientInputModel(),
