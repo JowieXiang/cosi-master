@@ -9,7 +9,9 @@ const AgeGroupSliderModel = Tool.extend({
         timeInterval: 2000,
         title: null,
         progressBarWidth: 10,
-        activeLayer: { layerId: "" },
+        activeLayer: {
+            layerId: ""
+        },
         windowsInterval: null,
         renderToWindow: true,
         glyphicon: "glyphicon-film",

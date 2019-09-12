@@ -30,6 +30,7 @@ const DashboardModel = Tool.extend({
         var channel = Radio.channel("Dashboard");
 
         this.superInitialize();
+        this.set("scope", Radio.request("SelectDistrict", "getScope"));
 
         this.set("exportButtonModel", new ExportButtonModel({
             tag: "Als CSV herunterladen",
@@ -248,7 +249,7 @@ const DashboardModel = Tool.extend({
             const districtDataToGraph = district;
 
             for (const prop in districtDataToGraph) {
-                if (!props.includes(prop) && prop !== "stadtteil") {
+                if (!props.includes(prop) && prop !== this.getPropertyTree()[this.getScope()].selector) {
                     delete districtDataToGraph[prop];
                 }
             }
@@ -259,14 +260,22 @@ const DashboardModel = Tool.extend({
         return data;
     },
     zoomAndHighlightFeature: function (district) {
-        let extent;
+        let extent,
+            selector = this.getPropertyTree()[this.getScope()];
 
-        _.each(this.get("activeFeatures"), (feature) => {
-            if (feature.getProperties()[this.getScope()] === district) {
+        // Quick and dirty for Statistische Gebiete
+        if (this.getScope() === "Statistische Gebiete") {
+            selector = "statgebiet";
+        }
+
+        _.each(Radio.request("SelectDistrict", "getSelectedDistricts"), (feature) => {
+            if (feature.getProperties()[selector] === district) {
                 extent = feature.getGeometry().getExtent();
             }
         });
-        Radio.trigger("Map", "zoomToExtent", extent, {padding: [20, 20, 20, 20]});
+        if (extent) {
+            Radio.trigger("Map", "zoomToExtent", extent, {padding: [20, 20, 20, 20]});
+        }
     },
     getScope: function () {
         return this.get("scope");
