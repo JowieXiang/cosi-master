@@ -7,10 +7,7 @@ import SnippetDropdownModel from "../snippets/dropdown/model";
 const SelectDistrict = Tool.extend({
     defaults: _.extend({}, Tool.prototype.defaults, {
         selectedDistricts: [],
-        districtLayerNames: [
-            "Stadtteile",
-            "Statistische Gebiete"
-        ],
+        districtLayerNames: [],
         districtLayersLoaded: [],
         scopeDropdownModel: {},
         activeScope: "",
@@ -37,8 +34,6 @@ const SelectDistrict = Tool.extend({
         channel: Radio.channel("SelectDistrict")
     }),
     initialize: function () {
-        var channel = Radio.channel("SelectDistrict");
-
         this.superInitialize();
 
         this.set("scopeDropdownModel", new SnippetDropdownModel({
@@ -76,7 +71,8 @@ const SelectDistrict = Tool.extend({
         });
 
         this.get("channel").reply({
-            "getSelectedDistricts": this.getSelectedDistricts
+            "getSelectedDistricts": this.getSelectedDistricts,
+            "getScope": this.getScope
         }, this);
     },
 

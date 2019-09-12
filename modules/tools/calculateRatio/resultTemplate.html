@@ -17,11 +17,12 @@
             <tr>
                 <th scope="row"><%= district %></th>
                 <td><%= results[district].ratio.toFixed(2) %></td>
-                <td><%= results[district].facilities %></td>
+                <td><%= results[district].facilities.toFixed(1) %></td>
                 <td><%= results[district].demographics %></td>
             </tr>
         <% } %>
     </table>
+    <div id="export-button"></div>
 <% } %>
 <% if (message !== "") { %>
     <div class="message"><%=message%></div>

@@ -32,18 +32,26 @@
       "dashboard": {
         "name": "Dashboard",
         "glyphicon": "glyphicon-stats",
-        "districtsLayer": "1694",
         "propertyTree": {
-          "layerIds": [
-            "2763",
-            "2769",
-            "2768",
-            "2771"
-          ],
-          "exclude": [
-            "geom",
-            "stadtteil_1"
-          ]
+          "Stadtteile": {
+            "selector": "stadtteil",
+            "layerIds": [
+              "2763",
+              "2769",
+              "2768",
+              "2771"
+            ],
+            "exclude": ["geom", "stadtteil_1"]
+          },
+          "Statistische Gebiete": {
+            "selector": "stat_gebiet",
+            "layerIds": [
+              "bev_gesamt",
+              "bev_maennlich",
+              "bev_weiblich"
+            ],
+            "exclude": ["geometry", "extent"]
+          }
         },
         "renderToWindow": false
       },
@@ -99,7 +107,11 @@
             "name": "Gebiet auswählen",
             "glyphicon": "glyphicon-picture",
             "isInitOpen": true,
-            "isActive": true
+            "isActive": true,
+            "districtLayerNames": [
+              "Stadtteile",
+              "Statistische Gebiete"
+            ]
           },
           "wsClientInput": {
             "name": "Worksession erstellen",
@@ -259,16 +271,6 @@
           "isFacility": true,
           "topic": "basic",
           "defaultProperty": "Einrichtungen"
-        },
-        {
-          "id": "1711",
-          "name": "Krankenhäuser",
-          "styleId": "1711",
-          "isFacility": true
-        },
-        {
-          "id": "14111",
-          "name": "Gehzeit zur nächsten Krankenhaus"
         }
       ],
       "Ordner": [
