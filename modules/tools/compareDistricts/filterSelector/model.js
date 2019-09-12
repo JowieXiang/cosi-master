@@ -1,48 +1,41 @@
 const FilterModel = Backbone.Model.extend({
     defaults: {
-        layerNames: [], // all select options (vector layers in the map)
-        selectedLayer: null, // selected option
-        sliderKeys: [] // range keys and values
-
+        layerOptions: [], // all select options (vector layers in the map) e.g. [{layerName:"",layerId:""},...]
+        selectedLayer: null, // selected option e.g. {layerName:"",layerId:""}
+        layerFilter: ""
     },
+
     initialize: function () {
-        const layers = Radio.request("Parser", "getItemsByAttributes", { typ: "WFS" }),
-            layerNames = layers.map(layer => layer.name);
+        const allLayers = Radio.request("Parser", "getItemsByAttributes", { typ: "WFS" }),
+            layers = allLayers.filter(layer => _.contains(Object.keys(layer), "mouseHoverField")),
+            layerOptions = layers.map(layer => {
+                // console.log("new layer: ", layer);
+                return { "layerName": layer.name, "layerId": layer.id };
+            });
 
-        this.setLayerNames(layerNames);
+        this.setLayerOptions(layerOptions);
     },
-    onSlide: function (key, value) {
-        /**
-         * reset slider field value on slide
-         */
-    },
-    setLayerNames: function (value) {
-        this.set("layerNames", value);
-    },
+
     setSelectedLayer: function (value) {
-        this.set("selectedLayer", value);
-    },
-    setSliderKeys: function (selectedLayerName) {
-        const selectedLayer = Radio.request("ModelList", "getModelByAttributes", { name: selectedLayerName });
+        /**
+         * this is unstable!!! because "value" is only the first word of the layer name
+         */
+        const selectedLayer = this.get("layerOptions").filter(layer => layer.layerName.includes(value))[0];
 
-        if (typeof selectedLayer.get("numericalProperties") !== "undefined") {
-            if (selectedLayer.get("numericalProperties")) {
-                const fields = [],
-                    numericalProperties = selectedLayer.get("numericalProperties");
-
-                _.each(numericalProperties, (prop) => {
-                    // fields.push({ [prop]: null });
-                    fields.push(prop);
-                });
-
-                this.set("sliderKeys", fields);
-            }
-        }
+        this.set("selectedLayer", selectedLayer);
     },
 
-    getSliderKeys: function () {
-        return this.get("sliderKeys");
+    setLayerOptions: function (value) {
+        this.set("layerOptions", value);
+    },
+
+    // filter out district names that are already selected
+    filterLayerNames: function (nameToFilter) {
+        // const newLayerNames = this.get("layerNames").filter(name => name === nameToFilter);
+
+        // this.set("districtNames", newLayerNames);
     }
+
 });
 
 export default FilterModel;

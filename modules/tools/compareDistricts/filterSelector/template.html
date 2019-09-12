@@ -2,8 +2,8 @@
 
 <div class="col-md-12 col-sm-12 col-xs-12">
     <select class="form-control input-sm" id="layer-selection">
-        <% _.each( layerNames, function (name) { %>
-        <option value=<%= name %>><%= name %></option>
+        <% _.each( layerOptions, function (layer) { %>
+        <option value=<%= layer.layerName %>><%= layer.layerName %></option>
         <% }); %>
     </select>
 </div>

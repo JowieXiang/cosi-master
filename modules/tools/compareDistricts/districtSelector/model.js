@@ -16,6 +16,7 @@ const DistrictSelectorModel = Backbone.Model.extend({
     },
     setDistrictNames: function (value) {
         this.set("districtNames", value);
+
     },
     setSelectedDistrict: function (value) {
         this.set("selectedDistrict", value);

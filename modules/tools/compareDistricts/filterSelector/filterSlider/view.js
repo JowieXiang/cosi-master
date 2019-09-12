@@ -3,7 +3,10 @@ import FilterSliderModel from "./model";
 
 const FilterView = Backbone.View.extend({
     events: {
-        "change .slider": "renderValue"
+        "change .slider": function (evt) {
+            this.renderValue(evt);
+            this.setSliderValue(evt);
+        }
     },
     initialize: function () {
         this.listenTo(this.model, {
@@ -26,6 +29,10 @@ const FilterView = Backbone.View.extend({
 
     renderValue: function (evt) {
         this.$(".slider-value").html(evt.target.value);
+    },
+
+    setSliderValue: function (evt) {
+        this.model.setSliderValue(evt.target.value);
     }
 
 

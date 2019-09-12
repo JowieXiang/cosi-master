@@ -20,6 +20,9 @@ const DistrictSelectorView = Backbone.View.extend({
     },
     setSelectedDistrict: function (evt) {
         this.model.setSelectedDistrict(evt.target.value);
+    },
+    getSelectedDistrict: function () {
+        return this.model.get("selectedDistrict");
     }
 
 

@@ -2,8 +2,9 @@ import Tool from "../../core/modelList/tool/model";
 
 const CompareDistrictsModel = Tool.extend({
     defaults: _.extend({}, Tool.prototype.defaults, {
-        selectedLayers: [],
-        
+        // selectedLayers: [],
+        layerFilterList: [], // e.g {layerId: "", filter: [{key: value},...]}
+        mapLayerName: "compare-district"
     }),
 
     initialize: function () {
@@ -28,10 +29,11 @@ const CompareDistrictsModel = Tool.extend({
         });
 
 
-    },
-    setSelectedLayers: function (value) {
-        this.set("selectedLayers", value);
     }
+    // setSelectedLayers: function (value) {
+    //     this.set("selectedLayers", value);
+    // },
+
 
 });
 
