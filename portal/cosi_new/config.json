@@ -108,9 +108,15 @@
             "glyphicon": "glyphicon-picture",
             "isInitOpen": true,
             "isActive": true,
-            "districtLayerNames": [
-              "Stadtteile",
-              "Statistische Gebiete"
+            "districtLayer": [
+              {
+                "name": "Stadtteile",
+                "selector": "stadtteil"
+              },
+              {
+                "name": "Statistische Gebiete",
+                "selector": "statgebiet"
+              }
             ]
           },
           "wsClientInput": {
@@ -135,6 +141,18 @@
               {
                 "title": "Arbeitslose in Prozent",
                 "layerId": "2771"
+              },
+              {
+                "title": "Bevölkerung gesamt",
+                "layerId": "bev_gesamt"
+              },
+              {
+                "title": "Bevölkerung (weiblich)",
+                "layerId": "bev_weiblich"
+              },
+              {
+                "title": "Bevölkerung (männlich)",
+                "layerId": "bev_maennlich"
               }
             ]
           },
