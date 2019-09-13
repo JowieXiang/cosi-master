@@ -185,6 +185,9 @@ const AgeGroupSliderModel = Tool.extend({
                         colorScale = Radio.request("ColorScale", "getColorScaleByValues", values, this.get("style").chromaticScheme),
                         newFeatures = [];
 
+                    // Add the generated legend style to the Legend Portal
+                    Radio.trigger("StyleWFS", "addDynamicLegendStyle", layer.layerId, colorScale.legend);
+
                     _.each(selectedFeatures, feature => newFeatures.push(feature.clone()));
                     _.each(newFeatures, (feature) => {
                         feature.setStyle(new Style({

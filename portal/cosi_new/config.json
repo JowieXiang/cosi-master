@@ -226,7 +226,8 @@
           "topic": "basic",
           "gfiAttributes": "ignore",
           "isNeverVisibleInTree": true,
-          "alwaysOnTop": true
+          "alwaysOnTop": true,
+          "legendURL": ""
         }
       ]
     },
@@ -422,19 +423,22 @@
               "id": "bev_gesamt",
               "styleId": "unstyled",
               "isDemographic": true,
-              "mouseHoverField": "dynamic"
+              "mouseHoverField": "dynamic",
+              "legendURL": ""
             },
             {
               "id": "bev_maennlich",
               "styleId": "unstyled",
               "isDemographic": true,
-              "mouseHoverField": "dynamic"
+              "mouseHoverField": "dynamic",
+              "legendURL": ""
             },
             {
               "id": "bev_weiblich",
               "styleId": "unstyled",
               "isDemographic": true,
-              "mouseHoverField": "dynamic"
+              "mouseHoverField": "dynamic",
+              "legendURL": ""
             }
           ]
         }
