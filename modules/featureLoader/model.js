@@ -35,8 +35,6 @@ const FeatureLoaderModel = Backbone.Model.extend({
     },
     // push feature collection to this model
     pushFeatureCollection: function (layerId, features) {
-        console.log("running ");
-
         var featureCollections = this.get("featureCollections");
 
         featureCollections.push({
@@ -44,9 +42,6 @@ const FeatureLoaderModel = Backbone.Model.extend({
             "collection": features
         });
         this.set("featureCollections", featureCollections);
-        console.log("layer pushed: ", layerId);
-        console.log("features pushed: ", features);
-
     },
     getFeaturesByLayerId: function (layerId) {
         const features = this.get("featureCollections").filter(collection => collection.layerId === layerId)[0].collection;

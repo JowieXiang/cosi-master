@@ -93,7 +93,7 @@ const AgeGroupSliderView = Backbone.View.extend({
      */
     setProgress: function () {
         var activeIndex = this.model.getActiveIndex(),
-            max = this.model.get("layerIds").length,
+            max = this.model.get("layerIds")[this.model.get("scope")].length,
             progressBarWidth = this.model.get("progressBarWidth"),
             singleStep = (100 - progressBarWidth) / (max - 1);
 

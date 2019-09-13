@@ -9,10 +9,10 @@ const SelectDistrict = Tool.extend({
         selectedDistricts: [],
         districtLayer: [],
         districtLayerNames: [],
-        districtLayerSelectors: [],
         districtLayersLoaded: [],
         scopeDropdownModel: {},
         activeScope: "",
+        activeSelector: "",
         deactivateGFI: true,
         // default ol style http://geoadmin.github.io/ol3/apidoc/ol.style.html
         defaultStyle: new Style({
@@ -38,8 +38,7 @@ const SelectDistrict = Tool.extend({
     initialize: function () {
         this.superInitialize();
         this.set({
-            "districtLayerNames": this.get("districtLayer").map(layer => layer.name),
-            "districtLayerSelectors": this.get("districtLayer").map(layer => layer.selector)
+            "districtLayerNames": this.get("districtLayer").map(layer => layer.name)
         });
         this.set("scopeDropdownModel", new SnippetDropdownModel({
             name: "Bezugseinheit",
@@ -78,7 +77,9 @@ const SelectDistrict = Tool.extend({
 
         this.get("channel").reply({
             "getSelectedDistricts": this.getSelectedDistricts,
-            "getScope": this.getScope
+            "getScope": this.getScope,
+            "getSelector": this.getSelector,
+            "getScopeAndSelector": this.getScopeAndSelector
         }, this);
     },
 
@@ -197,6 +198,11 @@ const SelectDistrict = Tool.extend({
         const scope = this.get("scopeDropdownModel").getSelectedValues().values[0];
 
         this.set("activeScope", scope);
+
+        if (scope && scope !== "") {
+            this.set("activeSelector", this.get("districtLayer").find(el => el.name === scope).selector);
+        }
+
         this.toggleScopeLayers();
     },
     getScope: function () {
@@ -227,6 +233,9 @@ const SelectDistrict = Tool.extend({
             this.setScope();
             this.toggleScopeLayers();
         }
+    },
+    getSelector: function () {
+        return this.get("activeSelector");
     },
 
     /**
