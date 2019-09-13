@@ -1,19 +1,20 @@
-import template from "text-loader!./template.html";
-import Model from "./model";
-
+import Template from "text-loader!./template.html";
+import DistrictSelectorModel from "./model";
 const DistrictSelectorView = Backbone.View.extend({
     events: {
         "change select": "setSelectedDistrict"
     },
     initialize: function () {
-
+        this.listenTo(this.model, {
+            "change:districtNames": this.render
+        });
 
     },
     tagName: "div",
-    className: "form-group col-md-6",
-    template: _.template(template),
+    className: "selection-container",
+    model: new DistrictSelectorModel(),
+    template: _.template(Template),
     render: function () {
-        this.model = new Model();
         this.$el.html(this.template(this.model.toJSON()));
         return this;
     },
