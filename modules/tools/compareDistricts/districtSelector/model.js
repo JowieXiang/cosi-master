@@ -5,18 +5,14 @@ const DistrictSelectorModel = Backbone.Model.extend({
 
     },
     initialize: function () {
+        this.initializeDistrictNames();
 
-        this.listenTo(Radio.channel("SelectDistrict"), {
-            "selectionChanged": function () {
-                const districtNames = Radio.request("SelectDistrict", "getSelectedDistricts").map(feature => feature.getProperties().stadtteil);
-
-                this.setDistrictNames(districtNames);
-            }
-        });
     },
-    setDistrictNames: function (value) {
-        this.set("districtNames", value);
+    initializeDistrictNames: function () {
 
+        const districtNames = Radio.request("SelectDistrict", "getSelectedDistricts").map(feature => feature.getProperties().stadtteil);
+
+        this.set("districtNames", districtNames);
     },
     setSelectedDistrict: function (value) {
         this.set("selectedDistrict", value);

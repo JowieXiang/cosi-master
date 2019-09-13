@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+
+<label for="district-selector" class="col-md-12 col-sm-12 col-xs-12">Referenzbezirk:</label>
+<div class="col-md-12 col-sm-12 col-xs-12">
+    <select class="form-control input-sm" id="district-selector">
+        <% _.each( districtNames, function (name) { %>
+        <option value=<%= name %>><%= name %></option>
+        <% }); %>
+    </select>
+</div>

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+
+<label for="layer-selection">filter layer:</label>
+<div class="col-9">
+    <select class="form-control input-sm" id="layer-selection">
+        <option disabled selected value> - </option>
+        <% _.each( layerOptions, function (layer) { %>
+        <option value=<%= layer.layerName %>><%= layer.layerName %></option>
+        <% }); %>
+    </select>
+</div>
+<div class="col-auto">
+    <div type="submit" class="btn btn-primary" id="add-filter"><span class="glyphicon glyphicon-plus"></span></div>
+</div>
+<div id="filter-slider-container">
+
+</div>
