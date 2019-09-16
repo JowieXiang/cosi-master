@@ -88,7 +88,8 @@ const CalculateRatioModel = Tool.extend({
     getRatiosForSelectedFeatures: function () {
         this.resetResults();
 
-        const selectedDistricts = Radio.request("SelectDistrict", "getSelectedDistricts");
+        const selectedDistricts = Radio.request("SelectDistrict", "getSelectedDistricts"),
+            selector = Radio.request("SelectDistrict", "getSelector");
         let facilities,
             demographics,
             ratio,
@@ -107,8 +108,8 @@ const CalculateRatioModel = Tool.extend({
                 totalDemographics += demographics;
 
                 // calculate Ratio for district
-                ratio = this.calculateRatio(facilities, demographics, district.getProperties().stadtteil);
-                this.setResultForDistrict(district.getProperties().stadtteil, {
+                ratio = this.calculateRatio(facilities, demographics, district.getProperties()[selector]);
+                this.setResultForDistrict(district.getProperties()[selector], {
                     ratio: ratio,
                     facilities: facilities,
                     demographics: demographics

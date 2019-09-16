@@ -12,16 +12,22 @@
                         <span class="figure-name">Übersicht</span>
                         <table class="table">
                                 <% _.each(_.allKeys(tableView[0]), (prop) => { %>
-                                <tr class="row">
-                                        <th class="prop" scope="row"><%= prop %></th>
-                                        <% _.each(tableView, (dist) => { %>
-                                                <% if (prop === sortKey) { %>
-                                                        <th scope="col" class="district"><%= dist[prop] %></th>
-                                                <% } else { %>
-                                                        <td><%= dist[prop] %></td>
-                                                <% } %>
-                                        <% }); %>
-                                </tr>
+                                        <% if (prop !== "gfi") { %>
+                                        <tr class="row">
+                                                <th class="prop" scope="row" title="<%= tableView[0].gfi ? tableView[0].gfi[prop] : prop %>"><%= prop %></th>
+                                                <% _.each(tableView, (dist) => { %>
+                                                        <% if (prop === sortKey) { %>
+                                                                <th scope="col" style="text-align:right;" class="district"><%= dist[prop] %></th>
+                                                        <% } else { %>
+                                                                <% if (!isNaN(parseFloat(dist[prop]))) { %>
+                                                                        <td style="text-align:right;"><%= new Intl.NumberFormat("de-DE").format(dist[prop]) %></td>
+                                                                <% } else { %>
+                                                                        <td style="text-align:right;"><%= dist[prop] %></td>
+                                                                <% } %>
+                                                        <% } %>
+                                                <% }); %>
+                                        </tr>
+                                        <% } %>
                                 <% }); %>
                         </table>
                 </div>

@@ -33,7 +33,8 @@ const ResultView = Backbone.View.extend({
         var layer = Radio.request("Map", "createLayerIfNotExists", "ratio_info_layer"),
             source = new VectorSource(),
             features = Radio.request("SelectDistrict", "getSelectedDistricts"),
-            values = [];
+            values = [],
+            selector = Radio.request("SelectDistrict", "getSelector");
 
         for (const district in results) {
             values.push(results[district].ratio);
@@ -49,10 +50,10 @@ const ResultView = Backbone.View.extend({
                         color: "#FFF"
                     }),
                     stroke: new Stroke({
-                        color: colorScale.scale(results[feature.getProperties().stadtteil].ratio),
+                        color: colorScale.scale(results[feature.getProperties()[selector]].ratio),
                         width: 3
                     }),
-                    text: results[feature.getProperties().stadtteil].ratio.toFixed(2)
+                    text: results[feature.getProperties()[selector]].ratio.toFixed(2)
                 })
             }));
         });

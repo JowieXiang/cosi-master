@@ -59,10 +59,8 @@ const DashboardView = Backbone.View.extend({
             this.model.createChart([row.find("th.prop").html()]);
 
             // Highlight the selected row
-            row.parent("tbody").find("tr").css("background", "transparent");
-            row.css({
-                background: "#3399CC"
-            });
+            row.parent("tbody").find("tr").removeClass("selected");
+            row.addClass("selected");
 
             // Add Header
             this.$el.find(".basic-graph-header").html(`Diagramm: ${row.find("th.prop").html()}`);

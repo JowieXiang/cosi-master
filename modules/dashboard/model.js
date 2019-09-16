@@ -63,8 +63,13 @@ const DashboardModel = Tool.extend({
         this.setSortKey();
 
         _.forEach(selectedDistricts, (district) => {
-            cleanTable.push({[this.get("sortKey")]: district.getProperties()[this.getPropertyTree()[this.getScope()].selector]});
+            cleanTable.push({[this.get("sortKey")]: district.getProperties()[this.get("sortKey")]});
         });
+
+        // Set columns for average and total values
+        cleanTable.push({[this.get("sortKey")]: "Gesamt"});
+        cleanTable.push({[this.get("sortKey")]: "Durchschnitt"});
+
         this.set("tableView", cleanTable);
     },
 
@@ -79,26 +84,33 @@ const DashboardModel = Tool.extend({
             layer = Radio.request("ModelList", "getModelByAttributes", {id: layerId});
 
         _.each(features, (feature) => {
-            const gfiAttr = layer.get("gfiAttributes");
-            let properties = Radio.request("Util", "renameKeys", gfiAttr, feature.getProperties());
-
-            if (gfiAttr !== "showAll" && gfiAttr !== "ignore") {
-                properties = Radio.request("Util", "pickKeyValuePairs", properties, Object.values(layer.get("gfiAttributes")));
-            }
+            const properties = feature.getProperties(),
+                gfiAttr = layer.get("gfiAttributes");
 
             _.each(currentTable, (column, i) => {
                 if (properties[this.get("sortKey")] === column[this.get("sortKey")]) {
                     for (const key in properties) {
-                        if (!this.getPropertyTree()[this.getScope()].exclude.includes(key)) {
-                            properties[`${key} - ${layer.get("name")}`] = properties[key];
+                        if (!this.getPropertyTree()[this.getScope()].exclude.includes(key) && this.getScope() !== "Stadtteile") {
+                            properties[`${key} - ${layer.get("id")}`] = properties[key];
                             delete properties[key];
                         }
                     }
                     currentTable[i] = Object.assign(column, properties);
+
+                    if (gfiAttr !== "showAll") {
+                        if (currentTable[i].gfi) {
+                            currentTable[i].gfi = Object.assign(currentTable[i].gfi, gfiAttr);
+                        }
+                        else {
+                            currentTable[i].gfi = gfiAttr;
+                        }
+                    }
                 }
             });
         });
-        this.set("tableView", this.filterTable(currentTable));
+
+        // Add total and mean values and filter table for excluded properties
+        this.set("tableView", this.calculateTotalAndMean(this.filterTable(currentTable)));
 
         // Update Export Link
         this.get("exportButtonModel").set("rawData", this.get("tableView"));
@@ -107,9 +119,9 @@ const DashboardModel = Tool.extend({
 
     /**
      * @description Filters the table for excluded columns (e.g. the geometry)
-     * @param {Object} table
+     * @param {Object} table the existing table
+     * @returns {Object} the resulting table
      */
-
     filterTable: function (table) {
         _.each(table, (col) => {
             for (const prop in col) {
@@ -120,6 +132,40 @@ const DashboardModel = Tool.extend({
                 });
             }
         });
+
+        return table;
+    },
+
+    /**
+     * @description sums up and averages all rows of the table
+     * @param {Object} table the existing table (already filtered)
+     * @returns {Object} the resulting table
+     */
+    calculateTotalAndMean: function (table) {
+        if (table) {
+            const properties = _.allKeys(table[0]);
+
+            _.each(properties, (prop) => {
+                let total = 0;
+
+                if (prop !== this.get("sortKey")) {
+                    _.each(table, (col) => {
+
+                        if (col[this.get("sortKey")] !== "Gesamt" && col[this.get("sortKey")] !== "Durchschnitt") {
+                            if (!isNaN(parseFloat(col[prop]))) {
+                                total += parseFloat(col[prop]);
+                            }
+                        }
+                        if (col[this.get("sortKey")] === "Gesamt") {
+                            col[prop] = total;
+                        }
+                        if (col[this.get("sortKey")] === "Durchschnitt") {
+                            col[prop] = total / table.length;
+                        }
+                    });
+                }
+            });
+        }
 
         return table;
     },
@@ -189,19 +235,7 @@ const DashboardModel = Tool.extend({
         this.updateTable(districtFeatures, layerId);
     },
     setSortKey: function () {
-        var layerId = this.getPropertyTree()[this.getScope()].layerIds[0];
-
-        this.addLayerModel(layerId);
-
-        const layer = Radio.request("ModelList", "getModelByAttributes", {id: layerId}),
-            sortKey = layer.get("gfiAttributes")[this.getPropertyTree()[this.getScope()].selector];
-
-        if (sortKey === "showAll" || sortKey === "ignore" || !sortKey) {
-            this.set("sortKey", this.getPropertyTree()[this.getScope()].selector);
-        }
-        else {
-            this.set("sortKey", sortKey);
-        }
+        this.set("sortKey", this.getPropertyTree()[this.getScope()].selector);
     },
     createChart (props) {
         Radio.trigger("Graph", "createGraph", {

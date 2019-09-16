@@ -184,7 +184,7 @@ const WFSStyle = Backbone.Model.extend({
     createLineStyle: function (feature, styleSubClass) {
         var style = this.getDefaultStyle();
 
-        if (styleSubClass === "SIMPLE") {
+        if (styleSubClass === "SIMPLE" || styleSubClass === "DYNAMIC") {
             style = this.createSimpleLineStyle();
         }
         return style;
@@ -217,7 +217,7 @@ const WFSStyle = Backbone.Model.extend({
     createPolygonStyle: function (feature, styleSubClass) {
         var style = this.getDefaultStyle();
 
-        if (styleSubClass === "SIMPLE") {
+        if (styleSubClass === "SIMPLE" || styleSubClass === "DYNAMIC") {
             style = this.createSimplePolygonStyle();
         }
         if (styleSubClass === "CUSTOM") {
@@ -295,7 +295,7 @@ const WFSStyle = Backbone.Model.extend({
     createPointStyle: function (feature, styleSubClass, isClustered) {
         var style = this.getDefaultStyle();
 
-        if (styleSubClass === "SIMPLE") {
+        if (styleSubClass === "SIMPLE" || styleSubClass === "DYNAMIC") {
             style = this.createSimplePointStyle(feature, isClustered);
         }
         else if (styleSubClass === "CUSTOM") {

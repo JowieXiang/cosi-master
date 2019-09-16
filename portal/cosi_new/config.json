@@ -121,10 +121,11 @@
           },
           "wsClientInput": {
             "name": "Worksession erstellen",
-            "glyphicon": "glyphicon-picture"
+            "glyphicon": "glyphicon-picture",
+            "isVisibleInMenu": false
           },
           "compareDistricts": {
-            "name": "Bezirksvergleich"
+            "name": "Vergleichbare Stadtteile ermitteln"
           },
           "ageGroupSlider": {
             "name": "Übersicht demographischer Daten",
@@ -171,7 +172,8 @@
             "glyphicon": "glyphicon-info-sign"
           },
           "compareFeatures": {
-            "name": "Gebiete vergleichen"
+            "name": "Gebiete vergleichen",
+            "isVisibleInMenu": false
           }
         }
       },
@@ -305,28 +307,10 @@
               "name": "Bevölkerungsdaten zu Stadtteilen in Hamburg",
               "id": "2763",
               "styleId": "unstyled",
-              "visibility": false,
+              "visibility": true,
+              "isNeverVisibleInTree": true,
               "mouseHoverField": [
-                "aerz_prz",
-                "afd15",
-                "alleinerz",
-                "bev",
-                "cdu15",
-                "e_ha",
-                "eph",
-                "fdp15",
-                "gruene15",
-                "haushgr",
-                "hhki",
-                "linke15",
-                "spd15",
-                "stadtteil",
-                "stadtteil_1",
-                "svpbs_prz",
-                "wbt15",
-                "wg_efg",
-                "wg_efg_prz",
-                "wgm2"
+                "bev"
               ],
               "topic": "basic",
               "isDemographic": true,
@@ -350,7 +334,8 @@
               "name": "Unter 18 Jährige mit Migrationshintergrund in Prozent 31.12.2014",
               "id": "2768",
               "styleId": "unstyled",
-              "visibility": false,
+              "visibility": true,
+              "isNeverVisibleInTree": true,
               "mouseHoverField": [
                 "bu18_prz"
               ],
@@ -376,7 +361,8 @@
               "name": "65 Jahre und älter in Prozent 31.12.2014",
               "id": "2769",
               "styleId": "unstyled",
-              "visibility": false,
+              "visibility": true,
+              "isNeverVisibleInTree": true,
               "mouseHoverField": [
                 "b65_prz"
               ],
@@ -395,14 +381,15 @@
                 "hhki": "Anzahl der Haushalte in denen Kinder leben 31.12.2014",
                 "haushgr": "Durchschnittliche Anzahl der Personen je Haushalt 31.12.2015",
                 "svpbs_prz": "Anteil sozialversicherungspflichtig Beschäftigter am Wohnort an den Erwerbsfähigen 15 bis unter 65-Jährigen 31.12.2014",
-                "b65_prz": "Anteil der Einwohnerinnen und Einwohner über 64 Jahre an der Gesamtbevölkerung 31.12.2014"
+                "b65_prz": "Anteil von Einwohnerinnen und Einwohnern über 64 Jahren an der Gesamtbevölkerung 31.12.2014"
               }
             },
             {
               "name": "Arbeitslose in Prozent 31.12.2014",
               "id": "2771",
               "styleId": "unstyled",
-              "visibility": false,
+              "visibility": true,
+              "isNeverVisibleInTree": true,
               "mouseHoverField": [
                 "al_prz"
               ],
@@ -423,22 +410,40 @@
               "id": "bev_gesamt",
               "styleId": "unstyled",
               "isDemographic": true,
+              "visibility": true,
+              "isNeverVisibleInTree": true,
               "mouseHoverField": "dynamic",
-              "legendURL": ""
+              "legendURL": "",
+              "correlationsField": {
+                "type": "abs",
+                "field": "jahr_2018"
+              }
             },
             {
               "id": "bev_maennlich",
               "styleId": "unstyled",
+              "visibility": true,
+              "isNeverVisibleInTree": true,
               "isDemographic": true,
               "mouseHoverField": "dynamic",
-              "legendURL": ""
+              "legendURL": "",
+              "correlationsField": {
+                "type": "abs",
+                "field": "jahr_2018"
+              }
             },
             {
               "id": "bev_weiblich",
               "styleId": "unstyled",
+              "visibility": true,
+              "isNeverVisibleInTree": true,
               "isDemographic": true,
               "mouseHoverField": "dynamic",
-              "legendURL": ""
+              "legendURL": "",
+              "correlationsField": {
+                "type": "abs",
+                "field": "jahr_2018"
+              }
             }
           ]
         }
