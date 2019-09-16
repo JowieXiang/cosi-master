@@ -306,6 +306,11 @@
               "id": "2763",
               "styleId": "unstyled",
               "visibility": false,
+              "districtCompareField":[
+                "bev",
+                "afd15",
+                "wgm2"
+              ],
               "mouseHoverField": [
                 "aerz_prz",
                 "afd15",
@@ -351,6 +356,9 @@
               "id": "2768",
               "styleId": "unstyled",
               "visibility": false,
+              "districtCompareField":[
+                "bu18_prz"
+              ],
               "mouseHoverField": [
                 "bu18_prz"
               ],
@@ -377,6 +385,9 @@
               "id": "2769",
               "styleId": "unstyled",
               "visibility": false,
+              "districtCompareField":[
+                "b65_prz"
+              ],
               "mouseHoverField": [
                 "b65_prz"
               ],
@@ -403,6 +414,9 @@
               "id": "2771",
               "styleId": "unstyled",
               "visibility": false,
+              "districtCompareField":[
+                "al_prz"
+              ],
               "mouseHoverField": [
                 "al_prz"
               ],

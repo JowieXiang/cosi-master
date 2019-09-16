@@ -1,29 +1,11 @@
-const LayerFilterModel = Backbone.Model.extend({
+const DistrictInfoModel = Backbone.Model.extend({
     defaults: {
         districtName: "", // selected district name
         districtInfo: [], // [{key:...,value:...},{},...]
-        layerInfo: {},
-        filter: ""// e.g {filterKey:value,filterKey:value,filterKey:value,...}
+        layerInfo: null
+
     },
     initialize: function () {
-        this.initializeFilter();
-        this.initializeDistrictInfo();
-    },
-    initializeFilter: function () {
-        const layerInfo = this.get("layerInfo"),
-            selectedLayer = Radio.request("Parser", "getItemByAttributes", { id: layerInfo.layerId }),
-            keys = selectedLayer.districtCompareField;
-        var newFilter = {};
-
-        _.each(keys, key => {
-            newFilter[key] = 0;
-        });
-        console.log("keys: ", keys);
-        console.log("newFilter: ", newFilter);
-
-        this.set("filter", JSON.stringify(newFilter));
-    },
-    initializeDistrictInfo: function () {
 
         // console.log($("#district-selector").children("option:selected").val());
         const districtName = $("#district-selector").children("option:selected").val(),
@@ -39,11 +21,10 @@ const LayerFilterModel = Backbone.Model.extend({
 
             districtInfo.push(newInfo);
         });
-        console.log("districtInfo: ", districtInfo);
+        console.log(districtInfo);
         this.set("districtInfo", districtInfo);
         this.set("districtName", districtName);
     }
-
 });
 
-export default LayerFilterModel;
+export default DistrictInfoModel;

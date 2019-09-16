@@ -62,7 +62,6 @@
           },
           "ageGroupSlider": {
             "name": "Altersgruppen-Schieberegler",
-            "glyphicon": "glyphicon-film",
             "title": "Simulation von Beispiel-WMS",
             "timeInterval": 2000,
             "layerIds": [

@@ -31,7 +31,7 @@ const SliderView = Backbone.View.extend({
     },
 
     setSliderValue: function (evt) {
-        this.model.setSliderValue(evt.target.value);
+        this.model.set("sliderValue", evt.target.value);
     }
 
 

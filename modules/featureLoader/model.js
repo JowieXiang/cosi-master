@@ -8,21 +8,27 @@ const FeatureLoaderModel = Backbone.Model.extend({
 
         channel.reply({
             "getFeaturesByLayerId": this.getFeaturesByLayerId
-            // "getSumData": this.getSumData,
-            // "getMinData": this.getMinData,
-            // "getMaxData": this.getMaxData,
-            // "getSeriesData": this.getSeriesData,
-            // "getDataByFunction": this.getDataByFunction,
-            // "getUniqueSeriesNames": this.getUniqueSeriesNames,
-            // "getElementNameAtLevel": this.getElementNameAtLevel,
-            // "concatAllElements": this.concatAllElements,
-            // "capitalize": this.capitalize
+
         }, this);
 
         this.listenTo(Radio.channel("Layer"), {
             "featuresLoaded": function (layerId, features) {
                 var currentLayerIds = [];
+                // selector = Radio.request("SelectDistrict", "getSelector");
 
+                _.each(features, feature => {
+
+                    if (_.contains(Object.keys(feature.getProperties()), "stadtteil")) {
+                        let stadtteil = feature.getProperties().stadtteil;
+
+                        stadtteil = stadtteil.replace(/_/g, "");
+                        stadtteil = stadtteil.replace(/-/g, "");
+                        stadtteil = stadtteil.replace(/\s+/g, "");
+                        feature.set("stadtteil", stadtteil);
+
+
+                    }
+                });
                 if (this.get("featureCollections").length > 0) {
 
                     currentLayerIds = this.get("featureCollections").map(collection => collection.layerId);
