@@ -309,6 +309,11 @@
               "styleId": "unstyled",
               "visibility": true,
               "isNeverVisibleInTree": true,
+              "districtCompareField":[
+                "bev",
+                "afd15",
+                "wgm2"
+              ],
               "mouseHoverField": [
                 "bev"
               ],
@@ -336,6 +341,9 @@
               "styleId": "unstyled",
               "visibility": true,
               "isNeverVisibleInTree": true,
+              "districtCompareField":[
+                "bu18_prz"
+              ],
               "mouseHoverField": [
                 "bu18_prz"
               ],
@@ -363,6 +371,9 @@
               "styleId": "unstyled",
               "visibility": true,
               "isNeverVisibleInTree": true,
+              "districtCompareField":[
+                "b65_prz"
+              ],
               "mouseHoverField": [
                 "b65_prz"
               ],
@@ -390,6 +401,9 @@
               "styleId": "unstyled",
               "visibility": true,
               "isNeverVisibleInTree": true,
+              "districtCompareField":[
+                "al_prz"
+              ],
               "mouseHoverField": [
                 "al_prz"
               ],

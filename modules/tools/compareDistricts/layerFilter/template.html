@@ -1,9 +1,35 @@
 <!DOCTYPE html>
-    <button type="button" class="close" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-    </button>
-    <h5>
-        <%= layerInfo.layerName %>
-    </h5>
-    <div id="layer-filter-slider-container">
+<div class="panel panel-primary">
+    <div class="panel-body">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h3>
+            <strong><%= layerInfo.layerName %></strong>
+        </h3>
+        <h4>
+            <%= districtName %> Info
+        </h4>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">key</th>
+                    <th scope="col">value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% _.each( districtInfo, function (info) { %>
+                <tr>
+                    <th scope="row"><%= info.key %></th>
+                    <td><%= info.value %></td>
+                </tr>
+                <% }); %>
+
+            </tbody>
+        </table>
+
+        <div id="layer-filter-slider-container">
+        </div>
     </div>
+</div>

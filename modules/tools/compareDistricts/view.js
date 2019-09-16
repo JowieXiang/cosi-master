@@ -5,12 +5,17 @@ import VectorSource from "ol/source/Vector";
 import { Fill, Stroke, Style } from "ol/style.js";
 import LayerFilterModel from "./layerFilter/model";
 import LayerFilterView from "./layerFilter/view";
+import DistrictInfoView from "./districtInfo/view";
+import DistrictInfoModel from "./districtInfo/model";
 
 import LayerFilterCollection from "./layerFilter/list";
 
 const CompareDistrictsView = Backbone.View.extend({
     events: {
-        "click #add-filter": "addFilterModel"
+        "click #add-filter": function (e) {
+            this.addFilterModel(e);
+            // this.addDistrictInfoTable(e);
+        }
 
     },
 
@@ -70,10 +75,11 @@ const CompareDistrictsView = Backbone.View.extend({
     },
 
     createSelectors: function () {
-        this.layerFilterSelector = new LayerFilterSelectorView();
-        this.$el.find("#selectors").append(this.layerFilterSelector.render().el);
         this.districtSelector = new DistrictSelectorView();
         this.$el.find("#selectors").append(this.districtSelector.render().el);
+        this.layerFilterSelector = new LayerFilterSelectorView();
+        this.$el.find("#selectors").append(this.layerFilterSelector.render().el);
+
     },
 
     addFilterModel: function () {
@@ -83,6 +89,17 @@ const CompareDistrictsView = Backbone.View.extend({
         // console.log("layerFilterModel added!");
         this.addOneToLayerFilterList(layerFilterModel);
         this.layerFilterCollection.add(layerFilterModel);
+    },
+    addDistrictInfoTable: function () {
+        // console.log(this.$el.find(".table").html());
+        if (this.$el.find(".table").html() == undefined) {
+            const layerInfo = this.layerFilterSelector.getSelectedLayer(),
+                districtInfoModel = new DistrictInfoModel({ layerInfo: layerInfo });
+
+            this.districtInfoTable = new DistrictInfoView({ model: districtInfoModel });
+
+            this.$el.find("#district-info-container").append(this.districtInfoTable.render().el);
+        }
     },
 
     renderLayerFilter: function (model) {
@@ -180,7 +197,7 @@ const CompareDistrictsView = Backbone.View.extend({
             featureCollection = Radio.request("FeatureLoader", "getFeaturesByLayerId", layerId),
             refFeature = featureCollection.filter(feature => feature.getProperties().stadtteil === refDistrictName)[0],
             filterCollection = JSON.parse(layerFilter.filter);
-        console.log("refFeature: ", refFeature);
+        // console.log("refFeature: ", refFeature);
         var filterResults = [],
             intersection = [];
         // console.log("refDistrictName: ", refDistrictName);

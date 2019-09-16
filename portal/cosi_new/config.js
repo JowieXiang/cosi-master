@@ -41,7 +41,7 @@ const Config = {
     //     numFeaturesToShow: 2,
     //     infoText: "(weitere Objekte. Bitte zoomen.)"
     // },
-    mouseHover_bev: true,
+    // mouseHover_bev: false,
     isMenubarVisible: true,
     geoAPI: false,
     clickCounter: {},

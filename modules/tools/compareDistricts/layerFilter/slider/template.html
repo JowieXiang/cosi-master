@@ -1,8 +1,16 @@
 <!DOCTYPE html>
 
 <div class="col-md-12 col-sm-12 col-xs-12">
-    <p>key: <%= key%></p>
-    <p>value: <span class="slider-value"> </span> %</p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col"><strong><%= key%></strong></th>
+                <th scope="col">tolerance: <span class="slider-value"></span> %</th>
+            </tr>
+        </thead>
+    </table>
+    <!-- <p>key: <%= key%></p>
+    <p>value: <span class="slider-value"> </span> %</p> -->
     <br />
     <input type="range" min="0" max="100" value="0" class="slider">
 </div>

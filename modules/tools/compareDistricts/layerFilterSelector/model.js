@@ -7,7 +7,7 @@ const LayerFilterSelectorModel = Backbone.Model.extend({
 
     initialize: function () {
         const allLayers = Radio.request("Parser", "getItemsByAttributes", { typ: "WFS" }),
-            layers = allLayers.filter(layer => _.contains(Object.keys(layer), "mouseHoverField")),
+            layers = allLayers.filter(layer => _.contains(Object.keys(layer), "districtCompareField")),
             layerOptions = layers.map(layer => {
                 // console.log("new layer: ", layer);
                 return { "layerName": layer.name, "layerId": layer.id };

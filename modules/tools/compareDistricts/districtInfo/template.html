@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+
+<h3>
+    <%= districtName %> Info
+</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">key</th>
+            <th scope="col">value</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% _.each( districtInfo, function (info) { %>
+        <tr>
+            <th scope="row"><%= info.key %></th>
+            <td><%= info.value %></td>
+        </tr>
+        <% }); %>
+
+    </tbody>
+</table>
