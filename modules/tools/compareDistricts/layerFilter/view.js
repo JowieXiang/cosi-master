@@ -41,7 +41,7 @@ const LayerFilterView = Backbone.View.extend({
                 silderView = new SliderView({ model: newSliderModel });
 
             this.sliderCollection.add(newSliderModel);
-            this.$el.find("#layer-filter-slider-container").append(silderView.render().el);
+            this.$el.find("#" + filterKey + "-td").append(silderView.render().el);
         });
 
     },

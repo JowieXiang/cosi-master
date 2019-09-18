@@ -5,10 +5,6 @@ const DistrictSelectorView = Backbone.View.extend({
     events: {
         "change select": "setSelectedDistrict"
     },
-    initialize: function () {
-
-
-    },
     tagName: "div",
     className: "form-group col-md-6",
     template: _.template(template),
@@ -19,6 +15,7 @@ const DistrictSelectorView = Backbone.View.extend({
     },
     setSelectedDistrict: function (evt) {
         this.model.setSelectedDistrict(evt.target.value);
+        $("#district-selector").prop("disabled", "disabled");
     },
     getSelectedDistrict: function () {
         return this.model.get("selectedDistrict");

@@ -5,8 +5,7 @@ import VectorSource from "ol/source/Vector";
 import { Fill, Stroke, Style } from "ol/style.js";
 import LayerFilterModel from "./layerFilter/model";
 import LayerFilterView from "./layerFilter/view";
-import DistrictInfoView from "./districtInfo/view";
-import DistrictInfoModel from "./districtInfo/model";
+
 
 import LayerFilterCollection from "./layerFilter/list";
 
@@ -14,7 +13,6 @@ const CompareDistrictsView = Backbone.View.extend({
     events: {
         "click #add-filter": function (e) {
             this.addFilterModel(e);
-            // this.addDistrictInfoTable(e);
         }
 
     },
@@ -83,23 +81,11 @@ const CompareDistrictsView = Backbone.View.extend({
     },
 
     addFilterModel: function () {
-        // console.log(this.layerFilterSelector.getSelectedLayer());
         const layerInfo = this.layerFilterSelector.getSelectedLayer(),
             layerFilterModel = new LayerFilterModel({ layerInfo: layerInfo });
-        // console.log("layerFilterModel added!");
+
         this.addOneToLayerFilterList(layerFilterModel);
         this.layerFilterCollection.add(layerFilterModel);
-    },
-    addDistrictInfoTable: function () {
-        // console.log(this.$el.find(".table").html());
-        if (this.$el.find(".table").html() == undefined) {
-            const layerInfo = this.layerFilterSelector.getSelectedLayer(),
-                districtInfoModel = new DistrictInfoModel({ layerInfo: layerInfo });
-
-            this.districtInfoTable = new DistrictInfoView({ model: districtInfoModel });
-
-            this.$el.find("#district-info-container").append(this.districtInfoTable.render().el);
-        }
     },
 
     renderLayerFilter: function (model) {
@@ -123,15 +109,12 @@ const CompareDistrictsView = Backbone.View.extend({
     },
 
     addOneToLayerFilterList: function (model) {
-        // console.log("model: ", model);
 
-        // console.log("model.get(filter): ", model.get("filter"));
         const newItem = { layerId: model.get("layerInfo").layerId, filter: model.get("filter") },
             newList = this.model.get("layerFilterList") === "" ? [] : JSON.parse(this.model.get("layerFilterList"));
 
         newList.push(newItem);
         this.model.set("layerFilterList", JSON.stringify(newList));
-        // console.log("newList: ", newList);
     },
 
     updateLayerFilterList: function (model) {
@@ -145,39 +128,23 @@ const CompareDistrictsView = Backbone.View.extend({
                     layerFilter.filter = model.get("filter");
                 }
             });
-            // this.model.set("layerFilterList", []); // have to reset the field in order to trigger change event
             this.model.set("layerFilterList", JSON.stringify(newList));
-            // console.log("update filterList: ", this.model.get("layerFilterList"));
         }
     },
     setCompareFeatures: function (model, value) {
         if (value !== "") {
             const layerFilterList = JSON.parse(value);
-            // var empty = true;
 
-
-            // _.each(layerFilterList, layerFilter => {
-            //     // console.log("layerFilter.filter: ", layerFilter);
-            //     if (layerFilter.filter !== "") {
-            //         empty = false;
-            //         return null;
-            //     }
-            // });
-            // // console.log("filterNum: ", filterNum);
-
-            // if (!empty) {
             var results = [],
                 intersection = [],
                 comparableFeatures = [],
                 resultNames = [];
 
-            // console.log("layerFilterList: ", value);
 
             _.each(layerFilterList, layerFilter => {
 
                 resultNames.push(this.filterOne(layerFilter).map(feature => feature.getProperties().stadtteil));
                 results.push(this.filterOne(layerFilter));
-                // console.log("results: ", results);
 
             }, this);
             comparableFeatures = results[0];
@@ -197,21 +164,15 @@ const CompareDistrictsView = Backbone.View.extend({
             featureCollection = Radio.request("FeatureLoader", "getFeaturesByLayerId", layerId),
             refFeature = featureCollection.filter(feature => feature.getProperties().stadtteil === refDistrictName)[0],
             filterCollection = JSON.parse(layerFilter.filter);
-        // console.log("refFeature: ", refFeature);
         var filterResults = [],
             intersection = [];
-        // console.log("refDistrictName: ", refDistrictName);
-        // console.log("layerFilter: ", layerFilter);
 
         _.each(Object.keys(filterCollection), filterKey => {
             const tolerance = parseFloat(filterCollection[filterKey]) * 0.01,
                 bounds = this.getBounds(featureCollection, filterKey),
                 selectedFeatures = featureCollection.filter(feature => Math.abs(feature.getProperties()[filterKey] - refFeature.getProperties()[filterKey]) / bounds < tolerance);
-            // console.log("tolerance: ", tolerance);
 
             filterResults.push(selectedFeatures);
-            // console.log("filterResults: ", filterResults[0]);
-            // console.log("filterResults.length: ", filterResults.length);
 
         }, this);
         if (filterResults.length > 1) {

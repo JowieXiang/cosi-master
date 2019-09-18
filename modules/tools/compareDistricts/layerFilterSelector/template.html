@@ -1,7 +1,7 @@
 <!DOCTYPE html>
+<div class="form-group">
 
-<label for="layer-selection">filter layer:</label>
-<div class="col-9">
+    <label for="layer-selection">filter layer:</label>
     <select class="form-control input-sm" id="layer-selection">
         <option disabled selected value> - </option>
         <% _.each( layerOptions, function (layer) { %>
@@ -9,9 +9,5 @@
         <% }); %>
     </select>
 </div>
-<div class="col-auto">
-    <div type="submit" class="btn btn-primary" id="add-filter"><span class="glyphicon glyphicon-plus"></span></div>
-</div>
-<div id="filter-slider-container">
-
-</div>
+<div type="submit" class="btn btn-primary" id="add-filter"><span class="glyphicon glyphicon-plus"></span> Add
+    filter</div>
