@@ -36,12 +36,6 @@ const AgeGroupSliderModel = Tool.extend({
             Radio.trigger("Alert", "alert", "Konfiguration des Werkzeuges: " + this.get("name") + " fehlerhaft. <br>Bitte prüfen Sie folgende LayerIds: " + invalidLayerIds + "!");
         }
 
-        this.listenTo(Radio.channel("Map"), {
-            "isReady": function () {
-                this.checkIfLayermodelExist(this.get("layerIds")[this.get("scope")]);
-            }
-        });
-
         this.listenTo(Radio.channel("Layer"), {
             "featuresLoaded": function (layerId, features) {
                 if (this.getScope() !== "") {

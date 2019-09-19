@@ -1,4 +1,4 @@
-import {Fill, Stroke, Style} from "ol/style.js";
+import { Fill, Stroke, Style } from "ol/style.js";
 import GeometryCollection from "ol/geom/GeometryCollection";
 import Geometry from 'ol/geom/Geometry';
 import Tool from "../core/modelList/tool/model";
@@ -7,14 +7,13 @@ import SnippetDropdownModel from "../snippets/dropdown/model";
 const SelectDistrict = Tool.extend({
     defaults: _.extend({}, Tool.prototype.defaults, {
         selectedDistricts: [],
-        districtLayer: [],
+        districtLayer: [], // e.g. {name: "Stadtteile", selector: "stadtteil"} {name: "Statistische Gebiete", selector: "statgebiet"}
         districtLayerNames: [],
         districtLayersLoaded: [],
         scopeDropdownModel: {},
-        activeScope: "",
-        activeSelector: "",
+        activeScope: "", // e.g. "Stadtteile" or "Statistische Gebiete"
+        activeSelector: "", // e.g. "stadtteil" or "statgebiet"
         deactivateGFI: true,
-        // default ol style http://geoadmin.github.io/ol3/apidoc/ol.style.html
         defaultStyle: new Style({
             fill: new Fill({
                 color: "rgba(255, 255, 255, 0.4)"
@@ -58,7 +57,7 @@ const SelectDistrict = Tool.extend({
                 else {
                     if (this.get("selectedDistricts").length > 0) {
                         Radio.trigger("Map", "zoomToExtent", this.getSelectedGeometries().getExtent());
-                        this.setBboxGeometryToLayer(Radio.request("ModelList", "getCollection"), Radio.request("Parser", "getItemsByAttributes", {typ: "WFS", isBaseLayer: false}));
+                        this.setBboxGeometryToLayer(Radio.request("ModelList", "getCollection"), Radio.request("Parser", "getItemsByAttributes", { typ: "WFS", isBaseLayer: false }));
                     }
                     this.get("channel").trigger("selectionChanged");
                     this.unlisten();
@@ -96,34 +95,30 @@ const SelectDistrict = Tool.extend({
 
     // select districts on click
     select: function (evt) {
-        // check if layer is visible
-        const visibleWFSLayers = Radio.request("ModelList", "getModelsByAttributes", {isVisibleInMap: true, typ: "WFS"}),
-            districtLayer = Radio.request("ModelList", "getModelByAttributes", {"name": this.getScope()});
+        const districtLayer = Radio.request("ModelList", "getModelByAttributes", { "name": this.getScope() }),
+            features = Radio.request("Map", "getFeaturesAtPixel", evt.map.getEventPixel(evt.originalEvent), {
+                layerFilter: function (layer) {
+                    return layer.get("name") === districtLayer.get("name");
+                },
+                hitTolerance: districtLayer.get("hitTolerance")
+            }),
+            isFeatureSelected = this.getSelectedDistricts().find(function (feature) {
+                return feature.getId() === features[0].getId();
+            });
 
-        if (visibleWFSLayers.includes(districtLayer)) {
-            const features = Radio.request("Map", "getFeaturesAtPixel", evt.map.getEventPixel(evt.originalEvent), {
-                    layerFilter: function (layer) {
-                        return layer.get("name") === districtLayer.get("name");
-                    },
-                    hitTolerance: districtLayer.get("hitTolerance")
-                }),
-                isFeatureSelected = this.getSelectedDistricts().find(function (feature) {
-                    return feature.getId() === features[0].getId();
-                });
-
-            if (features) {
-                // if already selected remove district from selectedDistricts
-                if (isFeatureSelected) {
-                    this.removeSelectedDistrict(features[0], this.getSelectedDistricts());
-                    features[0].setStyle(this.get("defaultStyle"));
-                }
-                // push selected district to selectedDistricts
-                else {
-                    this.pushSelectedDistrict(features[0]);
-                    features[0].setStyle(this.get("selectedStyle"));
-                }
+        if (features) {
+            // if already selected remove district from selectedDistricts
+            if (isFeatureSelected) {
+                this.removeSelectedDistrict(features[0], this.getSelectedDistricts());
+                features[0].setStyle(this.get("defaultStyle"));
+            }
+            // push selected district to selectedDistricts
+            else {
+                this.pushSelectedDistrict(features[0]);
+                features[0].setStyle(this.get("selectedStyle"));
             }
         }
+
     },
     pushSelectedDistrict: function (feature) {
         this.set({
@@ -210,7 +205,7 @@ const SelectDistrict = Tool.extend({
     },
     toggleScopeLayers: function () {
         _.each(this.get("districtLayerNames"), (layerName) => {
-            const layer = Radio.request("ModelList", "getModelByAttributes", {"name": layerName});
+            const layer = Radio.request("ModelList", "getModelByAttributes", { "name": layerName });
 
             if (layerName !== this.getScope()) {
                 layer.setIsVisibleInMap(false);
@@ -220,8 +215,8 @@ const SelectDistrict = Tool.extend({
             }
         });
     },
-    checkDistrictLayersLoaded (id) {
-        const name = Radio.request("ModelList", "getModelByAttributes", {"id": id}).get("name");
+    checkDistrictLayersLoaded: function (id) {
+        const name = Radio.request("ModelList", "getModelByAttributes", { "id": id }).get("name");
 
         if (this.get("districtLayerNames").includes(name)) {
             if (!this.get("districtLayersLoaded").includes(name)) {
@@ -251,10 +246,10 @@ const SelectDistrict = Tool.extend({
 
         return new GeometryCollection(geometries);
     },
-    getSelectedStyle () {
+    getSelectedStyle: function () {
         return this.get("selectedStyle");
     },
-    getDeselectedStyle () {
+    getDeselectedStyle: function () {
         return this.get("deselectedStyle");
     }
 });
