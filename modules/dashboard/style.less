@@ -21,6 +21,9 @@
         table {
             th.prop {
                 width: 25%;
+                button.open {
+                    float:right;
+                }
             }
             th, td {
                 &.district {
@@ -61,9 +64,14 @@
         tr {
             &.open {
                 .timeline-table {
-                    li {
-                        display:block !important;
+                    ul {
+                        li {
+                            display:block !important;
+                        }
                     }
+                }
+                button.open {
+                    transform: rotate(180deg);
                 }
             }
             &:hover {

@@ -6,7 +6,7 @@ const DashboardView = Backbone.View.extend({
         "click .close": "close",
         "click .district": "zoomToFeature",
         "click .row": "createChart",
-        "click .timeline-table": "toggleTimelineTable"
+        "click button.open": "toggleTimelineTable"
     },
     initialize: function () {
         this.exportButtonView = new ExportButtonView({model: this.model.get("exportButtonModel")});
@@ -35,8 +35,7 @@ const DashboardView = Backbone.View.extend({
     render: async function () {
         var attr = this.model.toJSON();
 
-        attr.tableView = Radio.request("Timeline", "createTimelineTable", attr.tableView);
-
+        // attr.tableView = Radio.request("Timeline", "createTimelineTable", attr.tableView);
         console.log(attr.tableView);
 
         this.$el.html(this.template(attr));
@@ -86,7 +85,7 @@ const DashboardView = Backbone.View.extend({
         this.$el.find(".dashboard-graph").empty();
     },
     toggleTimelineTable: function (event) {
-        this.$(event.target).parent("tr").toggleClass("open");
+        this.$(event.target).parent(".prop").parent("tr").toggleClass("open");
     },
     close: function () {
         this.model.setIsActive(false);

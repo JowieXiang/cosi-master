@@ -12,7 +12,7 @@ const DashboardModel = Tool.extend({
         tableView: [],
         name: "",
         glyphicon: "",
-        width: "40%",
+        width: "60%",
         exportButtonModel: {},
         scope: "",
         sortKey: "",
@@ -86,17 +86,12 @@ const DashboardModel = Tool.extend({
             layer = Radio.request("ModelList", "getModelByAttributes", {id: layerId});
 
         _.each(features, (feature) => {
-            const properties = feature.getProperties(),
+            let properties = feature.getProperties(),
                 gfiAttr = layer.get("gfiAttributes");
 
             _.each(currentTable, (column, i) => {
                 if (properties[this.get("sortKey")] === column[this.get("sortKey")]) {
-                    for (const key in properties) {
-                        if (!this.getPropertyTree()[this.getScope()].exclude.includes(key) && this.getScope() !== "Stadtteile") {
-                            properties[`${key} - ${layer.get("id")}`] = properties[key];
-                            delete properties[key];
-                        }
-                    }
+                    properties = Radio.request("Timeline", "createTimelineTable", [properties])[0];
                     currentTable[i] = Object.assign(column, properties);
 
                     if (gfiAttr !== "showAll") {
@@ -148,25 +143,60 @@ const DashboardModel = Tool.extend({
             const properties = _.allKeys(table[0]);
 
             _.each(properties, (prop) => {
-                let total = 0;
-
                 if (prop !== this.get("sortKey")) {
-                    _.each(table, (col) => {
 
-                        if (col[this.get("sortKey")] !== "Gesamt" && col[this.get("sortKey")] !== "Durchschnitt") {
-                            if (!isNaN(parseFloat(col[prop])) && prop !== this.get("sortKey")) {
+                    // Check whether values in row are numbers or Arrays of numbers
+                    if (!isNaN(parseFloat(table[0][prop])) && !Array.isArray(table[0][prop])) {
+                        let total = 0;
+
+                        // Add values for all columns
+                        _.each(table, (col) => {
+                            if (col[this.get("sortKey")] !== "Gesamt" && col[this.get("sortKey")] !== "Durchschnitt") {
                                 total += parseFloat(col[prop]);
                             }
-                        }
-                        if (total !== 0) {
-                            if (col[this.get("sortKey")] === "Gesamt") {
-                                col[prop] = total;
+                            if (total !== 0) {
+
+                                // write sum
+                                if (col[this.get("sortKey")] === "Gesamt") {
+                                    col[prop] = total;
+                                }
+
+                                // calculate and write average
+                                if (col[this.get("sortKey")] === "Durchschnitt") {
+                                    col[prop] = total / (table.length - 2);
+                                }
                             }
-                            if (col[this.get("sortKey")] === "Durchschnitt") {
-                                col[prop] = total / (table.length - 2);
+                        });
+                    }
+                    else if (Array.isArray(table[0][prop])) {
+                        const matrixTotal = [],
+                            totalArr = [];
+
+                        // Create Matrix from timeline values
+                        _.each(table, (col) => {
+                            if (col[this.get("sortKey")] !== "Gesamt" && col[this.get("sortKey")] !== "Durchschnitt") {
+                                matrixTotal.push(col[prop]);
                             }
-                        }
-                    });
+                            if (matrixTotal.length > 0) {
+                                // sum up all columns of timeline and calculate average on the fly
+                                if (col[this.get("sortKey")] === "Gesamt") {
+                                    col[prop] = [];
+                                    for (let i = 0; i < matrixTotal[0].length; i++) {
+                                        col[prop].push([matrixTotal[0][i][0], 0]);
+                                        for (let j = 0; j < matrixTotal.length; j++) {
+                                            col[prop][i][1] += parseFloat(matrixTotal[j][i][1]);
+                                        }
+                                        totalArr.push([col[prop][i][0], col[prop][i][1] / (table.length - 2)]);
+                                    }
+                                }
+
+                                // write average
+                                if (col[this.get("sortKey")] === "Durchschnitt") {
+                                    col[prop] = totalArr;
+                                }
+                            }
+                        });
+                    }
                 }
             });
         }

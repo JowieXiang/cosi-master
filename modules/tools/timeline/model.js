@@ -17,7 +17,6 @@ const Timeline = Tool.extend({
     },
     convertTable (inputTable) {
         const timelineTable = inputTable;
-        console.log(inputTable);
 
         timelineTable.forEach((col) => {
             let newPropertyKey;
