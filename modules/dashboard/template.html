@@ -19,10 +19,23 @@
                                                         <% if (prop === sortKey) { %>
                                                                 <th scope="col" style="text-align:right;" class="district"><%= dist[prop] %></th>
                                                         <% } else { %>
-                                                                <% if (!isNaN(parseFloat(dist[prop]))) { %>
-                                                                        <td style="text-align:right;"><%= new Intl.NumberFormat("de-DE").format(dist[prop]) %></td>
+                                                                <% if (Array.isArray(dist[prop])) { %>
+                                                                        <td class="timeline-table">
+                                                                                <ul class="list-group list-group-flush">
+                                                                                <% _.each(dist[prop], (timeVal) =>{ %>
+                                                                                        <li class="list-group-item nowrap">
+                                                                                                <span class="val"><%= timeVal[1] %></span>
+                                                                                                <small>(<%= timeVal[0] %>)</small>
+                                                                                        </li>
+                                                                                <% }); %>
+                                                                                </ul>
+                                                                        </td>
                                                                 <% } else { %>
-                                                                        <td style="text-align:right;"><%= dist[prop] %></td>
+                                                                        <% if (!isNaN(parseFloat(dist[prop]))) { %>
+                                                                                <td style="text-align:right;"><%= new Intl.NumberFormat("de-DE").format(dist[prop]) %></td>
+                                                                        <% } else { %>
+                                                                                <td style="text-align:right;"><%= dist[prop] %></td>
+                                                                        <% } %>
                                                                 <% } %>
                                                         <% } %>
                                                 <% }); %>

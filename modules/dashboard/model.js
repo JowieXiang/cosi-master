@@ -2,6 +2,7 @@ import Tool from "../core/modelList/tool/model";
 import ExportButtonModel from "../snippets/exportButton/model";
 import {TileLayer, VectorLayer} from "ol/layer";
 import VectorSource from "ol/source/Vector";
+import TimelineModel from "../tools/timeline/model";
 
 const DashboardModel = Tool.extend({
     defaults: _.extend({}, Tool.prototype.defaults, {
@@ -11,10 +12,11 @@ const DashboardModel = Tool.extend({
         tableView: [],
         name: "",
         glyphicon: "",
-        width: "60%",
+        width: "40%",
         exportButtonModel: {},
         scope: "",
-        sortKey: ""
+        sortKey: "",
+        timelineModel: new TimelineModel()
     }),
 
     /**
@@ -152,15 +154,17 @@ const DashboardModel = Tool.extend({
                     _.each(table, (col) => {
 
                         if (col[this.get("sortKey")] !== "Gesamt" && col[this.get("sortKey")] !== "Durchschnitt") {
-                            if (!isNaN(parseFloat(col[prop]))) {
+                            if (!isNaN(parseFloat(col[prop])) && prop !== this.get("sortKey")) {
                                 total += parseFloat(col[prop]);
                             }
                         }
-                        if (col[this.get("sortKey")] === "Gesamt") {
-                            col[prop] = total;
-                        }
-                        if (col[this.get("sortKey")] === "Durchschnitt") {
-                            col[prop] = total / table.length;
+                        if (total !== 0) {
+                            if (col[this.get("sortKey")] === "Gesamt") {
+                                col[prop] = total;
+                            }
+                            if (col[this.get("sortKey")] === "Durchschnitt") {
+                                col[prop] = total / (table.length - 2);
+                            }
                         }
                     });
                 }
@@ -243,7 +247,7 @@ const DashboardModel = Tool.extend({
             selector: ".dashboard-graph",
             scaleTypeX: "ordinal",
             scaleTypeY: "linear",
-            data: this.get("tableView"),
+            data: this.get("tableView").filter(col => col[this.get("sortKey")] !== "Gesamt"),
             attrToShowArray: props,
             xAttr: this.get("sortKey"),
             xAxisLabel: this.get("sortKey"),
@@ -254,7 +258,7 @@ const DashboardModel = Tool.extend({
                 right: 20,
                 bottom: 40
             },
-            width: $(window).width() * 0.6,
+            width: $(window).width() * 0.4,
             height: $(window).height() * 0.4,
             svgClass: "dashboard-grapg-svg"
         });

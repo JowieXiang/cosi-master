@@ -53,6 +53,7 @@ import Dashboard from "../../dashboard/model";
 import ColorScale from "../../tools/colorScale/model";
 import WsClientInput from "../../tools/wsClientInput/model";
 import CompareDistricts from "../../tools/compareDistricts/model";
+import Timeline from "../../tools/timeline/model";
 
 const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
     /**
@@ -307,6 +308,9 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
             }
             else if (attrs.id === "colorScale") {
                 return new ColorScale(attrs, options);
+            }
+            else if (attrs.id === "timeline") {
+                return new Timeline(attrs, options);
             }
             else if (attrs.id === "dashboard") {
                 return new Dashboard(attrs, options);

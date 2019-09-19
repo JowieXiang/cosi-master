@@ -5,7 +5,8 @@ const DashboardView = Backbone.View.extend({
     events: {
         "click .close": "close",
         "click .district": "zoomToFeature",
-        "click .row": "createChart"
+        "click .row": "createChart",
+        "click .timeline-table": "toggleTimelineTable"
     },
     initialize: function () {
         this.exportButtonView = new ExportButtonView({model: this.model.get("exportButtonModel")});
@@ -33,6 +34,10 @@ const DashboardView = Backbone.View.extend({
     template: _.template(Template),
     render: async function () {
         var attr = this.model.toJSON();
+
+        attr.tableView = Radio.request("Timeline", "createTimelineTable", attr.tableView);
+
+        console.log(attr.tableView);
 
         this.$el.html(this.template(attr));
         this.$el.find("#export-button").append(this.exportButtonView.render().el);
@@ -63,12 +68,25 @@ const DashboardView = Backbone.View.extend({
             row.addClass("selected");
 
             // Add Header
-            this.$el.find(".basic-graph-header").html(`Diagramm: ${row.find("th.prop").html()}`);
+            let title = row.find("th.prop").html();
+
+            // Check if GFI table available
+            if (this.model.get("tableView")[0].gfi) {
+                // Check if entry for the selected row exists
+                if (this.model.get("tableView")[0].gfi[row.find("th.prop").html()]) {
+                    title = this.model.get("tableView")[0].gfi[row.find("th.prop").html()];
+                }
+            }
+
+            this.$el.find(".basic-graph-header").html(`Diagramm: ${title}`);
         }
     },
     clearChart: function () {
         this.$el.find(".basic-graph-title").html("");
         this.$el.find(".dashboard-graph").empty();
+    },
+    toggleTimelineTable: function (event) {
+        this.$(event.target).parent("tr").toggleClass("open");
     },
     close: function () {
         this.model.setIsActive(false);
