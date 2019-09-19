@@ -2,6 +2,7 @@
 
 <label for="district-selector">Referenzbezirk:</label>
 <select class="form-control input-sm" id="district-selector">
+    <option disabled selected value> - </option>
     <% _.each( districtNames, function (name) { %>
     <option value=<%= name %>><%= name %></option>
     <% }); %>

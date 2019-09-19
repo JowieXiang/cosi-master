@@ -279,7 +279,8 @@
           "isFacility": true,
           "styleId": "12868",
           "topic": "basic",
-          "numericalProperties": false
+          "numericalProperties": false,
+          "alwaysOnTop": true
         },
         {
           "id": "1534",
@@ -291,7 +292,8 @@
           "numericalProperties": [
             "flaeche_qm",
             "flaeche_ha"
-          ]
+          ],
+          "alwaysOnTop": true
         },
         {
           "id": "753",
@@ -300,7 +302,8 @@
           "visibility": false,
           "isFacility": true,
           "topic": "basic",
-          "defaultProperty": "Einrichtungen"
+          "defaultProperty": "Einrichtungen",
+          "alwaysOnTop": true
         }
       ],
       "Ordner": [

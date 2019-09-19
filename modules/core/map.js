@@ -627,7 +627,7 @@ const map = Backbone.Model.extend({
             layer = new VectorLayer({
                 name: name,
                 source: source,
-                alwaysOnTop: true
+                alwaysOnTop: false
             });
 
             resultLayer = layer;
