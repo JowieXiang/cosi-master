@@ -51,16 +51,18 @@ const TimeSeriesView = Backbone.View.extend({
             data: this.model.get("graphData"),
             attrToShowArray: ["jahr_" + value],
             xAttr: "stat_gebiet",
-            xAxisLabel: "stat_gebiet",
+            xAxisLabel: {
+                "rotate": 45
+            },
             yAxisLabel: "jahr_" + value,
             margin: {
-                left: 40,
-                top: 25,
+                left: 60,
+                top: 20,
                 right: 20,
                 bottom: 40
             },
-            width: 300,
-            height: $(window).height() * 0.15,
+            width: document.getElementsByClassName("sidebar")[0].offsetWidth - 20,
+            height: document.getElementsByClassName("sidebar")[0].offsetHeight - (document.getElementsByClassName("sidebar")[0].offsetHeight * 0.75),
             svgClass: "dashboard-grapg-svg"
         });
     }
