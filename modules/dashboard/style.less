@@ -23,6 +23,22 @@
                 width: 25%;
                 button.open {
                     float:right;
+                    padding: 12px;
+                    position: relative;
+                    background-color: transparent;
+                    border: 1px solid lightgrey;
+                    border-radius: 4px;
+                    span {
+                        border-right: 1px solid lightgrey;
+                        border-bottom: 1px solid lightgrey;
+                        width: 9px;
+                        height: 9px;
+                        position: absolute;
+                        top: 5px;
+                        left: 8px;
+                        transform: rotate(45deg);
+                        pointer-events: none;
+                    }
                 }
             }
             th, td {
@@ -55,7 +71,7 @@
                         &:hover {
                         }
                         small {
-                            columns: #90c6f5;;
+                            color: #90c6f5;
                         }
                     }
                 }
