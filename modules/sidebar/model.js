@@ -26,7 +26,8 @@ const SidebarModel = Backbone.Model.extend(/** @lends SidebarModel.prototype */{
 
         this.listenTo(channel, {
             "toggle": this.toggle,
-            "append": this.addContent
+            "append": this.addContent,
+            "resize": this.resize
         });
         this.listenTo(Radio.channel("Util"), {
             "isViewMobileChanged": this.setIsMobile
@@ -78,6 +79,18 @@ const SidebarModel = Backbone.Model.extend(/** @lends SidebarModel.prototype */{
      */
     setWidth: function (value) {
         this.set("width", value);
+    },
+    /**
+     * @description resizes the open window
+     * @param {*} width the new width
+     * @return {void}
+     */
+    resize: function (width) {
+        if (width !== undefined) {
+            this.setWidth(width);
+        }
+
+        this.trigger("resize");
     }
 });
 

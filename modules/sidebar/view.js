@@ -18,7 +18,10 @@ const SidebarView = Backbone.View.extend(/** @lends SidebarView.prototype */{
         this.listenTo(this.model, {
             "change:isVisible": this.toggle,
             "change:isMobile": this.toggleClass,
-            "addContent": this.addContent
+            "addContent": this.addContent,
+            "resize": function () {
+                this.toggle(true);
+            }
         });
         $("#map").after(this.$el);
     },
@@ -48,7 +51,7 @@ const SidebarView = Backbone.View.extend(/** @lends SidebarView.prototype */{
      * @return {void}
      * @fires Map#RadioTriggerMapUpdateSize
      */
-    toggle: function (model, isVisible) {
+    toggle: function (isVisible) {
         if (isVisible) {
             this.$el.css("width", this.model.get("width"));
             this.$el.show();
@@ -57,7 +60,7 @@ const SidebarView = Backbone.View.extend(/** @lends SidebarView.prototype */{
             this.$el.hide();
         }
         this.toggleBackdrop(this.model.get("isMobile"), isVisible);
-        this.setMapWidth(this.model.get("isMobile"), isVisible, model.get("width"));
+        this.setMapWidth(this.model.get("isMobile"), isVisible, this.model.get("width"));
         Radio.trigger("Map", "updateSize");
     },
 
@@ -72,7 +75,6 @@ const SidebarView = Backbone.View.extend(/** @lends SidebarView.prototype */{
         this.toggleBackdrop(isMobile, this.model.get("isVisible"));
         this.setMapWidth(isMobile, this.model.get("isVisible"));
     },
-
     /**
      * Sets the width of the map
      * @param {boolean} isMobile Flag if the portal is in mobile mode.
@@ -82,7 +84,7 @@ const SidebarView = Backbone.View.extend(/** @lends SidebarView.prototype */{
      */
     setMapWidth: function (isMobile, isVisible, width) {
         if (!isMobile && isVisible) {
-            const diffToHundret = 100 - parseInt(width.substring(0, width.length - 1), 10);
+            const diffToHundret = 100 - parseFloat(width.substring(0, width.length - 1));
 
             $("#map").css("width", diffToHundret + "%");
         }

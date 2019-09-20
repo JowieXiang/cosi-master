@@ -6,7 +6,8 @@ const DashboardView = Backbone.View.extend({
         "click .close": "close",
         "click .district": "zoomToFeature",
         "click .row": "createChart",
-        "click button.open": "toggleTimelineTable"
+        "click button.open": "toggleTimelineTable",
+        "mousedown .drag-bar": "dragStart"
     },
     initialize: function () {
         this.exportButtonView = new ExportButtonView({model: this.model.get("exportButtonModel")});
@@ -26,17 +27,23 @@ const DashboardView = Backbone.View.extend({
         if (this.model.get("isActive") === true) {
             this.render();
         }
+
+        window.addEventListener("mouseup", () => {
+            this.dragEnd();
+        });
+        window.addEventListener("mousemove", (event) => {
+            this.dragMove(event);
+        });
     },
     id: "dashboard-view",
     className: "dashboard",
     model: {},
     exportButtonView: {},
     template: _.template(Template),
+    isDragging: false,
+    startX: 0,
     render: async function () {
         var attr = this.model.toJSON();
-
-        // attr.tableView = Radio.request("Timeline", "createTimelineTable", attr.tableView);
-        console.log(attr.tableView);
 
         this.$el.html(this.template(attr));
         this.$el.find("#export-button").append(this.exportButtonView.render().el);
@@ -90,6 +97,21 @@ const DashboardView = Backbone.View.extend({
     close: function () {
         this.model.setIsActive(false);
         Radio.trigger("ModelList", "toggleDefaultTool");
+    },
+    dragStart: function () {
+        this.isDragging = true;
+        this.$el.find(".drag-bar").addClass("dragging");
+    },
+    dragMove: function (event) {
+        if (this.isDragging) {
+            const newWidth = (((window.innerWidth - event.clientX) / window.innerWidth) * 100).toFixed(2) + "%";
+
+            Radio.trigger("Sidebar", "resize", newWidth);
+        }
+    },
+    dragEnd: function () {
+        this.isDragging = false;
+        this.$el.find(".drag-bar").removeClass("dragging");
     }
 });
 
