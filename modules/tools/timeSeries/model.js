@@ -14,6 +14,7 @@ const TimeSeriesModel = Tool.extend({
         this.listenToOnce(this, {
             "change:isActive": function () {
                 this.setLayerList(this.get("layerIds"));
+                this.trigger("render");
                 this.setDropDownModel(this.get("layerList"));
                 this.setSelectedLayer(this.get("layerList").at(0));
                 Radio.trigger("ModelList", "setModelAttributesById", this.get("layerList").at(0), {isSelected: true});
@@ -27,6 +28,7 @@ const TimeSeriesModel = Tool.extend({
 
         if (this.get("isActive")) {
             this.setLayerList(this.get("layerIds"));
+            this.trigger("render");
             this.setDropDownModel(this.get("layerList"));
             this.setSelectedLayer(this.get("layerList")[0].at(0));
             // auch gleich features selecten??s
@@ -62,19 +64,19 @@ const TimeSeriesModel = Tool.extend({
      * @returns {void}
      */
     setDropDownModel: function (layerList) {
-        this.set("dropdownModel", new DropdownModel({
+        const dropdownModel = new DropdownModel({
             name: "Thema",
             type: "string",
             values: layerList.pluck("name"),
             snippetType: "dropdown",
             isMultiple: false,
             preselectedValues: layerList.pluck("name")[0]
-        }));
+        });
 
-
-        this.listenTo(this.get("dropdownModel"), {
+        this.listenTo(dropdownModel, {
             "valuesChanged": this.dropDownCallback
         }, this);
+        this.trigger("renderDropDownView", dropdownModel);
     },
 
     /**
@@ -104,21 +106,20 @@ const TimeSeriesModel = Tool.extend({
         const features = layer.get("layer").getSource().getFeatures();
 
         if (features.length > 0) {
-            const values = this.getSliderValues(features[0], this.get("attribute_prefix"));
+            const values = this.getSliderValues(features[0], this.get("attribute_prefix")),
+                sliderModel = new SliderModel({
+                    snippetType: "slider",
+                    values: values,
+                    type: "integer",
+                    preselectedValues: values[1]
+                });
 
-            this.set("sliderModel", new SliderModel({
-                snippetType: "slider",
-                values: values,
-                type: "integer",
-                preselectedValues: values[1]
-            }));
-
-
-            this.listenTo(this.get("sliderModel"), {
+            this.listenTo(sliderModel, {
                 "valuesChanged": this.sliderCallback
             }, this);
 
             this.sliderCallback(undefined, values[1]);
+            this.trigger("renderSliderView", sliderModel);
         }
     },
 
@@ -151,7 +152,7 @@ const TimeSeriesModel = Tool.extend({
         });
         this.set("graphData", graphData);
         this.set("value", value);
-        this.trigger("renderSlider", value);
+        this.trigger("createGraph", value);
     },
 
     /**

@@ -4,32 +4,17 @@ import SnippetSliderView from "../../snippets/slider/view";
 
 const TimeSeriesView = Backbone.View.extend({
     initialize: function () {
-        this.listenToOnce(this.model, {
-            "change:isActive": function () {
-                this.scopeDropdownView = new SnippetDropdownView({model: this.model.get("dropdownModel")});
-            }
-        });
-
         this.listenTo(this.model, {
-            "change:isActive": function () {
-                this.render();
-                this.renderSlider(this.model.get("value"));
-            },
-            "renderSlider": this.renderSlider
+            "render": this.render,
+            "renderDropDownView": this.renderDropDownView,
+            "renderSliderView": this.renderSliderView,
+            "createGraph": this.createGraph
         });
-
-        if (this.model.get("isActive") === true) {
-            this.scopeDropdownView = new SnippetDropdownView({model: this.model.get("dropdownModel")});
-            this.render();
-        }
     },
     id: "time-series",
     template: _.template(Template),
     render: function () {
-        var attr = this.model.toJSON();
-
-        this.$el.html(this.template(attr));
-        this.$el.find(".dropdown").append(this.scopeDropdownView.render().el);
+        this.$el.html(this.template());
         Radio.trigger("Sidebar", "append", this.el);
         Radio.trigger("Sidebar", "toggle", true);
         this.delegateEvents();
@@ -37,12 +22,26 @@ const TimeSeriesView = Backbone.View.extend({
         return this;
     },
 
-    renderSlider: function (value) {
-        this.$el.find(".dashboard-graph").empty();
-        const sliderView = new SnippetSliderView({model: this.model.get("sliderModel")});
+    renderDropDownView: function (dropdownModel) {
+        const dropdownView = new SnippetDropdownView({model: dropdownModel});
+
+        this.$el.find(".dropdown").append(dropdownView.render().el);
+    },
+
+    renderSliderView: function (sliderModel) {
+        const sliderView = new SnippetSliderView({model: sliderModel});
 
         this.$el.find(".slider-container").remove();
-        this.$el.append(sliderView.render().$el);
+        this.$el.find(".slider").prepend(sliderView.render().$el);
+    },
+
+    createGraph: function (value) {
+        console.info(value);
+        this.$el.find(".dashboard-graph").empty();
+        // const sliderView = new SnippetSliderView({model: this.model.get("sliderModel")});
+
+        // this.$el.find(".slider-container").remove();
+        // this.$el.append(sliderView.render().$el);
         Radio.trigger("Graph", "createGraph", {
             graphType: "BarGraph",
             selector: ".dashboard-graph",
