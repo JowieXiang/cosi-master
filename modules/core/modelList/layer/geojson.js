@@ -84,12 +84,13 @@ const GeoJSONLayer = Layer.extend(/** @lends GeoJSONLayer.prototype */{
             altitudeMode: "clampToGround",
             hitTolerance: this.get("hitTolerance")
         }));
-
-        if (_.isUndefined(this.get("geojson"))) {
-            this.updateSource();
-        }
-        else {
-            this.handleData(this.get("geojson"), Radio.request("MapView", "getProjection").getCode());
+        if (this.get("isSelected")) {
+            if (_.isUndefined(this.get("geojson"))) {
+                this.updateSource();
+            }
+            else {
+                this.handleData(this.get("geojson"), Radio.request("MapView", "getProjection").getCode());
+            }
         }
     },
 
@@ -223,7 +224,9 @@ const GeoJSONLayer = Layer.extend(/** @lends GeoJSONLayer.prototype */{
 
             feature.setId(id);
         });
-
+        console.info(this.get("bboxGeometry"));
+        features = this.getFeaturesIntersectsGeometry(this.get("bboxGeometry"), features);
+        console.info(features.length);
         this.get("layerSource").clear(true);
         this.get("layerSource").addFeatures(features);
         this.get("layer").setStyle(this.get("styleFunction"));
@@ -242,6 +245,23 @@ const GeoJSONLayer = Layer.extend(/** @lends GeoJSONLayer.prototype */{
         }
 
         this.featuresLoaded(features);
+    },
+
+    /**
+     * returns the features that intersect the given geometries
+     * @param {ol.geom.Geometry[]} geometries - GeometryCollection with one or more geometry
+     * @param {ol.Feature[]} features - all features in the geometry extent
+     * @returns {ol.Feature[]} filtered features
+     */
+    getFeaturesIntersectsGeometry: function (geometries, features) {
+        if (geometries) {
+            return features.filter(function (feature) {
+                // test if the geometry and the passed extent intersect
+                return geometries.intersectsExtent(feature.getGeometry().getExtent());
+            });
+        }
+
+        return features;
     },
 
     /**

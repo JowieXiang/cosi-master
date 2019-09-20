@@ -43,6 +43,7 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             this.createLineGraph(graphConfig);
         }
         else if (graphConfig.graphType === "BarGraph") {
+            console.info(graphConfig);
             this.createBarGraph(graphConfig);
         }
     },
@@ -313,6 +314,7 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             label = _.isUndefined(xAxisLabel.label) ? null : [xAxisLabel.label],
             xAxisDraw = xAxis;
 
+console.info(width);
         xAxisDraw = svg.select(".graph-data").selectAll("yAxisDraw")
             .data([1]) // setze ein Dummy-Array mit Länge 1 damit genau einmal die Achse appended wird
             .enter()

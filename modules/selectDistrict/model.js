@@ -59,7 +59,9 @@ const SelectDistrict = Tool.extend({
                 else {
                     if (this.get("selectedDistricts").length > 0) {
                         Radio.trigger("Map", "zoomToExtent", this.getSelectedGeometries().getExtent());
-                        this.setBboxGeometryToLayer(Radio.request("ModelList", "getCollection"), Radio.request("Parser", "getItemsByAttributes", {typ: "WFS", isBaseLayer: false}));
+                        const layerlist = _.union(Radio.request("Parser", "getItemsByAttributes", {typ: "WFS", isBaseLayer: false}), Radio.request("Parser", "getItemsByAttributes", {typ: "GeoJSON", isBaseLayer: false}));
+
+                        this.setBboxGeometryToLayer(Radio.request("ModelList", "getCollection"), layerlist);
                     }
                     this.get("channel").trigger("selectionChanged");
                     this.unlisten();
@@ -174,6 +176,8 @@ const SelectDistrict = Tool.extend({
      * @returns {void}
      */
     setBboxGeometryToLayer: function (modelList, itemList) {
+        console.info(modelList);
+        console.info(itemList);
         itemList.forEach(function (item) {
             const model = modelList.get(item.id);
 

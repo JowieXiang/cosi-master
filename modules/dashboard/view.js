@@ -1,5 +1,5 @@
 import Template from "text-loader!./template.html";
-import ExportButtonView from "../snippets/exportButton/view";
+// import ExportButtonView from "../snippets/exportButton/view";
 
 const DashboardView = Backbone.View.extend({
     events: {
@@ -8,7 +8,7 @@ const DashboardView = Backbone.View.extend({
         "click .row": "createChart"
     },
     initialize: function () {
-        this.exportButtonView = new ExportButtonView({model: this.model.get("exportButtonModel")});
+        // this.exportButtonView = new ExportButtonView({model: this.model.get("exportButtonModel")});
 
         this.listenTo(this.model, {
             "change:isActive": function (model, isActive) {
@@ -35,7 +35,7 @@ const DashboardView = Backbone.View.extend({
         var attr = this.model.toJSON();
 
         this.$el.html(this.template(attr));
-        this.$el.find("#export-button").append(this.exportButtonView.render().el);
+        // this.$el.find("#export-button").append(this.exportButtonView.render().el);
 
         Radio.trigger("Sidebar", "append", this.$el);
         Radio.trigger("Sidebar", "toggle", true, this.model.get("width"));

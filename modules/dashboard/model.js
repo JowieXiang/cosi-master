@@ -1,5 +1,5 @@
 import Tool from "../core/modelList/tool/model";
-import ExportButtonModel from "../snippets/exportButton/model";
+// import ExportButtonModel from "../snippets/exportButton/model";
 import {TileLayer, VectorLayer} from "ol/layer";
 import VectorSource from "ol/source/Vector";
 
@@ -30,12 +30,12 @@ const DashboardModel = Tool.extend({
 
         this.superInitialize();
 
-        this.set("exportButtonModel", new ExportButtonModel({
-            tag: "Als CSV herunterladen",
-            rawData: this.get("tableView"),
-            filename: "CoSI-Dashboard-Export",
-            fileExtension: "csv"
-        }));
+        // this.set("exportButtonModel", new ExportButtonModel({
+        //     tag: "Als CSV herunterladen",
+        //     rawData: this.get("tableView"),
+        //     filename: "CoSI-Dashboard-Export",
+        //     fileExtension: "csv"
+        // }));
 
         this.listenTo(Radio.channel("SelectDistrict"), {
             "districtSelectionChanged": function (selectedDistricts) {
@@ -65,11 +65,12 @@ const DashboardModel = Tool.extend({
                 }
             });
         });
+        console.info(this.filterTable(currentTable));
         this.set("tableView", this.filterTable(currentTable));
 
         // Update Export Link
-        this.get("exportButtonModel").set("rawData", this.get("tableView"));
-        this.get("exportButtonModel").prepareForExport();
+        // this.get("exportButtonModel").set("rawData", this.get("tableView"));
+        // this.get("exportButtonModel").prepareForExport();
     },
     filterTable: function (table) {
         _.each(table, (col) => {
