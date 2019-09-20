@@ -71,7 +71,7 @@ import PieView from "../modules/charting/chartRenderer/pie/view";
 import BarView from "../modules/charting/chartRenderer/bar-line/view";
 import ChartUtil from "../modules/charting/chartRenderer/util/util";
 import DashboardView from "../modules/dashboard/view";
-import WsClientInputView from "../modules/tools/wsClientInput/view";
+// import WsClientInputView from "../modules/tools/wsClientInput/view";
 import CompareDistrictsView from "../modules/tools/compareDistricts/view";
 import FeatureLoaderModel from "../modules/featureLoader/model";
 
@@ -340,10 +340,10 @@ function loadApp() {
                 new AgeGroupSliderView({ model: tool });
                 break;
             }
-            case "wsClientInput": {
-                new WsClientInputView({ model: tool });
-                break;
-            }
+            // case "wsClientInput": {
+            //     new WsClientInputView({ model: tool });
+            //     break;
+            // }
             case "compareDistricts": {
                 new CompareDistrictsView({ model: tool });
                 break;
