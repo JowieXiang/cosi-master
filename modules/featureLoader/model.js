@@ -25,6 +25,10 @@ const FeatureLoaderModel = Backbone.Model.extend({
                         stadtteil = stadtteil.replace(/\s+/g, "");
                         feature.set("stadtteil", stadtteil);
                     }
+                    // move "stat_gebiet" value to "statgebiet" for gebiet features
+                    if (_.contains(Object.keys(feature.getProperties()), "stat_gebiet")) {
+                        feature.set("statgebiet", feature.getProperties().stat_gebiet);
+                    }
                 }, this);
                 if (this.get("featureCollections").length > 0) {
                     currentLayerIds = this.get("featureCollections").map(collection => collection.layerId);

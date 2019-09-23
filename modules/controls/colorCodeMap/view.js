@@ -1,6 +1,5 @@
 import template from "text-loader!./template.html";
 import LayerList from "./layer/list";
-import ColorCodeMapModel from "./model";
 import VectorSource from "ol/source/Vector";
 import { Fill, Stroke, Style } from "ol/style.js";
 import * as Chromatic from "d3-scale-chromatic";
@@ -26,9 +25,6 @@ const ColorCodeMapView = Backbone.View.extend({
             chromaticScheme: Chromatic.interpolateBlues,
             opacity: 0.8
         };
-        // this.listenTo(this.layerList, {
-        //     "add": this.addOption
-        // });
         this.listenTo(this.layerList, {
             "add": this.createColorCodeLayer
         });
@@ -40,7 +36,6 @@ const ColorCodeMapView = Backbone.View.extend({
             }
         });
     },
-    // model: new ColorCodeMapModel(),
     template: _.template(template),
     render: function () {
         this.$el.html(this.template());
@@ -74,7 +69,6 @@ const ColorCodeMapView = Backbone.View.extend({
             activeLayer.setVisible(true);
         }
     },
-    //  hide all color-code layers
     setAllColorCodeLayerInvisible: function () {
         this.layerList.forEach(layer => {
             if (Radio.request("Map", "getLayerByName", layer.get("layerId") + "_colorcoded")) {
@@ -96,10 +90,9 @@ const ColorCodeMapView = Backbone.View.extend({
     },
     setColorLayerFeatures: function () {
         const scope = Radio.request("SelectDistrict", "getScope"),
-            // Workaround for inconsistent naming of "Statistische Gebiete"-selector
             layerGroup = Radio.request("SelectDistrict", "getDistrictLayer").filter(item => item.name === scope)[0],
             layerIds = layerGroup.layerIds,
-            selector = Radio.request("SelectDistrict", "getSelector") === "statgebiet" ? "stat_gebiet" : Radio.request("SelectDistrict", "getSelector"),
+            selector = Radio.request("SelectDistrict", "getSelector"),
             districtNames = Radio.request("SelectDistrict", "getSelectedDistricts").map(feature => feature.getProperties()[selector]);
 
         _.each(layerIds, id => {
@@ -115,6 +108,7 @@ const ColorCodeMapView = Backbone.View.extend({
 
                 let propSelector = field;
 
+                // eslint-disable-next-line one-var
                 const values = selectedFeatures.map((feature) => {
                     const props = feature.getProperties();
                     let val;
@@ -148,8 +142,6 @@ const ColorCodeMapView = Backbone.View.extend({
                         })
                     }));
                 });
-                console.log("newFeatures: ", newFeatures);
-
                 colorCodeLayer.getSource().addFeatures(newFeatures);
                 colorCodeLayer.setOpacity(this.style.opacity);
             }

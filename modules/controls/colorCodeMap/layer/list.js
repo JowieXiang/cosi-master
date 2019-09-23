@@ -4,7 +4,7 @@ var LayerList = Backbone.Collection.extend({
     model: LayerModel,
     initialize: function () {
         this.listenTo(Radio.channel("FeatureLoader"), {
-            "addFeatureCollection": function (Id) {
+            "addFeatureCollection": function (Id, features) {
                 const districtLayer = Radio.request("SelectDistrict", "getDistrictLayer");
 
                 _.each(districtLayer, layerGroup => {
@@ -19,7 +19,7 @@ var LayerList = Backbone.Collection.extend({
                                 layerId: layerId,
                                 layerModel: layerModel
                             });
-                        console.log("layer added: ", newLayer);
+                        // console.log("layer added: ", Id);
 
                         this.add(newLayer);
                     }
