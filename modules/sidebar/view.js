@@ -20,7 +20,7 @@ const SidebarView = Backbone.View.extend(/** @lends SidebarView.prototype */{
             "change:isMobile": this.toggleClass,
             "addContent": this.addContent,
             "resize": function () {
-                this.toggle(true);
+                this.toggle(this.model, true);
             }
         });
         $("#map").after(this.$el);
@@ -60,7 +60,7 @@ const SidebarView = Backbone.View.extend(/** @lends SidebarView.prototype */{
             this.$el.hide();
         }
         this.toggleBackdrop(this.model.get("isMobile"), isVisible);
-        this.setMapWidth(this.model.get("isMobile"), isVisible, this.model.get("width"));
+        this.setMapWidth(this.model.get("isMobile"), isVisible, model.get("width"));
         Radio.trigger("Map", "updateSize");
     },
 
