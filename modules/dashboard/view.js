@@ -1,15 +1,16 @@
 import Template from "text-loader!./template.html";
-import ExportButtonView from "../snippets/exportButton/view";
+// import ExportButtonView from "../snippets/exportButton/view";
 
 const DashboardView = Backbone.View.extend({
     events: {
         "click .close": "close",
         "click .district": "zoomToFeature",
         "click .row": "createChart",
-        "click .timeline-table": "toggleTimelineTable"
+        "click button.open": "toggleTimelineTable",
+        "mousedown .drag-bar": "dragStart"
     },
     initialize: function () {
-        this.exportButtonView = new ExportButtonView({model: this.model.get("exportButtonModel")});
+        // this.exportButtonView = new ExportButtonView({model: this.model.get("exportButtonModel")});
 
         this.listenTo(this.model, {
             "change:isActive": function (model, isActive) {
@@ -26,21 +27,26 @@ const DashboardView = Backbone.View.extend({
         if (this.model.get("isActive") === true) {
             this.render();
         }
+
+        window.addEventListener("mouseup", () => {
+            this.dragEnd();
+        });
+        window.addEventListener("mousemove", (event) => {
+            this.dragMove(event);
+        });
     },
     id: "dashboard-view",
     className: "dashboard",
     model: {},
     exportButtonView: {},
     template: _.template(Template),
+    isDragging: false,
+    startX: 0,
     render: async function () {
         var attr = this.model.toJSON();
 
-        attr.tableView = Radio.request("Timeline", "createTimelineTable", attr.tableView);
-
-        console.log(attr.tableView);
-
         this.$el.html(this.template(attr));
-        this.$el.find("#export-button").append(this.exportButtonView.render().el);
+        // this.$el.find("#export-button").append(this.exportButtonView.render().el);
 
         Radio.trigger("Sidebar", "append", this.$el);
         Radio.trigger("Sidebar", "toggle", true, this.model.get("width"));
@@ -86,11 +92,26 @@ const DashboardView = Backbone.View.extend({
         this.$el.find(".dashboard-graph").empty();
     },
     toggleTimelineTable: function (event) {
-        this.$(event.target).parent("tr").toggleClass("open");
+        this.$(event.target).parent(".prop").parent("tr").toggleClass("open");
     },
     close: function () {
         this.model.setIsActive(false);
         Radio.trigger("ModelList", "toggleDefaultTool");
+    },
+    dragStart: function () {
+        this.isDragging = true;
+        this.$el.find(".drag-bar").addClass("dragging");
+    },
+    dragMove: function (event) {
+        if (this.isDragging) {
+            const newWidth = (((window.innerWidth - event.clientX) / window.innerWidth) * 100).toFixed(2) + "%";
+
+            Radio.trigger("Sidebar", "resize", newWidth);
+        }
+    },
+    dragEnd: function () {
+        this.isDragging = false;
+        this.$el.find(".drag-bar").removeClass("dragging");
     }
 });
 

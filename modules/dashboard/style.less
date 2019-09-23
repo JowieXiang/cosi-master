@@ -3,7 +3,26 @@
 @background_color_1: rgba(0, 0, 0,.5);
 
 /*SimpleView*/
+.drag-bar {
+    display: inline-block;
+    height: calc(100vh - 50px);
+    line-height: calc(100vh - 50px);
+    vertical-align: top;
+    width:10px;
+    text-align: center;
+    font-size: 24px;
+    border-right: 1px solid #fafafa;
+    cursor: grab;
+    &:hover {
+        background: rgb(250, 250, 250);
+    }
+    &.dragging {
+        cursor:grabbing;
+    }
+}
 .dashboard {
+    display:inline-block;
+    width:calc(100% - 15px);
     .header {
         width: 100%;
         border-bottom: 1px solid rgb(229,229,229);
@@ -21,6 +40,25 @@
         table {
             th.prop {
                 width: 25%;
+                button.open {
+                    float:right;
+                    padding: 12px;
+                    position: relative;
+                    background-color: transparent;
+                    border: 1px solid lightgrey;
+                    border-radius: 4px;
+                    span {
+                        border-right: 1px solid lightgrey;
+                        border-bottom: 1px solid lightgrey;
+                        width: 9px;
+                        height: 9px;
+                        position: absolute;
+                        top: 5px;
+                        left: 8px;
+                        transform: rotate(45deg);
+                        pointer-events: none;
+                    }
+                }
             }
             th, td {
                 &.district {
@@ -52,7 +90,7 @@
                         &:hover {
                         }
                         small {
-                            columns: #90c6f5;;
+                            color: #90c6f5;
                         }
                     }
                 }
@@ -61,9 +99,14 @@
         tr {
             &.open {
                 .timeline-table {
-                    li {
-                        display:block !important;
+                    ul {
+                        li {
+                            display:block !important;
+                        }
                     }
+                }
+                button.open {
+                    transform: rotate(180deg);
                 }
             }
             &:hover {

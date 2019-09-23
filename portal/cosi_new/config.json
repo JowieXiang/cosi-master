@@ -20,6 +20,37 @@
       },
       "tree": {
         "minChars": 3
+      },
+      "visibleWFS":
+      {
+        "minChars": 3
+      },
+      "specialWFS":
+      {
+        "minChars": 3,
+        "timeout": 10000,
+        "definitions": [
+          {
+            "url": "/geodienste_hamburg_de/MRH_WFS_Rotenburg",
+            "typeName": "app:mrh_row_bplan",
+            "propertyNames": ["app:name"],
+            "name": "B-Plan"
+          },
+          {
+            "url": "/geodienste_hamburg_de/HH_WFS_Bebauungsplaene",
+            "typeName": "app:hh_hh_festgestellt",
+            "propertyNames": ["app:geltendes_planrecht"],
+            "geometryName": "app:geom",
+            "name": "festgestellt"
+          },
+          {
+            "url": "/geodienste_hamburg_de/HH_WFS_Bebauungsplaene",
+            "typeName": "app:prosin_imverfahren",
+            "propertyNames": ["app:plan"],
+            "geometryName": "app:the_geom",
+            "name": "im Verfahren"
+          }
+        ]
       }
     },
     "mapView": {
@@ -102,6 +133,11 @@
         "name": "Werkzeuge",
         "glyphicon": "glyphicon-wrench",
         "children": {
+          "timeSeries": {
+            "name": "Zeitreihen anzeigen",
+            "glyphicon": "glyphicon-time",
+            "layerIds": ["bev_gesamt", "bev_maennlich", "bev_weiblich"]
+          },
           "measure": {
             "name": "Strecke / Fläche messen",
             "glyphicon": "icon-measuredistance"
@@ -174,19 +210,6 @@
     "Hintergrundkarten": {
       "Layer": [
         {
-          "id": "grossborstel",
-          "styleId": "grossborstel",
-          "topic": "basic",
-          "visibility": true,
-          "isVisibleInTree": false,
-          "gfiAttributes": "ignore"
-        },
-        {
-          "id": "sozialmonitoring",
-          "styleId": "sozialmonitoring",
-          "topic": "basic"
-        },
-        {
           "id": "94",
           "name": "Luftbilder DOP 20",
           "topic": "basic"
@@ -221,41 +244,10 @@
     "Fachdaten": {
       "Layer": [
         {
-          "id": "7484",
-          "name": "Gehzeit zur nächsten Kita",
-          "topic": "kitas"
-        },
-        {
-          "id": "apotheken",
-          "styleId": "apotheken",
-          "topic": "basic",
-          "isDefaultVisible": true,
-          "isFacility": true
-        },
-        {
-          "id": "supermaerkte",
-          "styleId": "supermaerkte",
-          "topic": "basic",
-          "isDefaultVisible": true,
-          "isFacility": true
-        },
-        {
-          "id": "7567",
-          "name": "Gehzeit zur nächsten Apotheke",
-          "topic": "nahversorgung"
-        },
-        {
-          "id": "5722",
-          "name": "Gehzeit zum nächsten Supermarkt",
-          "topic": "nahversorgung"
-        },
-        {
           "id": "12868",
           "name": "Sportstätten",
           "visibility": false,
-          "mouseHoverField": [
-            "aerz_prz"
-          ],
+          "searchField": ["name", "typ_zusammen"],
           "isFacility": true,
           "styleId": "12868",
           "topic": "basic",
@@ -273,7 +265,8 @@
             "flaeche_qm",
             "flaeche_ha"
           ],
-          "alwaysOnTop": true
+          "alwaysOnTop": true,
+          "searchField": ["anlagenname", "eigentum", "gruenart"]
         },
         {
           "id": "753",
@@ -283,7 +276,8 @@
           "isFacility": true,
           "topic": "basic",
           "defaultProperty": "Einrichtungen",
-          "alwaysOnTop": true
+          "alwaysOnTop": true,
+          "searchField": ["Traeger", "Leistungsarten", "Name"]
         }
       ],
       "Ordner": [

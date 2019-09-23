@@ -48,10 +48,11 @@ import LayerSliderModel from "../../tools/layerSlider/model";
 import AgeGroupSliderModel from "../../tools/ageGroupSlider/model";
 import GFI from "../../tools/gfi/model";
 import Viewpoint from "./viewpoint/model";
+import TimeSeries from "../../tools/timeSeries/model";
 import CalcuateRatio from "../../tools/calculateRatio/model";
 import Dashboard from "../../dashboard/model";
 import ColorScale from "../../tools/colorScale/model";
-import WsClientInput from "../../tools/wsClientInput/model";
+// import WsClientInput from "../../tools/wsClientInput/model";
 import CompareDistricts from "../../tools/compareDistricts/model";
 import Timeline from "../../tools/timeline/model";
 
@@ -303,6 +304,9 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
             else if (attrs.id === "formular") {
                 return new Formular(attrs, options);
             }
+            else if (attrs.id === "timeSeries") {
+                return new TimeSeries(attrs, options);
+            }
             else if (attrs.id === "calculateRatio") {
                 return new CalcuateRatio(attrs, options);
             }
@@ -332,9 +336,9 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
             else if (attrs.id === "selectDistrict") {
                 return new SelectDistrict(attrs, options);
             }
-            else if (attrs.id === "wsClientInput") {
-                return new WsClientInput(attrs, options);
-            }
+            // else if (attrs.id === "wsClientInput") {
+            //     return new WsClientInput(attrs, options);
+            // }
             else if (attrs.id === "compareDistricts") {
                 return new CompareDistricts(attrs, options);
             }

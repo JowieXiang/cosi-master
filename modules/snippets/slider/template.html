@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<% if (displayName) { %>
 <form class="form-inline">
     <div class= "title-values pull-left">
         <div class="form-group form-group-sm">
@@ -18,8 +19,9 @@
     </div>
     <% } %>
 </form>
+<% } %>
 </div>
-<input class="slider" type="text" data-slider-tooltip="hide" />
+<input class="slider" type="text" />
 <% if (!_.isUndefined(this.model.get("infoText"))) { %>
     <div class="info-text"><%= infoText %></div>
 <% } %>

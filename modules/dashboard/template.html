@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<div class="drag-bar">&#8942;</div>
 <div class="dashboard">
         <div class="btn-group header">
                 <span class="glyphicon <%=glyphicon%>"></span>
@@ -14,7 +15,7 @@
                                 <% _.each(_.allKeys(tableView[0]), (prop) => { %>
                                         <% if (prop !== "gfi") { %>
                                         <tr class="row">
-                                                <th class="prop" scope="row" title="<%= tableView[0].gfi ? tableView[0].gfi[prop] : prop %>"><%= prop %></th>
+                                                <th class="prop" scope="row" title="<%= tableView[0].gfi ? tableView[0].gfi[prop] : prop %>"><%= prop %><% if (Array.isArray(tableView[0][prop])) { %><button type="button" class="btn btn-outline-secondary open"><span></span></button><% } %></th>
                                                 <% _.each(tableView, (dist) => { %>
                                                         <% if (prop === sortKey) { %>
                                                                 <th scope="col" style="text-align:right;" class="district"><%= dist[prop] %></th>
@@ -24,8 +25,8 @@
                                                                                 <ul class="list-group list-group-flush">
                                                                                 <% _.each(dist[prop], (timeVal) =>{ %>
                                                                                         <li class="list-group-item nowrap">
-                                                                                                <span class="val"><%= timeVal[1] %></span>
-                                                                                                <small>(<%= timeVal[0] %>)</small>
+                                                                                                <span class="val"><%= Number.isInteger(timeVal[1]) ? timeVal[1] : timeVal[1].toFixed(2) %></span>
+                                                                                                <small class="year">(<%= timeVal[0] %>)</small>
                                                                                         </li>
                                                                                 <% }); %>
                                                                                 </ul>

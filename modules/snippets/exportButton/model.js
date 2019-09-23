@@ -1,5 +1,4 @@
 import SnippetModel from "../model";
-import * as json2csv from "json2csv";
 
 const ExportButtonModel = SnippetModel.extend({
     defaults: {
@@ -38,15 +37,14 @@ const ExportButtonModel = SnippetModel.extend({
         }
     },
     convertJsonToCsv: function (data = this.get("rawData")) {
-        const fields = _.allKeys([0]);
-        let dataAsObj = data;
+        let dataAsObjArr = data;
 
         if (typeof data.length === "undefined") {
-            dataAsObj = this.refineObject(dataAsObj);
+            dataAsObjArr = this.refineObject(dataAsObjArr);
         }
 
         try {
-            const csv = json2csv.parse(dataAsObj, fields);
+            const csv = Radio.request("Util", "convertArrayOfObjectsToCsv", dataAsObjArr);
 
             this.setData(csv, "text/csv");
         }

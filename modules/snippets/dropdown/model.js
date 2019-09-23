@@ -21,14 +21,15 @@ const DropdownModel = SnippetModel.extend(/** @lends DropdownModel.prototype */{
 
     initialize: function () {
         this.superInitialize();
+
         this.addValueModels(this.get("values"));
         if (this.get("preselectedValues").length > 0) {
             this.updateSelectedValues(this.get("preselectedValues"));
         }
         this.setValueModelsToShow(this.get("valuesCollection").where({isSelectable: true}));
         this.listenTo(this.get("valuesCollection"), {
-            "change:isSelected": function () {
-                this.triggerValuesChanged();
+            "change:isSelected": function (model, value) {
+                this.triggerValuesChanged(model, value);
             }
         });
     },
