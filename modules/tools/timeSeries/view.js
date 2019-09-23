@@ -4,7 +4,7 @@ import SnippetSliderView from "../../snippets/slider/view";
 
 const TimeSeriesView = Backbone.View.extend({
     events: {
-        "click button": "buttonClickCallback"
+        "click button.btn-slider": "buttonClickCallback"
     },
     initialize: function () {
         this.listenTo(this.model, {
@@ -12,7 +12,8 @@ const TimeSeriesView = Backbone.View.extend({
             "renderDropDownView": this.renderDropDownView,
             "renderSliderView": this.renderSliderView,
             "renderGraph": this.renderGraph,
-            "stopRunning": this.setButtonToPlay
+            "stopRunning": this.setButtonToPlay,
+            "remove": this.remove
         });
     },
     id: "time-series",
@@ -20,7 +21,7 @@ const TimeSeriesView = Backbone.View.extend({
     render: function () {
         this.$el.html(this.template());
         Radio.trigger("Sidebar", "append", this.el);
-        Radio.trigger("Sidebar", "toggle", true);
+        Radio.trigger("Sidebar", "toggle", true, "40%");
         this.delegateEvents();
 
         return this;
@@ -37,6 +38,11 @@ const TimeSeriesView = Backbone.View.extend({
 
         this.$el.find(".slider-container").remove();
         this.$el.find(".slider").prepend(sliderView.render().$el);
+    },
+
+    remove: function () {
+        this.$el.remove();
+        Radio.trigger("Sidebar", "toggle", false);
     },
 
     buttonClickCallback: function () {

@@ -1,6 +1,7 @@
 import Tool from "../../core/modelList/tool/model";
 import DropdownModel from "../../snippets/dropdown/model";
 import SliderModel from "../../snippets/slider/model";
+import {Fill, Style} from "ol/style.js";
 
 const TimeSeriesModel = Tool.extend({
     defaults: _.extend({}, Tool.prototype.defaults, {
@@ -12,14 +13,16 @@ const TimeSeriesModel = Tool.extend({
     initialize: function () {
         this.superInitialize();
 
-        this.listenToOnce(this, {
-            "change:isActive": function () {
-                this.setLayerList(this.get("layerIds"));
-                this.trigger("render");
-                this.setDropDownModel(this.get("layerList"));
-                this.setSelectedLayer(this.get("layerList").at(0));
-                Radio.trigger("ModelList", "setModelAttributesById", this.get("layerList").at(0), {isSelected: true});
-                this.setSliderModel(this.get("selectedLayer"));
+        this.listenTo(this, {
+            "change:isActive": function (model, isActive) {
+                if (!isActive) {
+                    this.unStyleFeatures(this.get("selectedLayer").get("layer").getSource().getFeatures());
+                    Radio.trigger("ModelList", "setModelAttributesById", this.get("selectedLayer"), {isSelected: false});
+                    this.trigger("remove");
+                }
+                else {
+                    this.run();
+                }
             }
         });
 
@@ -28,14 +31,21 @@ const TimeSeriesModel = Tool.extend({
         });
 
         if (this.get("isActive")) {
-            this.setLayerList(this.get("layerIds"));
-            this.trigger("render");
-            this.setDropDownModel(this.get("layerList"));
-            this.setSelectedLayer(this.get("layerList")[0].at(0));
-            // auch gleich features selecten??s
-            Radio.trigger("ModelList", "setModelAttributesById", this.get("layerList").at(0), {isSelected: true});
-            this.setSliderModel(this.get("selectedLayer"));
+            this.run();
         }
+    },
+
+    /**
+     * starts the tool
+     * @returns {void}
+     */
+    run: function () {
+        this.setLayerList(this.get("layerIds"));
+        this.trigger("render");
+        this.setDropDownModel(this.get("layerList"));
+        this.setSelectedLayer(this.get("layerList").at(0));
+        Radio.trigger("ModelList", "setModelAttributesById", this.get("layerList").at(0), {isSelected: true});
+        this.setSliderModel(this.get("selectedLayer"));
     },
 
     /**
@@ -160,7 +170,30 @@ const TimeSeriesModel = Tool.extend({
             graphData.push(feature.getProperties());
         });
 
+        this.styleFeatures(features, this.get("attribute_prefix") + sliderValue);
         this.trigger("renderGraph", graphData, sliderValue);
+    },
+
+    /**
+     * styles the features as well as the bar chart
+     * @param {Object[]} features - the features of the selected layer
+     * @param {string} attribute - style is depending on this attribute
+     * @returns {void}
+     */
+    styleFeatures: function (features, attribute) {
+        const values = features.map(function (feature) {
+                return feature.get(attribute);
+            }),
+            maxValue = Math.max(...values),
+            colorScale = Radio.request("ColorScale", "getColorScaleByValues", [0, maxValue]);
+
+        _.each(features, (feature) => {
+            feature.setStyle(new Style({
+                fill: new Fill({
+                    color: colorScale.scale(feature.getProperties()[attribute])
+                })
+            }));
+        });
     },
 
     /**
@@ -202,6 +235,17 @@ const TimeSeriesModel = Tool.extend({
      */
     getLayerByName: function (layerName) {
         return this.get("layerList").findWhere({name: layerName});
+    },
+
+    /**
+     * gives the features a "null-style"
+     * @param {Object[]} features - all styled features
+     * @returns {void}
+     */
+    unStyleFeatures: function (features) {
+        _.each(features, (feature) => {
+            feature.setStyle(null);
+        });
     },
 
     setSelectedLayer: function (layer) {

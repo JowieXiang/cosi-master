@@ -224,9 +224,8 @@ const GeoJSONLayer = Layer.extend(/** @lends GeoJSONLayer.prototype */{
 
             feature.setId(id);
         });
-        console.info(this.get("bboxGeometry"));
         features = this.getFeaturesIntersectsGeometry(this.get("bboxGeometry"), features);
-        console.info(features.length);
+
         this.get("layerSource").clear(true);
         this.get("layerSource").addFeatures(features);
         this.get("layer").setStyle(this.get("styleFunction"));
