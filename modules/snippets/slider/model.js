@@ -22,7 +22,9 @@ const SliderModel = SnippetModel.extend(/** @lends SliderModel.prototype */{
         step: 1,
         preselectedValues: null,
         precision: 3,
-        selection: "before"
+        selection: "before",
+        displayName: undefined,
+        ticks: []
     }),
 
     initialize: function (attributes) {
@@ -41,6 +43,9 @@ const SliderModel = SnippetModel.extend(/** @lends SliderModel.prototype */{
             },
             "updateDOMSlider": function () {
                 this.trigger("updateDOMSlider", this.getSelectedValues().values);
+            },
+            "updateValue": function (value) {
+                this.updateValues(value);
             }
         });
     },
@@ -55,14 +60,14 @@ const SliderModel = SnippetModel.extend(/** @lends SliderModel.prototype */{
         this.get("valuesCollection").add([
             new ValueModel({
                 attr: this.get("name"),
-                displayName: this.get("displayName") + " ab",
+                // displayName: this.get("displayName") + " ab",
                 value: min,
                 type: this.get("type"),
                 isMin: true
             }),
             new ValueModel({
                 attr: this.get("name"),
-                displayName: this.get("displayName") + " bis",
+                // displayName: this.get("displayName") + " bis",
                 value: max,
                 type: this.get("type"),
                 isMin: false

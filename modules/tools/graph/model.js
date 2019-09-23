@@ -302,6 +302,7 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
      * @param {String} [xAxisLabel.textAnchor=middle] Text anchor of x-axis label.
      * @param {String} [xAxisLabel.fill=#000] Text fill color.
      * @param {String} [xAxisLabel.fontSize=10] Text font size.
+     * @param {Number} [xAxisLabel.rotate] Value of Rotation.
      * @param {Number} width Width of SVG.
      * @returns {void}
      */
@@ -311,6 +312,7 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             fill = _.isUndefined(xAxisLabel.fill) ? "#000" : xAxisLabel.fill,
             fontSize = _.isUndefined(xAxisLabel.fontSize) ? 10 : xAxisLabel.fontSize,
             label = _.isUndefined(xAxisLabel.label) ? null : [xAxisLabel.label],
+            rotate = _.isUndefined(xAxisLabel.rotate) ? null : xAxisLabel.rotate,
             xAxisDraw = xAxis;
 
         xAxisDraw = svg.select(".graph-data").selectAll("yAxisDraw")
@@ -337,6 +339,9 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
                 .style("font-size", fontSize)
                 .text(label)
                 .attr("class", "xAxisLabelText");
+        }
+        if (rotate) {
+            this.rotateXAxisTexts(svg, rotate);
         }
     },
 
@@ -646,11 +651,12 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
     /**
      * Rotates the label on the x-axis by 45 degrees
      * @param {SVG} svg SVG.
+     * @param {number} rotate - rotate value
      * @return {void}
      */
-    rotateXAxisTexts: function (svg) {
+    rotateXAxisTexts: function (svg, rotate) {
         svg.select(".xAxisDraw").selectAll(".tick").selectAll("text")
-            .attr("transform", "rotate(45) translate(17, -4)");
+            .attr("transform", "rotate(" + rotate + ") translate(17, -4)");
     },
 
     /**
