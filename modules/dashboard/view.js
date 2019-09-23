@@ -101,20 +101,20 @@ const DashboardView = Backbone.View.extend({
             firstValue = row.find("td").first().html();
 
         if (!isNaN(parseFloat(firstValue))) {
-            this.model.createChart([row.find("th.prop").html()]);
+            this.model.createChart([row.find("th.prop").text()]);
 
             // Highlight the selected row
             row.parent("tbody").find("tr").removeClass("selected");
             row.addClass("selected");
 
             // Add Header
-            let title = row.find("th.prop").html();
+            let title = row.find("th.prop").text();
 
             // Check if GFI table available
             if (this.model.get("tableView")[0].gfi) {
                 // Check if entry for the selected row exists
-                if (this.model.get("tableView")[0].gfi[row.find("th.prop").html()]) {
-                    title = this.model.get("tableView")[0].gfi[row.find("th.prop").html()];
+                if (this.model.get("tableView")[0].gfi[row.find("th.prop").text()]) {
+                    title = this.model.get("tableView")[0].gfi[row.find("th.prop").text()];
                 }
             }
 
