@@ -4,7 +4,10 @@ import SnippetSliderView from "../../snippets/slider/view";
 
 const TimeSeriesView = Backbone.View.extend({
     events: {
-        "click button.btn-slider": "buttonClickCallback"
+        "click button.btn-slider": "buttonClickCallback",
+        "click button.close": function () {
+            this.model.setIsActive(false);
+        }
     },
     initialize: function () {
         this.listenTo(this.model, {
@@ -19,7 +22,9 @@ const TimeSeriesView = Backbone.View.extend({
     id: "time-series",
     template: _.template(Template),
     render: function () {
-        this.$el.html(this.template());
+        var attr = this.model.toJSON();
+
+        this.$el.html(this.template(attr));
         Radio.trigger("Sidebar", "append", this.el);
         Radio.trigger("Sidebar", "toggle", true, "40%");
         this.delegateEvents();
@@ -58,13 +63,13 @@ const TimeSeriesView = Backbone.View.extend({
     },
 
     setButtonToPlay: function () {
-        this.$el.find(".glyphicon").addClass("glyphicon-play");
-        this.$el.find(".glyphicon").removeClass("glyphicon-pause");
+        this.$el.find("button > .glyphicon").addClass("glyphicon-play");
+        this.$el.find("button > .glyphicon").removeClass("glyphicon-pause");
     },
 
     setButtonToPause: function () {
-        this.$el.find(".glyphicon").addClass("glyphicon-pause");
-        this.$el.find(".glyphicon").removeClass("glyphicon-play");
+        this.$el.find("button > .glyphicon").addClass("glyphicon-pause");
+        this.$el.find("button > .glyphicon").removeClass("glyphicon-play");
     },
 
     renderGraph: function (graphData, value) {

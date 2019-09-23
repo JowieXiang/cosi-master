@@ -99,6 +99,8 @@ import Button3DView from "../modules/controls/button3d/view";
 import ButtonObliqueView from "../modules/controls/buttonoblique/view";
 import Orientation3DView from "../modules/controls/orientation3d/view";
 import BackForwardView from "../modules/controls/backforward/view";
+import ColorCodeMapView from "../modules/controls/colorCodeMap/view";
+
 import "es6-promise/auto";
 
 var sbconfig, controls, controlsView;
@@ -394,6 +396,14 @@ function loadApp() {
                     }
                     break;
                 }
+                case "colorCodeMap": {
+                    if (control.attr === true) {
+                        element = controlsView.addRowBR(control.id);
+                        new ColorCodeMapView({ el: element });
+                    }
+                    break;
+                }
+                
                 case "fullScreen": {
                     if (control.attr === true) {
                         element = controlsView.addRowTR(control.id);

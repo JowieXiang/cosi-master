@@ -1,5 +1,8 @@
 {
   "Portalconfig": {
+    "controls": {
+      "colorCodeMap": true
+    },
     "portalTitle": {
       "title": "CoSI",
       "link": "http://geoinfo.hamburg.de",
@@ -133,7 +136,7 @@
         "glyphicon": "glyphicon-wrench",
         "children": {
           "timeSeries": {
-            "name": "Zeitreihen anzeigen",
+            "name": "Zeitstrahl Analyse",
             "glyphicon": "glyphicon-time",
             "layerIds": ["bev_gesamt", "bev_maennlich", "bev_weiblich"]
           },
@@ -149,11 +152,22 @@
             "districtLayer": [
               {
                 "name": "Stadtteile",
-                "selector": "stadtteil"
+                "selector": "stadtteil",
+                "layerIds": [
+                  "2763",
+                  "2769",
+                  "2768",
+                  "2771"
+                ]
               },
               {
                 "name": "Statistische Gebiete",
-                "selector": "statgebiet"
+                "selector": "statgebiet",
+                "layerIds": [
+                  "bev_gesamt",
+                  "bev_maennlich",
+                  "bev_weiblich"
+                ]
               }
             ]
           },
@@ -164,40 +178,6 @@
           },
           "compareDistricts": {
             "name": "Vergleichbare Stadtteile ermitteln"
-          },
-          "ageGroupSlider": {
-            "name": "Übersicht demographischer Daten",
-            "timeInterval": 2000,
-            "layerIds": {
-              "Stadtteile": [
-                {
-                  "title": "Unter 18 Jährige mit Migrationshintergrund in Prozent",
-                  "layerId": "2768"
-                },
-                {
-                  "title": "65 Jahre und älter in Prozent",
-                  "layerId": "2769"
-                },
-                {
-                  "title": "Arbeitslose in Prozent",
-                  "layerId": "2771"
-                }
-              ],
-              "Statistische Gebiete": [
-                {
-                  "title": "Bevölkerung gesamt",
-                  "layerId": "bev_gesamt"
-                },
-                {
-                  "title": "Bevölkerung (weiblich)",
-                  "layerId": "bev_weiblich"
-                },
-                {
-                  "title": "Bevölkerung (männlich)",
-                  "layerId": "bev_maennlich"
-                }
-              ]
-            }
           },
           "gfi": {
             "name": "Informationen abfragen",
@@ -261,6 +241,14 @@
           "alwaysOnTop": true,
           "legendURL": "",
           "searchField": ["statgebiet"]
+        },
+        {
+          "id": "1692",
+          "styleId": "red-polygon",
+          "visibility": true,
+          "gfiAttributes": "ignore",
+          "isNeverVisibleInTree": true,
+          "alwaysOnTop": true
         }
       ]
     },
