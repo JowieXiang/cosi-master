@@ -69,7 +69,8 @@ const SliderView = Backbone.View.extend(/** @lends SliderView.prototype */{
             precision: precision,
             value: selectedValue,
             selection: selection,
-            ticks: this.model.get("ticks")
+            ticks: this.model.get("ticks"),
+            tooltip: "always"
         });
     },
 

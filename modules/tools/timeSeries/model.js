@@ -5,7 +5,8 @@ import SliderModel from "../../snippets/slider/model";
 const TimeSeriesModel = Tool.extend({
     defaults: _.extend({}, Tool.prototype.defaults, {
         renderToWindow: false,
-        attribute_prefix: "jahr_"
+        attribute_prefix: "jahr_",
+        isRunning: false
     }),
 
     initialize: function () {
@@ -118,6 +119,7 @@ const TimeSeriesModel = Tool.extend({
                 "valuesChanged": this.sliderCallback
             }, this);
 
+            this.set("sliderModel", sliderModel);
             this.sliderCallback(undefined, values[1]);
             this.trigger("renderSliderView", sliderModel);
         }
@@ -136,23 +138,29 @@ const TimeSeriesModel = Tool.extend({
             if (key.includes(attribute_prefix)) {
                 const index = key.indexOf("_") + 1;
 
-                values.push(key.substr(index));
+                values.push(parseInt(key.substr(index), 10));
             }
         });
 
         return values.sort();
     },
 
-    sliderCallback: function (model, value) {
+    /**
+     * callback function for the "valuesChanged" event in the slider model
+     * collects the data for the graph
+     * @param {Backbone.Model} valueModel - the value model which is selected
+     * @param {number} sliderValue - the current value of the slider
+     * @returns {void}
+     */
+    sliderCallback: function (valueModel, sliderValue) {
         const features = this.get("selectedLayer").get("layer").getSource().getFeatures(),
             graphData = [];
 
         features.forEach(function (feature) {
             graphData.push(feature.getProperties());
         });
-        this.set("graphData", graphData);
-        this.set("value", value);
-        this.trigger("createGraph", value);
+
+        this.trigger("renderGraph", graphData, sliderValue);
     },
 
     /**
@@ -167,6 +175,27 @@ const TimeSeriesModel = Tool.extend({
     },
 
     /**
+     * starts the running of the time series
+     * @returns {void}
+     */
+    runningTimeSeries: function () {
+        const sliderModel = this.get("sliderModel"),
+            sliderModelValues = sliderModel.get("values"),
+            sliderModelValue = sliderModel.get("valuesCollection").at(0).get("value"),
+            indexOfValue = sliderModelValues.indexOf(sliderModelValue);
+
+        if (indexOfValue < sliderModelValues.length - 1 && this.get("isRunning")) {
+            sliderModel.get("valuesCollection").trigger("updateValue", sliderModelValues[indexOfValue + 1]);
+            setTimeout(this.runningTimeSeries.bind(this), 1500);
+        }
+        // stop the running
+        else {
+            this.setIsRunning(false);
+            this.trigger("stopRunning");
+        }
+    },
+
+    /**
      * gets a layer by name
      * @param {string} layerName - the name of a layer
      * @returns {Backbone.Model} the layer
@@ -177,6 +206,10 @@ const TimeSeriesModel = Tool.extend({
 
     setSelectedLayer: function (layer) {
         this.set("selectedLayer", layer);
+    },
+
+    setIsRunning: function (value) {
+        this.set("isRunning", value);
     }
 });
 

@@ -3,12 +3,16 @@ import SnippetDropdownView from "../../snippets/dropdown/view";
 import SnippetSliderView from "../../snippets/slider/view";
 
 const TimeSeriesView = Backbone.View.extend({
+    events: {
+        "click button": "buttonClickCallback"
+    },
     initialize: function () {
         this.listenTo(this.model, {
             "render": this.render,
             "renderDropDownView": this.renderDropDownView,
             "renderSliderView": this.renderSliderView,
-            "createGraph": this.createGraph
+            "renderGraph": this.renderGraph,
+            "stopRunning": this.setButtonToPlay
         });
     },
     id: "time-series",
@@ -35,19 +39,37 @@ const TimeSeriesView = Backbone.View.extend({
         this.$el.find(".slider").prepend(sliderView.render().$el);
     },
 
-    createGraph: function (value) {
-        console.info(value);
-        this.$el.find(".dashboard-graph").empty();
-        // const sliderView = new SnippetSliderView({model: this.model.get("sliderModel")});
+    buttonClickCallback: function () {
+        if (this.model.get("isRunning")) {
+            this.setButtonToPlay();
+            this.model.setIsRunning(false);
+        }
+        else {
+            this.setButtonToPause();
+            this.model.setIsRunning(true);
+            this.model.runningTimeSeries();
+        }
+    },
 
-        // this.$el.find(".slider-container").remove();
-        // this.$el.append(sliderView.render().$el);
+    setButtonToPlay: function () {
+        this.$el.find(".glyphicon").addClass("glyphicon-play");
+        this.$el.find(".glyphicon").removeClass("glyphicon-pause");
+    },
+
+    setButtonToPause: function () {
+        this.$el.find(".glyphicon").addClass("glyphicon-pause");
+        this.$el.find(".glyphicon").removeClass("glyphicon-play");
+    },
+
+    renderGraph: function (graphData, value) {
+        this.$el.find(".dashboard-graph").empty();
+
         Radio.trigger("Graph", "createGraph", {
             graphType: "BarGraph",
             selector: ".dashboard-graph",
             scaleTypeX: "ordinal",
             scaleTypeY: "linear",
-            data: this.model.get("graphData"),
+            data: graphData,
             attrToShowArray: ["jahr_" + value],
             xAttr: "stat_gebiet",
             xAxisLabel: {

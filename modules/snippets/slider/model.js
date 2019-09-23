@@ -43,6 +43,9 @@ const SliderModel = SnippetModel.extend(/** @lends SliderModel.prototype */{
             },
             "updateDOMSlider": function () {
                 this.trigger("updateDOMSlider", this.getSelectedValues().values);
+            },
+            "updateValue": function (value) {
+                this.updateValues(value);
             }
         });
     },

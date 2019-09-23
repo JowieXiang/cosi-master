@@ -65,7 +65,6 @@ const DashboardModel = Tool.extend({
                 }
             });
         });
-        console.info(this.filterTable(currentTable));
         this.set("tableView", this.filterTable(currentTable));
 
         // Update Export Link
