@@ -134,7 +134,7 @@
         "glyphicon": "glyphicon-wrench",
         "children": {
           "timeSeries": {
-            "name": "Zeitreihen anzeigen",
+            "name": "Zeitstrahl Analyse",
             "glyphicon": "glyphicon-time",
             "layerIds": ["bev_gesamt", "bev_maennlich", "bev_weiblich"]
           },
@@ -238,6 +238,14 @@
           "isNeverVisibleInTree": true,
           "alwaysOnTop": true,
           "legendURL": ""
+        },
+        {
+          "id": "1692",
+          "styleId": "red-polygon",
+          "visibility": true,
+          "gfiAttributes": "ignore",
+          "isNeverVisibleInTree": true,
+          "alwaysOnTop": true
         }
       ]
     },
