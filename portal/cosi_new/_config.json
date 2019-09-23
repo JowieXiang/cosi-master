@@ -37,8 +37,16 @@
         "glyphicon": "glyphicon-stats",
         "districtsLayer": "1694",
         "propertyTree": {
-          "layerIds": ["2763", "2769", "2768", "2771"],
-          "exclude": ["geom", "stadtteil_1"]
+          "layerIds": [
+            "2763",
+            "2769",
+            "2768",
+            "2771"
+          ],
+          "exclude": [
+            "geom",
+            "stadtteil_1"
+          ]
         },
         "renderToWindow": false
       },
@@ -56,28 +64,43 @@
             "isInitOpen": true,
             "isActive": true
           },
-          "wsClientInput":{
+          "wsClientInput": {
             "name": "Worksession erstellen",
             "glyphicon": "glyphicon-picture"
           },
           "ageGroupSlider": {
-            "name": "Altersgruppen-Schieberegler",
-            "title": "Simulation von Beispiel-WMS",
+            "name": "Übersicht demographischer Daten",
             "timeInterval": 2000,
-            "layerIds": [
-              {
-                "title": "Unter 18 Jährige mit Migrationshintergrund in Prozent",
-                "layerId": "2769"
-              },
-              {
-                "title": "65 Jahre und älter in Prozent",
-                "layerId": "2768"
-              },
-              {
-                "title": "Arbeitslose in Prozent",
-                "layerId": "2771"
-              }
-            ]
+            "layerIds": {
+              "Stadtteile": [
+                {
+                  "title": "Unter 18 Jährige mit Migrationshintergrund in Prozent",
+                  "layerId": "2768"
+                },
+                {
+                  "title": "65 Jahre und älter in Prozent",
+                  "layerId": "2769"
+                },
+                {
+                  "title": "Arbeitslose in Prozent",
+                  "layerId": "2771"
+                }
+              ],
+              "Statistische Gebiete": [
+                {
+                  "title": "Bevölkerung gesamt",
+                  "layerId": "bev_gesamt"
+                },
+                {
+                  "title": "Bevölkerung (weiblich)",
+                  "layerId": "bev_weiblich"
+                },
+                {
+                  "title": "Bevölkerung (männlich)",
+                  "layerId": "bev_maennlich"
+                }
+              ]
+            }
           },
           "gfi": {
             "name": "Informationen abfragen",
@@ -369,7 +392,7 @@
             },
             {
               "id": "2797",
-              "styleId":"2797"
+              "styleId": "2797"
             },
             {
               "id": "2784"

@@ -1,0 +1,162 @@
+import template from "text-loader!./template.html";
+import LayerList from "./layer/list";
+import ColorCodeMapModel from "./model";
+import VectorSource from "ol/source/Vector";
+import { Fill, Stroke, Style } from "ol/style.js";
+import * as Chromatic from "d3-scale-chromatic";
+
+const ColorCodeMapView = Backbone.View.extend({
+    events: {
+        "change select": function (e) {
+            this.setAllColorCodeLayerInvisible();
+            const selectedLayer = this.layerList.filter(function (layer) {
+                return layer.get("layerName") === e.target.value;
+            })[0];
+
+            if (selectedLayer !== undefined) {
+                this.showActiveColorCodeLayer(e);
+            }
+        }
+    },
+    initialize: function () {
+        this.render();
+        this.layerList = new LayerList();
+        this.setOptions();
+        this.style = {
+            chromaticScheme: Chromatic.interpolateBlues,
+            opacity: 0.8
+        };
+        // this.listenTo(this.layerList, {
+        //     "add": this.addOption
+        // });
+        this.listenTo(this.layerList, {
+            "add": this.createColorCodeLayer
+        });
+        this.listenTo(Radio.channel("SelectDistrict"), {
+            "selectionChanged": function () {
+                this.setOptions();
+                this.clearColorLayerFeatures();
+                this.setColorLayerFeatures();
+            }
+        });
+    },
+    // model: new ColorCodeMapModel(),
+    template: _.template(template),
+    render: function () {
+        this.$el.html(this.template());
+        return this;
+    },
+    setOptions: function () {
+        const scope = Radio.request("SelectDistrict", "getScope"),
+            selectedLayerGroup = this.layerList.filter(layer => layer.get("layerScope") === scope);
+
+        this.$el.find("#color-code-layer-selector").empty();
+        this.$el.find("#color-code-layer-selector").append("<option selected value> - clear - </option>");
+        _.each(selectedLayerGroup, layer => {
+            this.$el.find("#color-code-layer-selector").append(`<option>${layer.get("layerName")}</option>`);
+        });
+    },
+    createColorCodeLayer: function (layerModel) {
+        if (Radio.request("Map", "getLayerByName", layerModel.get("layerId") + "_colorcoded") === undefined) {
+            const newLayer = Radio.request("Map", "createLayerIfNotExists", layerModel.get("layerId") + "_colorcoded"),
+                newSource = new VectorSource();
+
+            newLayer.setSource(newSource);
+            newLayer.setVisible(false);
+        }
+    },
+    showActiveColorCodeLayer: function (e) {
+        const selectedLayerName = e.target.value,
+            selectedLayer = this.layerList.filter(layer => layer.get("layerName") === selectedLayerName)[0],
+            activeLayer = Radio.request("Map", "getLayerByName", selectedLayer.get("layerId") + "_colorcoded");
+
+        if (activeLayer !== undefined) {
+            activeLayer.setVisible(true);
+        }
+    },
+    //  hide all color-code layers
+    setAllColorCodeLayerInvisible: function () {
+        this.layerList.forEach(layer => {
+            if (Radio.request("Map", "getLayerByName", layer.get("layerId") + "_colorcoded")) {
+                const thisLayer = Radio.request("Map", "getLayerByName", layer.get("layerId") + "_colorcoded");
+
+                thisLayer.setVisible(false);
+            }
+        });
+    },
+    clearColorLayerFeatures: function () {
+        this.layerList.forEach(layer => {
+            const colorCodeLayer = Radio.request("Map", "getLayerByName", layer.get("layerId") + "_colorcoded");
+
+            if (colorCodeLayer !== undefined) {
+                colorCodeLayer.getSource().clear();
+                colorCodeLayer.setVisible(false);
+            }
+        });
+    },
+    setColorLayerFeatures: function () {
+        const scope = Radio.request("SelectDistrict", "getScope"),
+            // Workaround for inconsistent naming of "Statistische Gebiete"-selector
+            layerGroup = Radio.request("SelectDistrict", "getDistrictLayer").filter(item => item.name === scope)[0],
+            layerIds = layerGroup.layerIds,
+            selector = Radio.request("SelectDistrict", "getSelector") === "statgebiet" ? "stat_gebiet" : Radio.request("SelectDistrict", "getSelector"),
+            districtNames = Radio.request("SelectDistrict", "getSelectedDistricts").map(feature => feature.getProperties()[selector]);
+
+        _.each(layerIds, id => {
+            const featureCollection = Radio.request("FeatureLoader", "getFeaturesByLayerId", id),
+                selectedFeatures = featureCollection.filter(feature => {
+                    return _.contains(districtNames, feature.getProperties()[selector]);
+                });
+
+            if (selectedFeatures.length > 0) {
+                const colorCodeLayer = Radio.request("Map", "getLayerByName", id + "_colorcoded"),
+                    field = Radio.request("Parser", "getItemByAttributes", { id: id }).mouseHoverField,
+                    newFeatures = [];
+
+                let propSelector = field;
+
+                const values = selectedFeatures.map((feature) => {
+                    const props = feature.getProperties();
+                    let val;
+
+                    if (field === "dynamic") {
+                        for (const prop in props) {
+                            if (prop.includes("jahr_")) {
+                                val = props[prop];
+                                propSelector = prop;
+                                break;
+                            }
+                        }
+                        return parseFloat(val);
+                    }
+                    return parseFloat(feature.getProperties()[field]);
+                }),
+                    colorScale = Radio.request("ColorScale", "getColorScaleByValues", values, this.style.chromaticScheme);
+
+                // Add the generated legend style to the Legend Portal
+                Radio.trigger("StyleWFS", "addDynamicLegendStyle", id.layerId, colorScale.legend);
+
+                _.each(selectedFeatures, feature => newFeatures.push(feature.clone()));
+                _.each(newFeatures, (feature) => {
+                    feature.setStyle(new Style({
+                        fill: new Fill({
+                            color: colorScale.scale(parseFloat(feature.getProperties()[propSelector]))
+                        }),
+                        stroke: new Stroke({
+                            color: colorScale.scale(parseFloat(feature.getProperties()[propSelector])),
+                            width: 3
+                        })
+                    }));
+                });
+                console.log("newFeatures: ", newFeatures);
+
+                colorCodeLayer.getSource().addFeatures(newFeatures);
+                colorCodeLayer.setOpacity(this.style.opacity);
+            }
+        });
+    }
+
+
+});
+
+export default ColorCodeMapView;

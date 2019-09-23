@@ -7,7 +7,7 @@ import SnippetDropdownModel from "../snippets/dropdown/model";
 const SelectDistrict = Tool.extend({
     defaults: _.extend({}, Tool.prototype.defaults, {
         selectedDistricts: [],
-        districtLayer: [], // e.g. {name: "Stadtteile", selector: "stadtteil"} {name: "Statistische Gebiete", selector: "statgebiet"}
+        districtLayer: [], // e.g.  {name: "Statistische Gebiete", selector: "statgebiet", layerIds:[]}
         districtLayerNames: [],
         districtLayersLoaded: [],
         scopeDropdownModel: {},
@@ -78,7 +78,8 @@ const SelectDistrict = Tool.extend({
             "getSelectedDistricts": this.getSelectedDistricts,
             "getScope": this.getScope,
             "getSelector": this.getSelector,
-            "getScopeAndSelector": this.getScopeAndSelector
+            "getScopeAndSelector": this.getScopeAndSelector,
+            "getDistrictLayer": this.getDistrictLayer
         }, this);
     },
 
@@ -251,6 +252,9 @@ const SelectDistrict = Tool.extend({
     },
     getDeselectedStyle: function () {
         return this.get("deselectedStyle");
+    },
+    getDistrictLayer: function () {
+        return this.get("districtLayer");
     }
 });
 

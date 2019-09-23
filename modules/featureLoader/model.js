@@ -17,7 +17,6 @@ const FeatureLoaderModel = Backbone.Model.extend({
                 // selector = Radio.request("SelectDistrict", "getSelector");
 
                 _.each(features, feature => {
-
                     if (_.contains(Object.keys(feature.getProperties()), "stadtteil")) {
                         let stadtteil = feature.getProperties().stadtteil;
 
@@ -25,19 +24,23 @@ const FeatureLoaderModel = Backbone.Model.extend({
                         stadtteil = stadtteil.replace(/-/g, "");
                         stadtteil = stadtteil.replace(/\s+/g, "");
                         feature.set("stadtteil", stadtteil);
-
-
                     }
-                });
+                }, this);
                 if (this.get("featureCollections").length > 0) {
-
                     currentLayerIds = this.get("featureCollections").map(collection => collection.layerId);
                 }
                 if (!_.contains(currentLayerIds, layerId)) {
+                    channel.trigger("addFeatureCollection", layerId, features);
                     this.pushFeatureCollection(layerId, features);
                 }
             }
         });
+    },
+    sendAddedLayer: function (layerId, features) {
+        return {
+            "layerId": layerId,
+            "collection": features
+        };
     },
     // push feature collection to this model
     pushFeatureCollection: function (layerId, features) {
