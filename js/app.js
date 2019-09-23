@@ -21,7 +21,7 @@ import ZoomToFeature from "../modules/zoomtofeature/model";
 import SliderView from "../modules/snippets/slider/view";
 import SliderRangeView from "../modules/snippets/slider/range/view";
 import DropdownView from "../modules/snippets/dropdown/view";
-import ExportButtonView from "../modules/snippets/exportButton/view";
+// import ExportButtonView from "../modules/snippets/exportButton/view";
 import AdjustParamterView from "../modules/snippets/adjustParameter/view";
 import LayerinformationModel from "../modules/layerinformation/model";
 import FooterView from "../modules/footer/view";
@@ -61,6 +61,7 @@ import Formular from "../modules/formular/view";
 import FeatureLister from "../modules/featurelister/view";
 import PrintView from "../modules/tools/print_/view";
 //CoSI
+import TimeSeries from "../modules/tools/timeSeries/view";
 import SelectDistrictView from "../modules/selectDistrict/view";
 import CalculateRatioView from "../modules/tools/calculateRatio/selectView";
 import CosiTouchScreenView from "../modules/cosi/touchScreen/view";
@@ -169,7 +170,7 @@ function loadApp() {
     new SliderRangeView();
     new DropdownView();
     new AdjustParamterView();
-    new ExportButtonView();
+    // new ExportButtonView();
 
     if (_.has(Config, "metaDataCatalogueId")) {
         layerInformationModelSettings.metaDataCatalogueId = Config.metaDataCatalogueId;
@@ -350,6 +351,10 @@ function loadApp() {
             }
             case "selectDistrict": {
                 new SelectDistrictView({ model: tool });
+                break;
+            }
+            case "timeSeries": {
+                new TimeSeries({model: tool});
                 break;
             }
             default: {

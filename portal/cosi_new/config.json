@@ -130,6 +130,11 @@
         "name": "Werkzeuge",
         "glyphicon": "glyphicon-wrench",
         "children": {
+          "timeSeries": {
+            "name": "Zeitreihen anzeigen",
+            "glyphicon": "glyphicon-time",
+            "layerIds": ["bev_gesamt", "bev_maennlich", "bev_weiblich"]
+          },
           "measure": {
             "name": "Strecke / Fläche messen",
             "glyphicon": "icon-measuredistance"
