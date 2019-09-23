@@ -65,6 +65,7 @@
         "glyphicon": "glyphicon-stats",
         "propertyTree": {
           "Stadtteile": {
+            "id": 1694,
             "selector": "stadtteil",
             "layerIds": [
               "2763",
@@ -75,6 +76,7 @@
             "exclude": ["geom", "stadtteil_1"]
           },
           "Statistische Gebiete": {
+            "id": 6071,
             "selector": "stat_gebiet",
             "layerIds": [
               "bev_gesamt",
@@ -257,7 +259,8 @@
           "gfiAttributes": "ignore",
           "isNeverVisibleInTree": true,
           "alwaysOnTop": true,
-          "legendURL": ""
+          "legendURL": "",
+          "searchField": ["statgebiet"]
         }
       ]
     },

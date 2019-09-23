@@ -1,5 +1,6 @@
 import Tool from "../core/modelList/tool/model";
 // import ExportButtonModel from "../snippets/exportButton/model";
+import DropdownModel from "../snippets/dropdown/model";
 import {TileLayer, VectorLayer} from "ol/layer";
 import VectorSource from "ol/source/Vector";
 import TimelineModel from "../tools/timeline/model";
@@ -16,7 +17,17 @@ const DashboardModel = Tool.extend({
         exportButtonModel: {},
         scope: "",
         sortKey: "",
-        timelineModel: new TimelineModel()
+        timelineModel: new TimelineModel(),
+        filterDropdownModel: new DropdownModel({
+            name: "Filter",
+            type: "string",
+            displayName: "Filter",
+            values: [],
+            snippetType: "dropdown",
+            isMultiple: false,
+            preselectedValues: []
+        }),
+        scopeLayersLoaded: 0
     }),
 
     /**
@@ -47,11 +58,9 @@ const DashboardModel = Tool.extend({
             }
         }, this);
 
-        this.listenTo(Radio.channel("Layer"), {
-            "featuresLoaded": function (id, features) {
-                this.getDashboardLayerFeatures(id, features);
-            }
-        }, this);
+        this.listenTo(this, {
+            "change:isActive": this.getData
+        });
     },
 
     /**
@@ -86,8 +95,8 @@ const DashboardModel = Tool.extend({
             layer = Radio.request("ModelList", "getModelByAttributes", {id: layerId});
 
         _.each(features, (feature) => {
-            let properties = feature.getProperties(),
-                gfiAttr = layer.get("gfiAttributes");
+            let properties = feature.getProperties();
+            const gfiAttr = layer.get("gfiAttributes");
 
             _.each(currentTable, (column, i) => {
                 if (properties[this.get("sortKey")] === column[this.get("sortKey")]) {
@@ -224,10 +233,20 @@ const DashboardModel = Tool.extend({
         this.set("scope", scope);
         this.set("selectedDistricts", selectedDistricts.map(features => features.getProperties()[this.getPropertyTree()[this.getScope()].selector]));
 
+        // Set up empty table for selected districts
         this.setupTable(selectedDistricts);
-        _.each(this.getPropertyTree()[this.getScope()].layerIds, (layerId) => {
+
+        // Add relevant Features to the feature List
+        _.each(this.getPropertyTree()[scope].layerIds, (layerId) => {
             this.addLayerModel(layerId);
         });
+    },
+    getData: function () {
+        if (this.getScope() !== "") {
+            _.each(this.getPropertyTree()[this.getScope()].layerIds, (layerId) => {
+                this.getDashboardLayerFeatures(layerId, Radio.request("FeatureLoader", "getFeaturesByLayerId", layerId));
+            });
+        }
     },
 
     /**
@@ -255,10 +274,8 @@ const DashboardModel = Tool.extend({
      */
 
     getDashboardLayerFeatures: function (id, features) {
-        if (this.getScope() !== "") {
-            if (this.getPropertyTree()[this.getScope()].layerIds.includes(id)) {
-                this.getLayerFeaturesInActiveDistricts(features, id);
-            }
+        if (this.getPropertyTree()[this.getScope()].layerIds.includes(id)) {
+            this.getLayerFeaturesInActiveDistricts(features, id);
         }
     },
     getLayerFeaturesInActiveDistricts: function (features, layerId) {

@@ -8,7 +8,6 @@ const FeatureLoaderModel = Backbone.Model.extend({
 
         channel.reply({
             "getFeaturesByLayerId": this.getFeaturesByLayerId
-
         }, this);
 
         this.listenTo(Radio.channel("Layer"), {
@@ -30,7 +29,6 @@ const FeatureLoaderModel = Backbone.Model.extend({
                     }
                 });
                 if (this.get("featureCollections").length > 0) {
-
                     currentLayerIds = this.get("featureCollections").map(collection => collection.layerId);
                 }
                 if (!_.contains(currentLayerIds, layerId)) {

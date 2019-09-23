@@ -1,4 +1,5 @@
 import Template from "text-loader!./template.html";
+import DropdownView from "../snippets/dropdown/view";
 // import ExportButtonView from "../snippets/exportButton/view";
 
 const DashboardView = Backbone.View.extend({
@@ -6,11 +7,13 @@ const DashboardView = Backbone.View.extend({
         "click .close": "close",
         "click .district": "zoomToFeature",
         "click .row": "createChart",
-        "click button.open": "toggleTimelineTable",
+        "click .prop button.open": "toggleTimelineTable",
+        "click .figure > .header > button.open": "toggleFigure",
         "mousedown .drag-bar": "dragStart"
     },
     initialize: function () {
         // this.exportButtonView = new ExportButtonView({model: this.model.get("exportButtonModel")});
+        this.filterDropdownView = new DropdownView({model: this.model.get("filterDropdownModel")});
 
         this.listenTo(this.model, {
             "change:isActive": function (model, isActive) {
@@ -39,6 +42,7 @@ const DashboardView = Backbone.View.extend({
     className: "dashboard",
     model: {},
     exportButtonView: {},
+    filterDropdownView: {},
     template: _.template(Template),
     isDragging: false,
     startX: 0,
@@ -46,6 +50,7 @@ const DashboardView = Backbone.View.extend({
         var attr = this.model.toJSON();
 
         this.$el.html(this.template(attr));
+        this.$el.find(".filter-dropdown").append(this.filterDropdownView.render().el);
         // this.$el.find("#export-button").append(this.exportButtonView.render().el);
 
         Radio.trigger("Sidebar", "append", this.$el);
@@ -88,11 +93,14 @@ const DashboardView = Backbone.View.extend({
         }
     },
     clearChart: function () {
-        this.$el.find(".basic-graph-title").html("");
+        this.$el.find(".basic-graph-header").html("");
         this.$el.find(".dashboard-graph").empty();
     },
     toggleTimelineTable: function (event) {
         this.$(event.target).parent(".prop").parent("tr").toggleClass("open");
+    },
+    toggleFigure: function (event) {
+        this.$(event.target).parent(".header").parent(".figure").toggleClass("open");
     },
     close: function () {
         this.model.setIsActive(false);

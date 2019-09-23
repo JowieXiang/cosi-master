@@ -28,6 +28,46 @@
         border-bottom: 1px solid rgb(229,229,229);
         padding: 10px;
     }
+    .figure {
+        .filter-dropdown {
+            width: 40%;
+            min-width: 320px;
+            float: right;
+            .dropdown-container {
+                padding: 0;
+            }
+        }
+        button.open {
+            float:right;
+            padding: 12px;
+            position: relative;
+            background-color: transparent;
+            border: 1px solid lightgrey;
+            border-radius: 4px;
+            span {
+                border-right: 1px solid lightgrey;
+                border-bottom: 1px solid lightgrey;
+                width: 9px;
+                height: 9px;
+                position: absolute;
+                top: 5px;
+                left: 8px;
+                transform: rotate(45deg);
+                pointer-events: none;
+            }
+        }
+        .content {
+            display:none;
+        }
+        &.open {
+            button.open {
+                transform: rotate(180deg);
+            }
+            .content {
+                display:block;
+            }
+        }
+    }
     .simple-views-container {
         .btn-default {
             &:focus {
@@ -40,25 +80,6 @@
         table {
             th.prop {
                 width: 25%;
-                button.open {
-                    float:right;
-                    padding: 12px;
-                    position: relative;
-                    background-color: transparent;
-                    border: 1px solid lightgrey;
-                    border-radius: 4px;
-                    span {
-                        border-right: 1px solid lightgrey;
-                        border-bottom: 1px solid lightgrey;
-                        width: 9px;
-                        height: 9px;
-                        position: absolute;
-                        top: 5px;
-                        left: 8px;
-                        transform: rotate(45deg);
-                        pointer-events: none;
-                    }
-                }
             }
             th, td {
                 &.district {
@@ -148,6 +169,9 @@
     display: inline-block;
 }
 .detail-view-container {
+    padding: 8px 15px;
+    width: 100%;
+    border-bottom: 1px solid rgb(229, 229, 229);
     .dashboard-graph {
         width:100%;
         height:40vh;
