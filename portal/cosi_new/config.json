@@ -240,6 +240,14 @@
           "isNeverVisibleInTree": true,
           "alwaysOnTop": true,
           "legendURL": ""
+        },
+        {
+          "id": "1692",
+          "styleId": "red-polygon",
+          "visibility": true,
+          "gfiAttributes": "ignore",
+          "isNeverVisibleInTree": true,
+          "alwaysOnTop": true
         }
       ]
     },
