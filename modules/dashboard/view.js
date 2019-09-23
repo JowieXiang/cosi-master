@@ -13,7 +13,6 @@ const DashboardView = Backbone.View.extend({
     },
     initialize: function () {
         // this.exportButtonView = new ExportButtonView({model: this.model.get("exportButtonModel")});
-        this.filterDropdownView = new DropdownView({model: this.model.get("filterDropdownModel")});
 
         this.listenTo(this.model, {
             "change:isActive": function (model, isActive) {
@@ -24,6 +23,14 @@ const DashboardView = Backbone.View.extend({
                     this.$el.remove();
                     Radio.trigger("Sidebar", "toggle", false);
                 }
+            },
+            "updateProperties": function () {
+                if (this.model.get("isActive")) {
+                    this.renderFilter();
+                }
+            },
+            "tableViewFilter": function (selectedValues) {
+                this.showFilteredTable(selectedValues.values);
             }
         });
 
@@ -50,8 +57,9 @@ const DashboardView = Backbone.View.extend({
         var attr = this.model.toJSON();
 
         this.$el.html(this.template(attr));
-        this.$el.find(".filter-dropdown").append(this.filterDropdownView.render().el);
         // this.$el.find("#export-button").append(this.exportButtonView.render().el);
+
+        this.renderFilter();
 
         Radio.trigger("Sidebar", "append", this.$el);
         Radio.trigger("Sidebar", "toggle", true, this.model.get("width"));
@@ -59,6 +67,27 @@ const DashboardView = Backbone.View.extend({
         this.delegateEvents();
 
         return this;
+    },
+    renderFilter () {
+        this.filterDropdownView = new DropdownView({model: this.model.get("filterDropdownModel")});
+        this.$el.find(".filter-dropdown").html(this.filterDropdownView.render().el);
+    },
+    showFilteredTable (selectedValues) {
+        _.each(this.$el.find(".overview tr"), (row, i) => {
+            if (i > 0) {
+                if (selectedValues.length > 0) {
+                    if (!selectedValues.includes($(row).find("th.prop").text())) {
+                        $(row).addClass("hidden");
+                    }
+                    else {
+                        $(row).removeClass("hidden");
+                    }
+                }
+                else {
+                    $(row).removeClass("hidden");
+                }
+            }
+        });
     },
     zoomToFeature (event) {
         const scope = event.target.innerHTML;

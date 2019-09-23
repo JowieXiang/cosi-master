@@ -18,15 +18,7 @@ const DashboardModel = Tool.extend({
         scope: "",
         sortKey: "",
         timelineModel: new TimelineModel(),
-        filterDropdownModel: new DropdownModel({
-            name: "Filter",
-            type: "string",
-            displayName: "Filter",
-            values: [],
-            snippetType: "dropdown",
-            isMultiple: false,
-            preselectedValues: []
-        }),
+        filterDropdownModel: {},
         scopeLayersLoaded: 0
     }),
 
@@ -117,6 +109,9 @@ const DashboardModel = Tool.extend({
 
         // Add total and mean values and filter table for excluded properties
         this.set("tableView", this.calculateTotalAndMean(this.filterTable(currentTable)));
+
+        // Update the filter dropdown list
+        this.updateFilter();
 
         // Update Export Link
         // this.get("exportButtonModel").set("rawData", this.get("tableView"));
@@ -361,6 +356,25 @@ const DashboardModel = Tool.extend({
         if (extent) {
             Radio.trigger("Map", "zoomToExtent", extent, {padding: [20, 20, 20, 20]});
         }
+    },
+    filterTableView: function () {
+        this.trigger("tableViewFilter", this.get("filterDropdownModel").getSelectedValues());
+    },
+    updateFilter: function () {
+        const properties = _.allKeys(this.get("tableView")[0]);
+
+        this.set("filterDropdownModel", new DropdownModel({
+            name: "Filter",
+            type: "string",
+            displayName: "Filter",
+            values: properties.filter(prop => prop !== "gfi" && prop !== this.getPropertyTree()[this.getScope()].selector),
+            snippetType: "dropdown",
+            isMultiple: true
+        }));
+        this.listenTo(this.get("filterDropdownModel"), {
+            "valuesChanged": this.filterTableView
+        });
+        this.trigger("updateProperties");
     },
     getScope: function () {
         return this.get("scope");

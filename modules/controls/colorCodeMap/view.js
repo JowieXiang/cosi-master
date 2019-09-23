@@ -32,7 +32,7 @@ const ColorCodeMapView = Backbone.View.extend({
             "selectionChanged": function () {
                 this.setOptions();
                 this.clearColorLayerFeatures();
-                this.setColorLayerFeatures();
+                // this.setColorLayerFeatures();
             }
         });
     },
