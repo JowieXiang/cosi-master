@@ -103,7 +103,6 @@ const TimeSeriesModel = Tool.extend({
         Radio.trigger("ModelList", "setModelAttributesById", layer.get("id"), {isSelected: isSelected});
         if (isSelected) {
             this.setSelectedLayer(layer);
-            Radio.trigger("ModelList", "setModelAttributesById", this.get("layerList").at(0), {isSelected: true});
             this.setSliderModel(layer);
         }
     },
@@ -122,7 +121,7 @@ const TimeSeriesModel = Tool.extend({
                     snippetType: "slider",
                     values: values,
                     type: "integer",
-                    preselectedValues: values[1]
+                    preselectedValues: values[0]
                 });
 
             this.listenTo(sliderModel, {
@@ -130,7 +129,7 @@ const TimeSeriesModel = Tool.extend({
             }, this);
 
             this.set("sliderModel", sliderModel);
-            this.sliderCallback(undefined, values[1]);
+            this.sliderCallback(undefined, values[0]);
             this.trigger("renderSliderView", sliderModel);
         }
     },

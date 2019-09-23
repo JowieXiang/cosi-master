@@ -100,7 +100,7 @@
         "glyphicon": "glyphicon-wrench",
         "children": {
           "timeSeries": {
-            "name": "Zeitreihen anzeigen",
+            "name": "Zeitstrahl Analyse",
             "glyphicon": "glyphicon-time",
             "layerIds": ["bev_gesamt", "bev_maennlich", "bev_weiblich"]
           },

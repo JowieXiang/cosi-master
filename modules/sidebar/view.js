@@ -51,7 +51,7 @@ const SidebarView = Backbone.View.extend(/** @lends SidebarView.prototype */{
      * @return {void}
      * @fires Map#RadioTriggerMapUpdateSize
      */
-    toggle: function (isVisible) {
+    toggle: function (model, isVisible) {
         if (isVisible) {
             this.$el.css("width", this.model.get("width"));
             this.$el.show();

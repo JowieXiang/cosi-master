@@ -758,7 +758,7 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             }, this)
             .append("title")
             .text(function (d) {
-                return (Math.round(d[attrToShowArray[0]] * 1000) / 10) + " %";
+                return d[attrToShowArray[0]];
             });
     },
 
