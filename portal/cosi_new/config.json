@@ -163,6 +163,15 @@
           "compareDistricts": {
             "name": "Vergleichbare Stadtteile ermitteln"
           },
+          "print": {
+            "name": "Karte drucken",
+            "glyphicon": "glyphicon-print",
+            "mapfishServiceId": "mapfish_qs",
+            "printAppId": "master",
+            "filename": "Ausdruck",
+            "title": "Mein Titel",
+            "version" : "mapfish_print_3"
+          },
           "ageGroupSlider": {
             "name": "Übersicht demographischer Daten",
             "timeInterval": 2000,
