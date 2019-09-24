@@ -5,8 +5,6 @@ import VectorSource from "ol/source/Vector";
 import { Fill, Stroke, Style } from "ol/style.js";
 import LayerFilterModel from "./layerFilter/model";
 import LayerFilterView from "./layerFilter/view";
-
-
 import LayerFilterCollection from "./layerFilter/list";
 
 const CompareDistrictsView = Backbone.View.extend({
@@ -39,7 +37,11 @@ const CompareDistrictsView = Backbone.View.extend({
                     this.model.set("layerFilterList", "");
                 }
             },
-            "change:layerFilterList": this.setCompareFeatures
+            "change:layerFilterList": function (model, value) {
+                if (this.model.get("layerFilterList") !== "") {
+                    this.setCompareFeatures(model, value);
+                }
+            }
         });
 
 
@@ -132,7 +134,7 @@ const CompareDistrictsView = Backbone.View.extend({
         }
     },
     setCompareFeatures: function (model, value) {
-        if (value !== "") {
+        if (JSON.parse(value).length > 0) {
             const layerFilterList = JSON.parse(value);
 
             var results = [],

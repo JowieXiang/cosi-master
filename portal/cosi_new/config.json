@@ -309,9 +309,9 @@
               "name": "Bevölkerungsdaten zu Stadtteilen in Hamburg",
               "id": "2763",
               "styleId": "unstyled",
+              "visibility": true,
               "districtCompareField":[
                 "bev",
-                "afd15",
                 "wgm2"
               ],
               "mouseHoverField": [
@@ -339,6 +339,7 @@
               "name": "Unter 18 Jährige mit Migrationshintergrund in Prozent 31.12.2014",
               "id": "2768",
               "styleId": "unstyled",
+              "visibility": true,
               "districtCompareField":[
                 "bu18_prz"
               ],
@@ -367,6 +368,7 @@
               "name": "65 Jahre und älter in Prozent 31.12.2014",
               "id": "2769",
               "styleId": "unstyled",
+              "visibility": true,
               "districtCompareField":[
                 "b65_prz"
               ],
@@ -395,6 +397,7 @@
               "name": "Arbeitslose in Prozent 31.12.2014",
               "id": "2771",
               "styleId": "unstyled",
+              "visibility": true,
               "districtCompareField":[
                 "al_prz"
               ],
@@ -417,6 +420,7 @@
             {
               "id": "bev_gesamt",
               "styleId": "unstyled",
+              "visibility": true,
               "isDemographic": true,
               "mouseHoverField": "dynamic",
               "legendURL": "",
@@ -439,6 +443,7 @@
             {
               "id": "bev_weiblich",
               "styleId": "unstyled",
+              "visibility": true,
               "isDemographic": true,
               "mouseHoverField": "dynamic",
               "legendURL": "",
