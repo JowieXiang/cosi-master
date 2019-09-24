@@ -56,7 +56,12 @@ const FeatureLoaderModel = Backbone.Model.extend({
         this.set("featureCollections", featureCollections);
     },
     getFeaturesByLayerId: function (layerId) {
-        const features = this.get("featureCollections").filter(collection => collection.layerId === layerId)[0].collection;
+        const selectedCollection = this.get("featureCollections").filter(collection => collection.layerId === layerId);
+        let features = [];
+
+        if (selectedCollection.length > 0) {
+            features = selectedCollection[0].collection;
+        }
 
         return features;
     }
