@@ -9,50 +9,59 @@
                 <% } %>
         </div>
         <div class="simple-views-container">
-                <div class="figure">
-                        <span class="figure-name">Übersicht</span>
-                        <table class="table">
-                                <% _.each(_.allKeys(tableView[0]), (prop) => { %>
-                                        <% if (prop !== "gfi") { %>
-                                        <tr class="row">
-                                                <th class="prop" scope="row" title="<%= tableView[0].gfi ? tableView[0].gfi[prop] : prop %>"><%= prop %><% if (Array.isArray(tableView[0][prop])) { %><button type="button" class="btn btn-outline-secondary open"><span></span></button><% } %></th>
-                                                <% _.each(tableView, (dist) => { %>
-                                                        <% if (prop === sortKey) { %>
-                                                                <th scope="col" style="text-align:right;" class="district"><%= dist[prop] %></th>
-                                                        <% } else { %>
-                                                                <% if (Array.isArray(dist[prop])) { %>
-                                                                        <td class="timeline-table">
-                                                                                <ul class="list-group list-group-flush">
-                                                                                <% _.each(dist[prop], (timeVal) =>{ %>
-                                                                                        <li class="list-group-item nowrap">
-                                                                                                <span class="val"><%= Number.isInteger(timeVal[1]) ? timeVal[1] : timeVal[1].toFixed(2) %></span>
-                                                                                                <small class="year">(<%= timeVal[0] %>)</small>
-                                                                                        </li>
-                                                                                <% }); %>
-                                                                                </ul>
-                                                                        </td>
+                <div class="overview figure open">
+                        <div class="btn-group header" style="border-bottom: none;">
+                                <span class="figure-name">Übersicht</span>
+                                <button type="button" class="btn btn-outline-secondary open"><span></span></button>
+                                <span class="filter-dropdown"></span>
+                        </div>
+                        <div class="content">
+                                <table class="table">
+                                        <% _.each(_.allKeys(tableView[0]), (prop) => { %>
+                                                <% if (prop !== "gfi") { %>
+                                                <tr class="row">
+                                                        <th class="prop" scope="row" title="<%= tableView[0].gfi ? tableView[0].gfi[prop] : prop %>"><span class="prop-name"><%= prop %></span><% if (Array.isArray(tableView[0][prop])) { %><button type="button" class="btn btn-outline-secondary open"><span></span></button><% } %></th>
+                                                        <% _.each(tableView, (dist) => { %>
+                                                                <% if (prop === sortKey) { %>
+                                                                        <th scope="col" style="text-align:right;" class="district"><%= dist[prop] %></th>
                                                                 <% } else { %>
-                                                                        <% if (!isNaN(parseFloat(dist[prop]))) { %>
-                                                                                <td style="text-align:right;"><%= new Intl.NumberFormat("de-DE").format(dist[prop]) %></td>
+                                                                        <% if (Array.isArray(dist[prop])) { %>
+                                                                                <td class="timeline-table">
+                                                                                        <ul class="list-group list-group-flush">
+                                                                                        <% _.each(dist[prop], (timeVal) =>{ %>
+                                                                                                <li class="list-group-item nowrap">
+                                                                                                        <span class="val"><%= Number.isInteger(timeVal[1]) ? timeVal[1] : timeVal[1].toFixed(2) %></span>
+                                                                                                        <small class="year">(<%= timeVal[0] %>)</small>
+                                                                                                </li>
+                                                                                        <% }); %>
+                                                                                        </ul>
+                                                                                </td>
                                                                         <% } else { %>
-                                                                                <td style="text-align:right;"><%= dist[prop] %></td>
+                                                                                <% if (!isNaN(parseFloat(dist[prop]))) { %>
+                                                                                        <td style="text-align:right;"><%= new Intl.NumberFormat("de-DE").format(dist[prop]) %></td>
+                                                                                <% } else { %>
+                                                                                        <td style="text-align:right;"><%= dist[prop] %></td>
+                                                                                <% } %>
                                                                         <% } %>
                                                                 <% } %>
-                                                        <% } %>
-                                                <% }); %>
-                                        </tr>
-                                        <% } %>
-                                <% }); %>
-                        </table>
+                                                        <% }); %>
+                                                </tr>
+                                                <% } %>
+                                        <% }); %>
+                                </table>
+                                <div id="export-button"></div>
+                        </div>
                 </div>
         </div>
-        <div id="export-button"></div>
         <div class="detail-view-container">
-                <div class="basic-graph">
+                <div class="figure open">
                         <div class="btn-group header">
                                 <span class="basic-graph-header"></span>
+                                <button type="button" class="btn btn-outline-secondary open"><span></span></button>
                         </div>
-                        <svg class="dashboard-graph"></svg>
+                        <div class="content">
+                                <svg class="dashboard-graph"></svg>
+                        </div>
                 </div>
         </div>
 </div>
