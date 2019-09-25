@@ -13,7 +13,8 @@ const FeatureLoaderModel = Backbone.Model.extend({
             "statgebiet-layers": [
                 "15564",
                 "15565",
-                "15566"
+                "15566",
+                "15989"
             ],
             "Sportstätten-layer": [
                 "12868"

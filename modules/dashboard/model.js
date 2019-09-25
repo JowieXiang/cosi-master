@@ -252,6 +252,7 @@ const DashboardModel = Tool.extend({
     getData: function () {
         if (this.getScope() !== "") {
             _.each(this.getPropertyTree()[this.getScope()].layerIds, (layerId) => {
+                console.log(layerId);
                 this.getDashboardLayerFeatures(layerId, Radio.request("FeatureLoader", "getFeaturesByLayerId", layerId));
             });
         }

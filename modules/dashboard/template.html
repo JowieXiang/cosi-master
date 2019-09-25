@@ -30,7 +30,7 @@
                                                                                         <ul class="list-group list-group-flush">
                                                                                         <% _.each(dist[prop], (timeVal) =>{ %>
                                                                                                 <li class="list-group-item nowrap">
-                                                                                                        <span class="val"><%= Number.isInteger(timeVal[1]) ? timeVal[1] : timeVal[1].toFixed(2) %></span>
+                                                                                                        <span class="val"><%= Number.isInteger(parseFloat(timeVal[1])) ? parseFloat(timeVal[1]) : parseFloat(timeVal[1]).toFixed(2) %></span>
                                                                                                         <small class="year">(<%= timeVal[0] %>)</small>
                                                                                                 </li>
                                                                                         <% }); %>

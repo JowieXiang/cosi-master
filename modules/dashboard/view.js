@@ -55,6 +55,7 @@ const DashboardView = Backbone.View.extend({
     startX: 0,
     render: async function () {
         var attr = this.model.toJSON();
+        console.log(attr.tableView);
 
         this.$el.html(this.template(attr));
         this.$el.find("#export-button").append(this.exportButtonView.render().el);
