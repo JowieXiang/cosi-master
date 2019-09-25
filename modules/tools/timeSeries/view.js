@@ -72,7 +72,7 @@ const TimeSeriesView = Backbone.View.extend({
         this.$el.find("button > .glyphicon").removeClass("glyphicon-play");
     },
 
-    renderGraph: function (graphData, value) {
+    renderGraph: function (graphData, value, getMaxYAxisValue) {
         this.$el.find(".time-series-graph").empty();
 
         Radio.trigger("Graph", "createGraph", {
@@ -86,7 +86,9 @@ const TimeSeriesView = Backbone.View.extend({
             xAxisLabel: {
                 "rotate": 45
             },
-            yAxisLabel: "jahr_" + value,
+            yAxisLabel: {
+                "maxValue": getMaxYAxisValue
+            },
             margin: {
                 left: 60,
                 top: 20,
