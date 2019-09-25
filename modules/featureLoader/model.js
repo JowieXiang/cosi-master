@@ -11,9 +11,9 @@ const FeatureLoaderModel = Backbone.Model.extend({
                 "2771"
             ],
             "statgebiet-layers": [
-                "bev_gesamt",
-                "bev_maennlich",
-                "bev_weiblich"
+                "15564",
+                "15565",
+                "15566"
             ],
             "Sportstätten-layer": [
                 "12868"
