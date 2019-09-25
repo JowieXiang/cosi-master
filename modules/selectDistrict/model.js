@@ -175,8 +175,6 @@ const SelectDistrict = Tool.extend({
      * @returns {void}
      */
     setBboxGeometryToLayer: function (modelList, itemList) {
-        console.info(modelList);
-        console.info(itemList);
         itemList.forEach(function (item) {
             const model = modelList.get(item.id);
 

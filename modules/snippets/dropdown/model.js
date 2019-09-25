@@ -27,10 +27,14 @@ const DropdownModel = SnippetModel.extend(/** @lends DropdownModel.prototype */{
             this.updateSelectedValues(this.get("preselectedValues"));
         }
         this.setValueModelsToShow(this.get("valuesCollection").where({isSelectable: true}));
+
         this.listenTo(this.get("valuesCollection"), {
             "change:isSelected": function (model, value) {
                 this.triggerValuesChanged(model, value);
             }
+        });
+        this.listenTo(this, {
+            "change:values": this.initialize
         });
     },
 

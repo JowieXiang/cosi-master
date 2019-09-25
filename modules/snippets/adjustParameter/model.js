@@ -8,9 +8,10 @@ const AdjustParameterModel = SnippetModel.extend({
         defaultOption: "Anzahl",
         selectedOption: [],
         initValue: 1.00,
-        step: 0.05
+        step: 0.05,
+        infoText: "Der eingegebene Wert entspricht keinem offiziellen, rechtlich bindenden Schlüssel, sonder dient rein der explorativen Analyse"
     },
-    initialize: function (layerId) {
+    initialize: function (layerId, infoText) {
         const opts = this.getProperties(layerId);
 
         this.superInitialize();
@@ -20,7 +21,8 @@ const AdjustParameterModel = SnippetModel.extend({
             "layer": opts.layer,
             "numericalValues": opts.numericalValues,
             "defaultOption": opts.defaultOption,
-            "selectedOption": [opts.defaultOption, 1.00]
+            "selectedOption": [opts.defaultOption, 1.00],
+            "infoText": infoText ? infoText : this.get("infoText")
         });
 
         this.listenTo(this, {

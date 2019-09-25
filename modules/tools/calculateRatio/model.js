@@ -1,7 +1,7 @@
 import Tool from "../../core/modelList/tool/model";
 import SnippetDropdownModel from "../../snippets/dropdown/model";
 import AdjustParameterView from "../../snippets/adjustParameter/view";
-// import ExportButtonModel from "../../snippets/exportButton/model";
+import ExportButtonModel from "../../snippets/exportButton/model";
 import Geometry from "ol/geom/Geometry";
 import Feature from "ol/Feature";
 import * as Extent from "ol/extent";
@@ -68,7 +68,6 @@ const CalculateRatioModel = Tool.extend({
         this.listenTo(Radio.channel("Map"), {
             "isReady": function () {
                 this.getActiveLayersWithValues();
-                // this.getInitialDemographicLayers();
                 this.updateDropdownMenus();
             }
         }, this);
@@ -127,7 +126,7 @@ const CalculateRatioModel = Tool.extend({
             this.setMessage("Bitte wählen Sie mindestens einen Stadtteil aus.");
         }
 
-        // this.generateExport();
+        this.generateExport();
         this.trigger("renderResults");
     },
     calculateRatio (facilities, demographics, area = "allen Unterschungsgebieten") {
@@ -247,9 +246,7 @@ const CalculateRatioModel = Tool.extend({
             denDropdownModel = this.get("denDropdownModel");
 
         numDropdownModel.set("values", _.allKeys(this.get("numValues")));
-        // numDropdownModel.initialize();
         denDropdownModel.set("values", _.allKeys(this.get("denValues")));
-        // denDropdownModel.initialize();
     },
     setDropdownSnippets: function (values) {
         if (values.numerators) {
@@ -272,7 +269,7 @@ const CalculateRatioModel = Tool.extend({
         }));
     },
     createModifier: function (layerName) {
-        this.get("adjustParameterViews").push(new AdjustParameterView(this.get("numValues")[layerName]));
+        this.get("adjustParameterViews").push(new AdjustParameterView(this.get("numValues")[layerName], this.get("modifierInfoText")));
         this.trigger("change:adjustParameterViews");
     },
     setNumerators: function () {

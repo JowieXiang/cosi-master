@@ -43,6 +43,19 @@ const DashboardModel = Tool.extend({
             filename: "CoSI-Dashboard-Export",
             fileExtension: "csv"
         }));
+        
+        this.set("filterDropdownModel", new DropdownModel({
+            name: "Filter",
+            type: "string",
+            displayName: "Filter",
+            values: [],
+            snippetType: "dropdown",
+            isMultiple: true
+        }));
+
+        this.listenTo(this.get("filterDropdownModel"), {
+            "valuesChanged": this.filterTableView
+        });
 
         this.listenTo(Radio.channel("SelectDistrict"), {
             "districtSelectionChanged": function (selectedDistricts) {
@@ -239,6 +252,7 @@ const DashboardModel = Tool.extend({
     getData: function () {
         if (this.getScope() !== "") {
             _.each(this.getPropertyTree()[this.getScope()].layerIds, (layerId) => {
+                console.log(layerId);
                 this.getDashboardLayerFeatures(layerId, Radio.request("FeatureLoader", "getFeaturesByLayerId", layerId));
             });
         }
@@ -363,17 +377,7 @@ const DashboardModel = Tool.extend({
     updateFilter: function () {
         const properties = _.allKeys(this.get("tableView")[0]);
 
-        this.set("filterDropdownModel", new DropdownModel({
-            name: "Filter",
-            type: "string",
-            displayName: "Filter",
-            values: properties.filter(prop => prop !== "gfi" && prop !== this.getPropertyTree()[this.getScope()].selector),
-            snippetType: "dropdown",
-            isMultiple: true
-        }));
-        this.listenTo(this.get("filterDropdownModel"), {
-            "valuesChanged": this.filterTableView
-        });
+        this.get("filterDropdownModel").set("values", properties.filter(prop => prop !== "gfi" && prop !== this.getPropertyTree()[this.getScope()].selector));
         this.trigger("updateProperties");
     },
     getScope: function () {

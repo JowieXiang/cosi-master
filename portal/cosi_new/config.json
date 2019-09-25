@@ -82,11 +82,12 @@
             "id": 6071,
             "selector": "stat_gebiet",
             "layerIds": [
-              "bev_gesamt",
-              "bev_maennlich",
-              "bev_weiblich"
+              "15563",
+              "15564",
+              "15565",
+              "15989"
             ],
-            "exclude": ["geometry", "extent"]
+            "exclude": ["geometry", "geom", "extent", "statgebiet"]
           }
         },
         "renderToWindow": false
@@ -169,7 +170,10 @@
                 "name": "Statistische Gebiete",
                 "selector": "statgebiet",
                 "layerIds": [
-                  "6071"
+                  "15563",
+                  "15564",
+                  "15565",
+                  "15989"
                 ]
               }
             ]
@@ -199,7 +203,8 @@
           },
           "calculateRatio": {
             "name": "Angebotsdeckung ermitteln",
-            "glyphicon": "glyphicon-info-sign"
+            "glyphicon": "glyphicon-info-sign",
+            "modifierInfoText": "<h3>Gewichtung:</h3><p>Hiermit können Sie eine beliebige Gewichtung für die Berechnung der Angebots/Zielgruppen-Verhältnisse festlegen um die Deckung der Nachfrage zu überprüfen.<br />z.B.: 'Wieviele Qudaratmeter pädagogische Fläche benötigt ein Kitakind?'<br />Sie können zwischen 'geteilt' ('/') und 'multipliziert' ('x') wählen.</p><p><strong>Der eingegebene Wert entspricht keinem offiziellen, rechtlich bindenden Schlüssel, sonder dient rein der explorativen Analyse.</strong></p>"
           },
           "compareFeatures": {
             "name": "Gebiete vergleichen",
@@ -439,6 +444,7 @@
             {
               "id": "15564",
               "styleId": "unstyled",
+              "visibility": true,
               "isDemographic": true,
               "mouseHoverField": "dynamic",
               "legendURL": "",
