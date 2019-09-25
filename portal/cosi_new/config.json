@@ -138,7 +138,12 @@
           "timeSeries": {
             "name": "Zeitstrahl Analyse",
             "glyphicon": "glyphicon-time",
-            "layerIds": ["bev_gesamt", "bev_maennlich", "bev_weiblich"]
+            "layerIds": [
+              "15563",
+              "15564",
+              "15565",
+              "15989"
+            ]
           },
           "measure": {
             "name": "Strecke / Fläche messen",
@@ -164,9 +169,7 @@
                 "name": "Statistische Gebiete",
                 "selector": "statgebiet",
                 "layerIds": [
-                  "bev_gesamt",
-                  "bev_maennlich",
-                  "bev_weiblich"
+                  "6071"
                 ]
               }
             ]
@@ -236,6 +239,10 @@
           "id": "1694",
           "name": "Stadtteile",
           "visibility": true,
+          "districtCompareField":[
+            "Sportstätten",
+            "Grünflächen"
+          ],
           "topic": "basic",
           "gfiAttributes": "ignore",
           "isNeverVisibleInTree": true,
@@ -419,7 +426,19 @@
           "isFolderSelectable": true,
           "Layer": [
             {
-              "id": "bev_gesamt",
+              "id": "15563",
+              "styleId": "unstyled",
+              "visibility": true,
+              "isDemographic": true,
+              "mouseHoverField": "dynamic",
+              "legendURL": "",
+              "correlationsField": {
+                "type": "abs",
+                "field": "jahr_2018"
+              }
+            },
+            {
+              "id": "15564",
               "styleId": "unstyled",
               "isDemographic": true,
               "mouseHoverField": "dynamic",
@@ -430,8 +449,9 @@
               }
             },
             {
-              "id": "bev_maennlich",
+              "id": "15565",
               "styleId": "unstyled",
+              "visibility": true,
               "isDemographic": true,
               "mouseHoverField": "dynamic",
               "legendURL": "",
@@ -441,8 +461,9 @@
               }
             },
             {
-              "id": "bev_weiblich",
+              "id": "15989",
               "styleId": "unstyled",
+              "visibility": true,
               "isDemographic": true,
               "mouseHoverField": "dynamic",
               "legendURL": "",

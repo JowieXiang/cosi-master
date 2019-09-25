@@ -8,11 +8,6 @@ const SliderView = Backbone.View.extend({
             this.setSliderValue(evt);
         }
     },
-    initialize: function () {
-        this.listenTo(this.model, {
-            // "change:sliderValue": somefunction
-        });
-    },
 
     tagName: "div",
     className: "filter-slider",
