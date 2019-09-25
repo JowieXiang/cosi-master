@@ -9,8 +9,12 @@
             <option value="<%= value %>"><%= value %></option>
         <% }) %>
     </select>
+    <select class="form-control" id="operator" title="Rechenoperator für die Gewichtung wählen">
+        <option value="*" title="Multiplizieren - Bsp.: '1 Lehrer kann 20 Schüler betreuen'">x</option>
+        <option value="/" title="Dividieren - Bsp.: '1 Schüler braucht 5qm Sportplatzfläche'">/</option>
+    </select>
     <input class="form-control" type="number" value="<%= initValue %>" id="modifier-input" step="<%= step %>">
     <div class="input-group-append">
-        <label class="input-group-text" for="modifier-input">Gewichtung</label>
+        <label class="input-group-text" for="modifier-input">Gewichtung<span class="glyphicon glyphicon-info-sign info-button"></span></label>
     </div>
 </div>

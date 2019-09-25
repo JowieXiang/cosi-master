@@ -1,7 +1,7 @@
 import ResultTemplate from "text-loader!./resultTemplate.html";
 import VectorSource from "ol/source/Vector";
 import {Fill, Stroke, Style, Text} from "ol/style.js";
-// import ExportButtonView from "../../snippets/exportButton/view";
+import ExportButtonView from "../../snippets/exportButton/view";
 
 
 const ResultView = Backbone.View.extend({
@@ -9,7 +9,7 @@ const ResultView = Backbone.View.extend({
     template: _.template(ResultTemplate),
     textStyle: new Style({}),
     render: function () {
-        // this.exportButtonView = new ExportButtonView({model: this.model.get("exportButtonModel")});
+        this.exportButtonView = new ExportButtonView({model: this.model.get("exportButtonModel")});
 
         const attr = this.model.toJSON(),
             results = this.model.getResults();

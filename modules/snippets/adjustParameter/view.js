@@ -6,11 +6,12 @@ const AdjustParameterView = Backbone.View.extend({
     events: {
         "change #parameter-select": "setModifier",
         "change #modifier-input": "setModifier",
-        "click #layer-name": "test"
+        "change #operator": "setModifier",
+        "click .info-button": "showInfo"
     },
-    initialize: function (layerId) {
+    initialize: function (layerId, infoText = null) {
         if (layerId) {
-            this.model = new AdjustParameterModel(layerId);
+            this.model = new AdjustParameterModel(layerId, infoText);
         }
     },
     model: {},
@@ -25,13 +26,18 @@ const AdjustParameterView = Backbone.View.extend({
         return this;
     },
     setModifier: function () {
+        const modValue = this.$el.find("#operator").val() === "/" ? 1 / parseFloat(this.$el.find("#modifier-input").val()) : parseFloat(this.$el.find("#modifier-input").val());
+
         this.model.set("selectedOption", [
             this.$el.find("#parameter-select").val(),
-            parseFloat(this.$el.find("#modifier-input").val())
+            modValue
         ]);
     },
-    test: function () {
-        console.log(this.model.getSelectedOption());
+    showInfo: function () {
+        Radio.trigger("Alert", "alert", {
+            text: `${this.model.get("infoText")}`,
+            kategorie: "alert-info"
+        });
     }
 });
 
