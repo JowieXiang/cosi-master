@@ -116,12 +116,12 @@ const TimeSeriesModel = Tool.extend({
         const features = layer.get("layer").getSource().getFeatures();
 
         if (features.length > 0) {
-            const values = this.getSliderValues(features[0], this.get("attribute_prefix")),
+            const sliderValues = this.getSliderValues(features[0], this.get("attribute_prefix")),
                 sliderModel = new SliderModel({
                     snippetType: "slider",
-                    values: values,
+                    values: sliderValues,
                     type: "integer",
-                    preselectedValues: values[0]
+                    preselectedValues: sliderValues[0]
                 });
 
             this.listenTo(sliderModel, {
@@ -129,7 +129,7 @@ const TimeSeriesModel = Tool.extend({
             }, this);
 
             this.set("sliderModel", sliderModel);
-            this.sliderCallback(undefined, values[0]);
+            this.sliderCallback(undefined, sliderValues[0]);
             this.trigger("renderSliderView", sliderModel);
         }
     },
@@ -170,7 +170,7 @@ const TimeSeriesModel = Tool.extend({
         });
 
         this.styleFeatures(features, this.get("attribute_prefix") + sliderValue);
-        this.trigger("renderGraph", graphData, sliderValue);
+        this.trigger("renderGraph", graphData, sliderValue, this.getMaxYAxisValue(graphData, this.get("attribute_prefix"), this.get("sliderModel").get("values")));
     },
 
     /**
@@ -225,6 +225,27 @@ const TimeSeriesModel = Tool.extend({
             this.setIsRunning(false);
             this.trigger("stopRunning");
         }
+    },
+
+    /**
+     * gets the max value for the y-axis
+     * @param {object[]} graphData - data for graph
+     * @param {string} prefix - time unit prefix
+     * @param {number[]} sliderValues - values of the slider
+     * @returns {number} max
+     */
+    getMaxYAxisValue: function (graphData, prefix, sliderValues) {
+        let maxValue = 0;
+
+        sliderValues.forEach(function (value) {
+            const maxValues = graphData.map(function (data) {
+                return data[prefix + value];
+            });
+
+            maxValue = Math.max(...maxValues, maxValue);
+        });
+
+        return maxValue;
     },
 
     /**

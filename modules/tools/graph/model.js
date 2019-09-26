@@ -74,9 +74,10 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
      * @param {Object[]} data Data for graph.
      * @param {String[]} attrToShowArray Attribute array.
      * @param {Object} axisTicks Ticks object.
+     * @param {number} yAxisMaxValue - max value for the y-axis
      * @return {object} - Object with attribute "minValue" and "maxValue".
      */
-    createValues: function (data, attrToShowArray, axisTicks) {
+    createValues: function (data, attrToShowArray, axisTicks, yAxisMaxValue) {
         var valueObj = {};
 
         if (!_.isUndefined(axisTicks) && _.has(axisTicks, "start") && _.has(axisTicks, "end")) {
@@ -85,7 +86,12 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
         }
         else {
             valueObj.minValue = 0;
-            valueObj.maxValue = this.createMaxValue(data, attrToShowArray);
+            if (yAxisMaxValue) {
+                valueObj.maxValue = yAxisMaxValue;
+            }
+            else {
+                valueObj.maxValue = this.createMaxValue(data, attrToShowArray);
+            }
         }
 
         return valueObj;
@@ -124,9 +130,10 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
      * @param {String} scaletype Enum of scaletype. Possible values are "ordinal" or "linear".
      * @param {String[]} attrToShowArray Array of attributes to be shown in graph.
      * @param {Object} yAxisTicks Ticks object.
+     * @param {number} yAxisMaxValue - max value for the y-axis
      * @returns {Object} - scaleY
      */
-    createScaleY: function (data, height, scaletype, attrToShowArray, yAxisTicks) {
+    createScaleY: function (data, height, scaletype, attrToShowArray, yAxisTicks, yAxisMaxValue) {
         var rangeArray = [height, 0],
             scale,
             valueObj;
@@ -135,7 +142,7 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             scale = this.createOrdinalScale(data, rangeArray, attrToShowArray);
         }
         else if (scaletype === "linear") {
-            valueObj = this.createValues(data, attrToShowArray, yAxisTicks);
+            valueObj = this.createValues(data, attrToShowArray, yAxisTicks, yAxisMaxValue);
             scale = this.createLinearScale(valueObj.minValue, valueObj.maxValue, rangeArray);
         }
         else {
@@ -683,6 +690,7 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             xAttr = graphConfig.xAttr,
             xAxisLabel = graphConfig.xAxisLabel ? graphConfig.xAxisLabel : undefined,
             yAxisLabel = graphConfig.yAxisLabel ? graphConfig.yAxisLabel : undefined,
+            yAxisMaxValue = graphConfig.yAxisLabel.maxValue ? graphConfig.yAxisLabel.maxValue : undefined,
             attrToShowArray = graphConfig.attrToShowArray,
             margin = graphConfig.margin,
             width = graphConfig.width - margin.left - margin.right,
@@ -690,7 +698,7 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             xAxisTicks = graphConfig.xAxisTicks,
             yAxisTicks = graphConfig.yAxisTicks,
             scaleX = this.createScaleX(data, width, scaleTypeX, xAttr, xAxisTicks),
-            scaleY = this.createScaleY(data, height, scaleTypeY, attrToShowArray, yAxisTicks),
+            scaleY = this.createScaleY(data, height, scaleTypeY, attrToShowArray, yAxisTicks, yAxisMaxValue),
             xAxis = this.createAxisBottom(scaleX, xAxisTicks),
             yAxis = this.createAxisLeft(scaleY, yAxisTicks),
             svgClass = graphConfig.svgClass,
