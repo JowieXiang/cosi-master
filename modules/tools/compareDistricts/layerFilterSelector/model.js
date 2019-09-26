@@ -6,8 +6,9 @@ const LayerFilterSelectorModel = Backbone.Model.extend({
     },
 
     initialize: function () {
-        const allLayers = Radio.request("Parser", "getItemsByAttributes", { typ: "WFS" }),
-            layers = allLayers.filter(layer => _.contains(Object.keys(layer), "districtCompareField")),
+        const currentSelector = Radio.request("SelectDistrict", "getSelector"),
+            allLayers = Radio.request("Parser", "getItemsByAttributes", { typ: "WFS" }),
+            layers = allLayers.filter(layer => _.contains(Object.keys(layer), "districtCompareField")).filter(layer => layer.selector === currentSelector),
             layerOptions = layers.map(layer => {
                 // console.log("new layer: ", layer);
                 return { "layerName": layer.name, "layerId": layer.id };
@@ -21,7 +22,6 @@ const LayerFilterSelectorModel = Backbone.Model.extend({
          * this is unstable!!! because "value" is only the first word of the layer name
          */
         const selectedLayer = this.get("layerOptions").filter(layer => layer.layerName.includes(value))[0];
-
         this.set("selectedLayer", selectedLayer);
     },
 

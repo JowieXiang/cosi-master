@@ -135,7 +135,8 @@ const CompareDistrictsView = Backbone.View.extend({
     },
     setCompareFeatures: function (model, value) {
         if (JSON.parse(value).length > 0) {
-            const layerFilterList = JSON.parse(value);
+            const layerFilterList = JSON.parse(value),
+                selector = Radio.request("SelectDistrict", "getSelector") === "statgebiet" ? "stat_gebiet" : Radio.request("SelectDistrict", "getSelector");
 
             var results = [],
                 intersection = [],
@@ -145,7 +146,7 @@ const CompareDistrictsView = Backbone.View.extend({
 
             _.each(layerFilterList, layerFilter => {
 
-                resultNames.push(this.filterOne(layerFilter).map(feature => feature.getProperties().stadtteil));
+                resultNames.push(this.filterOne(layerFilter).map(feature => feature.getProperties()[selector]));
                 results.push(this.filterOne(layerFilter));
 
             }, this);
@@ -153,7 +154,7 @@ const CompareDistrictsView = Backbone.View.extend({
 
             if (results.length > 1) {
                 intersection = _.intersection(...resultNames);
-                comparableFeatures = results[0].filter(feature => _.contains(intersection, feature.getProperties().stadtteil));
+                comparableFeatures = results[0].filter(feature => _.contains(intersection, feature.getProperties()[selector]));
             }
             this.showComparableDistricts(comparableFeatures);
             // }
@@ -161,10 +162,11 @@ const CompareDistrictsView = Backbone.View.extend({
     },
 
     filterOne: function (layerFilter) {
-        const layerId = layerFilter.layerId,
+        const selector = Radio.request("SelectDistrict", "getSelector") === "statgebiet" ? "stat_gebiet" : Radio.request("SelectDistrict", "getSelector"),
+            layerId = layerFilter.layerId,
             refDistrictName = this.districtSelector.getSelectedDistrict(),
             featureCollection = Radio.request("FeatureLoader", "getFeaturesByLayerId", layerId),
-            refFeature = featureCollection.filter(feature => feature.getProperties().stadtteil === refDistrictName)[0],
+            refFeature = featureCollection.filter(feature => feature.getProperties()[selector] === refDistrictName)[0],
             filterCollection = JSON.parse(layerFilter.filter);
         var filterResults = [],
             intersection = [];

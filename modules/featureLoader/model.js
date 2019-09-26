@@ -11,9 +11,9 @@ const FeatureLoaderModel = Backbone.Model.extend({
                 "2771"
             ],
             "statgebiet-layers": [
+                "15563",
                 "15564",
                 "15565",
-                "15566",
                 "15989"
             ],
             "Sportstätten-layer": [
@@ -37,7 +37,6 @@ const FeatureLoaderModel = Backbone.Model.extend({
 
         this.listenTo(Radio.channel("Layer"), {
             "featuresLoaded": function (layerId, features) {
-                console.log("layer:", layerId);
                 this.processData(layerId, features);
             }
         });
@@ -62,6 +61,7 @@ const FeatureLoaderModel = Backbone.Model.extend({
                     break;
                 }
                 case "statgebiet-layers": {
+                    console.log("gebiet layer: ",features[0].getProperties());
                     this.processStatgebietData(features);
                     break;
                 }
@@ -83,6 +83,7 @@ const FeatureLoaderModel = Backbone.Model.extend({
             }
             this.channel.trigger("addFeatureCollection", layerId, features);
             this.pushFeatureCollection(layerId, features);
+            console.log("layer:", layerId);
         }
     },
     processStatteilData: function (features) {
@@ -114,7 +115,6 @@ const FeatureLoaderModel = Backbone.Model.extend({
         // console.log("districtLayer: ", districtLayer);
         _.each(districtLayer.collection, district => {
             district.set("sports", []);
-            console.log("district.getProperties: ", district.getProperties().sports);
 
         });
     },
