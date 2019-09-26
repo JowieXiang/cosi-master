@@ -157,7 +157,6 @@ const CompareDistrictsView = Backbone.View.extend({
                 comparableFeatures = results[0].filter(feature => _.contains(intersection, feature.getProperties()[selector]));
             }
             this.showComparableDistricts(comparableFeatures);
-            // }
         }
     },
 
@@ -188,11 +187,14 @@ const CompareDistrictsView = Backbone.View.extend({
     },
 
     showComparableDistricts: function (districtFeatures) {
-        var mapLayer = Radio.request("Map", "getLayerByName", this.model.get("mapLayerName"));
+        const mapLayer = Radio.request("Map", "getLayerByName", this.model.get("mapLayerName")),
+            cloneCollection = [];
 
         mapLayer.getSource().clear();
         _.each(districtFeatures, (feature) => {
-            feature.setStyle(new Style({
+            const featureClone = feature.clone();
+
+            featureClone.setStyle(new Style({
                 fill: new Fill({
                     color: [8, 119, 95, 0.3]
                 }),
@@ -201,10 +203,10 @@ const CompareDistrictsView = Backbone.View.extend({
                     width: 3
                 })
             }));
+            cloneCollection.push(featureClone);
         });
         mapLayer.setVisible(true);
-
-        mapLayer.getSource().addFeatures(districtFeatures);
+        mapLayer.getSource().addFeatures(cloneCollection);
     },
     getBounds: function (features, filterKey) {
         const values = features.map(feature => parseFloat(feature.getProperties()[filterKey])),
