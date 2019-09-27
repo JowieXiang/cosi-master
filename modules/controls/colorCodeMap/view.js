@@ -28,13 +28,13 @@ const ColorCodeMapView = Backbone.View.extend({
         this.listenTo(this.layerList, {
             "add": this.createColorCodeLayer
         });
-        this.listenTo(Radio.channel("SelectDistrict"), {
-            "selectionChanged": function () {
-                this.setOptions();
-                this.clearColorLayerFeatures();
-                this.setColorLayerFeatures();
-            }
-        });
+        // this.listenTo(Radio.channel("SelectDistrict"), {
+        //     "selectionChanged": function () {
+        //         this.setOptions();
+        //         this.clearColorLayerFeatures();
+        //         this.setColorLayerFeatures();
+        //     }
+        // });
     },
     template: _.template(template),
     render: function () {

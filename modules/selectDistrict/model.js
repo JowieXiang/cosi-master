@@ -61,7 +61,7 @@ const SelectDistrict = Tool.extend({
 
                         this.setBboxGeometryToLayer(Radio.request("ModelList", "getCollection"), layerlist);
                     }
-                    this.get("channel").trigger("selectionChanged");
+                    this.get("channel").trigger("selectionChanged", this.getSelectedGeometries(), this.get("activeScope"));
                     this.unlisten();
                 }
             }
