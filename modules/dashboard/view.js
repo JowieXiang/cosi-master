@@ -77,7 +77,7 @@ const DashboardView = Backbone.View.extend({
         _.each(this.$el.find(".overview tr"), (row, i) => {
             if (i > 0) {
                 if (selectedValues.length > 0) {
-                    if (!selectedValues.includes($(row).find("th.prop").text())) {
+                    if (!selectedValues.includes($(row).find("th.prop").attr("id"))) {
                         $(row).addClass("hidden");
                     }
                     else {
@@ -99,27 +99,17 @@ const DashboardView = Backbone.View.extend({
         this.clearChart();
 
         const row = this.$(event.target).parent("tr"),
-            firstValue = row.find("td").first().html();
+            firstValue = row.find("td").first().text();
 
         if (!isNaN(parseFloat(firstValue))) {
-            this.model.createChart([row.find("th.prop").text()]);
+            this.model.createChart([row.find("th.prop").attr("id")]);
 
             // Highlight the selected row
             row.parent("tbody").find("tr").removeClass("selected");
             row.addClass("selected");
 
             // Add Header
-            let title = row.find("th.prop").text();
-
-            // Check if GFI table available
-            if (this.model.get("tableView")[0].gfi) {
-                // Check if entry for the selected row exists
-                if (this.model.get("tableView")[0].gfi[row.find("th.prop").text()]) {
-                    title = this.model.get("tableView")[0].gfi[row.find("th.prop").text()];
-                }
-            }
-
-            this.$el.find(".basic-graph-header").html(`Diagramm: ${title}`);
+            this.$el.find(".basic-graph-header").html(`Diagramm: ${row.find("th.prop").text()}`);
         }
     },
     clearChart: function () {

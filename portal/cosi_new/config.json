@@ -389,14 +389,14 @@
               },
               "gfiAttributes": {
                 "stadtteil": "Stadtteil",
-                "aerz_prz": "Anteil der Haushalte in denen Alleinerziehende leben an allen Haushalten 31.12.2014",
-                "alleinerz": "Anzahl der Haushalte in denen Alleinerziehende leben 31.12.2014",
-                "bev": "Anzahl der Einwohnerinnen und Einwohner 31.12.2014",
-                "e_ha": "Einwohnerinnen und Einwohner je ha 31.12.2014",
-                "eph": "Anzahl der Haushalte in denen nur eine Person lebt 31.12.2014",
-                "hhki": "Anzahl der Haushalte in denen Kinder leben 31.12.2014",
-                "haushgr": "Durchschnittliche Anzahl der Personen je Haushalt 31.12.2015",
-                "svpbs_prz": "Anteil sozialversicherungspflichtig Beschäftigter am Wohnort an den Erwerbsfähigen 15 bis unter 65-Jährigen 31.12.2014"
+                "aerz_prz": "Haushalte (Alleinerziehende, in %, 2014)",
+                "alleinerz": "Haushalte (Alleinerziehende, 2014)",
+                "bev": "Bevölkerung (gesamt, 2014)",
+                "e_ha": "EW / ha (2014)",
+                "eph": "Haushalte (1-Person, 2014)",
+                "hhki": "Haushalte (m. Kindern, 2014)",
+                "haushgr": "Haushaltsgröße (2015)",
+                "svpbs_prz": "sozialversicherungspflichtig Beschäftigte (15-65J., in %, 2014)"
               }
             },
             {
@@ -419,14 +419,14 @@
               },
               "gfiAttributes": {
                 "stadtteil": "Stadtteil",
-                "aerz_prz": "Anteil der Haushalte in denen Alleinerziehende leben an allen Haushalten 31.12.2014",
-                "alleinerz": "Anzahl der Haushalte in denen Alleinerziehende leben 31.12.2014",
-                "e_ha": "Einwohnerinnen und Einwohner je ha 31.12.2014",
-                "eph": "Anzahl der Haushalte in denen nur eine Person lebt 31.12.2014",
-                "hhki": "Anzahl der Haushalte in denen Kinder leben 31.12.2014",
-                "haushgr": "Durchschnittliche Anzahl der Personen je Haushalt 31.12.2015",
-                "svpbs_prz": "Anteil sozialversicherungspflichtig Beschäftigter am Wohnort an den Erwerbsfähigen 15 bis unter 65-Jährigen 31.12.2014",
-                "bu18_prz": "Anteil Kinder und Jugendlicher unter 18 Jahren an der Gesamtbevölkerung 31.12.2014"
+                "aerz_prz": "Haushalte (Alleinerziehende, in %, 2014)",
+                "alleinerz": "Haushalte (Alleinerziehende, 2014)",
+                "e_ha": "EW / ha (2014)",
+                "eph": "Haushalte (1-Person, 2014)",
+                "hhki": "Haushalte (m. Kindern, 2014)",
+                "haushgr": "Haushaltsgröße (2015)",
+                "svpbs_prz": "sozialversicherungspflichtig Beschäftigte (15-65J, in %, 2014)",
+                "bu18_prz": "EW < 18J. (in %, 2014)"
               }
             },
             {
@@ -449,14 +449,14 @@
               },
               "gfiAttributes": {
                 "stadtteil": "Stadtteil",
-                "aerz_prz": "Anteil der Haushalte in denen Alleinerziehende leben an allen Haushalten 31.12.2014",
-                "alleinerz": "Anzahl der Haushalte in denen Alleinerziehende leben 31.12.2014",
-                "e_ha": "Einwohnerinnen und Einwohner je ha 31.12.2014",
-                "eph": "Anzahl der Haushalte in denen nur eine Person lebt 31.12.2014",
-                "hhki": "Anzahl der Haushalte in denen Kinder leben 31.12.2014",
-                "haushgr": "Durchschnittliche Anzahl der Personen je Haushalt 31.12.2015",
-                "svpbs_prz": "Anteil sozialversicherungspflichtig Beschäftigter am Wohnort an den Erwerbsfähigen 15 bis unter 65-Jährigen 31.12.2014",
-                "b65_prz": "Anteil von Einwohnerinnen und Einwohnern über 64 Jahren an der Gesamtbevölkerung 31.12.2014"
+                "aerz_prz": "Haushalte (Alleinerziehende, in %, 2014)",
+                "alleinerz": "Haushalte (Alleinerziehende, 2014)",
+                "e_ha": "EW / ha (2014)",
+                "eph": "Haushalte (1-Person, 2014)",
+                "hhki": "Haushalte (m. Kindern, 2014)",
+                "haushgr": "Haushaltsgröße (2015)",
+                "svpbs_prz": "sozialversicherungspflichtig Beschäftigte (15-65J, in %, 2014)",
+                "b65_prz": "EW > 64J. (in %, 2014)"
               }
             },
             {
@@ -498,6 +498,16 @@
               "correlationsField": {
                 "type": "abs",
                 "field": "jahr_2018"
+              },
+              "gfiAttributes": {
+                "stat_gebiet": "Statistisches Gebiet",
+                "verwaltungseinheit": "Verwaltungseinheit",
+                "bezirk": "bezirk",
+                "stadtteil": "Stadtteil",
+                "bev_insgesamt": "Bevölkerung (gesamt)",
+                "bev_weiblich": "Bevölkerung (weiblich)",
+                "bev_maennlich": "Bevölkerung (männlich)",
+                "bev_u6": "Kinder < 6 Jahren"
               }
             },
             {
@@ -514,6 +524,16 @@
               "correlationsField": {
                 "type": "abs",
                 "field": "jahr_2018"
+              },
+              "gfiAttributes": {
+                "stat_gebiet": "Statistisches Gebiet",
+                "verwaltungseinheit": "Verwaltungseinheit",
+                "bezirk": "Bezirk",
+                "stadtteil": "Stadtteil",
+                "bev_insgesamt": "Bevölkerung (gesamt)",
+                "bev_weiblich": "Bevölkerung (weiblich)",
+                "bev_maennlich": "Bevölkerung (männlich)",
+                "bev_u6": "Kinder < 6 Jahren"
               }
             },
             {
@@ -530,6 +550,16 @@
               "correlationsField": {
                 "type": "abs",
                 "field": "jahr_2018"
+              },
+              "gfiAttributes": {
+                "stat_gebiet": "Statistisches Gebiet",
+                "verwaltungseinheit": "Verwaltungseinheit",
+                "bezirk": "Bezirk",
+                "stadtteil": "Stadtteil",
+                "bev_insgesamt": "Bevölkerung (gesamt)",
+                "bev_weiblich": "Bevölkerung (weiblich)",
+                "bev_maennlich": "Bevölkerung (männlich)",
+                "bev_u6": "Kinder < 6 Jahren"
               }
             },
             {
@@ -546,6 +576,16 @@
               "correlationsField": {
                 "type": "abs",
                 "field": "jahr_2018"
+              },
+              "gfiAttributes": {
+                "stat_gebiet": "Statistisches Gebiet",
+                "verwaltungseinheit": "Verwaltungseinheit",
+                "bezirk": "Bezirk",
+                "stadtteil": "Stadtteil",
+                "bev_insgesamt": "Bevölkerung (gesamt)",
+                "bev_weiblich": "Bevölkerung (weiblich)",
+                "bev_maennlich": "Bevölkerung (männlich)",
+                "bev_u6": "Kinder < 6 Jahren"
               }
             }
           ]

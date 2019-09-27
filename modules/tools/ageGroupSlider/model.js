@@ -104,6 +104,7 @@ const AgeGroupSliderModel = Tool.extend({
     },
     // set active color-code layer visible
     showActiveColorCodeLayer: function () {
+        console.log("visible");
         const activeLayer = Radio.request("Map", "getLayerByName", this.get("activeLayer").layerId + "_colorcoded");
 
         if (activeLayer !== undefined) {
@@ -145,6 +146,7 @@ const AgeGroupSliderModel = Tool.extend({
     },
 
     addFeaturesToColorCodeLayers: function () {
+        console.log("styling");
         // Workaround for inconsistent naming of "Statistische Gebiete"-selector
         const selector = Radio.request("SelectDistrict", "getSelector") === "statgebiet" ? "stat_gebiet" : Radio.request("SelectDistrict", "getSelector"),
             districtNames = Radio.request("SelectDistrict", "getSelectedDistricts").map(feature => feature.getProperties()[selector]);
@@ -181,6 +183,7 @@ const AgeGroupSliderModel = Tool.extend({
 
                     // Add the generated legend style to the Legend Portal
                     Radio.trigger("StyleWFS", "addDynamicLegendStyle", layer.layerId, colorScale.legend);
+                    console.log(layer.layerId, colorScale.legend);
 
                     _.each(selectedFeatures, feature => newFeatures.push(feature.clone()));
                     _.each(newFeatures, (feature) => {
