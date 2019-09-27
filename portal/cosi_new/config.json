@@ -282,9 +282,9 @@
           "name": "Stadtteile",
           "visibility": true,
           "districtCompareField": [
-            "Sportstätten",
-            "Grünflächen"
+            "Sportstätten"
           ],
+          "selector": "stadtteil",
           "topic": "basic",
           "gfiAttributes": "ignore",
           "isNeverVisibleInTree": true,
