@@ -22,11 +22,7 @@ const DropdownModel = SnippetModel.extend(/** @lends DropdownModel.prototype */{
     initialize: function () {
         this.superInitialize();
 
-        this.addValueModels(this.get("values"));
-        if (this.get("preselectedValues").length > 0) {
-            this.updateSelectedValues(this.get("preselectedValues"));
-        }
-        this.setValueModelsToShow(this.get("valuesCollection").where({isSelectable: true}));
+        this.postInitialize();
 
         this.listenTo(this.get("valuesCollection"), {
             "change:isSelected": function (model, value) {
@@ -34,8 +30,18 @@ const DropdownModel = SnippetModel.extend(/** @lends DropdownModel.prototype */{
             }
         });
         this.listenTo(this, {
-            "change:values": this.initialize
+            "change:values": function () {
+                this.postInitialize();
+            }
         });
+    },
+
+    postInitialize: function () {
+        this.addValueModels(this.get("values"));
+        if (this.get("preselectedValues").length > 0) {
+            this.updateSelectedValues(this.get("preselectedValues"));
+        }
+        this.setValueModelsToShow(this.get("valuesCollection").where({isSelectable: true}));
     },
 
     /**
@@ -45,7 +51,12 @@ const DropdownModel = SnippetModel.extend(/** @lends DropdownModel.prototype */{
      */
     addValueModels: function (valueList) {
         _.each(valueList, function (value) {
-            this.addValueModel(value);
+            if (!this.get("valuesCollection").models.map(model => model.get("value")).includes(value)) {
+                this.addValueModel(value);
+            }
+            else {
+                this.get("valuesCollection").remove(this.get("valueCollection").where({value: value}));
+            }
         }, this);
     },
 

@@ -59,6 +59,7 @@ const ResultView = Backbone.View.extend({
         });
         source.addFeatures(features);
         layer.setSource(source);
+        layer.setZIndex(10);
     }
 });
 
