@@ -1,3 +1,4 @@
+
 const FeatureLoaderModel = Backbone.Model.extend({
     defaults: {
         layerGroups: {
@@ -11,9 +12,9 @@ const FeatureLoaderModel = Backbone.Model.extend({
                 "2771"
             ],
             "statgebiet-layers": [
+                "15563",
                 "15564",
                 "15565",
-                "15566",
                 "15989"
             ],
             "Sportstätten-layer": [
@@ -32,12 +33,22 @@ const FeatureLoaderModel = Backbone.Model.extend({
         this.channel = Radio.channel("FeatureLoader");
 
         this.channel.reply({
-            "getFeaturesByLayerId": this.getFeaturesByLayerId
+            "getFeaturesByLayerId": this.getFeaturesByLayerId,
+            "checkIfLayermodelExist": this.checkIfLayermodelExist
         }, this);
+        /**
+         * todo: load data only when needed
+         */
+        this.listenTo(Radio.channel("SelectDistrict"), {
+            "selectionChanged": function () {
+                const selector = Radio.channel("SelectDistrict", "getSelector"),
+                    layerList = _.union(Radio.request("Parser", "getItemsByAttributes", { typ: "WFS", isBaseLayer: false }), Radio.request("Parser", "getItemsByAttributes", { typ: "GeoJSON", isBaseLayer: false })),
+                    selectedLayerGroup = layerList.filter(layer => layer.selector === selector);
+            }
+        });
 
         this.listenTo(Radio.channel("Layer"), {
             "featuresLoaded": function (layerId, features) {
-                console.log("layer:", layerId);
                 this.processData(layerId, features);
             }
         });
@@ -62,6 +73,7 @@ const FeatureLoaderModel = Backbone.Model.extend({
                     break;
                 }
                 case "statgebiet-layers": {
+                    console.log("gebiet layer: ", features[0].getProperties());
                     this.processStatgebietData(features);
                     break;
                 }
@@ -83,6 +95,7 @@ const FeatureLoaderModel = Backbone.Model.extend({
             }
             this.channel.trigger("addFeatureCollection", layerId, features);
             this.pushFeatureCollection(layerId, features);
+            console.log("layer:", layerId);
         }
     },
     processStatteilData: function (features) {
@@ -104,17 +117,21 @@ const FeatureLoaderModel = Backbone.Model.extend({
             }
         }, this);
     },
-    processSportsData: function (features) {
-        const featuresByStatteil = _.groupBy(features, function (feature) {
-            return feature.getProperties().stadtteil;
-        }),
-            districtLayer = this.get("featureCollections").filter(collection => collection.layerId === this.get("layerGroups").stadtteil[0])[0];
-        // console.log("featuresByStatteil: ", featuresByStatteil);
+    processSportsData: function (sportFeatures) {
 
-        // console.log("districtLayer: ", districtLayer);
-        _.each(districtLayer.collection, district => {
-            district.set("sports", []);
-            console.log("district.getProperties: ", district.getProperties().sports);
+        const districtLayer = this.get("featureCollections").filter(collection => collection.layerId === this.get("layerGroups").stadtteil[0])[0];
+
+
+        _.each(districtLayer.collection, districtFeature => {
+            const districtGeometry = [districtFeature.getGeometry()];
+            // console.log("districtGeometry: ", districtGeometry);
+
+            if (districtGeometry) {
+                const sports = sportFeatures.filter(sportFeature => districtFeature.getGeometry().intersectsExtent(sportFeature.getGeometry().getExtent()));
+
+                districtFeature.set("Sportstätten", sports.length);
+            }
+            // console.log("districtFeature.getProperties().sports: ", districtFeature.getProperties()["Sportstätten"]);
 
         });
     },
@@ -157,6 +174,54 @@ const FeatureLoaderModel = Backbone.Model.extend({
         }
 
         return features;
+    },
+
+    /**
+     * Prüft ob das Layermodel schon existiert
+     * @param   {object[]}  layerIds Konfiguration der Layer aus config.json
+     * @returns {void}
+     */
+    checkIfLayermodelExist: function (layerIds) {
+        _.each(layerIds, function (layer) {
+            if (Radio.request("ModelList", "getModelsByAttributes", { id: layer.layerId }).length === 0) {
+                this.addLayerModel(layer.layerId);
+            }
+        }, this);
+    },
+    /**
+     * Fügt das Layermodel kurzzeitig der Modellist hinzu um prepareLayerObject auszuführen und entfernt das Model dann wieder.
+     * @param   {string}  layerId    Id des Layers
+     * @returns {void}
+     */
+    addLayerModel: function (layerId) {
+        Radio.trigger("ModelList", "addModelsByAttributes", { id: layerId });
+        this.sendModification(layerId, true);
+        this.sendModification(layerId, false);
+    },
+    /**
+     * Ermittelt die Sichtbarkeit der layerIds
+     * @param   {string} activeLayerId id des activeLayer
+     * @returns {void}
+     */
+    toggleLayerVisibility: function (activeLayerId) {
+        _.each(this.get("layerIds")[this.get("scope")], function (layer) {
+            var status = layer.layerId === activeLayerId;
+
+            this.sendModification(layer.layerId, status);
+        }, this);
+    },
+
+    /**
+     * Triggert übers Radio die neue Sichtbarkeit
+     * @param   {string}    layerId layerId
+     * @param   {boolean}   status  Sichtbarkeit true / false
+     * @returns {void}
+     */
+    sendModification: function (layerId, status) {
+        Radio.trigger("ModelList", "setModelAttributesById", layerId, {
+            isSelected: status,
+            isVisibleInMap: status
+        });
     }
 
 });

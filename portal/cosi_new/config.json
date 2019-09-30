@@ -21,32 +21,36 @@
       "tree": {
         "minChars": 3
       },
-      "visibleWFS":
-      {
+      "visibleWFS": {
         "minChars": 3
       },
-      "specialWFS":
-      {
+      "specialWFS": {
         "minChars": 3,
         "timeout": 10000,
         "definitions": [
           {
             "url": "/geodienste_hamburg_de/MRH_WFS_Rotenburg",
             "typeName": "app:mrh_row_bplan",
-            "propertyNames": ["app:name"],
+            "propertyNames": [
+              "app:name"
+            ],
             "name": "B-Plan"
           },
           {
             "url": "/geodienste_hamburg_de/HH_WFS_Bebauungsplaene",
             "typeName": "app:hh_hh_festgestellt",
-            "propertyNames": ["app:geltendes_planrecht"],
+            "propertyNames": [
+              "app:geltendes_planrecht"
+            ],
             "geometryName": "app:geom",
             "name": "festgestellt"
           },
           {
             "url": "/geodienste_hamburg_de/HH_WFS_Bebauungsplaene",
             "typeName": "app:prosin_imverfahren",
-            "propertyNames": ["app:plan"],
+            "propertyNames": [
+              "app:plan"
+            ],
             "geometryName": "app:the_geom",
             "name": "im Verfahren"
           }
@@ -55,7 +59,10 @@
     },
     "mapView": {
       "backgroundImage": "/../../node_modules/lgv-config/img/backgroundCanvas.jpeg",
-      "startCenter": [565790, 5934262]
+      "startCenter": [
+        565790,
+        5934262
+      ]
     },
     "menu": {
       "tree": {
@@ -76,7 +83,10 @@
               "2768",
               "2771"
             ],
-            "exclude": ["geom", "stadtteil_1"]
+            "exclude": [
+              "geom",
+              "stadtteil_1"
+            ]
           },
           "Statistische Gebiete": {
             "id": 6071,
@@ -87,7 +97,12 @@
               "15565",
               "15989"
             ],
-            "exclude": ["geometry", "geom", "extent", "statgebiet"]
+            "exclude": [
+              "geometry",
+              "geom",
+              "extent",
+              "statgebiet"
+            ]
           }
         },
         "renderToWindow": false
@@ -106,14 +121,28 @@
             "isSelected": false,
             "name": "Sportstätten",
             "info": "Die Filter 'Baujahr' und 'Letzte Generalsanierung' können zu unvollständigen Ergebnissen führen, da diese Daten nicht für alle Einrichtungen vorliegen.",
-            "attributeWhiteList": ["bezirk", "stadtteil", "typ_zusammen", "segmente", "traegergruppe", "baujahr", "letzte_generalsanierung"]
+            "attributeWhiteList": [
+              "bezirk",
+              "stadtteil",
+              "typ_zusammen",
+              "segmente",
+              "traegergruppe",
+              "baujahr",
+              "letzte_generalsanierung"
+            ]
           },
           {
             "layerId": "753",
             "isActive": false,
             "isSelected": false,
             "name": "Kindertagesstätten",
-            "attributeWhiteList": ["Bezirk", "Stadtteil", "Traeger", "Leistungsarten", "Leistungsname"]
+            "attributeWhiteList": [
+              "Bezirk",
+              "Stadtteil",
+              "Traeger",
+              "Leistungsarten",
+              "Leistungsname"
+            ]
           },
           {
             "layerId": "1534",
@@ -121,14 +150,23 @@
             "isSelected": false,
             "name": "Grünflächen",
             "info": "Die Grünflächen sind im aktuellen digitalen Grünplan nur numerisch nach Bezirken und Stadtteilen geordnet. Diese Sortierung wurde aus Verständlichkeitsgründen im Filter deaktiviert.",
-            "attributeWhiteList": ["gruenart", "eigentum", "flaeche_qm"]
+            "attributeWhiteList": [
+              "gruenart",
+              "eigentum",
+              "flaeche_qm"
+            ]
           },
           {
             "layerId": "1711",
             "isActive": false,
             "isSelected": false,
             "name": "Krankenhäuser",
-            "attributeWhiteList": ["geburtsklinik_differenziert", "teilnahme_notversorgung", "anzahl_planbetten", "anzahl_plaetze_teilstationaer"]
+            "attributeWhiteList": [
+              "geburtsklinik_differenziert",
+              "teilnahme_notversorgung",
+              "anzahl_planbetten",
+              "anzahl_plaetze_teilstationaer"
+            ]
           }
         ]
       },
@@ -193,7 +231,7 @@
             "printAppId": "master",
             "filename": "Ausdruck",
             "title": "Mein Titel",
-            "version" : "mapfish_print_3"
+            "version": "mapfish_print_3"
           },
           "gfi": {
             "name": "Informationen abfragen",
@@ -243,10 +281,10 @@
           "id": "1694",
           "name": "Stadtteile",
           "visibility": true,
-          "districtCompareField":[
-            "Sportstätten",
-            "Grünflächen"
+          "districtCompareField": [
+            "Sportstätten"
           ],
+          "selector": "stadtteil",
           "topic": "basic",
           "gfiAttributes": "ignore",
           "isNeverVisibleInTree": true,
@@ -261,7 +299,9 @@
           "isNeverVisibleInTree": true,
           "alwaysOnTop": true,
           "legendURL": "",
-          "searchField": ["statgebiet"]
+          "searchField": [
+            "statgebiet"
+          ]
         },
         {
           "id": "1692",
@@ -279,7 +319,10 @@
           "id": "12868",
           "name": "Sportstätten",
           "visibility": false,
-          "searchField": ["name", "typ_zusammen"],
+          "searchField": [
+            "name",
+            "typ_zusammen"
+          ],
           "isFacility": true,
           "styleId": "12868",
           "topic": "basic",
@@ -298,7 +341,11 @@
             "flaeche_ha"
           ],
           "alwaysOnTop": true,
-          "searchField": ["anlagenname", "eigentum", "gruenart"]
+          "searchField": [
+            "anlagenname",
+            "eigentum",
+            "gruenart"
+          ]
         },
         {
           "id": "753",
@@ -309,7 +356,11 @@
           "topic": "basic",
           "defaultProperty": "Einrichtungen",
           "alwaysOnTop": true,
-          "searchField": ["Traeger", "Leistungsarten", "Name"]
+          "searchField": [
+            "Traeger",
+            "Leistungsarten",
+            "Name"
+          ]
         }
       ],
       "Ordner": [
@@ -322,10 +373,11 @@
               "id": "2763",
               "styleId": "unstyled",
               "visibility": true,
-              "districtCompareField":[
+              "districtCompareField": [
                 "bev",
                 "wgm2"
               ],
+              "selector": "stadtteil",
               "mouseHoverField": [
                 "bev"
               ],
@@ -352,9 +404,10 @@
               "id": "2768",
               "styleId": "unstyled",
               "visibility": true,
-              "districtCompareField":[
+              "districtCompareField": [
                 "bu18_prz"
               ],
+              "selector": "stadtteil",
               "mouseHoverField": [
                 "bu18_prz"
               ],
@@ -381,9 +434,10 @@
               "id": "2769",
               "styleId": "unstyled",
               "visibility": true,
-              "districtCompareField":[
+              "districtCompareField": [
                 "b65_prz"
               ],
+              "selector": "stadtteil",
               "mouseHoverField": [
                 "b65_prz"
               ],
@@ -410,12 +464,13 @@
               "id": "2771",
               "styleId": "unstyled",
               "visibility": true,
-              "districtCompareField":[
+              "districtCompareField": [
                 "al_prz"
               ],
               "mouseHoverField": [
                 "al_prz"
               ],
+              "selector": "stadtteil",
               "topic": "basic",
               "isDemographic": true,
               "correlationsField": {
@@ -433,6 +488,10 @@
               "id": "15563",
               "styleId": "unstyled",
               "visibility": true,
+              "districtCompareField": [
+                "jahr_2018"
+              ],
+              "selector": "statgebiet",
               "isDemographic": true,
               "mouseHoverField": "dynamic",
               "legendURL": "",
@@ -445,6 +504,10 @@
               "id": "15564",
               "styleId": "unstyled",
               "visibility": true,
+              "districtCompareField": [
+                "jahr_2018"
+              ],
+              "selector": "statgebiet",
               "isDemographic": true,
               "mouseHoverField": "dynamic",
               "legendURL": "",
@@ -457,6 +520,10 @@
               "id": "15565",
               "styleId": "unstyled",
               "visibility": true,
+              "districtCompareField": [
+                "jahr_2018"
+              ],
+              "selector": "statgebiet",
               "isDemographic": true,
               "mouseHoverField": "dynamic",
               "legendURL": "",
@@ -469,6 +536,10 @@
               "id": "15989",
               "styleId": "unstyled",
               "visibility": true,
+              "districtCompareField": [
+                "jahr_2018"
+              ],
+              "selector": "statgebiet",
               "isDemographic": true,
               "mouseHoverField": "dynamic",
               "legendURL": "",

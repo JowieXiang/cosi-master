@@ -9,8 +9,8 @@ const DistrictSelectorModel = Backbone.Model.extend({
 
     },
     initializeDistrictNames: function () {
-
-        const districtNames = Radio.request("SelectDistrict", "getSelectedDistricts").map(feature => feature.getProperties().stadtteil);
+        const selector = Radio.request("SelectDistrict", "getSelector") === "statgebiet" ? "stat_gebiet" : Radio.request("SelectDistrict", "getSelector"),
+            districtNames = Radio.request("SelectDistrict", "getSelectedDistricts").map(feature => feature.getProperties()[selector]);
 
         this.set("districtNames", districtNames);
     },

@@ -11,9 +11,6 @@ const LayerFilterView = Backbone.View.extend({
 
     initialize: function () {
         this.sliderCollection = new SliderCollection();
-        this.listenTo(this.model, {
-
-        });
         this.listenTo(this.sliderCollection, {
             "change:sliderValue": this.updateLayerFilter
         });
