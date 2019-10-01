@@ -16,7 +16,8 @@ const DropdownModel = SnippetModel.extend(/** @lends DropdownModel.prototype */{
         preselectedValues: [],
         // number of entries displayed
         numOfOptions: 10,
-        isMultiple: true
+        isMultiple: true,
+        liveSearch: false
     },
 
     initialize: function () {

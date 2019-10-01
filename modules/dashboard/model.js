@@ -50,7 +50,8 @@ const DashboardModel = Tool.extend({
             displayName: "Filter",
             values: [],
             snippetType: "dropdown",
-            isMultiple: true
+            isMultiple: true,
+            liveSearch: true
         }));
 
         this.listenTo(this.get("filterDropdownModel"), {
