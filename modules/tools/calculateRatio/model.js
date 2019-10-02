@@ -146,24 +146,14 @@ const CalculateRatioModel = Tool.extend({
                     const layerId = this.get("denValues")[den],
                         layer = Radio.request("ModelList", "getModelByAttributes", {id: layerId}),
                         features = layer.get("layerSource").getFeatures(),
-                        featureInDistrict = features.filter((feature) => {
+                        districtProperties = features.filter((feature) => {
                             return Extent.containsExtent(Extent.buffer(districtGeometry.getExtent(), 10), feature.getGeometry().getExtent());
-                        });
+                        })[0].getProperties();
 
-                    if (layer.get("correlationsField")) {
-                        switch (layer.get("correlationsField").type) {
-                            case "abs":
-                                targetPopulation += parseInt(featureInDistrict[0].getProperties()[layer.get("correlationsField").field], 10);
-                                break;
-                            case "rel":
-                                Radio.trigger("Alert", "alert", {
-                                    text: "<strong>Die Berechnung für relative Zielgruppen (in %) ist zur Zeit noch nicht implementiert.</strong>",
-                                    kategorie: "alert-warning"
-                                });
-                                break;
-                            default:
-                                this.setMessage("Entschuldigung! Der zu prüfende Layer besitzt keine gültige Spalte für Verhältnisanalysen. Bitte wählen Sie einen anderen Layer aus.");
-                        }
+                    if (layer.get("mouseHoverField")) {
+                        const field = layer.get("mouseHoverField") === "dynamic" ? Radio.request("Timeline", "getLatestFieldFromProperties", districtProperties) : layer.get("mouseHoverField");
+
+                        targetPopulation += parseInt(districtProperties[field], 10);
                     }
                     else {
                         this.setMessage("Entschuldigung! Der zu prüfende Layer besitzt keine gültige Spalte für Verhältnisanalysen. Bitte wählen Sie einen anderen Layer aus.");
@@ -196,7 +186,9 @@ const CalculateRatioModel = Tool.extend({
                 _.each(this.getNumerators(), (num) => {
                     const layerId = this.get("numValues")[num],
                         layer = Radio.request("ModelList", "getModelByAttributes", {id: layerId}),
-                        features = layer.get("layerSource").getFeatures();
+                        features = layer.get("layerSource").getFeatures().filter(f => typeof f.style_ === "object" || f.style_ === null);
+
+                    // console.log(features.map(f => typeof f.style_));
 
                     _.each(features, (feature) => {
                         const geometry = feature.getGeometry(),

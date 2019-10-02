@@ -16,17 +16,14 @@ const DropdownModel = SnippetModel.extend(/** @lends DropdownModel.prototype */{
         preselectedValues: [],
         // number of entries displayed
         numOfOptions: 10,
-        isMultiple: true
+        isMultiple: true,
+        liveSearch: false
     },
 
     initialize: function () {
         this.superInitialize();
 
-        this.addValueModels(this.get("values"));
-        if (this.get("preselectedValues").length > 0) {
-            this.updateSelectedValues(this.get("preselectedValues"));
-        }
-        this.setValueModelsToShow(this.get("valuesCollection").where({isSelectable: true}));
+        this.postInitialize();
 
         this.listenTo(this.get("valuesCollection"), {
             "change:isSelected": function (model, value) {
@@ -34,18 +31,33 @@ const DropdownModel = SnippetModel.extend(/** @lends DropdownModel.prototype */{
             }
         });
         this.listenTo(this, {
-            "change:values": this.initialize
+            "change:values": function () {
+                this.postInitialize();
+            }
         });
     },
 
+    postInitialize: function () {
+        this.updateValueModels(this.get("values"));
+        if (this.get("preselectedValues").length > 0) {
+            this.updateSelectedValues(this.get("preselectedValues"));
+        }
+        this.setValueModelsToShow(this.get("valuesCollection").where({isSelectable: true}));
+    },
+
     /**
-     * calls addValueModel for each value
+     * checks for each value whether it already exists and removes the models that are not in the valueList anymore
      * @param {string[]} valueList - init dropdown values
      * @returns {void}
      */
-    addValueModels: function (valueList) {
+    updateValueModels: function (valueList) {
         _.each(valueList, function (value) {
-            this.addValueModel(value);
+            if (!this.get("valuesCollection").models.map(model => model.get("value")).includes(value)) {
+                this.addValueModel(value);
+            }
+            else {
+                this.get("valuesCollection").remove(this.get("valuesCollection").models.filter((model) => !valueList.includes(model.get("value"))));
+            }
         }, this);
     },
 

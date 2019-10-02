@@ -50,7 +50,8 @@ const DashboardModel = Tool.extend({
             displayName: "Filter",
             values: [],
             snippetType: "dropdown",
-            isMultiple: true
+            isMultiple: true,
+            liveSearch: true
         }));
 
         this.listenTo(this.get("filterDropdownModel"), {
@@ -252,7 +253,6 @@ const DashboardModel = Tool.extend({
     getData: function () {
         if (this.getScope() !== "") {
             _.each(this.getPropertyTree()[this.getScope()].layerIds, (layerId) => {
-                console.log(layerId);
                 this.getDashboardLayerFeatures(layerId, Radio.request("FeatureLoader", "getFeaturesByLayerId", layerId));
             });
         }

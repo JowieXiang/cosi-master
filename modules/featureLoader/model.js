@@ -73,7 +73,6 @@ const FeatureLoaderModel = Backbone.Model.extend({
                     break;
                 }
                 case "statgebiet-layers": {
-                    console.log("gebiet layer: ", features[0].getProperties());
                     this.processStatgebietData(features);
                     break;
                 }
@@ -95,7 +94,6 @@ const FeatureLoaderModel = Backbone.Model.extend({
             }
             this.channel.trigger("addFeatureCollection", layerId, features);
             this.pushFeatureCollection(layerId, features);
-            console.log("layer:", layerId);
         }
     },
     processStatteilData: function (features) {

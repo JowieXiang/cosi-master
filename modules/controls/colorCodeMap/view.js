@@ -103,41 +103,32 @@ const ColorCodeMapView = Backbone.View.extend({
 
             if (selectedFeatures.length > 0) {
                 const colorCodeLayer = Radio.request("Map", "getLayerByName", id + "_colorcoded"),
-                    field = Radio.request("Parser", "getItemByAttributes", { id: id }).mouseHoverField,
                     newFeatures = [];
 
-                let propSelector = field;
+                let field = Radio.request("Parser", "getItemByAttributes", { id: id }).mouseHoverField;
 
                 // eslint-disable-next-line one-var
                 const values = selectedFeatures.map((feature) => {
                     const props = feature.getProperties();
-                    let val;
 
                     if (field === "dynamic") {
-                        for (const prop in props) {
-                            if (prop.includes("jahr_")) {
-                                val = props[prop];
-                                propSelector = prop;
-                                break;
-                            }
-                        }
-                        return parseFloat(val);
+                        field = Radio.request("Timeline", "getLatestFieldFromProperties", props);
                     }
-                    return parseFloat(feature.getProperties()[field]);
+                    return parseFloat(props[field]);
                 }),
                     colorScale = Radio.request("ColorScale", "getColorScaleByValues", values, this.style.chromaticScheme);
 
                 // Add the generated legend style to the Legend Portal
-                Radio.trigger("StyleWFS", "addDynamicLegendStyle", id.layerId, colorScale.legend);
+                Radio.trigger("StyleWFS", "addDynamicLegendStyle", id + "_colorcoded", colorScale.legend);
 
                 _.each(selectedFeatures, feature => newFeatures.push(feature.clone()));
                 _.each(newFeatures, (feature) => {
                     feature.setStyle(new Style({
                         fill: new Fill({
-                            color: colorScale.scale(parseFloat(feature.getProperties()[propSelector]))
+                            color: colorScale.scale(parseFloat(feature.getProperties()[field]))
                         }),
                         stroke: new Stroke({
-                            color: colorScale.scale(parseFloat(feature.getProperties()[propSelector])),
+                            color: colorScale.scale(parseFloat(feature.getProperties()[field])),
                             width: 3
                         })
                     }));

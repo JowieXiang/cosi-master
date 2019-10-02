@@ -1,4 +1,6 @@
 import Tool from "../../core/modelList/tool/model";
+import {TileLayer, VectorLayer} from "ol/layer";
+import VectorSource from "ol/source/Vector";
 
 const Timeline = Tool.extend({
     defaults: {
@@ -12,6 +14,9 @@ const Timeline = Tool.extend({
         channel.reply({
             "createTimelineTable": function (inputTable) {
                 return this.convertTable(inputTable);
+            },
+            "getLatestFieldFromProperties": function (input) {
+                return this.getLatestField(input);
             }
         }, this);
     },
@@ -39,6 +44,26 @@ const Timeline = Tool.extend({
         });
 
         return timelineTable;
+    },
+    getLatestField (properties) {
+        let latestYear = 0,
+            selector;
+
+        // find latest year
+        for (const prop in properties) {
+            if (prop.includes(this.getPrefix())) {
+                if (parseFloat(prop.replace(this.getPrefix(), "")) > latestYear) {
+                    latestYear = parseFloat(prop.replace(this.getPrefix(), ""));
+                    selector = prop;
+                }
+            }
+            // Break if the found date is from last year
+            if (latestYear === new Date().getFullYear() - 1) {
+                break;
+            }
+        }
+
+        return selector;
     },
     getSignifier () {
         return this.get("timelineSignifier");
