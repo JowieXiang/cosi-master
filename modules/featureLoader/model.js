@@ -54,12 +54,15 @@ const FeatureLoaderModel = Backbone.Model.extend({
         });
     },
     processData: function (layerId, features) {
-        const currentLayerIds = this.get("featureCollections").length > 0 ? this.get("featureCollections").map(collection => collection.layerId) : [],
+        const newLayer = Radio.request("RawLayerList", "getLayerListWhere", { id: layerId })[0],
+            currentLayerIds = this.get("featureCollections").length > 0 ? this.get("featureCollections").map(collection => collection.layerId) : [],
             layerCategory = _.allKeys(this.get("layerGroups")).filter(groupName => {
                 const layerGroup = this.get("layerGroups")[groupName];
 
                 return _.contains(layerGroup, layerId);
             });
+        console.log("layerName: ", newLayer.get("name"));
+        console.log("layerURL: ", newLayer.get("url"));
         // console.log("layerGroup: ", layerCategory, layerId);
 
         if (!_.contains(currentLayerIds, layerId) && layerCategory.length > 0) {
