@@ -1,5 +1,6 @@
 import template from "text-loader!./template.html";
 import DistrictSelectorView from "./districtSelector/view";
+import LayerFilterSelectorModel from "./layerFilterSelector/model";
 import LayerFilterSelectorView from "./layerFilterSelector/view";
 import VectorSource from "ol/source/Vector";
 import { Fill, Stroke, Style } from "ol/style.js";
@@ -11,12 +12,17 @@ const CompareDistrictsView = Backbone.View.extend({
     events: {
         "click #add-filter": function (e) {
             this.addFilterModel(e);
+            this.filterLayerOptions();
         }
 
     },
 
     initialize: function () {
+        const channel = Radio.channel("CompareDistricts");
 
+        this.listenTo(channel, {
+            "closeFilter": this.addLayerOption
+        });
         this.listenTo(this.model, {
             "change:isActive": function (model, value) {
                 this.createMapLayer(this.model.get("mapLayerName"));
@@ -76,10 +82,9 @@ const CompareDistrictsView = Backbone.View.extend({
 
     createSelectors: function () {
         this.districtSelector = new DistrictSelectorView();
-        this.$el.find("#selectors").append(this.districtSelector.render().el);
-        this.layerFilterSelector = new LayerFilterSelectorView();
-        this.$el.find("#selectors").append(this.layerFilterSelector.render().el);
-
+        this.$el.find("#district-selector-container").append(this.districtSelector.render().el);
+        this.layerFilterSelector = new LayerFilterSelectorView({ model: new LayerFilterSelectorModel() });
+        this.$el.find("#layerfilter-selector-container").append(this.layerFilterSelector.render().el);
     },
 
     addFilterModel: function () {
@@ -89,7 +94,24 @@ const CompareDistrictsView = Backbone.View.extend({
         this.addOneToLayerFilterList(layerFilterModel);
         this.layerFilterCollection.add(layerFilterModel);
     },
+    filterLayerOptions: function () {
+        const selectedLayer = this.layerFilterSelector.getSelectedLayer(),
+            layerOptions = this.layerFilterSelector.getLayerOptions(),
+            newOptions = layerOptions.filter(layer => layer.layerId !== selectedLayer.layerId);
 
+        this.layerFilterSelector.setLayerOptions(newOptions);
+        console.log("newOptions: ", this.layerFilterSelector.getLayerOptions());
+        this.layerFilterSelector.render();
+        // this.$el.find("#layerfilter-selector-container").empty();
+        // this.$el.find("#layerfilter-selector-container").append(this.layerFilterSelector.render().el);
+    },
+    addLayerOption: function (layerInfo) {
+        const newOptions = this.layerFilterSelector.getLayerOptions();
+
+        newOptions.push(layerInfo);
+        this.layerFilterSelector.setLayerOptions(newOptions);
+        this.layerFilterSelector.render();
+    },
     renderLayerFilter: function (model) {
         const layerFilterView = new LayerFilterView({ model: model });
 
@@ -171,9 +193,9 @@ const CompareDistrictsView = Backbone.View.extend({
             intersection = [];
 
         _.each(Object.keys(filterCollection), filterKey => {
-            const tolerance = parseFloat(filterCollection[filterKey]) * 0.01,
+            const tolerance = parseFloat(filterCollection[filterKey]),
                 bounds = this.getBounds(featureCollection, filterKey),
-                selectedFeatures = featureCollection.filter(feature => Math.abs(feature.getProperties()[filterKey] - refFeature.getProperties()[filterKey]) / bounds < tolerance);
+                selectedFeatures = featureCollection.filter(feature => Math.abs(feature.getProperties()[filterKey] - refFeature.getProperties()[filterKey]) < tolerance);
 
             filterResults.push(selectedFeatures);
 

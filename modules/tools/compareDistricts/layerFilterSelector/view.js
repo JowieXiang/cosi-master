@@ -7,13 +7,10 @@ const LayerFilterSelectorView = Backbone.View.extend({
     },
 
     initialize: function () {
-
-
         this.listenTo(this.model, {
             "change:selectedLayer": function (model, value) {
             }
         });
-
     },
 
     tagName: "div",
@@ -23,7 +20,6 @@ const LayerFilterSelectorView = Backbone.View.extend({
     template: _.template(template),
 
     render: function () {
-        this.model = new Model();
         this.$el.html(this.template(this.model.toJSON()));
         return this;
     },
@@ -33,6 +29,12 @@ const LayerFilterSelectorView = Backbone.View.extend({
     },
     getSelectedLayer: function () {
         return this.model.getSelectedLayer();
+    },
+    getLayerOptions: function () {
+        return this.model.getLayerOptions();
+    },
+    setLayerOptions: function (options) {
+        this.model.setLayerOptions(options);
     }
 
 });

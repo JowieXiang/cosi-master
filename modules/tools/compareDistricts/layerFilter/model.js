@@ -1,7 +1,7 @@
 const LayerFilterModel = Backbone.Model.extend({
     defaults: {
         districtName: "", // selected district name
-        districtInfo: [], // [{key:...,value:...},{},...]
+        districtInfo: [], // [{key:...,value:..., max: ..., min: ..., space: ...},{},...]
         layerInfo: {},
         filter: ""// e.g {filterKey:value,filterKey:value,filterKey:value,...}
     },
@@ -32,8 +32,19 @@ const LayerFilterModel = Backbone.Model.extend({
             refFeature = featureCollection.filter(feature => feature.getProperties()[selector] === districtName)[0],
             districtInfo = [];
 
+        // console.log("values: ", featureCollection.map(feature => feature.getProperties()[selector]));
+
+        // console.log("max: ", max);
+        // console.log("min: ", min);
+
         _.each(keys, key => {
-            const newInfo = { key: key, value: refFeature.getProperties()[key] };
+
+            const values = featureCollection.map(feature => parseFloat(feature.getProperties()[key])),
+                max = Math.max(...values),
+                min = Math.min(...values),
+                refValue = refFeature.getProperties()[key],
+                space = Math.max(max - refValue, refValue - min),
+                newInfo = { key: key, value: refValue, max: max, min: min, space: space };
 
             districtInfo.push(newInfo);
         });

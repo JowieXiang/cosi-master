@@ -11,8 +11,6 @@ const SliderView = Backbone.View.extend({
 
     tagName: "div",
     className: "filter-slider",
-
-    model: new SliderModel(),
     template: _.template(template),
 
     render: function () {

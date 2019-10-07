@@ -12,7 +12,10 @@ const LayerFilterView = Backbone.View.extend({
     initialize: function () {
         this.sliderCollection = new SliderCollection();
         this.listenTo(this.sliderCollection, {
-            "change:sliderValue": this.updateLayerFilter
+            "change:sliderValue": function (model) {
+                this.updateLayerFilter(model);
+                this.filterFeatures();
+            }
         });
 
     },
@@ -34,36 +37,42 @@ const LayerFilterView = Backbone.View.extend({
         const filterData = JSON.parse(this.model.get("filter"));
 
         _.each(Object.keys(filterData), filterKey => {
-            const newSliderModel = new SliderModel({ key: filterKey }),
+            const thisInfo = this.model.get("districtInfo").filter(disInfo => disInfo.key === filterKey)[0],
+                space = thisInfo.space,
+                newSliderModel = new SliderModel({ key: filterKey, space: space }),
                 silderView = new SliderView({ model: newSliderModel });
 
             this.sliderCollection.add(newSliderModel);
             this.$el.find("#" + filterKey + "-td").append(silderView.render().el);
         });
-
     },
     destroySelf: function () {
         this.remove();
         this.model.destroy();
-
+        Radio.trigger("CompareDistricts", "closeFilter", this.model.get("layerInfo"));
     },
     updateLayerFilter: function (sliderModel) {
+        const key = sliderModel.get("key"),
+            newFilter = JSON.parse(this.model.get("filter"));
 
-        const key = sliderModel.get("key");
-        // console.log(this.model.get("layerFilter"));
-        var newFilter = JSON.parse(this.model.get("filter"));
-        // console.log("newFilter: ", newFilter);
-
-        // console.log("key: ", key);
-
-        // console.log("newFilter[key]: ", newFilter[key]);
-        // console.log("sliderModel.get(sliderValue): ", sliderModel.get("sliderValue"));
 
         newFilter[key] = sliderModel.get("sliderValue");
-        // this.model.set("layerFilter", ""); // have to reset the field in order to trigger change event
-
         this.model.set("filter", JSON.stringify(newFilter));
-        // console.log("new layerFilter: ", this.model.get("filter"));
+    },
+    filterFeatures: function () {
+        // const filterArray = JSON.parse(this.model.get("filter")),
+        //     layerInfo = this.model.get("layerInfo"),
+        //     featureCollection = Radio.request("FeatureLoader", "getFeaturesByLayerId", layerInfo.layerId);
+
+        // _.each(Object.keys(filterArray), key => {
+        //     const tolerance = filterArray[key];
+
+        // });
+
+        // console.log("filterArray: ", filterArray);
+        // console.log("layerInfo: ", layerInfo);
+
+
     }
 
 });

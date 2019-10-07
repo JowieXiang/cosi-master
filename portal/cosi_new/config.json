@@ -375,8 +375,7 @@
               "styleId": "unstyled",
               "visibility": true,
               "districtCompareField": [
-                "bev",
-                "wgm2"
+                "bev"
               ],
               "selector": "stadtteil",
               "mouseHoverField": [

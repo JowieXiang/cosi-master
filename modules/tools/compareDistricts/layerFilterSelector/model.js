@@ -30,6 +30,9 @@ const LayerFilterSelectorModel = Backbone.Model.extend({
     },
     getSelectedLayer: function () {
         return this.get("selectedLayer");
+    },
+    getLayerOptions: function () {
+        return this.get("layerOptions");
     }
 
 });
