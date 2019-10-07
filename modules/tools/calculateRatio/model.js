@@ -186,7 +186,9 @@ const CalculateRatioModel = Tool.extend({
                 _.each(this.getNumerators(), (num) => {
                     const layerId = this.get("numValues")[num],
                         layer = Radio.request("ModelList", "getModelByAttributes", {id: layerId}),
-                        features = layer.get("layerSource").getFeatures();
+                        features = layer.get("layerSource").getFeatures().filter(f => typeof f.style_ === "object" || f.style_ === null);
+
+                    // console.log(features.map(f => typeof f.style_));
 
                     _.each(features, (feature) => {
                         const geometry = feature.getGeometry(),

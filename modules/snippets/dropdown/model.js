@@ -16,7 +16,8 @@ const DropdownModel = SnippetModel.extend(/** @lends DropdownModel.prototype */{
         preselectedValues: [],
         // number of entries displayed
         numOfOptions: 10,
-        isMultiple: true
+        isMultiple: true,
+        liveSearch: false
     },
 
     initialize: function () {
@@ -37,7 +38,7 @@ const DropdownModel = SnippetModel.extend(/** @lends DropdownModel.prototype */{
     },
 
     postInitialize: function () {
-        this.addValueModels(this.get("values"));
+        this.updateValueModels(this.get("values"));
         if (this.get("preselectedValues").length > 0) {
             this.updateSelectedValues(this.get("preselectedValues"));
         }
@@ -45,17 +46,17 @@ const DropdownModel = SnippetModel.extend(/** @lends DropdownModel.prototype */{
     },
 
     /**
-     * calls addValueModel for each value
+     * checks for each value whether it already exists and removes the models that are not in the valueList anymore
      * @param {string[]} valueList - init dropdown values
      * @returns {void}
      */
-    addValueModels: function (valueList) {
+    updateValueModels: function (valueList) {
         _.each(valueList, function (value) {
             if (!this.get("valuesCollection").models.map(model => model.get("value")).includes(value)) {
                 this.addValueModel(value);
             }
             else {
-                this.get("valuesCollection").remove(this.get("valueCollection").where({value: value}));
+                this.get("valuesCollection").remove(this.get("valuesCollection").models.filter((model) => !valueList.includes(model.get("value"))));
             }
         }, this);
     },
