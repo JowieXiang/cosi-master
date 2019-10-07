@@ -1,5 +1,4 @@
 import template from "text-loader!./template.html";
-import SliderModel from "./model";
 
 const SliderView = Backbone.View.extend({
     events: {

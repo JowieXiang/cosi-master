@@ -27,6 +27,9 @@ const LayerFilterSelectorView = Backbone.View.extend({
     setSelectedLayer: function (evt) {
         this.model.setSelectedLayer(evt.target.value);
     },
+    clearSelectedLayer: function () {
+        this.model.set("selectedLayer", null);
+    },
     getSelectedLayer: function () {
         return this.model.getSelectedLayer();
     },
