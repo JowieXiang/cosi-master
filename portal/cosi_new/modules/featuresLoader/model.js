@@ -57,8 +57,6 @@ const featuresLoader = Backbone.Model.extend({
             }),
             propertyListPromise = this.getPropertyListWithoutGeometry(serviceUrl),
             featurePromiseList = [];
-        console.info("layerList: ", layerList);
-        console.info("layerList[0].get(featureNS): ", layerList[0].get("featureNS"));
 
         Radio.trigger("FeaturesLoader", "districtsLoaded", layerList);
         propertyListPromise.then(propertyList => {

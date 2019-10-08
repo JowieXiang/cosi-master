@@ -17,7 +17,6 @@ var LayerList = Backbone.Collection.extend({
                             layerId: layerId,
                             layerModel: layerModel
                         });
-                    console.log("layer added: ", newLayer);
                     
                     this.add(newLayer);
                     // }

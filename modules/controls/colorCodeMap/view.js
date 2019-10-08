@@ -7,17 +7,11 @@ import * as Chromatic from "d3-scale-chromatic";
 const ColorCodeMapView = Backbone.View.extend({
     events: {
         "change select": function (e) {
-            this.setAllColorCodeLayerInvisible();
-            const selectedLayer = this.layerList.filter(function (layer) {
-                return layer.get("layerName") === e.target.value;
-            })[0];
-
-            if (selectedLayer !== undefined) {
-                this.showActiveColorCodeLayer(e);
-            }
+            this.onSelect(e);
         }
     },
     initialize: function () {
+        this.createColorCodeLayer();
         this.render();
         this.layerList = new LayerList();
         this.setOptions();
@@ -25,14 +19,9 @@ const ColorCodeMapView = Backbone.View.extend({
             chromaticScheme: Chromatic.interpolateBlues,
             opacity: 0.8
         };
-        this.listenTo(this.layerList, {
-            "add": this.createColorCodeLayer
-        });
         this.listenTo(Radio.channel("ColorCodeMap"), {
             "districtsLoaded": function () {
                 this.setOptions();
-                this.clearColorLayerFeatures();
-                this.setColorLayerFeatures();
             }
         });
     },
@@ -40,6 +29,19 @@ const ColorCodeMapView = Backbone.View.extend({
     render: function () {
         this.$el.html(this.template());
         return this;
+    },
+    onSelect: function (e) {
+        this.hideColorCodeLayer();
+        this.clearColorLayerFeatures();
+
+        const selectedLayer = this.layerList.filter(function (layer) {
+            return layer.get("layerName") === e.target.value;
+        })[0];
+
+        if (selectedLayer !== undefined) {
+            this.setColorLayerFeatures(selectedLayer);
+            this.showColorCodeLayer();
+        }
     },
     setOptions: function () {
 
@@ -49,92 +51,71 @@ const ColorCodeMapView = Backbone.View.extend({
             this.$el.find("#color-code-layer-selector").append(`<option>${layer.get("layerName")}</option>`);
         });
     },
-    createColorCodeLayer: function (layerModel) {
-        if (Radio.request("Map", "getLayerByName", layerModel.get("layerId") + "_colorcoded") === undefined) {
-            const newLayer = Radio.request("Map", "createLayerIfNotExists", layerModel.get("layerId") + "_colorcoded"),
+    createColorCodeLayer: function () {
+        if (Radio.request("Map", "getLayerByName", "colorCode") === undefined) {
+            const newLayer = Radio.request("Map", "createLayerIfNotExists", "colorCode"),
                 newSource = new VectorSource();
 
             newLayer.setSource(newSource);
             newLayer.setVisible(false);
         }
     },
-    showActiveColorCodeLayer: function (e) {
-        const selectedLayerName = e.target.value,
-            selectedLayer = this.layerList.filter(layer => layer.get("layerName") === selectedLayerName)[0],
-            activeLayer = Radio.request("Map", "getLayerByName", selectedLayer.get("layerId") + "_colorcoded");
+    showColorCodeLayer: function () {
+        const colorCodeLayer = Radio.request("Map", "getLayerByName", "colorCode");
 
-        if (activeLayer !== undefined) {
-            activeLayer.setVisible(true);
+        if (colorCodeLayer !== undefined) {
+            colorCodeLayer.setVisible(true);
         }
     },
-    setAllColorCodeLayerInvisible: function () {
-        this.layerList.forEach(layer => {
-            if (Radio.request("Map", "getLayerByName", layer.get("layerId") + "_colorcoded")) {
-                const thisLayer = Radio.request("Map", "getLayerByName", layer.get("layerId") + "_colorcoded");
+    hideColorCodeLayer: function () {
+        if (Radio.request("Map", "getLayerByName", "colorCode")) {
+            const colorCodeLayer = Radio.request("Map", "getLayerByName", "colorCode");
 
-                thisLayer.setVisible(false);
-            }
-        });
+            colorCodeLayer.setVisible(false);
+        }
     },
     clearColorLayerFeatures: function () {
-        this.layerList.forEach(layer => {
-            const colorCodeLayer = Radio.request("Map", "getLayerByName", layer.get("layerId") + "_colorcoded");
+        const colorCodeLayer = Radio.request("Map", "getLayerByName", "colorCode");
 
-            if (colorCodeLayer !== undefined) {
-                colorCodeLayer.getSource().clear();
-                colorCodeLayer.setVisible(false);
-            }
-        });
+        if (colorCodeLayer !== undefined) {
+            colorCodeLayer.getSource().clear();
+            colorCodeLayer.setVisible(false);
+        }
     },
-    setColorLayerFeatures: function () {
-        const scope = Radio.request("SelectDistrict", "getScope"),
-            layerGroup = Radio.request("SelectDistrict", "getDistrictLayer").filter(item => item.name === scope)[0],
-            layerIds = layerGroup.layerIds,
-            selector = Radio.request("SelectDistrict", "getSelector"),
-            districtNames = Radio.request("SelectDistrict", "getSelectedDistricts").map(feature => feature.getProperties()[selector]);
+    setColorLayerFeatures: function (selectedLayer) {
+        const layerId = selectedLayer.get("layerId"),
+            selector = Radio.request("SelectDistrict", "getSelector") === "statgebiet" ? "stat_gebiet" : Radio.request("SelectDistrict", "getSelector"),
+            districtNames = Radio.request("SelectDistrict", "getSelectedDistricts").map(feature => feature.getProperties()[selector]),
+            featureCollection = Radio.request("FeaturesLoader", "getAllFeaturesByAttribute", { id: layerId }),
+            selectedFeatures = featureCollection.filter(feature => {
+                return _.contains(districtNames, feature.getProperties()[selector]);
+            });
 
-        _.each(layerIds, id => {
-            const featureCollection = Radio.request("FeaturesLoader", "getAllFeaturesByAttribute", { id: layerId }),
-                selectedFeatures = featureCollection.filter(feature => {
-                    return _.contains(districtNames, feature.getProperties()[selector]);
-                });
+        if (selectedFeatures.length > 0) {
+            const colorCodeLayer = Radio.request("Map", "getLayerByName", "colorCode"),
+                newFeatures = [],
+                field = "jahr_2018",
+                values = selectedFeatures.map(feature => feature.getProperties()[field]),
+                colorScale = Radio.request("ColorScale", "getColorScaleByValues", values, this.style.chromaticScheme);
 
-            if (selectedFeatures.length > 0) {
-                const colorCodeLayer = Radio.request("Map", "getLayerByName", id + "_colorcoded"),
-                    newFeatures = [];
+            // Add the generated legend style to the Legend Portal
+            Radio.trigger("StyleWFS", "addDynamicLegendStyle", "colorCode", colorScale.legend);
 
-                let field = Radio.request("Parser", "getItemByAttributes", { id: id }).mouseHoverField;
-
-                // eslint-disable-next-line one-var
-                const values = selectedFeatures.map(feature => {
-                        const props = feature.getProperties();
-
-                        if (field === "dynamic") {
-                            field = Radio.request("Timeline", "getLatestFieldFromProperties", props);
-                        }
-                        return parseFloat(props[field]);
+            _.each(selectedFeatures, feature => newFeatures.push(feature.clone()));
+            _.each(newFeatures, (feature) => {
+                feature.setStyle(new Style({
+                    fill: new Fill({
+                        color: colorScale.scale(parseFloat(feature.getProperties()[field]))
                     }),
-                    colorScale = Radio.request("ColorScale", "getColorScaleByValues", values, this.style.chromaticScheme);
-
-                // Add the generated legend style to the Legend Portal
-                Radio.trigger("StyleWFS", "addDynamicLegendStyle", id + "_colorcoded", colorScale.legend);
-
-                _.each(selectedFeatures, feature => newFeatures.push(feature.clone()));
-                _.each(newFeatures, (feature) => {
-                    feature.setStyle(new Style({
-                        fill: new Fill({
-                            color: colorScale.scale(parseFloat(feature.getProperties()[field]))
-                        }),
-                        stroke: new Stroke({
-                            color: colorScale.scale(parseFloat(feature.getProperties()[field])),
-                            width: 3
-                        })
-                    }));
-                });
-                colorCodeLayer.getSource().addFeatures(newFeatures);
-                colorCodeLayer.setOpacity(this.style.opacity);
-            }
-        });
+                    stroke: new Stroke({
+                        color: colorScale.scale(parseFloat(feature.getProperties()[field])),
+                        width: 3
+                    })
+                }));
+            });
+            colorCodeLayer.getSource().addFeatures(newFeatures);
+            colorCodeLayer.setOpacity(this.style.opacity);
+        }
     }
 
 
