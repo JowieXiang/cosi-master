@@ -20,18 +20,19 @@
                                         <% _.each(_.allKeys(tableView[0]), (prop) => { %>
                                                 <% if (prop !== "gfi") { %>
                                                 <tr class="row">
-                                                        <th class="prop" scope="row" title="<%= prop %>" id="<%= prop %>"><span class="prop-name"><%= tableView[0].gfi[prop] ? tableView[0].gfi[prop] : prop %></span><% if (Array.isArray(tableView[0][prop])) { %><button type="button" class="btn btn-outline-secondary open"><span></span></button><% } %></th>
+                                                        <th class="prop" scope="row" title="<%= prop %>" id="<%= prop %>"><span class="prop-name"><%= prop %></span><% if (tableView[0][prop] instanceof Object) { %><button type="button" class="btn btn-outline-secondary open"><span></span></button><% } %></th>
                                                         <% _.each(tableView, (dist) => { %>
                                                                 <% if (prop === sortKey) { %>
                                                                         <th scope="col" style="text-align:right;" class="district"><%= dist[prop] %></th>
                                                                 <% } else { %>
-                                                                        <% if (Array.isArray(dist[prop])) { %>
+                                                                        <% if (dist[prop] instanceof Object) { %>
+                                                                        <% const tempArr = Object.entries(dist[prop]).reverse()%>
                                                                                 <td class="timeline-table">
                                                                                         <ul class="list-group list-group-flush">
-                                                                                        <% _.each(dist[prop], (timeVal) =>{ %>
+                                                                                        <% tempArr.forEach(val => { %>
                                                                                                 <li class="list-group-item nowrap">
-                                                                                                        <span class="val"><%= Number.isInteger(parseFloat(timeVal[1])) ? parseFloat(timeVal[1]) : parseFloat(timeVal[1]).toFixed(2) %></span>
-                                                                                                        <small class="year">(<%= timeVal[0] %>)</small>
+                                                                                                        <span class="val"><%= isNaN(val[1]) ? val[1] : Number.isInteger(parseFloat(val[1])) ? parseFloat(val[1]) : parseFloat(val[1]).toFixed(2) %></span>
+                                                                                                        <small class="year">(<%= val[0] %>)</small>
                                                                                                 </li>
                                                                                         <% }); %>
                                                                                         </ul>
