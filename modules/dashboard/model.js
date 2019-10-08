@@ -59,8 +59,10 @@ const DashboardModel = Tool.extend({
         });
 
         this.listenTo(Radio.channel("SelectDistrict"), {
-            "districtSelectionChanged": function (selectedDistricts) {
-                this.updateDistricts(selectedDistricts);
+            "districtSelectionChanged": function () {
+                this.set("scope", Radio.request("SelectDistrict", "getScope"));
+                this.setSortKey();
+                // this.updateDistricts(selectedDistricts);
             }
         }, this);
 
@@ -96,41 +98,93 @@ const DashboardModel = Tool.extend({
      * @param {string} layerId - the ID of the LayerModel of the data
      */
 
-    updateTable: function (features, layerId) {
-        const currentTable = this.get("tableView"),
-            layer = Radio.request("ModelList", "getModelByAttributes", {id: layerId});
+    updateTable: function (features) {
 
-        _.each(features, (feature) => {
-            let properties = feature.getProperties();
-            const gfiAttr = layer.get("gfiAttributes");
+        var rawTable = features
+            .map(feature => feature.getProperties()[this.get("sortKey")])
+            .reduce((districts, districtName) => districts.includes(districtName) ? districts : [...districts, districtName], []);
 
-            _.each(currentTable, (column, i) => {
-                if (properties[this.get("sortKey")] === column[this.get("sortKey")]) {
-                    properties = Radio.request("Timeline", "createTimelineTable", [properties])[0];
-                    currentTable[i] = Object.assign(column, properties);
+        const table = features.reduce((newTable, feature) => {
+            const properties = feature.getProperties(),
+                col = newTable.find(col => col[this.get("sortKey")] === properties[this.get("sortKey")]);
 
-                    if (gfiAttr !== "showAll") {
-                        if (currentTable[i].gfi) {
-                            currentTable[i].gfi = Object.assign(currentTable[i].gfi, gfiAttr);
-                        }
-                        else {
-                            currentTable[i].gfi = gfiAttr;
-                        }
-                    }
-                }
-            });
+            if (col) {
+                console.log(Object.assign(col, properties));
+            }
+            else {
+                
+            }
         });
 
-        // Add total and mean values and filter table for excluded properties
-        this.set("tableView", this.calculateTotalAndMean(this.filterTable(currentTable)));
+        // const currentTable = this.get("tableView"),
+        // layer = Radio.request("ModelList", "getModelByAttributes", {id: layerId});
 
-        // Update the filter dropdown list
-        this.updateFilter();
+        // _.each(features, (feature) => {
+        //     let properties = feature.getProperties();
+        //     const gfiAttr = layer.get("gfiAttributes");
 
-        // Update Export Link
-        this.get("exportButtonModel").set("rawData", this.get("tableView"));
-        this.get("exportButtonModel").prepareForExport();
+        //     _.each(currentTable, (column, i) => {
+        //         if (properties[this.get("sortKey")] === column[this.get("sortKey")]) {
+        //             properties = Radio.request("Timeline", "createTimelineTable", [properties])[0];
+        //             currentTable[i] = Object.assign(column, properties);
+
+        //             if (gfiAttr !== "showAll") {
+        //                 if (currentTable[i].gfi) {
+        //                     currentTable[i].gfi = Object.assign(currentTable[i].gfi, gfiAttr);
+        //                 }
+        //                 else {
+        //                     currentTable[i].gfi = gfiAttr;
+        //                 }
+        //             }
+        //         }
+        //     });
+        // });
+
+        // // Add total and mean values and filter table for excluded properties
+        // this.set("tableView", this.calculateTotalAndMean(this.filterTable(currentTable)));
+
+        // // Update the filter dropdown list
+        // this.updateFilter();
+
+        // // Update Export Link
+        // this.get("exportButtonModel").set("rawData", this.get("tableView"));
+        // this.get("exportButtonModel").prepareForExport();
     },
+    // updateTable: function (features, layerId) {
+    //     const currentTable = this.get("tableView"),
+    //         layer = Radio.request("ModelList", "getModelByAttributes", {id: layerId});
+
+    //     _.each(features, (feature) => {
+    //         let properties = feature.getProperties();
+    //         const gfiAttr = layer.get("gfiAttributes");
+
+    //         _.each(currentTable, (column, i) => {
+    //             if (properties[this.get("sortKey")] === column[this.get("sortKey")]) {
+    //                 properties = Radio.request("Timeline", "createTimelineTable", [properties])[0];
+    //                 currentTable[i] = Object.assign(column, properties);
+
+    //                 if (gfiAttr !== "showAll") {
+    //                     if (currentTable[i].gfi) {
+    //                         currentTable[i].gfi = Object.assign(currentTable[i].gfi, gfiAttr);
+    //                     }
+    //                     else {
+    //                         currentTable[i].gfi = gfiAttr;
+    //                     }
+    //                 }
+    //             }
+    //         });
+    //     });
+
+    //     // Add total and mean values and filter table for excluded properties
+    //     this.set("tableView", this.calculateTotalAndMean(this.filterTable(currentTable)));
+
+    //     // Update the filter dropdown list
+    //     this.updateFilter();
+
+    //     // Update Export Link
+    //     this.get("exportButtonModel").set("rawData", this.get("tableView"));
+    //     this.get("exportButtonModel").prepareForExport();
+    // },
 
     /**
      * @description Filters the table for excluded columns (e.g. the geometry)
@@ -251,11 +305,14 @@ const DashboardModel = Tool.extend({
         });
     },
     getData: function () {
-        if (this.getScope() !== "") {
-            _.each(this.getPropertyTree()[this.getScope()].layerIds, (layerId) => {
-                this.getDashboardLayerFeatures(layerId, Radio.request("FeatureLoader", "getFeaturesByLayerId", layerId));
-            });
-        }
+        const features = Radio.request("FeaturesLoader", "getDistrictsByType", Radio.request("SelectDistrict", "getScope"));
+
+        this.updateTable(features);
+        // if (this.getScope() !== "") {
+        //     _.each(this.getPropertyTree()[this.getScope()].layerIds, (layerId) => {
+        //         this.getDashboardLayerFeatures(layerId, Radio.request("FeatureLoader", "getFeaturesByLayerId", layerId));
+        //     });
+        // }
     },
 
     /**
