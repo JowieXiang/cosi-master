@@ -60,13 +60,9 @@ import TreeFilterView from "../modules/treefilter/view";
 import Formular from "../modules/formular/view";
 import FeatureLister from "../modules/featurelister/view";
 import PrintView from "../modules/tools/print_/view";
-//CoSI
 import TimeSeries from "../modules/tools/timeSeries/view";
 import SelectDistrictView from "../modules/selectDistrict/view";
 import CalculateRatioView from "../modules/tools/calculateRatio/selectView";
-import CosiTouchScreenView from "../modules/cosi/touchScreen/view";
-import CosiInfosSreenView from "../modules/cosi/infoScreen/view";
-import CosiSelectAreaView from "../modules/cosi/infoScreen/selectArea/view";
 import LocalStorageView from "../modules/localStorage/view";
 import PieView from "../modules/charting/chartRenderer/pie/view";
 import BarView from "../modules/charting/chartRenderer/bar-line/view";
@@ -537,34 +533,19 @@ function loadApp() {
     }
     /* eslint-enable no-undef */
 
-    if (_.has(Config, "cosiMode")) {
-        if (_.has(Config, "mouseHover")) {
-            new MouseHoverPopupView(Config.mouseHover);
-        }
-
-        if (!_.has(Config.cosiMode, "isInfoscreen")) {
-            new CosiTouchScreenView(Config);
-        }
-
-        if (_.has(Config.cosiMode, "isInfoscreen")) {
-            new CosiInfosSreenView();
-            new CosiSelectAreaView();
-        }
-
-        /*
-        *   Loclstorage so far only used in the context of CoSI
-        */
-        if (_.has(Config, "isLocalStorage")) {
-            new LocalStorageView();
-        }
-
-        /*
-        *   Charting so far only used in the context of CoSI
-        */
-        new PieView();
-        new BarView();
-        new ChartUtil();
+    /*
+    *   Loclstorage so far only used in the context of CoSI
+    */
+    if (_.has(Config, "isLocalStorage")) {
+        new LocalStorageView();
     }
+
+    /*
+    *   Charting so far only used in the context of CoSI
+    */
+    new PieView();
+    new BarView();
+    new ChartUtil();
 
     Radio.trigger("Util", "hideLoader");
 }

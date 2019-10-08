@@ -17,6 +17,9 @@ const Timeline = Tool.extend({
             },
             "getLatestFieldFromProperties": function (input) {
                 return this.getLatestField(input);
+            },
+            "fillUpTimelineGaps": function (inputTable, outputType = "Object") {
+                return this.fillUpTimelineGaps(inputTable, outputType);
             }
         }, this);
     },
@@ -29,14 +32,14 @@ const Timeline = Tool.extend({
             for (const prop in col) {
                 if (prop.includes(this.getSignifier())) {
                     newPropertyKey = col[prop];
-                    col[newPropertyKey] = [];
+                    col[newPropertyKey] = {};
 
                     delete col[prop];
                 }
                 if (prop.includes(this.getPrefix()) && typeof newPropertyKey !== "undefined") {
                     const year = prop.replace(this.getPrefix(), "").slice(0, 4);
 
-                    col[newPropertyKey].push([year, col[prop]]);
+                    col[newPropertyKey][year] = col[prop];
 
                     delete col[prop];
                 }
@@ -64,6 +67,28 @@ const Timeline = Tool.extend({
         }
 
         return selector;
+    },
+    fillUpTimelineGaps (inputTable, outputType = "Object") {
+        for (const prop in inputTable[0]) {
+            if (inputTable[0][prop] instanceof Object) {
+                const range = inputTable
+                    .map(col => col[prop])
+                    .map(timeline => timeline ? Object.keys(timeline) : [])
+                    .reduce((allYears, yearsOfCol) => [...allYears, ...yearsOfCol], [])
+                    .reduce((years, year) => {
+                        years[year] = "-";
+                        return years;
+                    }, {});
+
+                inputTable.forEach(col => {
+                    if (col[prop] instanceof Object) {
+                        col[prop] = outputType === "Array" ? Object.entries({...range, ...col[prop]}) : {...range, ...col[prop]};
+                    }
+                });
+            }
+        }
+
+        return inputTable;
     },
     getSignifier () {
         return this.get("timelineSignifier");

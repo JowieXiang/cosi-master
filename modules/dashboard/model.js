@@ -43,7 +43,7 @@ const DashboardModel = Tool.extend({
             filename: "CoSI-Dashboard-Export",
             fileExtension: "csv"
         }));
-        
+
         this.set("filterDropdownModel", new DropdownModel({
             name: "Filter",
             type: "string",
@@ -59,8 +59,10 @@ const DashboardModel = Tool.extend({
         });
 
         this.listenTo(Radio.channel("SelectDistrict"), {
-            "districtSelectionChanged": function (selectedDistricts) {
-                this.updateDistricts(selectedDistricts);
+            "districtSelectionChanged": function () {
+                this.set("scope", Radio.request("SelectDistrict", "getScope"));
+                this.setSortKey();
+                // this.updateDistricts(selectedDistricts);
             }
         }, this);
 
@@ -96,33 +98,25 @@ const DashboardModel = Tool.extend({
      * @param {string} layerId - the ID of the LayerModel of the data
      */
 
-    updateTable: function (features, layerId) {
-        const currentTable = this.get("tableView"),
-            layer = Radio.request("ModelList", "getModelByAttributes", {id: layerId});
+    updateTable: function (features) {
+        const table = features.reduce((newTable, feature) => {
+            const properties = feature.getProperties(),
+                distCol = newTable.find(col => col[this.get("sortKey")] === properties[this.get("sortKey")]);
 
-        _.each(features, (feature) => {
-            let properties = feature.getProperties();
-            const gfiAttr = layer.get("gfiAttributes");
-
-            _.each(currentTable, (column, i) => {
-                if (properties[this.get("sortKey")] === column[this.get("sortKey")]) {
-                    properties = Radio.request("Timeline", "createTimelineTable", [properties])[0];
-                    currentTable[i] = Object.assign(column, properties);
-
-                    if (gfiAttr !== "showAll") {
-                        if (currentTable[i].gfi) {
-                            currentTable[i].gfi = Object.assign(currentTable[i].gfi, gfiAttr);
-                        }
-                        else {
-                            currentTable[i].gfi = gfiAttr;
-                        }
+            if (distCol) {
+                return newTable.map((col) => {
+                    if (col[this.get("sortKey")] === properties[this.get("sortKey")]) {
+                        return {...col, ...Radio.request("Timeline", "createTimelineTable", [properties])[0]};
                     }
-                }
-            });
-        });
-
+                    return col;
+                });
+            }
+            return [...newTable, Radio.request("Timeline", "createTimelineTable", [properties])[0]];
+        }, []);
+        
+        // Todo: GFI mapping
         // Add total and mean values and filter table for excluded properties
-        this.set("tableView", this.calculateTotalAndMean(this.filterTable(currentTable)));
+        this.set("tableView", this.calculateTotalAndMean(Radio.request("Timeline", "fillUpTimelineGaps", table)));
 
         // Update the filter dropdown list
         this.updateFilter();
@@ -136,6 +130,7 @@ const DashboardModel = Tool.extend({
      * @description Filters the table for excluded columns (e.g. the geometry)
      * @param {Object} table the existing table
      * @returns {Object} the resulting table
+     * @deprecated
      */
     filterTable: function (table) {
         _.each(table, (col) => {
@@ -160,6 +155,7 @@ const DashboardModel = Tool.extend({
         if (table) {
             const properties = _.allKeys(table[0]);
 
+            table.push({[this.get("sortKey")]: "Gesamt"}, {[this.get("sortKey")]: "Durchschnitt"});
             _.each(properties, (prop) => {
                 if (prop !== this.get("sortKey")) {
 
@@ -188,7 +184,7 @@ const DashboardModel = Tool.extend({
                     }
                     else if (Array.isArray(table[0][prop])) {
                         const matrixTotal = [],
-                            totalArr = [];
+                            avgArr = [];
 
                         // Create Matrix from timeline values
                         _.each(table, (col) => {
@@ -197,20 +193,21 @@ const DashboardModel = Tool.extend({
                             }
                             if (matrixTotal.length > 0) {
                                 // sum up all columns of timeline and calculate average on the fly
+                                console.log(matrixTotal);
                                 if (col[this.get("sortKey")] === "Gesamt") {
                                     col[prop] = [];
                                     for (let i = 0; i < matrixTotal[0].length; i++) {
-                                        col[prop].push([matrixTotal[0][i][0], 0]);
-                                        for (let j = 0; j < matrixTotal.length; j++) {
-                                            col[prop][i][1] += parseFloat(matrixTotal[j][i][1]);
-                                        }
-                                        totalArr.push([col[prop][i][0], col[prop][i][1] / (table.length - 2)]);
+                                        // col[prop].push([matrixTotal[0][i][0], 0]);
+                                        // for (let j = 0; j < matrixTotal.length; j++) {
+                                        //     col[prop][i][1] += parseFloat(matrixTotal[j][i][1]);
+                                        // }
+                                        // avgArr.push([col[prop][i][0], col[prop][i][1] / (table.length - 2)]);
                                     }
                                 }
 
                                 // write average
                                 if (col[this.get("sortKey")] === "Durchschnitt") {
-                                    col[prop] = totalArr;
+                                    col[prop] = avgArr;
                                 }
                             }
                         });
@@ -251,11 +248,14 @@ const DashboardModel = Tool.extend({
         });
     },
     getData: function () {
-        if (this.getScope() !== "") {
-            _.each(this.getPropertyTree()[this.getScope()].layerIds, (layerId) => {
-                this.getDashboardLayerFeatures(layerId, Radio.request("FeatureLoader", "getFeaturesByLayerId", layerId));
-            });
-        }
+        const features = Radio.request("FeaturesLoader", "getDistrictsByType", Radio.request("SelectDistrict", "getScope"));
+
+        this.updateTable(features);
+        // if (this.getScope() !== "") {
+        //     _.each(this.getPropertyTree()[this.getScope()].layerIds, (layerId) => {
+        //         this.getDashboardLayerFeatures(layerId, Radio.request("FeatureLoader", "getFeaturesByLayerId", layerId));
+        //     });
+        // }
     },
 
     /**
