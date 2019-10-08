@@ -1,4 +1,4 @@
-import {WFS} from "ol/format.js";
+import { WFS } from "ol/format.js";
 
 const featuresLoader = Backbone.Model.extend({
     defaults: {
@@ -18,7 +18,9 @@ const featuresLoader = Backbone.Model.extend({
             "getDistrictsByCategory": this.getDistrictsByCategory,
             "getAllFeaturesByAttribute": this.getAllFeaturesByAttribute
         }, this);
-
+        channel.on({
+            "districtsLoaded": this.districtsLoaded
+        }, this);
         this.listenTo(Radio.channel("SelectDistrict"), {
             "selectionChanged": this.checkDistrictType
         });
@@ -49,13 +51,16 @@ const featuresLoader = Backbone.Model.extend({
      * @returns {void}
      */
     loadDistricts: function (bbox, serviceUrl, attribute, districtNameList) {
-        const layerList = Radio.request("RawLayerList", "getLayerListWhere", {url: serviceUrl}),
+        const layerList = Radio.request("RawLayerList", "getLayerListWhere", { url: serviceUrl }),
             wfsReader = new WFS({
                 featureNS: layerList[0].get("featureNS")
             }),
             propertyListPromise = this.getPropertyListWithoutGeometry(serviceUrl),
             featurePromiseList = [];
+        console.info("layerList: ", layerList);
+        console.info("layerList[0].get(featureNS): ", layerList[0].get("featureNS"));
 
+        Radio.trigger("FeaturesLoader", "districtsLoaded", layerList);
         propertyListPromise.then(propertyList => {
             layerList.forEach(function (layer) {
                 const getFeatureUrl = Radio.request("Util", "getProxyURL", this.getUrl(layer, bbox, propertyList));
@@ -80,7 +85,8 @@ const featuresLoader = Backbone.Model.extend({
             }, this);
             Promise.all(featurePromiseList).then((featureList) => {
                 this.set(attribute, featureList.flat());
-                console.info(featureList.flat());
+                // console.info(featureList.flat());
+                console.info(featureList);
             });
         });
     },
@@ -191,8 +197,18 @@ const featuresLoader = Backbone.Model.extend({
             // to do
         };
         xhr.send();
-        console.info(featureList);
         return featureList[valueOfLayer];
+    },
+
+    /**
+     * returns all raw layers within the scope of respective district selection
+     * e.g. if selected district is of type statistishe gebiet
+     * returns all WFS layers on the level of statistishe gebiet
+     * @param {array} layerList - layerList of selected type
+     * @returns {array} layerList of selected type
+     */
+    districtsLoaded: function (layerList) {
+        return layerList;
     }
 
 });

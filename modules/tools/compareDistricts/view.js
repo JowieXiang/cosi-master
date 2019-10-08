@@ -164,7 +164,8 @@ const CompareDistrictsView = Backbone.View.extend({
         const selector = Radio.request("SelectDistrict", "getSelector") === "statgebiet" ? "stat_gebiet" : Radio.request("SelectDistrict", "getSelector"),
             layerId = layerFilter.layerId,
             refDistrictName = this.districtSelector.getSelectedDistrict(),
-            featureCollection = Radio.request("FeatureLoader", "getFeaturesByLayerId", layerId),
+            // featureCollection = Radio.request("FeatureLoader", "getFeaturesByLayerId", layerId),
+            featureCollection = Radio.request("FeaturesLoader", "getAllFeaturesByAttribute", { id: layerId }),
             refFeature = featureCollection.filter(feature => feature.getProperties()[selector] === refDistrictName)[0],
             filterCollection = JSON.parse(layerFilter.filter);
         var filterResults = [],

@@ -28,13 +28,13 @@ const ColorCodeMapView = Backbone.View.extend({
         this.listenTo(this.layerList, {
             "add": this.createColorCodeLayer
         });
-        // this.listenTo(Radio.channel("SelectDistrict"), {
-        //     "selectionChanged": function () {
-        //         this.setOptions();
-        //         this.clearColorLayerFeatures();
-        //         this.setColorLayerFeatures();
-        //     }
-        // });
+        this.listenTo(Radio.channel("ColorCodeMap"), {
+            "districtsLoaded": function () {
+                this.setOptions();
+                this.clearColorLayerFeatures();
+                this.setColorLayerFeatures();
+            }
+        });
     },
     template: _.template(template),
     render: function () {
@@ -42,12 +42,10 @@ const ColorCodeMapView = Backbone.View.extend({
         return this;
     },
     setOptions: function () {
-        const scope = Radio.request("SelectDistrict", "getScope"),
-            selectedLayerGroup = this.layerList.filter(layer => layer.get("layerScope") === scope);
 
         this.$el.find("#color-code-layer-selector").empty();
         this.$el.find("#color-code-layer-selector").append("<option selected value> - clear - </option>");
-        _.each(selectedLayerGroup, layer => {
+        this.layerList.forEach(layer => {
             this.$el.find("#color-code-layer-selector").append(`<option>${layer.get("layerName")}</option>`);
         });
     },
@@ -96,7 +94,7 @@ const ColorCodeMapView = Backbone.View.extend({
             districtNames = Radio.request("SelectDistrict", "getSelectedDistricts").map(feature => feature.getProperties()[selector]);
 
         _.each(layerIds, id => {
-            const featureCollection = Radio.request("FeatureLoader", "getFeaturesByLayerId", id),
+            const featureCollection = Radio.request("FeaturesLoader", "getAllFeaturesByAttribute", { id: layerId }),
                 selectedFeatures = featureCollection.filter(feature => {
                     return _.contains(districtNames, feature.getProperties()[selector]);
                 });
@@ -108,14 +106,14 @@ const ColorCodeMapView = Backbone.View.extend({
                 let field = Radio.request("Parser", "getItemByAttributes", { id: id }).mouseHoverField;
 
                 // eslint-disable-next-line one-var
-                const values = selectedFeatures.map((feature) => {
-                    const props = feature.getProperties();
+                const values = selectedFeatures.map(feature => {
+                        const props = feature.getProperties();
 
-                    if (field === "dynamic") {
-                        field = Radio.request("Timeline", "getLatestFieldFromProperties", props);
-                    }
-                    return parseFloat(props[field]);
-                }),
+                        if (field === "dynamic") {
+                            field = Radio.request("Timeline", "getLatestFieldFromProperties", props);
+                        }
+                        return parseFloat(props[field]);
+                    }),
                     colorScale = Radio.request("ColorScale", "getColorScaleByValues", values, this.style.chromaticScheme);
 
                 // Add the generated legend style to the Legend Portal
