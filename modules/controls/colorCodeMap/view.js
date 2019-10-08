@@ -14,7 +14,6 @@ const ColorCodeMapView = Backbone.View.extend({
         this.createColorCodeLayer();
         this.render();
         this.layerList = new LayerList();
-        this.setOptions();
         this.style = {
             chromaticScheme: Chromatic.interpolateBlues,
             opacity: 0.8
@@ -31,25 +30,30 @@ const ColorCodeMapView = Backbone.View.extend({
         return this;
     },
     onSelect: function (e) {
-        this.hideColorCodeLayer();
-        this.clearColorLayerFeatures();
-
         const selectedLayer = this.layerList.filter(function (layer) {
-            return layer.get("layerName") === e.target.value;
+            return layer.get("layerName").trim() === e.target.value.trim();
         })[0];
 
         if (selectedLayer !== undefined) {
+            this.clearColorLayerFeatures();
             this.setColorLayerFeatures(selectedLayer);
             this.showColorCodeLayer();
         }
+        else {
+            this.hideColorCodeLayer();
+            this.clearColorLayerFeatures();
+        }
+        this.$el.find("#color-code-layer-selector").selectpicker("refresh");
+
     },
     setOptions: function () {
+        const select = this.$el.find("#color-code-layer-selector");
 
-        this.$el.find("#color-code-layer-selector").empty();
-        this.$el.find("#color-code-layer-selector").append("<option selected value> - clear - </option>");
+        select.empty().append("<option> - clear - </option>");
         this.layerList.forEach(layer => {
-            this.$el.find("#color-code-layer-selector").append(`<option>${layer.get("layerName")}</option>`);
+            select.append(`<option>${layer.get("layerName")}</option>`);
         });
+        select.selectpicker("refresh");
     },
     createColorCodeLayer: function () {
         if (Radio.request("Map", "getLayerByName", "colorCode") === undefined) {
@@ -79,7 +83,6 @@ const ColorCodeMapView = Backbone.View.extend({
 
         if (colorCodeLayer !== undefined) {
             colorCodeLayer.getSource().clear();
-            colorCodeLayer.setVisible(false);
         }
     },
     setColorLayerFeatures: function (selectedLayer) {
