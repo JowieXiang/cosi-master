@@ -161,7 +161,7 @@ function loadApp() {
     new MenuLoader();
     new ZoomToGeometry();
     new ColorScale();
-    new FeatureLoaderModel();
+    // new FeatureLoaderModel();
 
 
     if (_.has(Config, "zoomToFeature")) {
@@ -403,7 +403,7 @@ function loadApp() {
                     }
                     break;
                 }
-                
+
                 case "fullScreen": {
                     if (control.attr === true) {
                         element = controlsView.addRowTR(control.id);

@@ -61,7 +61,7 @@ const SelectDistrict = Tool.extend({
 
                         this.setBboxGeometryToLayer(Radio.request("ModelList", "getCollection"), layerlist);
                     }
-                    this.get("channel").trigger("selectionChanged");
+                    this.get("channel").trigger("selectionChanged", this.getSelectedGeometries().getExtent().toString(), this.get("activeScope"), this.getSelectedDistrictNames(this.get("selectedDistricts")));
                     this.unlisten();
                 }
             }
@@ -249,6 +249,27 @@ const SelectDistrict = Tool.extend({
 
         return new GeometryCollection(geometries);
     },
+
+    /**
+     * returns the names of the districts
+     * @param {ol.Feature[]} districts - the selected districts
+     * @returns {string[]} names - a list of the names of the selected districts
+     */
+    getSelectedDistrictNames: function (districts) {
+        var names = [];
+
+        districts.forEach(function (district) {
+            // to do - change statgebiet to stat_gebiet someday in the future
+            if (district.get("statgebiet")) {
+                names.push(district.get("statgebiet"));
+            }
+            else {
+                names.push(district.get("stadtteil"));
+            }
+        });
+        return names;
+    },
+
     getSelectedStyle: function () {
         return this.get("selectedStyle");
     },

@@ -28,7 +28,7 @@ const LayerFilterModel = Backbone.Model.extend({
             layerId = this.get("layerInfo").layerId,
             selectedLayer = Radio.request("Parser", "getItemByAttributes", { id: layerId }),
             keys = selectedLayer.districtCompareField,
-            featureCollection = Radio.request("FeatureLoader", "getFeaturesByLayerId", layerId),
+            featureCollection = Radio.request("FeaturesLoader", "getAllFeaturesByAttribute", { id: layerId }),
             refFeature = featureCollection.filter(feature => feature.getProperties()[selector] === districtName)[0],
             districtInfo = [];
 
