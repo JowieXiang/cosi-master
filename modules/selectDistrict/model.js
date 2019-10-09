@@ -10,6 +10,7 @@ const SelectDistrict = Tool.extend({
         districtLayer: [], // e.g.  {name: "Statistische Gebiete", selector: "statgebiet", layerIds:[]}
         districtLayerNames: [],
         districtLayersLoaded: [],
+        isReady: false,
         scopeDropdownModel: {},
         activeScope: "", // e.g. "Stadtteile" or "Statistische Gebiete"
         activeSelector: "", // e.g. "stadtteil" or "statgebiet"
@@ -36,6 +37,7 @@ const SelectDistrict = Tool.extend({
     }),
     initialize: function () {
         this.superInitialize();
+        this.getUrlQuery();
         this.set({
             "districtLayerNames": this.get("districtLayer").map(layer => layer.name)
         });
@@ -60,20 +62,22 @@ const SelectDistrict = Tool.extend({
                         const layerlist = _.union(Radio.request("Parser", "getItemsByAttributes", { typ: "WFS", isBaseLayer: false }), Radio.request("Parser", "getItemsByAttributes", { typ: "GeoJSON", isBaseLayer: false }));
 
                         this.setBboxGeometryToLayer(Radio.request("ModelList", "getCollection"), layerlist);
+                        this.get("channel").trigger("selectionChanged", this.getSelectedGeometries().getExtent().toString(), this.get("activeScope"), this.getSelectedDistrictNames(this.get("selectedDistricts")));
                     }
-                    this.get("channel").trigger("selectionChanged", this.getSelectedGeometries().getExtent().toString(), this.get("activeScope"), this.getSelectedDistrictNames(this.get("selectedDistricts")));
                     this.unlisten();
                 }
             }
         });
 
         this.listenTo(this.get("scopeDropdownModel"), {
-            "valuesChanged": this.setScope
+            "valuesChanged": this.getScopeFromDropdown
         }, this);
 
         this.listenTo(Radio.channel("Layer"), "featuresLoaded", function (id) {
-            this.checkDistrictLayersLoaded(id);
-            this.setScope();
+            if (!this.get("isReady")) {
+                this.checkDistrictLayersLoaded(id);
+                this.getScopeFromDropdown();
+            }
         });
 
         this.get("channel").reply({
@@ -127,6 +131,16 @@ const SelectDistrict = Tool.extend({
         this.set({
             "selectedDistricts": this.get("selectedDistricts").concat(feature)
         });
+    },
+    setFeaturesByScopeAndIds (scope, ids) {
+        this.setScope(scope);
+        const layer = Radio.request("ModelList", "getModelByAttributes", {name: scope}),
+            features = layer.get("layerSource").getFeatures().filter(feature => ids.includes(feature.getProperties()[this.getSelector()]));
+
+        if (features && features.length !== 0) {
+            this.set("selectedDistricts", features);
+            this.toggleIsActive();
+        }
     },
 
     /**
@@ -192,15 +206,16 @@ const SelectDistrict = Tool.extend({
             }
         }, this);
     },
-    setScope: function () {
+    getScopeFromDropdown () {
         const scope = this.get("scopeDropdownModel").getSelectedValues().values[0];
 
+        this.setScope(scope);
+    },
+    setScope: function (scope) {
         this.set("activeScope", scope);
-
-        if (scope && scope !== "") {
+        if (scope && scope !== "" && this.get("districtLayer").length !== 0) {
             this.set("activeSelector", this.get("districtLayer").find(el => el.name === scope).selector);
         }
-
         this.toggleScopeLayers();
     },
     getScope: function () {
@@ -228,12 +243,23 @@ const SelectDistrict = Tool.extend({
         }
 
         if (_.isEqual(this.get("districtLayerNames"), this.get("districtLayersLoaded"))) {
-            this.setScope();
-            this.toggleScopeLayers();
+            this.getScopeFromDropdown();
+
+            if (this.get("urlQuery")) {
+                this.setFeaturesByScopeAndIds(...this.get("urlQuery"));
+            }
+
+            this.set("isReady", true);
         }
     },
     getSelector: function () {
         return this.get("activeSelector");
+    },
+    getScopeAndSelector: function () {
+        return {
+            scope: this.getScope(),
+            selector: this.getSelector()
+        };
     },
 
     /**
@@ -278,6 +304,13 @@ const SelectDistrict = Tool.extend({
     },
     getDistrictLayer: function () {
         return this.get("districtLayer");
+    },
+    getUrlQuery () {
+        const query = window.location.search.split("&").filter(q => q.includes("scope") || q.includes("selectedDistricts"));
+
+        if (query.length > 0) {
+            this.set("urlQuery", [query[0].substring(query[0].indexOf("=") + 1).replace("%20", " "), query[1].substring(query[1].indexOf("=") + 1).split(",")]);
+        }
     }
 });
 

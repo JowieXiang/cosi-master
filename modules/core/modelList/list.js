@@ -132,7 +132,11 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
             },
             "toggleWfsCluster": this.toggleWfsCluster,
             "toggleDefaultTool": this.toggleDefaultTool,
-            "refreshLightTree": this.refreshLightTree
+            "refreshLightTree": this.refreshLightTree,
+            "addModelsAndUpdate": function (models) {
+                this.add(models);
+                this.updateLayerView();
+            }
         }, this);
 
         this.listenTo(this, {

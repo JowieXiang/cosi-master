@@ -62,34 +62,12 @@ const DashboardModel = Tool.extend({
             "districtSelectionChanged": function () {
                 this.set("scope", Radio.request("SelectDistrict", "getScope"));
                 this.setSortKey();
-                // this.updateDistricts(selectedDistricts);
             }
         }, this);
 
         this.listenTo(this, {
             "change:isActive": this.getData
         });
-    },
-
-    /**
-     * @description Creates a new Obj for the dashboard-table, as Array<Object> with the district-names as columns
-     * @param {ol.feature} selectedDistricts - the features of the districts (Stadtteile or stat. Gebiete) which host the geom. and name of the resp. area
-     */
-
-    setupTable: function (selectedDistricts) {
-        const cleanTable = [];
-
-        this.setSortKey();
-
-        _.forEach(selectedDistricts, (district) => {
-            cleanTable.push({[this.get("sortKey")]: district.getProperties()[this.get("sortKey")]});
-        });
-
-        // Set columns for average and total values
-        cleanTable.push({[this.get("sortKey")]: "Gesamt"});
-        cleanTable.push({[this.get("sortKey")]: "Durchschnitt"});
-
-        this.set("tableView", cleanTable);
     },
 
     /**
@@ -116,7 +94,8 @@ const DashboardModel = Tool.extend({
         
         // Todo: GFI mapping
         // Add total and mean values and filter table for excluded properties
-        this.set("tableView", this.calculateTotalAndMean(Radio.request("Timeline", "fillUpTimelineGaps", table)));
+        this.set("tableView", this.calculateTotalAndMean(Radio.request("Timeline", "fillUpTimelineGaps", table, "Array")));
+        // console.log(this.get("tableView"));
 
         // Update the filter dropdown list
         this.updateFilter();
@@ -193,15 +172,19 @@ const DashboardModel = Tool.extend({
                             }
                             if (matrixTotal.length > 0) {
                                 // sum up all columns of timeline and calculate average on the fly
-                                console.log(matrixTotal);
                                 if (col[this.get("sortKey")] === "Gesamt") {
                                     col[prop] = [];
                                     for (let i = 0; i < matrixTotal[0].length; i++) {
-                                        // col[prop].push([matrixTotal[0][i][0], 0]);
-                                        // for (let j = 0; j < matrixTotal.length; j++) {
-                                        //     col[prop][i][1] += parseFloat(matrixTotal[j][i][1]);
-                                        // }
-                                        // avgArr.push([col[prop][i][0], col[prop][i][1] / (table.length - 2)]);
+                                        let n = 0;
+
+                                        col[prop].push([matrixTotal[0][i][0], 0]);
+                                        for (let j = 0; j < matrixTotal.length; j++) {
+                                            if (matrixTotal[j]) {
+                                                col[prop][i][1] += isNaN(parseFloat(matrixTotal[j][i][1])) ? 0 : parseFloat(matrixTotal[j][i][1]);
+                                                n += isNaN(parseFloat(matrixTotal[j][i][1])) ? 0 : 1;
+                                            }
+                                        }
+                                        avgArr.push([col[prop][i][0], col[prop][i][1] / n]);
                                     }
                                 }
 
@@ -219,43 +202,10 @@ const DashboardModel = Tool.extend({
         return table;
     },
 
-    /**
-     * @description Updates the district selection and pushes the district-features
-     * @param {Array<ol.feature>} selectedDistricts
-     */
-
-    updateDistricts: function (selectedDistricts) {
-        const scope = Radio.request("SelectDistrict", "getScope");
-
-        // Temporary: replace "statgebiete"-key with "stat_gebiete" until replacement data provided
-        if (scope === "Statistische Gebiete") {
-            selectedDistricts.forEach((district) => {
-                district.setProperties({
-                    "stat_gebiet": district.getProperties().statgebiet
-                });
-            });
-        }
-
-        this.set("scope", scope);
-        this.set("selectedDistricts", selectedDistricts.map(features => features.getProperties()[this.getPropertyTree()[this.getScope()].selector]));
-
-        // Set up empty table for selected districts
-        this.setupTable(selectedDistricts);
-
-        // Add relevant Features to the feature List
-        _.each(this.getPropertyTree()[scope].layerIds, (layerId) => {
-            this.addLayerModel(layerId);
-        });
-    },
     getData: function () {
         const features = Radio.request("FeaturesLoader", "getDistrictsByType", Radio.request("SelectDistrict", "getScope"));
 
         this.updateTable(features);
-        // if (this.getScope() !== "") {
-        //     _.each(this.getPropertyTree()[this.getScope()].layerIds, (layerId) => {
-        //         this.getDashboardLayerFeatures(layerId, Radio.request("FeatureLoader", "getFeaturesByLayerId", layerId));
-        //     });
-        // }
     },
 
     /**
