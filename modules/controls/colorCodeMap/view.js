@@ -54,6 +54,8 @@ const ColorCodeMapView = Backbone.View.extend({
         this.layerList.forEach(layer => {
             select.append(`<option>${layer.get("layerName")}</option>`);
         });
+        this.$el.find(".dropdown-menu");
+        console.log("dropdown-menu: ",this.$el.find(".dropdown-menu"));
         select.selectpicker("refresh");
     },
     createColorCodeLayer: function () {
