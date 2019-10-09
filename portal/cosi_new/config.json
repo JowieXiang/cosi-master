@@ -1,8 +1,5 @@
 {
   "Portalconfig": {
-    "controls": {
-      "colorCodeMap": true
-    },
     "portalTitle": {
       "title": "CoSI",
       "link": "http://geoinfo.hamburg.de",
@@ -362,9 +359,99 @@
             "Leistungsarten",
             "Name"
           ]
+        },
+        {
+          "id": "1750"
+        },
+        {
+          "id": "2013"
+        },
+        {
+          "id": "2678"
+        },
+        {
+          "id": "8144"
+        },
+        {
+          "id": "5207"
         }
       ],
       "Ordner": [
+        {
+          "Titel": "Feinkartierung",
+          "Layer": [
+            {
+              "id": "14859"
+            },
+            {
+              "id": "14860"
+            },
+            {
+              "id": "14861"
+            },
+            {
+              "id": "14862"
+            },
+            {
+              "id": "14863"
+            },
+            {
+              "id": "14864"
+            }
+          ]
+        },
+        {
+          "Titel": "Bebauungspläne",
+          "Layer": [
+            {
+              "id": "1561"
+            },
+            {
+              "id": "1562"
+            },
+            {
+              "id": "11094"
+            }
+          ]
+        },
+        {
+          "Titel": "Flächen des Bezirks",
+          "Layer": [
+            {
+              "id": "7236",
+              "name": "Stadtgrün belastet mit Erbbaurecht"
+            },
+            {
+              "id": "1427",
+              "name": "Stadtgrün"
+            }
+          ]
+        },
+        {
+          "Titel": "Lärmkarten",
+          "Layer": [
+            {
+              "id": "2430"
+            },
+            {
+              "id": "667"
+            },
+            {
+              "id": "14859"
+            },
+            {
+              "id": "96"
+            }
+          ]
+        },
+        {
+          "Titel": "Schulen",
+          "Layer": [
+            {
+              "id": "1585"
+            }
+          ]
+        },
         {
           "Titel": "Demografie (Stadtteile)",
           "isFolderSelectable": true,

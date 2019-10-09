@@ -26,7 +26,8 @@ const ColorCodeMapView = Backbone.View.extend({
     },
     template: _.template(template),
     render: function () {
-        this.$el.html(this.template());
+        // this.$el.html(this.template());
+        $(".masterportal-container").append(this.$el.html(this.template()));
         return this;
     },
     onSelect: function (e) {
@@ -87,11 +88,12 @@ const ColorCodeMapView = Backbone.View.extend({
     },
     setColorLayerFeatures: function (selectedLayer) {
         const layerId = selectedLayer.get("layerId"),
-            selector = Radio.request("SelectDistrict", "getSelector") === "statgebiet" ? "stat_gebiet" : Radio.request("SelectDistrict", "getSelector"),
-            districtNames = Radio.request("SelectDistrict", "getSelectedDistricts").map(feature => feature.getProperties()[selector]),
+            WFSselector = Radio.request("SelectDistrict", "getSelector") === "statgebiet" ? "stat_gebiet" : Radio.request("SelectDistrict", "getSelector"),
+            districtSelector = Radio.request("SelectDistrict", "getSelector"),
+            districtNames = Radio.request("SelectDistrict", "getSelectedDistricts").map(feature => feature.getProperties()[districtSelector]),
             featureCollection = Radio.request("FeaturesLoader", "getAllFeaturesByAttribute", { id: layerId }),
             selectedFeatures = featureCollection.filter(feature => {
-                return _.contains(districtNames, feature.getProperties()[selector]);
+                return _.contains(districtNames, feature.getProperties()[WFSselector]);
             });
 
         if (selectedFeatures.length > 0) {

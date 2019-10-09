@@ -412,14 +412,6 @@ async function loadApp() {
                     }
                     break;
                 }
-                case "colorCodeMap": {
-                    if (control.attr === true) {
-                        element = controlsView.addRowBR(control.id);
-                        new ColorCodeMapView({ el: element });
-                    }
-                    break;
-                }
-
                 case "fullScreen": {
                     if (control.attr === true) {
                         element = controlsView.addRowTR(control.id);
@@ -552,6 +544,7 @@ async function loadApp() {
     new PieView();
     new BarView();
     new ChartUtil();
+    new ColorCodeMapView();
 
     Radio.trigger("Util", "hideLoader");
 }
