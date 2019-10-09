@@ -26,7 +26,8 @@ const ColorCodeMapView = Backbone.View.extend({
     },
     template: _.template(template),
     render: function () {
-        this.$el.html(this.template());
+        // this.$el.html(this.template());
+        $(".masterportal-container").append(this.$el.html(this.template()));
         return this;
     },
     onSelect: function (e) {
