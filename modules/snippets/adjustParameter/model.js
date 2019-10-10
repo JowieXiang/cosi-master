@@ -42,7 +42,7 @@ const AdjustParameterModel = SnippetModel.extend({
                 properties = layer.get("numericalProperties").filter(prop => prop !== layer.get("defaultProperty"));
             }
         }
-        else {
+        else if (layer.get("layerSource").getFeatures()) {
             propObj = layer.get("layerSource").getFeatures()[0].getProperties();
 
             for (const prop in propObj) {

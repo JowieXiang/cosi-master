@@ -63,14 +63,11 @@ const CalculateRatioModel = Tool.extend({
             "change:numerators": this.updateModifiers
         });
         this.listenTo(Radio.channel("Layer"), {
-            "layerVisibleChanged": this.getActiveLayersWithValues
+            "layerVisibleChanged": this.getActiveFacilityLayers
         });
-        this.listenTo(Radio.channel("Map"), {
-            "isReady": function () {
-                this.getActiveLayersWithValues();
-                this.updateDropdownMenus();
-            }
-        }, this);
+        this.listenTo(Radio.channel("FeaturesLoader"), {
+            "districtsLoaded": this.getAbsoluteDemographicsLayers
+        });
         this.on({
             "change:denValues": this.updateDropdownMenus,
             "change:numValues": this.updateDropdownMenus
@@ -100,7 +97,7 @@ const CalculateRatioModel = Tool.extend({
             _.each(selectedDistricts, (district) => {
                 // get the facilities and demographics for each district
                 facilities = this.getFacilitiesInDistrict(district);
-                demographics = this.getTargetDemographicsInDistrict(district);
+                demographics = this.getTargetDemographicsInDistrict(district, selector);
 
                 // add up all demographics and facilities for all selected districts
                 totalFacilities += facilities;
@@ -136,33 +133,24 @@ const CalculateRatioModel = Tool.extend({
         this.setMessage(`In ${area} ist keine Population der Zielgruppe vorhanden. Daher können keine Ergebnisse angezeigt werden.`);
         return "n/a";
     },
-    getTargetDemographicsInDistrict: function (district) {
-        const districtGeometry = district.getGeometry();
+    getTargetDemographicsInDistrict: function (district, selector) {
         let targetPopulation = 0;
 
-        if (typeof this.getDenominators() !== undefined) {
-            if (this.getDenominators().length > 0) {
-                _.each(this.getDenominators(), (den) => {
-                    const layerId = this.get("denValues")[den],
-                        layer = Radio.request("ModelList", "getModelByAttributes", {id: layerId}),
-                        features = layer.get("layerSource").getFeatures(),
-                        districtProperties = features.filter((feature) => {
-                            return Extent.containsExtent(Extent.buffer(districtGeometry.getExtent(), 10), feature.getGeometry().getExtent());
-                        })[0].getProperties();
+        if (this.getDenominators().length > 0) {
+            this.getDenominators().forEach((den) => {
+                const districtFeature = Radio.request("FeaturesLoader", "getAllFeaturesByAttribute", {name: den})
+                    .filter(feature => feature.getProperties()[selector === "statgebiet" ? "stat_gebiet" : selector] === district.getProperties()[selector]);
 
-                    if (layer.get("mouseHoverField")) {
-                        const field = layer.get("mouseHoverField") === "dynamic" ? Radio.request("Timeline", "getLatestFieldFromProperties", districtProperties) : layer.get("mouseHoverField");
+                if (districtFeature) {
+                    const districtProperties = districtFeature[0].getProperties(),
+                        field = Radio.request("Timeline", "getLatestFieldFromProperties", districtProperties);
 
-                        targetPopulation += parseInt(districtProperties[field], 10);
-                    }
-                    else {
-                        this.setMessage("Entschuldigung! Der zu prüfende Layer besitzt keine gültige Spalte für Verhältnisanalysen. Bitte wählen Sie einen anderen Layer aus.");
-                    }
-                });
-            }
-            else {
-                this.setMessage("Bitte wählen Sie eine demografische Zielgruppe aus.");
-            }
+                    targetPopulation += parseInt(districtProperties[field], 10);
+                }
+                else {
+                    this.setMessage("Entschuldigung! Der zu prüfende Layer besitzt keine gültige Spalte für Verhältnisanalysen. Bitte wählen Sie einen anderen Layer aus.");
+                }
+            });
         }
         else {
             this.setMessage("Bitte wählen Sie eine demografische Zielgruppe aus.");
@@ -211,13 +199,13 @@ const CalculateRatioModel = Tool.extend({
 
         return featureCount;
     },
-    getActiveLayersWithValues: function () {
-        const collection = Radio.request("ModelList", "getCollection"),
-            possibleDenominators = collection.where({type: "layer", isVisibleInMap: true, isDemographic: true}),
-            possibleNumerators = collection.where({type: "layer", isVisibleInMap: true, isFacility: true});
+    getActiveFacilityLayers: function () {
+        const possibleNumerators = Radio.request("ModelList", "getModelsByAttributes", {type: "layer", isVisibleInMap: true, isFacility: true});
 
         this.setDropdownValues(possibleNumerators, "numValues");
-        this.setDropdownValues(possibleDenominators, "denValues");
+    },
+    getAbsoluteDemographicsLayers: function (layerList) {
+        this.setDropdownValues(layerList.filter(layer => !(layer.get("name").includes("proz") || layer.get("name").includes("ant") || layer.get("name").includes("avg"))), "denValues");
     },
     setDropdownValues: function (models, field) {
         const values = this.remapModelsToValues(models);

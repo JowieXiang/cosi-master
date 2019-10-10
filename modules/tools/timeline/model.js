@@ -58,6 +58,7 @@ const Timeline = Tool.extend({
                 if (parseFloat(prop.replace(this.getPrefix(), "")) > latestYear) {
                     latestYear = parseFloat(prop.replace(this.getPrefix(), ""));
                     selector = prop;
+                    console.log(latestYear, selector);
                 }
             }
             // Break if the found date is from last year
