@@ -11,9 +11,8 @@ const SidebarModel = Backbone.Model.extend(/** @lends SidebarModel.prototype */{
      * @class SidebarModel
      * @extends Backbone.Model
      * @memberof Sidebar
-     * @param {Boolean} isVisible=false Flag if sidebar is visible
-     * @param {Boolean} isMobile=false Flag if sidebar is mobile
-     * @param {String} width="30%" Shows the width of the sidebar
+     * @property {Boolean} isVisible=false Flag if sidebar is visible
+     * @property {Boolean} isMobile=false Flag if sidebar is mobile
      * @listens Sidebar#RadioTriggerSidebarToggle
      * @listens Sidebar#RadioTriggerSidebarAppend
      * @listens Util#RadioTriggerUtilIsViewMobileChanged

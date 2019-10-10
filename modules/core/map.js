@@ -56,6 +56,7 @@ const map = Backbone.Model.extend({
             "addOverlay": this.addOverlay,
             "addInteraction": this.addInteraction,
             "addControl": this.addControl,
+            "removeControl": this.removeControl,
             "removeLayer": this.removeLayer,
             "removeLoadingLayer": this.removeLoadingLayer,
             "removeOverlay": this.removeOverlay,
@@ -82,6 +83,7 @@ const map = Backbone.Model.extend({
         });
 
         this.set("view", mapView.get("view"));
+        this.setProjectionFromParamUrl(Radio.request("ParametricURL", "getProjectionFromUrl"));
 
         this.set("map", new Map({
             logo: null,
@@ -271,9 +273,26 @@ const map = Backbone.Model.extend({
     },
     setCameraParameter: function (params) {
         var map3d = this.getMap3d(),
-            camera;
+            camera,
+            destination,
+            orientation;
 
-        if (_.isUndefined(map3d) === false && _.isNull(params) === false) {
+        // if the cameraPosition is given, directly set the cesium camera position, otherwise use olcesium Camera
+        if (map3d && params.cameraPosition) {
+            camera = this.getMap3d().getCesiumScene().camera;
+            destination = Cesium.Cartesian3.fromDegrees(params.cameraPosition[0], params.cameraPosition[1], params.cameraPosition[2]);
+            orientation = {
+                heading: Cesium.Math.toRadians(parseFloat(params.heading)),
+                pitch: Cesium.Math.toRadians(parseFloat(params.pitch)),
+                roll: Cesium.Math.toRadians(parseFloat(params.roll))
+            };
+
+            camera.setView({
+                destination,
+                orientation
+            });
+        }
+        else if (_.isUndefined(map3d) === false && _.isNull(params) === false) {
             camera = map3d.getCamera();
             if (_.has(params, "tilt")) {
                 camera.setTilt(parseFloat(params.tilt));
@@ -305,14 +324,40 @@ const map = Backbone.Model.extend({
             scene.shadowMap.size = 2048; // this is default
             scene.fxaa = _.has(params, "fxaa") ? params.fxaa : scene.fxaa;
             scene.globe.enableLighting = _.has(params, "enableLighting") ? params.enableLighting : scene.globe.enableLighting;
+            scene.globe.depthTestAgainstTerrain = true;
+            scene.highDynamicRange = false;
+            scene.pickTranslucentDepth = true;
+            scene.camera.enableTerrainAdjustmentWhenLoading = true;
         }
         return scene;
     },
 
+    /**
+     * activates the 3d Map, if oblique is still active, the obliquemap will be deactivated before.
+     * @listens Map#RadioTriggerMapChange
+     * @fires Map#RadioTriggerObliqueMapDeactivate
+     * @fires Map#RadioTriggerMapChange
+     * @fires Map#RadioTriggerMapBeforeChange
+     * @fires Alerting#RadioTriggerAlertAlert
+     * @return {void} -
+     */
     activateMap3d: function () {
         var camera,
             cameraParameter = _.has(Config, "cameraParameter") ? Config.cameraParameter : null;
 
+        if (this.isMap3d()) {
+            return;
+        }
+        if (this.getMapMode() === "Oblique") {
+            Radio.once("Map", "change", function (mapMode) {
+                if (mapMode === "2D") {
+                    this.activateMap3d();
+                }
+            }.bind(this));
+            Radio.trigger("ObliqueMap", "deactivate");
+            return;
+        }
+        Radio.trigger("Map", "beforeChange", "3D");
         if (!this.getMap3d()) {
             this.setMap3d(this.createMap3d());
             this.handle3DEvents();
@@ -322,6 +367,7 @@ const map = Backbone.Model.extend({
             camera.changed.addEventListener(this.reactToCameraChanged, this);
         }
         this.getMap3d().setEnabled(true);
+        Radio.trigger("Alert", "alert", "Der 3D-Modus befindet sich zur Zeit noch in der Beta-Version!");
         Radio.trigger("Map", "change", "3D");
     },
 
@@ -376,11 +422,19 @@ const map = Backbone.Model.extend({
             Radio.trigger("Map", "clickedWindowPosition", {position: event.position, pickedPosition: transformedPickedPosition, coordinate: transformedCoords, latitude: coords[0], longitude: coords[1], resolution: resolution, originalEvent: event, map: this.get("map")});
         }
     },
+    /**
+     * deactivates the 3D map and changes to the 2D Map Mode.
+     * @fires Map#RadioTriggerMapChange
+     * @fires Map#RadioTriggerMapBeforeChange
+     * @fires Alerting#RadioTriggerAlertAlertRemove
+     * @return {void} -
+     */
     deactivateMap3d: function () {
         var resolution,
             resolutions;
 
         if (this.getMap3d()) {
+            Radio.trigger("Map", "beforeChange", "2D");
             this.get("view").animate({rotation: 0}, function () {
                 this.getMap3d().setEnabled(false);
                 this.get("view").setRotation(0);
@@ -392,6 +446,7 @@ const map = Backbone.Model.extend({
                 if (resolution < resolutions[resolutions.length - 1]) {
                     this.get("view").setResolution(resolutions[resolutions.length - 1]);
                 }
+                Radio.trigger("Alert", "alert:remove");
                 Radio.trigger("Map", "change", "2D");
             }.bind(this));
         }
@@ -482,6 +537,10 @@ const map = Backbone.Model.extend({
             channel = Radio.channel("Map"),
             layersCollection = this.get("map").getLayers();
 
+        // if the layer is already at the correct position, do nothing
+        if (layersCollection.item(index) === layer) {
+            return;
+        }
         layersCollection.remove(layer);
         layersCollection.insertAt(index, layer);
         this.setImportDrawMeasureLayersOnTop(layersCollection);
@@ -533,7 +592,18 @@ const map = Backbone.Model.extend({
     },
 
     zoomToExtent: function (extent, options) {
-        this.get("view").fit(extent, this.get("map").getSize(), options);
+        var extentToUse = extent;
+
+        if (!_.isUndefined(this.get("projectionFromParamUrl"))) {
+            const projectionGiven = this.get("projectionFromParamUrl"),
+                leftBottom = extent.slice(0, 2),
+                topRight = extent.slice(2, 4),
+                transformedLeftBottom = Radio.request("CRS", "transformToMapProjection", projectionGiven, leftBottom),
+                transformedTopRight = Radio.request("CRS", "transformToMapProjection", projectionGiven, topRight);
+
+            extentToUse = transformedLeftBottom.concat(transformedTopRight);
+        }
+        this.get("view").fit(extentToUse, this.get("map").getSize(), options);
     },
 
     zoomToFilteredFeatures: function (ids, layerId) {
@@ -656,7 +726,17 @@ const map = Backbone.Model.extend({
 
     setShadowTime: function (value) {
         this.set("shadowTime", value);
+    },
+
+    /**
+     * @description Sets projection from param url
+     * @param {string} projection todo
+     * @return {float} current Zoom of MapView
+     */
+    setProjectionFromParamUrl: function (projection) {
+        this.set("projectionFromParamUrl", projection);
     }
+
 });
 
 export default map;

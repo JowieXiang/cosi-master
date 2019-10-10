@@ -6,7 +6,7 @@ const Util = Backbone.Model.extend(/** @lends Util.prototype */{
         proxy: true,
         proxyHost: "",
         loaderOverlayTimeoutReference: null,
-        loaderOverlayTimeout: 20
+        loaderOverlayTimeout: 40
     },
     /**
      * @class Util
@@ -399,12 +399,17 @@ const Util = Backbone.Model.extend(/** @lends Util.prototype */{
 
             port = parser.port;
 
-            result = url.replace(protocol, "").replace(":" + port, "");
-            // www und www2 usw. raus
-            // hostname = result.replace(/www\d?\./, "");
             if (!parser.hostname) {
                 parser.hostname = window.location.hostname;
             }
+
+            if (parser.hostname === "localhost" || !parser.hostname) {
+                return url;
+            }
+
+            result = url.replace(protocol, "").replace(":" + port, "");
+            // www und www2 usw. raus
+            // hostname = result.replace(/www\d?\./, "");
             hostname = parser.hostname.split(".").join("_");
             result = this.get("proxyHost") + "/" + result.replace(parser.hostname, hostname);
 

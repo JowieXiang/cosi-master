@@ -46,7 +46,6 @@ import SaveSelectionView from "../modules/tools/saveSelection/view";
 import StyleWMSView from "../modules/tools/styleWMS/view";
 import LayerSliderView from "../modules/tools/layerSlider/view";
 import AgeGroupSliderView from "../modules/tools/ageGroupSlider/view";
-
 import CompareFeaturesView from "../modules/tools/compareFeatures/view";
 import EinwohnerabfrageView from "../modules/tools/einwohnerabfrage_hh/selectView";
 import ImportView from "../modules/tools/kmlimport/view";
@@ -90,7 +89,7 @@ import FreezeModel from "../modules/controls/freeze/model";
 import MapMarkerView from "../modules/mapMarker/view";
 import SearchbarView from "../modules/searchbar/view";
 import TitleView from "../modules/title/view";
-import HighlightFeature from "../modules/highlightFeature/model";
+import HighlightFeature from "../modules/highlightfeature/model";
 import Button3DView from "../modules/controls/button3d/view";
 import ButtonObliqueView from "../modules/controls/buttonoblique/view";
 import Orientation3DView from "../modules/controls/orientation3d/view";
@@ -98,6 +97,7 @@ import BackForwardView from "../modules/controls/backforward/view";
 import ColorCodeMapView from "../modules/controls/colorCodeMap/view";
 
 import "es6-promise/auto";
+import VirtualcityModel from "../modules/tools/virtualcity/model";
 
 var sbconfig, controls, controlsView;
 
@@ -105,7 +105,7 @@ var sbconfig, controls, controlsView;
  * load the configuration of master portal
  * @return {void}.
  */
-function loadApp() {
+async function loadApp() {
 
     // Prepare config for Utils
     var utilConfig = {},
@@ -151,6 +151,29 @@ function loadApp() {
         cswParserSettings.cswId = Config.cswId;
     }
 
+    // Variable CUSTOMMODULE wird im webpack.DefinePlugin gesetzt
+    /* eslint-disable no-undef */
+    const customModule = new Promise((res, rej) => {
+        if (CUSTOMMODULE !== "") {
+            // DO NOT REMOVE [webpackMode: "eager"] comment, its needed.
+            res(import(/* webpackMode: "eager" */CUSTOMMODULE));
+            rej(error);
+        }
+    });
+
+    if (CUSTOMMODULE !== "") {
+        try {
+            const module = await customModule;
+
+            /* eslint-disable new-cap */
+            new module.default();
+        }
+        catch (error) {
+            console.error(error);
+            Radio.trigger("Alert", "alert", "Entschuldigung, diese Anwendung konnte nicht vollständig geladen werden. Bitte wenden sie sich an den Administrator.");
+        }
+    }
+
     new CswParserModel(cswParserSettings);
     new GraphModel();
     new WFSTransactionModel();
@@ -158,7 +181,6 @@ function loadApp() {
     new ZoomToGeometry();
     new ColorScale();
     // new FeatureLoaderModel();
-
 
     if (_.has(Config, "zoomToFeature")) {
         new ZoomToFeature(Config.zoomToFeature);
@@ -194,10 +216,6 @@ function loadApp() {
         new ScaleLineView();
     }
 
-    // if (_.has(Config, "dashboard")) {
-    //     new DashboardView(Config.dashboard);
-    // }
-
     new WindowView();
     // Module laden
     // Tools
@@ -205,6 +223,7 @@ function loadApp() {
     new SidebarView();
 
     _.each(Radio.request("ModelList", "getModelsByAttributes", { type: "tool" }), function (tool) {
+        // console.log(tool);
         switch (tool.id) {
             case "dashboard": {
                 new DashboardView({ model: tool });
@@ -353,6 +372,10 @@ function loadApp() {
             }
             case "timeSeries": {
                 new TimeSeries({model: tool});
+                break;
+            }
+            case "virtualCity": {
+                new VirtualcityModel(tool.attributes);
                 break;
             }
             default: {
@@ -509,20 +532,6 @@ function loadApp() {
 
     new HighlightFeature();
 
-    // Variable CUSTOMMODULE wird im webpack.DefinePlugin gesetzt
-    /* eslint-disable no-undef */
-    if (CUSTOMMODULE !== "") {
-        // DO NOT REMOVE [webpackMode: "eager"] comment, its needed.
-        import(/* webpackMode: "eager" */CUSTOMMODULE)
-            .then(module => {
-                /* eslint-disable new-cap */
-                new module.default();
-            })
-            .catch(error => {
-                console.error(error);
-                Radio.trigger("Alert", "alert", "Entschuldigung, diese Anwendung konnte nicht vollständig geladen werden. Bitte wenden sie sich an den Administrator.");
-            });
-    }
     /* eslint-enable no-undef */
 
     /*

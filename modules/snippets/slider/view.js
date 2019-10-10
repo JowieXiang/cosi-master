@@ -1,5 +1,6 @@
 import Template from "text-loader!./template.html";
 import "bootstrap-slider";
+import "jquery-ui/ui/widgets/draggable";
 /**
  * @member SliderViewTemplate
  * @description Template used to create the simple slider
@@ -72,6 +73,8 @@ const SliderView = Backbone.View.extend(/** @lends SliderView.prototype */{
             ticks: this.model.get("ticks"),
             tooltip: "always"
         });
+
+        this.$el.find("input.slider").draggable();
     },
 
     /**

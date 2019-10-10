@@ -17,19 +17,18 @@
                         </div>
                         <div class="content">
                                 <table class="table">
-                                        <% _.each(_.allKeys(tableView[0]), (prop) => { %>
+                                        <% _.each(_.allKeys(tableView[0]), function (prop) { %>
                                                 <% if (prop !== "gfi") { %>
                                                 <tr class="row">
-                                                        <th class="prop" scope="row" title="<%= prop %>" id="<%= prop %>"><span class="prop-name"><%= prop %></span><% if (tableView[0][prop] instanceof Object) { %><button type="button" class="btn btn-outline-secondary open"><span></span></button><% } %></th>
-                                                        <% _.each(tableView, (dist) => { %>
+                                                        <th class="prop" scope="row" title="<%= prop %>" id="<%= prop %>"><span class="prop-name"><%= prop %></span><% if (Array.isArray(tableView[0][prop])) { %><button type="button" class="btn btn-outline-secondary open"><span></span></button><% } %></th>
+                                                        <% _.each(tableView, function (dist) { %>
                                                                 <% if (prop === sortKey) { %>
                                                                         <th scope="col" style="text-align:right;" class="district"><%= dist[prop] %></th>
                                                                 <% } else { %>
-                                                                        <% if (dist[prop] instanceof Object) { %>
-                                                                        <% const tempArr = Object.entries(dist[prop]).reverse()%>
+                                                                        <% if (Array.isArray(dist[prop])) { %>
                                                                                 <td class="timeline-table">
                                                                                         <ul class="list-group list-group-flush">
-                                                                                        <% tempArr.forEach(val => { %>
+                                                                                        <% dist[prop].forEach(function (val) { %>
                                                                                                 <li class="list-group-item nowrap">
                                                                                                         <span class="val"><%= isNaN(val[1]) ? val[1] : Number.isInteger(parseFloat(val[1])) ? parseFloat(val[1]) : parseFloat(val[1]).toFixed(2) %></span>
                                                                                                         <small class="year">(<%= val[0] %>)</small>

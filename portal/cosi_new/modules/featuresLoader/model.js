@@ -1,4 +1,5 @@
-import { WFS } from "ol/format.js";
+import {WFS} from "ol/format.js";
+import "whatwg-fetch";
 
 const featuresLoader = Backbone.Model.extend({
     defaults: {
@@ -63,7 +64,7 @@ const featuresLoader = Backbone.Model.extend({
             layerList.forEach(function (layer) {
                 const getFeatureUrl = Radio.request("Util", "getProxyURL", this.getUrl(layer, bbox, propertyList));
 
-                featurePromiseList.push(fetch(getFeatureUrl)
+                featurePromiseList.push(window.fetch(getFeatureUrl)
                     .then(response => {
                         return response.text();
                     })
@@ -82,9 +83,9 @@ const featuresLoader = Backbone.Model.extend({
                     }));
             }, this);
             Promise.all(featurePromiseList).then((featureList) => {
-                this.set(attribute, featureList.flat());
+                this.set(attribute, featureList.reduce((total, feature) => total.concat(feature), []));
                 // console.info(featureList.flat());
-                console.info(featureList);
+                console.info(this.get("statistischeGebiete"));
             });
         });
     },
@@ -96,7 +97,7 @@ const featuresLoader = Backbone.Model.extend({
      * @returns {string} property list
      */
     getPropertyListWithoutGeometry: function (url) {
-        return fetch(`${url}?service=WFS&request=DescribeFeatureType&version=1.1.0`)
+        return window.fetch(`${url}?service=WFS&request=DescribeFeatureType&version=1.1.0`)
             .then(response => {
                 return response.text();
             })

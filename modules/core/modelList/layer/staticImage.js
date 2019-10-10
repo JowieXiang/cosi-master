@@ -4,6 +4,11 @@ import Projection from "ol/proj/Projection.js";
 import StaticImageSource from "ol/source/ImageStatic.js";
 
 const StaticImageLayer = Layer.extend({
+
+    defaults: _.extend({}, Layer.prototype.defaults, {
+        supported: ["2D", "3D"]
+    }),
+
     /**
      * Creates layer source for staticImage
      * @return {void}
@@ -32,6 +37,7 @@ const StaticImageLayer = Layer.extend({
             source: this.get("layerSource"),
             name: this.get("name"),
             typ: "StaticImage",
+            legendURL: this.get("legendURL"),
             transparency: this.get("transparency")
         }));
     },

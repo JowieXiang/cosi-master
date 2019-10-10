@@ -1,4 +1,5 @@
 import Overlay from "ol/Overlay.js";
+import {getCenter} from "ol/extent.js";
 import ThemeList from "./themes/list";
 import DesktopDetachedView from "./desktop/detached/view";
 import TableView from "./table/view";
@@ -204,30 +205,35 @@ const Gfi = Tool.extend({
             wmsGFIParams = [],
             GFIParams3d = [],
             unionParams = [],
-            coordinate = [];
+            coordinate = [],
+            feature;
 
         Radio.trigger("ClickCounter", "gfi");
         if (Radio.request("Map", "isMap3d")) {
             GFIParams3d = this.setGfiParams3d(evt);
+            // use pickedPosition in 3D Mode, to get the 3d position directly at the 3d object
+            this.setCoordinate(evt.pickedPosition);
         }
-        // für detached MapMarker
-        const feature = evt.map.forEachFeatureAtPixel(evt.pixel, function (feat) {
-            return feat;
-        });
 
+        // für detached MapMarker
+        if (evt.hasOwnProperty("pixel")) {
+            feature = evt.map.forEachFeatureAtPixel(evt.pixel, function (feat) {
+                return feat;
+            });
+        }
+
+        // Derive (center) coordinate with respect to the feature type
         if (feature === null || feature === undefined) {
             this.setIsMapMarkerVisible(false);
             Radio.trigger("MapMarker", "hideMarker");
             coordinate = evt.coordinate;
         }
-        else if (feature.getGeometry().getType() === "Point") {
+        else if ((/polygon/i).test(feature.getGeometry().getType())) {
+            coordinate = getCenter(feature.getGeometry().getExtent());
+        }
+        else {
             this.setIsMapMarkerVisible(true);
-            coordinate = feature.getGeometry().getCoordinates();
-        } else {
-            this.setIsMapMarkerVisible(false);
-            Radio.trigger("MapMarker", "hideMarker");
-            var map = Radio.request("Map", "getMap");
-            coordinate = map.getView().getCenter();
+            coordinate = feature.getGeometry().getFirstCoordinate();
         }
 
         this.setCoordinate(coordinate);
@@ -244,7 +250,7 @@ const Gfi = Tool.extend({
             this.setIsVisible(false);
         }
         else {
-            this.get("overlay").setPosition(evt.coordinate);
+            this.get("overlay").setPosition(this.get("coordinate"));
             this.get("themeList").reset(unionParams);
         }
     },
@@ -262,7 +268,7 @@ const Gfi = Tool.extend({
                 olFeature,
                 layer;
 
-            if (feature instanceof Cesium.Cesium3DTileFeature) {
+            if (feature instanceof Cesium.Cesium3DTileFeature || feature instanceof Cesium.Cesium3DTilePointFeature) {
                 propertyNames = feature.getPropertyNames();
                 _.each(propertyNames, function (propertyName) {
                     properties[propertyName] = feature.getProperty(propertyName);
@@ -297,6 +303,20 @@ const Gfi = Tool.extend({
                 layer = feature.primitive.olLayer;
                 if (olFeature && layer) {
                     gfiParams3d.push(this.getVectorGfiParams3d(olFeature, layer));
+                }
+                else if (feature.primitive.id instanceof Cesium.Entity) {
+                    layerModel = Radio.request("ModelList", "getModelByAttributes", {id: feature.primitive.id.layerReferenceId});
+                    if (layerModel) {
+                        modelAttributes = _.pick(layerModel.attributes, "name", "gfiAttributes", "typ", "gfiTheme", "routable", "id", "isComparable");
+                    }
+                    if (modelAttributes) {
+                        if (feature.primitive.id.attributes) {
+                            modelAttributes.attributes = feature.primitive.id.attributes;
+                        }
+                    }
+                    if (layerModel) {
+                        gfiParams3d.push(modelAttributes);
+                    }
                 }
             }
         }, this);

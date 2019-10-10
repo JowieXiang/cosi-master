@@ -6,7 +6,7 @@
       "title": "GeoViewer",
       "logo": "",
       "link": "",
-      "tooltip": ""
+      "toolTip": ""
     },
     "searchBar":
     {
@@ -61,9 +61,15 @@
         "minChars": 3
       },
       "gdi":{
-		"minChars": 3,
-		"serviceId": "elastic"
-	  },
+		    "minChars": 3,
+        "serviceId": "elastic_qs",
+        "queryObject": {
+          "id": "query",
+          "params": {
+            "query_string": "%%searchString%%"
+          }
+        }
+	    },
       "placeholder": "Suche nach Adresse/Krankenhaus/B-Plan"
     },
     "menu":
@@ -235,7 +241,7 @@
             "name": "Pendler (Animation)",
             "glyphicon": "glyphicon-play-circle",
             "steps": 30,
-            "url": "http://geodienste.hamburg.de/Test_MRH_WFS_Pendlerverflechtung",
+            "url": "http://geodienste.hamburg.de/MRH_WFS_Pendlerverflechtung",
             "params": {
                 "REQUEST": "GetFeature",
                 "SERVICE": "WFS",
@@ -313,7 +319,7 @@
       "attributions":
       {
         "isInitOpenDesktop": true,
-        "isInitOpenMobile": false
+        "isInitOpenMobile": true
       },
       "overviewMap":
       {

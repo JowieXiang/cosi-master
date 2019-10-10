@@ -5,7 +5,7 @@
     </div>
     <select class="form-control custom-select" id="parameter-select">
         <option value="count"><%= defaultOption %></option>
-        <% _.each(numericalValues, (value) => { %>
+        <% _.each(numericalValues, function (value) { %>
             <option value="<%= value %>"><%= value %></option>
         <% }) %>
     </select>

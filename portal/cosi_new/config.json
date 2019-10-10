@@ -245,11 +245,6 @@
           "compareFeatures": {
             "name": "Gebiete vergleichen",
             "isVisibleInMenu": false
-          },
-          "timeline": {
-            "isVisibleInMenu": false,
-            "timelineSignifier": "kategorie",
-            "timelinePrefix": "jahr_"
           }
         }
       },
