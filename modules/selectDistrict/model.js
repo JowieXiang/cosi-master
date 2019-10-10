@@ -139,6 +139,9 @@ const SelectDistrict = Tool.extend({
 
         if (features && features.length !== 0) {
             this.set("selectedDistricts", features);
+            features.forEach(function (feature) {
+                feature.setStyle(this.get("selectedStyle"));
+            }, this);
             this.toggleIsActive();
         }
     },
@@ -160,6 +163,7 @@ const SelectDistrict = Tool.extend({
 
     resetSelectedDistricts: function () {
         _.each(this.get("selectedDistricts"), function (feature) {
+            console.log("reset");
             feature.setStyle(this.get("defaultStyle"));
         }, this);
         this.set("selectedDistricts", []);
@@ -209,7 +213,9 @@ const SelectDistrict = Tool.extend({
     getScopeFromDropdown () {
         const scope = this.get("scopeDropdownModel").getSelectedValues().values[0];
 
-        this.setScope(scope);
+        if (this.get("isActive")) {
+            this.setScope(scope);
+        }
     },
     setScope: function (scope) {
         this.set("activeScope", scope);
@@ -223,7 +229,7 @@ const SelectDistrict = Tool.extend({
     },
     toggleScopeLayers: function () {
         _.each(this.get("districtLayerNames"), (layerName) => {
-            const layer = Radio.request("ModelList", "getModelByAttributes", { "name": layerName });
+            const layer = Radio.request("ModelList", "getModelByAttributes", { "name": layerName }); 
 
             if (layerName !== this.getScope()) {
                 layer.setIsVisibleInMap(false);
