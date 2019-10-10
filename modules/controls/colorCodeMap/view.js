@@ -51,12 +51,11 @@ const ColorCodeMapView = Backbone.View.extend({
     setOptions: function () {
         const select = this.$el.find("#color-code-layer-selector");
 
-        select.empty().append("<option> - clear - </option>");
+        select.empty().append("<option> - klar - </option>");
         this.layerList.forEach(layer => {
             select.append(`<option>${layer.get("layerName")}</option>`);
         });
         this.$el.find(".dropdown-menu");
-        console.log("dropdown-menu: ", this.$el.find(".dropdown-menu"));
         select.selectpicker("refresh");
     },
     createColorCodeLayer: function () {
@@ -108,7 +107,6 @@ const ColorCodeMapView = Backbone.View.extend({
 
             // Add the generated legend style to the Legend Portal
             Radio.trigger("StyleWFS", "addDynamicLegendStyle", "colorCode", colorScale.legend);
-            console.log("colorScale.legend: ", colorScale.legend);
             _.each(selectedFeatures, feature => newFeatures.push(feature.clone()));
             _.each(newFeatures, (feature) => {
                 feature.setStyle(new Style({
@@ -124,6 +122,19 @@ const ColorCodeMapView = Backbone.View.extend({
             colorCodeLayer.getSource().addFeatures(newFeatures);
             colorCodeLayer.setOpacity(this.style.opacity);
             this.setLegend(colorScale.legend);
+        }
+        else {
+            this.selectDistrictReminder();
+        }
+    },
+    selectDistrictReminder: function () {
+        const selectedDistricts = Radio.request("SelectDistrict", "getSelectedDistricts");
+
+        if (selectedDistricts.length === 0) {
+            Radio.trigger("Alert", "alert", {
+                text: "<strong> Bitte wählen Sie zuerst die Bezirke mit 'Gebiet wählen' im Werkzeugmenü aus</strong>",
+                kategorie: "alert-warning"
+            });
         }
     },
     clearLegend: function () {
