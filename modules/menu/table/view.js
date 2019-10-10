@@ -21,8 +21,8 @@ const Menu = Backbone.View.extend({
         });
     },
     model: new TableNavModel(),
-    id: "table-nav",
-    className: "table-nav-0deg",
+    id: "table-navigation",
+    className: "table-nav-0deg container-fluid",
     template: _.template(MainTemplate),
     render: function () {
 
@@ -81,7 +81,7 @@ const Menu = Backbone.View.extend({
         this.$el.find("#table-nav-main").append(new LayerListView().render().$el);
     },
     renderCategoryList: function () {
-        this.$el.append(new CategoryList().$el);
+        new CategoryList();
     },
     renderTools: function () {
         new ToolView();
@@ -103,8 +103,8 @@ const Menu = Backbone.View.extend({
             x = touch.clientX - 20,
             y = touch.clientY - 20,
             rotateAngle = this.model.getRotateAngle(),
-            menuWidth = $("#table-nav").width(),
-            menuHeight = $("#table-nav").height();
+            menuWidth = $("#table-navigation").width(),
+            menuHeight = $("#table-navigation").height();
 
         if (rotateAngle === 0) {
             this.$el.css({
@@ -137,7 +137,7 @@ const Menu = Backbone.View.extend({
 
     },
     placeMenu: function (x, y) {
-        var currentClass = $("#table-nav").attr("class"),
+        var currentClass = $("#table-navigation").attr("class"),
             posClass,
             minPos;
 

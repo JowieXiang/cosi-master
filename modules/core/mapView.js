@@ -156,7 +156,8 @@ const MapView = Backbone.Model.extend(/** @lends MapView.prototype */{
         });
 
         // overwrite the resolution if zoomLevel is configured and resolution is not
-        if (attributes && attributes.resolution && attributes.zoomLevel !== undefined) {
+        if (attributes && _.isUndefined(attributes.resolution) && Number.isInteger(attributes.zoomLevel)) {
+
             const resolution = this.get("options")[attributes.zoomLevel].resolution;
 
             this.setResolution(resolution);
@@ -345,6 +346,7 @@ const MapView = Backbone.Model.extend(/** @lends MapView.prototype */{
         };
 
         this.set("projection", proj);
+        Radio.trigger("CRS", "addAliasForWFSFromGoeserver", epsgCode);
     },
 
     /**

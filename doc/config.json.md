@@ -183,13 +183,19 @@ Konfiguration des GDI Suchdienstes
 |----|-------------|---|-------|------------|------|
 |minChars|nein|Integer|3|Minimale Anzahl an Buchstaben, ab der die Suche losläuft.|false|
 |serviceID|ja|String||Id des Suchdienstes. Wird aufgelöst in der [rest-services.json](rest-services.json.md).|false|
+|queryObject|ja|Object||Query Objekt, das vom Elastic Search Model ausgelesen wird.|false|
 
 **Beispiel**
 ```
 #!json
 "gdi": {
     "minChars": 3,
-    "serviceId": "elastic"
+    "serviceId": "elastic",
+    "queryObject": {
+                        "id": "query",
+                        "params": {
+                            "query_string": "%%searchString%%"
+                        }
 }
 ```
 
@@ -262,7 +268,7 @@ Konfiguration einer Definition bei der SpecialWFS Suche
 ***
 
 #### Portalconfig.searchBar.tree
-Konfiguration der SpecialWFS Suche
+Alle Layer, die im Themenbaum des Portals sind, werden durchsucht.
 
 |Name|Verpflichtend|Typ|Default|Beschreibung|Expert|
 |----|-------------|---|-------|------------|------|
@@ -394,18 +400,19 @@ Das Attribut attributions kann vom Typ Boolean oder Object sein. Wenn es vom Typ
 
 Das Attribut overviewMap kann vom Typ Boolean oder Object sein. Wenn es vom Typ Boolean, zeigt es die Overviewmap mit den Defaulteinsellungen an. Ist es vom Typ Object, so gelten folgende Attribute
 
-|Name|Verpflichtend|Typ|Default|Beschreibung|Expert|
-|----|-------------|---|-------|------------|------|
-|resolution|nein|Integer||Legt die Resolution fest, die in der Overviewmap verwendet werden soll.|false|
-|baselayer|nein|String||Deprecated in 3.0.0 Bitte "layerId" verwenden.|false|
-|layerId|nein|String||Über den Parameter layerId kann ein anderer Layer für die Overviewmap verwendet werden.|false|
+|Name|Verpflichtend|Typ|Default|Beschreibung|
+|----|-------------|---|-------|------------|
+|resolution|nein|Integer||Legt die Resolution fest, die in der Overviewmap verwendet werden soll.|
+|baselayer|nein|String||Über den Parameter baselayer kann ein anderer Layer für die Overviewmap verwendet werden. Hier muss eine Id aus der services.json angegeben werden die in der config.js des Portals, im Parameter layerConf steht.|
+|isInitOpen|nein|Boolean|true|Legt fest, ob die OverviewMap beim Start dargestellt oder verborgen sein soll.|
 
 **Beispiel overviewmap als Object:**
 ```
 #!json
 "overviewMap": {
     "resolution": 305.7487246381551,
-    "layerId": "452"
+    "baselayer": "452",
+    "isInitOpen": false
 }
 ```
 
@@ -613,7 +620,7 @@ Hier können die Menüeinträge und deren Anordnung konfiguriert werden. Die Rei
 
 ***
 
-### Portalconfig.menu.info
+#### Portalconfig.menu.info
 
 [inherits]: # (Portalconfig.menu.folder)
 
@@ -625,7 +632,7 @@ Informations-Ordner in dem Werkzeuge oder staticlinks eingetragen werden können
 
 ***
 
-### Portalconfig.menu.info.children
+##### Portalconfig.menu.info.children
 [type:staticlinks]: # (Portalconfig.menu.staticlinks)
 
 Liste der Werkzeuge oder Staticlinks die im Info-Ordner erscheinen sollen.
@@ -1413,7 +1420,7 @@ Definiert einen Layer für den Layerslider.
 
 [inherits]: # (Portalconfig.menu.tool)
 
-Das virtualcity Tool bietet die Möglichkeit die Planungen von einem virtualcityPLANNER Dienst im Masterportal anzuzeigen. 
+Das virtualcity Tool bietet die Möglichkeit die Planungen von einem virtualcityPLANNER Dienst im Masterportal anzuzeigen.
 Die Planungen müssen im virtualcityPLANNER auf Öffentlich gesetzt sein, dann können sie über dieses Tool angezeigt werden
 
 
@@ -1461,7 +1468,7 @@ Das ShadowTool bietet eine Oberfläche zur Definition einer Zeitangabe. Über Sl
 
 ***
 
-#### Portalconfig.menu.staticlinks
+### Portalconfig.menu.staticlinks
 Das Array staticlink beinhaltet Objekte die entweder als link zu einer anderen Webressource dienen oder als Trigger eines zu definierenden Events.
 
 |Name|Verpflichtend|Typ|Default|Beschreibung|Expert|
@@ -1765,7 +1772,6 @@ Neben diesen Attributen gibt es auch Typ-spezifische Attribute für [WMS](#markd
 |maxScale|nein|String||Wert aus [services.json](services.json.md). Maximaler Maßstab bei dem dem Layer angezeigt werden soll.|false|
 |minScale|nein|String||Wert aus [services.json](services.json.md). Minimaler Maßstab bei dem dem Layer angezeigt werden soll.|false|
 |autoRefresh|nein|Integer||Automatischer reload des Layers. Angabe in ms. Minimum ist 500.|false|
-|isVisibleInTree|nein|Boolean|true|Anzeige ob Layer im Themenbaum sichtbar ist.|false|
 |isNeverVisibleInTree|nein|Boolean|false|Anzeige ob Layer niemals im Themenbaum sichtbar ist.|false|
 
 **Beispiel**
@@ -1811,7 +1817,6 @@ Neben diesen Attributen gibt es auch Typ-spezifische Attribute für [WMS](#markd
 |maxScale|nein|String||Wert aus [services.json](services.json.md). Maximaler Maßstab bei dem dem Layer angezeigt werden soll.|false|
 |minScale|nein|String||Wert aus [services.json](services.json.md). Minimaler Maßstab bei dem dem Layer angezeigt werden soll.|false|
 |autoRefresh|nein|Integer||Automatischer reload des Layers. Angabe in ms. Minimum ist 500.|false|
-|isVisibleInTree|nein|Boolean|true|Anzeige ob Layer im Themenbaum sichtbar ist.|false|
 |isNeverVisibleInTree|nein|Boolean|false|Anzeige ob Layer niemals im Themenbaum sichtbar ist.|false|
 
 **Beispiel mit einer Id**
@@ -1837,7 +1842,7 @@ Neben diesen Attributen gibt es auch Typ-spezifische Attribute für [WMS](#markd
 
 [inherits]: # (Themenconfig.Layer)
 
-Hier werde WMS typische Attribute aufgelistet.
+Hier werden WMS typische Attribute aufgelistet.
 
 |Name|Verpflichtend|Typ|Default|Beschreibung|Expert|
 |----|-------------|---|-------|------------|------|
@@ -1864,7 +1869,6 @@ Hier werde WMS typische Attribute aufgelistet.
     "maxScale": "100000",
     "minScale": "1000",
     "autoRefresh": "10000",
-    "isVisibleInTree": true,
     "isNeverVisibleInTree": false,
     "attributesToStyle": ["MyFirstAttr"],
     "featureCount": 2,
@@ -1876,6 +1880,119 @@ Hier werde WMS typische Attribute aufgelistet.
 ```
 
 ***
+
+#### Themenconfig.Layer.Tileset
+
+[inherits]: # (Themenconfig.Layer)
+
+Hier werden Tileset typische Attribute aufgelistet.
+
+|Name|Verpflichtend|Typ|Default|Beschreibung|
+|----|-------------|---|-------|------------|
+|hiddenFeatures|nein|Array|[]|Liste mit IDs, die in der Ebene versteckt werden sollen|
+|[cesium3DTilesetOptions]|nein|Object|{}|Cesium 3D Tileset Options, werden direkt an das Cesium Tileset Objekt durchgereicht. maximumScreenSpaceError ist z.B. für die Sichtweite relevant.|
+
+[cesium3DTilesetOptions]: https://cesiumjs.org/Cesium/Build/Documentation/Cesium3DTileset.html
+
+**Beispiel**
+```
+#!json
+{
+    "id": "123456",
+    "name": "TilesetLayerName",
+    "visibility": true,
+    "hiddenFeatures": ["id1", "id2"],
+    "cesium3DTilesetOptions" : {
+        maximumScreenSpaceError : 6
+    },
+}
+```
+
+***
+
+#### Themenconfig.Layer.Terrain
+
+[inherits]: # (Themenconfig.Layer)
+
+Hier werden Terrain typische Attribute aufgelistet.
+
+|Name|Verpflichtend|Typ|Default|Beschreibung|
+|----|-------------|---|-------|------------|
+|[cesiumTerrainProviderOptions]|nein|Object|Cesium TerrainProvider Options, werden direkt an den Cesium TerrainProvider durchgereicht. requestVertexNormals ist z.B. für das Shading auf der Oberfläche relevant.
+
+[cesiumTerrainProviderOptions]: https://cesiumjs.org/Cesium/Build/Documentation/CesiumTerrainProvider.html
+
+**Beispiel**
+```
+#!json
+{
+    "id": "123456",
+    "name": "TerrainLayerName",
+    "visibility": true,
+    "cesiumTerrainProviderOptions": {
+        "requestVertexNormals" : true
+    },
+}
+```
+
+***
+
+#### Themenconfig.Layer.Entitites3D
+
+[inherits]: # (Themenconfig.Layer)
+
+Hier werden Entities3D typische Attribute aufgelistet.
+
+|Name|Verpflichtend|Typ|Default|Beschreibung|
+|----|-------------|---|-------|------------|
+|entities|ja|Array||Modelle, die angezeigt werden sollen |`[]`|
+
+Entity Optionen
+
+|Name|Verpflichtend|Typ|default|Beschreibung|Beispiel|
+|----|-------------|---|-------|------------|--------|
+|url|ja|String|`""`|Url zu dem Modell|`"https://hamburg.virtualcitymap.de/gltf/4AQfNWNDHHFQzfBm.glb"`|
+|attributes|nein|Object|{}|Attribute für das Modell|`{"name": "test"}`|
+|latitude|ja|Number| |Breitengrad des Modell-Origins in Grad|`53.541831`|
+|longitude|ja|Number| |Längengrad des Modell-Origins in Grad|`9.917963`|
+|height|nein|Number|0|Höhe des Modell-Origins|`10`|
+|heading|nein|Number|0|Rotation des Modells, in Grad|`0`|
+|pitch|nein|Number|0|Neigung des Modells in Grad |`0`|
+|roll|nein|Number|0|Roll des Modells in Grad|`0`|
+|scale|nein|Number|1|Skalierung des Modells|`1`|
+|allowPicking|nein|Boolean|true|Ob das Modell angeklickt werden darf (GFI)|`true`|
+|show|nein|Boolean|true|Ob das Modell angezeigt werden soll (sollte true sein)|`true`|
+
+
+**Beispiel**
+```
+#!json
+{
+    "id": "123456",
+    "name": "EntitiesLayerName",
+    "visibility": true,
+    "entities": [
+       {
+         "url": "https://hamburg.virtualcitymap.de/gltf/4AQfNWNDHHFQzfBm.glb",
+         "attributes": {
+           "name": "Fernsehturm.kmz"
+         },
+         "latitude": 53.541831,
+         "longitude": 9.917963,
+         "height": 10,
+         "heading": -1.2502079000000208,
+         "pitch": 0,
+         "roll": 0,
+         "scale": 5,
+         "allowPicking": true,
+         "show": true
+       }
+     ]
+}
+```
+
+***
+
 #### Themenconfig.Layer.StaticImage
 
 [inherits]: # (Themenconfig.Layer)
@@ -1939,7 +2056,6 @@ Hier werden Vector typische Attribute aufgelistet. Vector Layer sind WFS, GeoJSO
     "maxScale": "100000",
     "minScale": "1000",
     "autoRefresh": "10000",
-    "isVisibleInTree": true,
     "isNeverVisibleInTree": false,
     "clusterDistance": 60,
     "extendedFilter": true,

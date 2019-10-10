@@ -46,7 +46,6 @@ import SaveSelectionView from "../modules/tools/saveSelection/view";
 import StyleWMSView from "../modules/tools/styleWMS/view";
 import LayerSliderView from "../modules/tools/layerSlider/view";
 import AgeGroupSliderView from "../modules/tools/ageGroupSlider/view";
-
 import CompareFeaturesView from "../modules/tools/compareFeatures/view";
 import EinwohnerabfrageView from "../modules/tools/einwohnerabfrage_hh/selectView";
 import ImportView from "../modules/tools/kmlimport/view";
@@ -90,7 +89,7 @@ import FreezeModel from "../modules/controls/freeze/model";
 import MapMarkerView from "../modules/mapMarker/view";
 import SearchbarView from "../modules/searchbar/view";
 import TitleView from "../modules/title/view";
-import HighlightFeature from "../modules/highlightFeature/model";
+import HighlightFeature from "../modules/highlightfeature/model";
 import Button3DView from "../modules/controls/button3d/view";
 import ButtonObliqueView from "../modules/controls/buttonoblique/view";
 import Orientation3DView from "../modules/controls/orientation3d/view";
@@ -98,6 +97,7 @@ import BackForwardView from "../modules/controls/backforward/view";
 import ColorCodeMapView from "../modules/controls/colorCodeMap/view";
 
 import "es6-promise/auto";
+import VirtualcityModel from "../modules/tools/virtualcity/model";
 
 var sbconfig, controls, controlsView;
 
@@ -158,7 +158,6 @@ function loadApp() {
     new ZoomToGeometry();
     new ColorScale();
     // new FeatureLoaderModel();
-
 
     if (_.has(Config, "zoomToFeature")) {
         new ZoomToFeature(Config.zoomToFeature);
@@ -353,6 +352,10 @@ function loadApp() {
             }
             case "timeSeries": {
                 new TimeSeries({model: tool});
+                break;
+            }
+            case "virtualCity": {
+                new VirtualcityModel(tool.attributes);
                 break;
             }
             default: {

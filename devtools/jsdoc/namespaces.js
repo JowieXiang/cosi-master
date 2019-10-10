@@ -89,6 +89,7 @@
 
 /**
  * @namespace MapMarker
+ * @memberOf Core
  * @description MapMarker
  */
 
@@ -103,7 +104,7 @@
  */
 
 /**
- * @namespace Quickhelp
+ * @namespace QuickHelp
  * @description fooBar
  */
 
@@ -670,6 +671,12 @@
  */
 
 /**
+ * @namespace VirtualCity
+ * @memberOf Tools
+ * @description Tool to show virtual city data
+ */
+
+/**
  * @namespace TreeFilter
  * @description foobar
  */
@@ -841,4 +848,10 @@
  * @class Collection
  * @memberOf Backbone
  * @description {@link http://backbonejs.org/#Collection}
+ */
+
+/**
+ * @namespace Tileset
+ * @memberOf Core.ModelList.Layer
+ * @description Helper functions for Cesium 3D TilesetLayer and VCS Style Handling
  */

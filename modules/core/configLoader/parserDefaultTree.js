@@ -4,8 +4,9 @@ const DefaultTreeParser = Parser.extend(/** @lends DefaultTreeParser.prototype *
     /**
      * @class DefaultTreeParser
      * @extends Parser
-     * @memberOf Core.ConfigLoader
-     * @fires Util#RadioRequestUtilIsViewMobile
+     * @memberof Core.ConfigLoader
+     * @fires Core#RadioRequestUtilIsViewMobile
+     * @fires QuickHelp#RadioRequestQuickHelpIsSet
      * @constructs
      */
     defaults: _.extend({}, Parser.prototype.defaults, {
@@ -97,7 +98,7 @@ const DefaultTreeParser = Parser.extend(/** @lends DefaultTreeParser.prototype *
         var baseLayerIds = _.flatten(_.pluck(this.get("baselayer").Layer, "id")),
             // Unterscheidung nach Overlay und Baselayer
             typeGroup = _.groupBy(layerList, function (layer) {
-                if (layer.typ === "Terrain3D" || layer.typ === "TileSet3D") {
+                if (layer.typ === "Terrain3D" || layer.typ === "TileSet3D" || layer.typ === "Entities3D") {
                     return "layer3d";
                 }
                 else if (layer.typ === "Oblique") {
@@ -249,11 +250,13 @@ const DefaultTreeParser = Parser.extend(/** @lends DefaultTreeParser.prototype *
     /**
      * Creates all models for the DefaultTree
      * @param  {Object} tree tree created from the categories and MetaNames
+     * @fires QuickHelp#RadioRequestQuickHelpIsSet
      * @returns {void}
      */
     createModelsForDefaultTree: function (tree) {
         var sortedKeys = Object.keys(tree).sort(),
-            sortedCategories = [];
+            sortedCategories = [],
+            isQuickHelpSet = Radio.request("QuickHelp", "isSet");
 
         _.each(sortedKeys, function (key) {
             sortedCategories.push(tree[key]);
@@ -265,7 +268,8 @@ const DefaultTreeParser = Parser.extend(/** @lends DefaultTreeParser.prototype *
             level: 0,
             isInThemen: true,
             isVisibleInTree: true,
-            glyphicon: "glyphicon-plus-sign"
+            glyphicon: "glyphicon-plus-sign",
+            quickHelp: isQuickHelpSet
         });
         _.each(tree, function (category) {
             // Unterordner erzeugen
@@ -276,7 +280,8 @@ const DefaultTreeParser = Parser.extend(/** @lends DefaultTreeParser.prototype *
                 isLeafFolder: true,
                 level: 1,
                 parentId: category.id,
-                type: "folder"
+                type: "folder",
+                quickHelp: isQuickHelpSet
             });
             _.each(category.layer, function (layer) {
                 layer.name = layer.datasets[0].md_name;
