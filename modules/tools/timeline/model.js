@@ -82,7 +82,7 @@ const Timeline = Tool.extend({
 
                 inputTable.forEach(col => {
                     if (col[prop] instanceof Object) {
-                        col[prop] = outputType === "Array" ? Object.entries({...range, ...col[prop]}) : {...range, ...col[prop]};
+                        col[prop] = outputType === "Array" ? Object.entries({...range, ...col[prop]}).reverse() : {...range, ...col[prop]};
                     }
                 });
             }

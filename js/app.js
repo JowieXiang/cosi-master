@@ -105,7 +105,7 @@ var sbconfig, controls, controlsView;
  * load the configuration of master portal
  * @return {void}.
  */
-function loadApp() {
+async function loadApp() {
 
     // Prepare config for Utils
     var utilConfig = {},
@@ -151,6 +151,29 @@ function loadApp() {
         cswParserSettings.cswId = Config.cswId;
     }
 
+    // Variable CUSTOMMODULE wird im webpack.DefinePlugin gesetzt
+    /* eslint-disable no-undef */
+    const customModule = new Promise((res, rej) => {
+        if (CUSTOMMODULE !== "") {
+            // DO NOT REMOVE [webpackMode: "eager"] comment, its needed.
+            res(import(/* webpackMode: "eager" */CUSTOMMODULE));
+            rej(error);
+        }
+    });
+
+    if (CUSTOMMODULE !== "") {
+        try {
+            const module = await customModule;
+
+            /* eslint-disable new-cap */
+            new module.default();
+        }
+        catch (error) {
+            console.error(error);
+            Radio.trigger("Alert", "alert", "Entschuldigung, diese Anwendung konnte nicht vollständig geladen werden. Bitte wenden sie sich an den Administrator.");
+        }
+    }
+
     new CswParserModel(cswParserSettings);
     new GraphModel();
     new WFSTransactionModel();
@@ -193,10 +216,6 @@ function loadApp() {
         new ScaleLineView();
     }
 
-    // if (_.has(Config, "dashboard")) {
-    //     new DashboardView(Config.dashboard);
-    // }
-
     new WindowView();
     // Module laden
     // Tools
@@ -204,6 +223,7 @@ function loadApp() {
     new SidebarView();
 
     _.each(Radio.request("ModelList", "getModelsByAttributes", { type: "tool" }), function (tool) {
+        // console.log(tool);
         switch (tool.id) {
             case "dashboard": {
                 new DashboardView({ model: tool });
@@ -395,14 +415,6 @@ function loadApp() {
                     }
                     break;
                 }
-                case "colorCodeMap": {
-                    if (control.attr === true) {
-                        element = controlsView.addRowBR(control.id);
-                        new ColorCodeMapView({ el: element });
-                    }
-                    break;
-                }
-
                 case "fullScreen": {
                     if (control.attr === true) {
                         element = controlsView.addRowTR(control.id);
@@ -520,20 +532,6 @@ function loadApp() {
 
     new HighlightFeature();
 
-    // Variable CUSTOMMODULE wird im webpack.DefinePlugin gesetzt
-    /* eslint-disable no-undef */
-    if (CUSTOMMODULE !== "") {
-        // DO NOT REMOVE [webpackMode: "eager"] comment, its needed.
-        import(/* webpackMode: "eager" */CUSTOMMODULE)
-            .then(module => {
-                /* eslint-disable new-cap */
-                new module.default();
-            })
-            .catch(error => {
-                console.error(error);
-                Radio.trigger("Alert", "alert", "Entschuldigung, diese Anwendung konnte nicht vollständig geladen werden. Bitte wenden sie sich an den Administrator.");
-            });
-    }
     /* eslint-enable no-undef */
 
     /*
@@ -549,6 +547,7 @@ function loadApp() {
     new PieView();
     new BarView();
     new ChartUtil();
+    new ColorCodeMapView();
 
     Radio.trigger("Util", "hideLoader");
 }

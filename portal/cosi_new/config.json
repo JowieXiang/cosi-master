@@ -1,8 +1,5 @@
 {
   "Portalconfig": {
-    "controls": {
-      "colorCodeMap": true
-    },
     "portalTitle": {
       "title": "CoSI",
       "link": "http://geoinfo.hamburg.de",

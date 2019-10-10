@@ -40,9 +40,9 @@ const LayerFilterModel = Backbone.Model.extend({
         _.each(keys, key => {
 
             const values = featureCollection.map(feature => parseFloat(feature.getProperties()[key])),
-                max = Math.max(...values),
-                min = Math.min(...values),
-                refValue = refFeature.getProperties()[key],
+                max = parseInt(Math.max(...values), 10),
+                min = parseInt(Math.min(...values), 10),
+                refValue = parseInt(refFeature.getProperties()[key], 10),
                 space = Math.max(max - refValue, refValue - min),
                 newInfo = { key: key, value: refValue, max: max, min: min, space: space };
 
