@@ -277,6 +277,9 @@
           "districtCompareField": [
             "Sportstätten"
           ],
+          "mouseHoverField": [
+            "stadtteil"
+          ],
           "selector": "stadtteil",
           "topic": "basic",
           "gfiAttributes": "ignore",
@@ -287,6 +290,9 @@
           "id": "6071",
           "name": "Statistische Gebiete",
           "visibility": true,
+          "mouseHoverField": [
+            "statgebiet"
+          ],
           "topic": "basic",
           "gfiAttributes": "ignore",
           "isNeverVisibleInTree": true,
@@ -444,196 +450,6 @@
           "Layer": [
             {
               "id": "1585"
-            }
-          ]
-        },
-        {
-          "Titel": "Demografie (Stadtteile)",
-          "isFolderSelectable": true,
-          "Layer": [
-            {
-              "name": "Bevölkerungsdaten zu Stadtteilen in Hamburg",
-              "id": "2763",
-              "styleId": "unstyled",
-              "visibility": true,
-              "districtCompareField": [
-                "bev"
-              ],
-              "selector": "stadtteil",
-              "mouseHoverField": [
-                "bev"
-              ],
-              "topic": "basic",
-              "isDemographic": true,
-              "gfiAttributes": {
-                "stadtteil": "Stadtteil",
-                "aerz_prz": "Haushalte (Alleinerziehende, in %, 2014)",
-                "alleinerz": "Haushalte (Alleinerziehende, 2014)",
-                "bev": "Bevölkerung (gesamt, 2014)",
-                "e_ha": "EW / ha (2014)",
-                "eph": "Haushalte (1-Person, 2014)",
-                "hhki": "Haushalte (m. Kindern, 2014)",
-                "haushgr": "Haushaltsgröße (2015)",
-                "svpbs_prz": "sozialversicherungspflichtig Beschäftigte (15-65J., in %, 2014)"
-              }
-            },
-            {
-              "name": "Unter 18 Jährige mit Migrationshintergrund in Prozent 31.12.2014",
-              "id": "2768",
-              "styleId": "unstyled",
-              "visibility": true,
-              "districtCompareField": [
-                "bu18_prz"
-              ],
-              "selector": "stadtteil",
-              "mouseHoverField": [
-                "bu18_prz"
-              ],
-              "topic": "basic",
-              "isDemographic": true,
-              "gfiAttributes": {
-                "stadtteil": "Stadtteil",
-                "aerz_prz": "Haushalte (Alleinerziehende, in %, 2014)",
-                "alleinerz": "Haushalte (Alleinerziehende, 2014)",
-                "e_ha": "EW / ha (2014)",
-                "eph": "Haushalte (1-Person, 2014)",
-                "hhki": "Haushalte (m. Kindern, 2014)",
-                "haushgr": "Haushaltsgröße (2015)",
-                "svpbs_prz": "sozialversicherungspflichtig Beschäftigte (15-65J, in %, 2014)",
-                "bu18_prz": "EW < 18J. (in %, 2014)"
-              }
-            },
-            {
-              "name": "65 Jahre und älter in Prozent 31.12.2014",
-              "id": "2769",
-              "styleId": "unstyled",
-              "visibility": true,
-              "districtCompareField": [
-                "b65_prz"
-              ],
-              "selector": "stadtteil",
-              "mouseHoverField": [
-                "b65_prz"
-              ],
-              "topic": "basic",
-              "isDemographic": true,
-              "gfiAttributes": {
-                "stadtteil": "Stadtteil",
-                "aerz_prz": "Haushalte (Alleinerziehende, in %, 2014)",
-                "alleinerz": "Haushalte (Alleinerziehende, 2014)",
-                "e_ha": "EW / ha (2014)",
-                "eph": "Haushalte (1-Person, 2014)",
-                "hhki": "Haushalte (m. Kindern, 2014)",
-                "haushgr": "Haushaltsgröße (2015)",
-                "svpbs_prz": "sozialversicherungspflichtig Beschäftigte (15-65J, in %, 2014)",
-                "b65_prz": "EW > 64J. (in %, 2014)"
-              }
-            },
-            {
-              "name": "Arbeitslose in Prozent 31.12.2014",
-              "id": "2771",
-              "styleId": "unstyled",
-              "visibility": true,
-              "districtCompareField": [
-                "al_prz"
-              ],
-              "mouseHoverField": [
-                "al_prz"
-              ],
-              "selector": "stadtteil",
-              "topic": "basic",
-              "isDemographic": true
-            }
-          ]
-        },
-        {
-          "Titel": "Demografie (stat. Gebiete)",
-          "isFolderSelectable": true,
-          "Layer": [
-            {
-              "id": "15563",
-              "styleId": "unstyled",
-              "visibility": true,
-              "districtCompareField": [
-                "jahr_2018"
-              ],
-              "selector": "statgebiet",
-              "isDemographic": true,
-              "mouseHoverField": "dynamic",
-              "legendURL": "",
-              "gfiAttributes": {
-                "stat_gebiet": "Statistisches Gebiet",
-                "verwaltungseinheit": "Verwaltungseinheit",
-                "bezirk": "bezirk",
-                "stadtteil": "Stadtteil",
-                "bev_insgesamt": "Bevölkerung (gesamt)",
-                "bev_weiblich": "Bevölkerung (weiblich)",
-                "bev_maennlich": "Bevölkerung (männlich)",
-                "bev_u6": "Kinder < 6 Jahren"
-              }
-            },
-            {
-              "id": "15564",
-              "styleId": "unstyled",
-              "visibility": true,
-              "districtCompareField": [
-                "jahr_2018"
-              ],
-              "selector": "statgebiet",
-              "isDemographic": true,
-              "mouseHoverField": "dynamic",
-              "legendURL": "",
-              "gfiAttributes": {
-                "stat_gebiet": "Statistisches Gebiet",
-                "verwaltungseinheit": "Verwaltungseinheit",
-                "bezirk": "Bezirk",
-                "stadtteil": "Stadtteil",
-                "bev_insgesamt": "Bevölkerung (gesamt)",
-                "bev_weiblich": "Bevölkerung (weiblich)",
-                "bev_maennlich": "Bevölkerung (männlich)",
-                "bev_u6": "Kinder < 6 Jahren"
-              }
-            },
-            {
-              "id": "15565",
-              "styleId": "unstyled",
-              "visibility": true,
-              "selector": "statgebiet",
-              "isDemographic": true,
-              "mouseHoverField": "dynamic",
-              "legendURL": "",
-              "gfiAttributes": {
-                "stat_gebiet": "Statistisches Gebiet",
-                "verwaltungseinheit": "Verwaltungseinheit",
-                "bezirk": "Bezirk",
-                "stadtteil": "Stadtteil",
-                "bev_insgesamt": "Bevölkerung (gesamt)",
-                "bev_weiblich": "Bevölkerung (weiblich)",
-                "bev_maennlich": "Bevölkerung (männlich)",
-                "bev_u6": "Kinder < 6 Jahren"
-              }
-            },
-            {
-              "id": "15989",
-              "styleId": "unstyled",
-              "visibility": true,
-              "districtCompareField": [
-                "jahr_2018"
-              ],
-              "selector": "statgebiet",
-              "isDemographic": true,
-              "mouseHoverField": "dynamic",
-              "legendURL": "",
-              "gfiAttributes": {
-                "stat_gebiet": "Statistisches Gebiet",
-                "verwaltungseinheit": "Verwaltungseinheit",
-                "bezirk": "Bezirk",
-                "stadtteil": "Stadtteil",
-                "bev_insgesamt": "Bevölkerung (gesamt)",
-                "bev_weiblich": "Bevölkerung (weiblich)",
-                "bev_maennlich": "Bevölkerung (männlich)",
-                "bev_u6": "Kinder < 6 Jahren"
-              }
             }
           ]
         }

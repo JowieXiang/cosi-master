@@ -69,7 +69,6 @@ import ChartUtil from "../modules/charting/chartRenderer/util/util";
 import DashboardView from "../modules/dashboard/view";
 // import WsClientInputView from "../modules/tools/wsClientInput/view";
 import CompareDistrictsView from "../modules/tools/compareDistricts/view";
-import FeatureLoaderModel from "../modules/featureLoader/model";
 
 // @deprecated in version 3.0.0
 // remove "version" in doc and config.
@@ -180,7 +179,6 @@ async function loadApp() {
     new MenuLoader();
     new ZoomToGeometry();
     new ColorScale();
-    // new FeatureLoaderModel();
 
     if (_.has(Config, "zoomToFeature")) {
         new ZoomToFeature(Config.zoomToFeature);

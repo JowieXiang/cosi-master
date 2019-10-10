@@ -44,6 +44,10 @@ const ResultView = Backbone.View.extend({
 
         _.each(features, (feature) => {
             feature.setStyle(new Style({
+                stroke: new Stroke({
+                    color: colorScale.scale(results[feature.getProperties()[selector]].ratio),
+                    width: 5
+                }),
                 text: new Text({
                     font: "16px Calibri,sans-serif",
                     fill: new Fill({

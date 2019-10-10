@@ -52,6 +52,7 @@ const featuresLoader = Backbone.Model.extend({
      * @returns {void}
      */
     loadDistricts: function (bbox, serviceUrl, attribute, districtNameList) {
+        Radio.trigger("Util", "showLoader");
         const layerList = Radio.request("RawLayerList", "getLayerListWhere", { url: serviceUrl }),
             wfsReader = new WFS({
                 featureNS: layerList[0].get("featureNS")
@@ -84,7 +85,7 @@ const featuresLoader = Backbone.Model.extend({
             }, this);
             Promise.all(featurePromiseList).then((featureList) => {
                 this.set(attribute, featureList.reduce((total, feature) => total.concat(feature), []));
-                // console.info(featureList.flat());
+                Radio.trigger("Util", "hideLoader");
                 console.info(this.get("statistischeGebiete"));
             });
         });

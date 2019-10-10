@@ -163,7 +163,6 @@ const SelectDistrict = Tool.extend({
 
     resetSelectedDistricts: function () {
         _.each(this.get("selectedDistricts"), function (feature) {
-            console.log("reset");
             feature.setStyle(this.get("defaultStyle"));
         }, this);
         this.set("selectedDistricts", []);
