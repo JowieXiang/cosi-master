@@ -35,8 +35,9 @@ const ColorCodeMapView = Backbone.View.extend({
             return layer.get("layerName").trim() === e.target.value.trim();
         })[0];
 
+        this.clearColorLayerFeatures();
+        this.clearLegend();
         if (selectedLayer !== undefined) {
-            this.clearColorLayerFeatures();
             this.setColorLayerFeatures(selectedLayer);
             this.showColorCodeLayer();
         }
@@ -50,10 +51,11 @@ const ColorCodeMapView = Backbone.View.extend({
     setOptions: function () {
         const select = this.$el.find("#color-code-layer-selector");
 
-        select.empty().append("<option> - clear - </option>");
+        select.empty().append("<option> - klar - </option>");
         this.layerList.forEach(layer => {
             select.append(`<option>${layer.get("layerName")}</option>`);
         });
+        this.$el.find(".dropdown-menu");
         select.selectpicker("refresh");
     },
     createColorCodeLayer: function () {
@@ -105,7 +107,6 @@ const ColorCodeMapView = Backbone.View.extend({
 
             // Add the generated legend style to the Legend Portal
             Radio.trigger("StyleWFS", "addDynamicLegendStyle", "colorCode", colorScale.legend);
-
             _.each(selectedFeatures, feature => newFeatures.push(feature.clone()));
             _.each(newFeatures, (feature) => {
                 feature.setStyle(new Style({
@@ -120,10 +121,37 @@ const ColorCodeMapView = Backbone.View.extend({
             });
             colorCodeLayer.getSource().addFeatures(newFeatures);
             colorCodeLayer.setOpacity(this.style.opacity);
+            this.setLegend(colorScale.legend);
+        }
+        else {
+            this.selectDistrictReminder();
+        }
+    },
+    selectDistrictReminder: function () {
+        const selectedDistricts = Radio.request("SelectDistrict", "getSelectedDistricts");
+
+        if (selectedDistricts.length === 0) {
+            Radio.trigger("Alert", "alert", {
+                text: "<strong> Bitte wählen Sie zuerst die Bezirke mit 'Gebiet wählen' im Werkzeugmenü aus</strong>",
+                kategorie: "alert-warning"
+            });
+        }
+    },
+    clearLegend: function () {
+        this.$el.find("#color-code-legend").empty();
+    },
+    setLegend: function (data) {
+        for (let i = 0; i < data.values.length; i++) {
+            this.$el.find("#color-code-legend").append(`
+            <li style="display:inline;">
+                <svg width="8" height="8">
+                    <rect width="8" height="8" style="fill:${data.colors[i]};stroke-width:.5;stroke:rgb(0,0,0)" />
+                </svg>
+                    ${data.values[i]}
+            </li>
+            `);
         }
     }
-
-
 });
 
 export default ColorCodeMapView;

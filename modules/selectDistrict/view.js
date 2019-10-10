@@ -1,14 +1,15 @@
 import SelectDistrictModel from "./model";
 import Template from "text-loader!./template.html";
-import SnippetValueView from "../snippets/value/view";
 import SnippetDropdownView from "../snippets/dropdown/view";
 
 const SelectDistrictView = Backbone.View.extend({
     events: {
-        "click button#Submit": "toggleIsActive"
+        "click button#Submit": "checkIfSelected"
     },
     initialize: function () {
-        this.scopeDropdownView = new SnippetDropdownView({model: this.model.get("scopeDropdownModel")});
+        this.scopeDropdownView = new SnippetDropdownView({
+            model: this.model.get("scopeDropdownModel")
+        });
 
         this.listenTo(this.model, {
             "change:isActive": this.render
@@ -37,9 +38,22 @@ const SelectDistrictView = Backbone.View.extend({
     getSelectedDistricts: function () {
         return this.model.getSelectedDistricts();
     },
-
+    checkIfSelected: function () {
+        if (this.model.get("selectedDistricts").length === 0) {
+            this.selectDistrictReminder();
+        }
+        else {
+            this.toggleIsActive();
+        }
+    },
     toggleIsActive: function () {
         this.model.toggleIsActive();
+    },
+    selectDistrictReminder: function () {
+        Radio.trigger("Alert", "alert", {
+            text: "<strong>Warnung: Sie haben noch keine Bezirke ausgewählt. Bitte klicken Sie auf die Karte, um die Stadtteile auszuwählen, mit denen Sie arbeiten möchten.</strong>",
+            kategorie: "alert-warning"
+        });
     }
 });
 
