@@ -53,6 +53,11 @@ const featuresLoader = Backbone.Model.extend({
      */
     loadDistricts: function (bbox, serviceUrl, attribute, districtNameList) {
         Radio.trigger("Util", "showLoader");
+        Radio.trigger("Alert", "alert", {
+            text: "Datensätze werden geladen",
+            kategorie: "alert-info"
+        });
+
         const layerList = Radio.request("RawLayerList", "getLayerListWhere", { url: serviceUrl }),
             wfsReader = new WFS({
                 featureNS: layerList[0].get("featureNS")
