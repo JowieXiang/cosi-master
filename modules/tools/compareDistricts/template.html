@@ -1,21 +1,32 @@
 <!DOCTYPE html>
-<div class="calculate-ratio container">
+<div class="compare-districts container">
 	<div class="row">
 		<form>
 			<div class="form-row" id="district-selector-container">
 			</div>
 			<div class="form-row" id="layerfilter-selector-container">
 			</div>
+			<div class="form-row">
+				<div class="form-group col-md-4" id="add-filter-button-group">
+					<br />
+					<div id="add-filter">
+						<span class="glyphicon glyphicon-plus"></span>
+						Hinzufügen
+					</div>
+				</div>
+			</div>
 		</form>
 	</div>
 	<div class="row">
 		<div class="col">
-			<p>Referenzgebiet <strong><span id="refdistrict"></span></strong></p>
+			<p id="Referenzgebiet"><strong>| Referenzgebiet</strong></p>
+			<p id="refdistrict"></p>
 		</div>
 	</div>
 	<div class="row">
 		<div class="col">
-			<p>Vergleichbare Gebiete <strong><span id="compare-results"></span></strong></p>
+			<p><strong>| Vergleichbare Gebiete</strong></p>
+			<p id="compare-results"></p>
 		</div>
 	</div>
 	<br />

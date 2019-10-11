@@ -1,27 +1,31 @@
 const LayerFilterSelectorModel = Backbone.Model.extend({
     defaults: {
         layerOptions: [], // all select options (vector layers in the map) e.g. [{layerName:"",layerId:""},...]
-        selectedLayer: null // selected option e.g. {layerName:"",layerId:""}
-
+        selectedLayer: null, // selected option e.g. {layerName:"",layerId:""}
+        urls: {
+            "statgebiet": "https://geodienste.hamburg.de/HH_WFS_Statistische_Gebiete_Test",
+            "stadtteile": ""
+        }
     },
 
     initialize: function () {
         const currentSelector = Radio.request("SelectDistrict", "getSelector"),
-            allLayers = Radio.request("Parser", "getItemsByAttributes", { typ: "WFS" }),
-            layers = allLayers.filter(layer => _.contains(Object.keys(layer), "districtCompareField")).filter(layer => layer.selector === currentSelector),
+            layers = Radio.request("RawLayerList", "getLayerListWhere", {
+                url: this.get("urls")[currentSelector]
+            }),
             layerOptions = layers.map(layer => {
-                // console.log("new layer: ", layer);
-                return { "layerName": layer.name, "layerId": layer.id };
+                return {
+                    "layerName": layer.get("name").replace(/ /g, "_"), "layerId": layer.get("id")
+                };
             });
 
         this.setLayerOptions(layerOptions);
     },
 
     setSelectedLayer: function (value) {
-        /**
-         * this is unstable!!! because "value" is only the first word of the layer name
-         */
-        const selectedLayer = this.get("layerOptions").filter(layer => layer.layerName.includes(value))[0];
+        const selectedLayer = this.get("layerOptions").filter(layer => layer.layerName.replace(/ /g, "_") === value)[0];
+
+        selectedLayer.layerName = selectedLayer.layerName.replace(/_/g, " ");
         this.set("selectedLayer", selectedLayer);
     },
 

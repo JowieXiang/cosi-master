@@ -6,7 +6,7 @@ const DistrictSelectorView = Backbone.View.extend({
         "change select": "setSelectedDistrict"
     },
     tagName: "div",
-    className: "form-group col-md-6",
+    className: "form-group col-md-4",
     template: _.template(template),
     render: function () {
         this.model = new Model();

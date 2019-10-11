@@ -14,7 +14,7 @@ const LayerFilterSelectorView = Backbone.View.extend({
     },
 
     tagName: "div",
-    className: "form-group col-md-6",
+    className: "form-group col-md-4",
 
     // model: new FilterSelectorModel(),
     template: _.template(template),

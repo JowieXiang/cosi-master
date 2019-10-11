@@ -185,7 +185,7 @@ const featuresLoader = Backbone.Model.extend({
             featureList = this.get("featureList"),
             layer = Radio.request("RawLayerList", "getLayerWhere", obj),
             xhr = new XMLHttpRequest();
-
+        console.log("getLayerWhere: ",layer);
         if (featureList.hasOwnProperty(valueOfLayer)) {
             return featureList[valueOfLayer];
         }

@@ -130,16 +130,17 @@ const CompareDistrictsView = Backbone.View.extend({
     },
     setRefDistrict: function () {
         this.model.set("refDistrict", this.districtSelector.getSelectedDistrict());
-        this.$el.find("#refdistrict").html(this.model.get("refDistrict"));
+        this.$el.find("#refdistrict").html(`
+        <span class="name-tag">${this.model.get("refDistrict")}</span>
+        `);
     },
     setCompareResults: function (comparableDistricts) {
         let domString = "";
 
         this.$el.find("#compare-results").empty();
         _.each(comparableDistricts, district => {
-            domString += `${district}, `;
+            domString += `<span class="name-tag">${district} </span>`;
         });
-        domString = domString.slice(0, domString.length - 2);
         this.$el.find("#compare-results").append(domString);
     },
     addOneToLayerFilterList: function (model) {
@@ -180,8 +181,11 @@ const CompareDistrictsView = Backbone.View.extend({
             if (results.length > 1) {
                 intersection = _.intersection(...resultNames);
                 comparableFeatures = results[0].filter(feature => _.contains(intersection, feature.getProperties()[selector]));
+                this.setCompareResults(intersection);
             }
-            this.setCompareResults(intersection);
+            else {
+                this.setCompareResults(resultNames.flat());
+            }
             this.showComparableDistricts(comparableFeatures);
         }
     },

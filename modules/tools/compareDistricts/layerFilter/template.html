@@ -1,34 +1,33 @@
 <!DOCTYPE html>
-<div class="panel panel-primary">
-    <div class="panel-body">
-        <button type="button" class="close" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-        <h5>
-            <strong><%= layerInfo.layerName %></strong>
-        </h5>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">Parameter</th>
-                    <th scope="col">min.</th>
-                    <th scope="col">Referenzwert</th>
-                    <th scope="col">max.</th>
-                    <th scope="col">Toleranz</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% _.each( districtInfo, function (info) { %>
-                <tr>
-                    <td><%= info.key %></td>
-                    <td><%= info.min %></td>
-                    <td><%= info.value %></td>
-                    <td><%= info.max %></td>
-                    <td id="<%= info.key %>-td"></td>
-                </tr>
-                <% }); %>
+<div class="container filter-panel">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h6>
+        <strong><%= layerInfo.layerName %></strong>
+    </h6>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Parameter</th>
+                <th scope="col">min.</th>
+                <th scope="col">Referenzwert</th>
+                <th scope="col">max.</th>
+                <th scope="col">Toleranz</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% _.each( districtInfo, function (info) { %>
+            <tr>
+                <td><%= info.key %></td>
+                <td><%= info.min %></td>
+                <td><%= info.value %></td>
+                <td><%= info.max %></td>
+                <td id="<%= info.key %>-td"></td>
+            </tr>
+            <% }); %>
 
-            </tbody>
-        </table>
-    </div>
+        </tbody>
+    </table>
 </div>
+<br/>

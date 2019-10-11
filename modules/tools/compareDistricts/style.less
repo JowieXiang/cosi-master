@@ -1,34 +1,78 @@
-@color_1: #eee;
-@color_2: black;
+@color_1           : #eee;
+@color_2           : black;
 @background_color_1: rgb(85, 85, 85);
 @background_color_2: #eee;
 
+.compare-districts {
+	font-size: 10px;
+}
+
 #layerslider {
 	width: 350px;
+
 	.progress-bar {
 		background-color: @background_color_1;
-		transition: all .6s;
+		transition      : all .6s;
 	}
+
 	.progress {
-		height: 25px;
+		height          : 25px;
 		background-color: @background_color_2;
 	}
+
 	.btn-default {
 		background-color: @background_color_2;
-		transition: all .2s ease-in-out;
+		transition      : all .2s ease-in-out;
+
 		&:hover {
 			background-color: @background_color_1;
-			color: @color_1;
+			color           : @color_1;
 		}
 	}
+
 	input[readonly] {
-		color: @color_2;
-		cursor: not-allowed;
-		white-space: nowrap;
-		overflow: hidden;
+		color        : @color_2;
+		cursor       : not-allowed;
+		white-space  : nowrap;
+		overflow     : hidden;
 		text-overflow: ellipsis;
 	}
 }
+
 #compare-results {
 	word-wrap: break-word
+}
+
+#add-filter {
+	padding         : 5px;
+	background-color: white;
+	border-radius   : 5px;
+	height          : 30px;
+	box-shadow      : rgba(0, 0, 0, 0.3) 0px 1px 2px 0px;
+	border          : none;
+	cursor: pointer;
+}
+
+#add-filter:hover {
+	background-color: #d3d3d3;
+}
+
+.form-group {
+	padding-left: 0px;
+}
+
+#compare-results {
+	line-height: 1.6;
+}
+
+.name-tag {
+	border-radius   : 5px;
+	background-color: #d3d3d3;
+	color           : white;
+	padding         : 2px 4px;
+	margin          : 2px;
+}
+
+#Referenzgebiet {
+	margin-top: 10px;
 }
