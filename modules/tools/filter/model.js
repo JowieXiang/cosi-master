@@ -75,6 +75,16 @@ const FilterModel = Tool.extend({
                         this.createQuery(filterModel);
                     }, this);
                 }
+                // update query weil andere features
+                else if (this.isModelInQueryCollection(layerId, queryCollection)) {
+                    const oldQuery = queryCollection.findWhere({layerId: layerId.toString()}),
+                        newQuery = predefinedQueries.find(function (query) {
+                            return query.layerId === layerId;
+                        });
+
+                    queryCollection.remove(oldQuery);
+                    this.createQuery(newQuery);
+                }
 
             }
         }, this);
