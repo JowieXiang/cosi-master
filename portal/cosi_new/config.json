@@ -104,97 +104,69 @@
         },
         "renderToWindow": false
       },
-      "filter": {
-        "name": "Filter",
-        "glyphicon": "glyphicon-filter",
-        "deactivateGFI": false,
-        "isGeneric": false,
-        "isInitOpen": false,
-        "allowMultipleQueriesPerLayer": false,
-        "predefinedQueries": [
-          {
-            "layerId": "12868",
-            "isActive": false,
-            "isSelected": false,
-            "name": "Sportstätten",
-            "info": "Die Filter 'Baujahr' und 'Letzte Generalsanierung' können zu unvollständigen Ergebnissen führen, da diese Daten nicht für alle Einrichtungen vorliegen.",
-            "attributeWhiteList": [
-              "bezirk",
-              "stadtteil",
-              "typ_zusammen",
-              "segmente",
-              "traegergruppe",
-              "baujahr",
-              "letzte_generalsanierung"
-            ]
-          },
-          {
-            "layerId": "753",
-            "isActive": false,
-            "isSelected": false,
-            "name": "Kindertagesstätten",
-            "attributeWhiteList": [
-              "Bezirk",
-              "Stadtteil",
-              "Traeger",
-              "Leistungsarten",
-              "Leistungsname"
-            ]
-          },
-          {
-            "layerId": "1534",
-            "isActive": false,
-            "isSelected": false,
-            "name": "Grünflächen",
-            "info": "Die Grünflächen sind im aktuellen digitalen Grünplan nur numerisch nach Bezirken und Stadtteilen geordnet. Diese Sortierung wurde aus Verständlichkeitsgründen im Filter deaktiviert.",
-            "attributeWhiteList": [
-              "gruenart",
-              "eigentum",
-              "flaeche_qm"
-            ]
-          },
-          {
-            "layerId": "1711",
-            "isActive": false,
-            "isSelected": false,
-            "name": "Krankenhäuser",
-            "attributeWhiteList": [
-              "geburtsklinik_differenziert",
-              "teilnahme_notversorgung",
-              "anzahl_planbetten",
-              "anzahl_plaetze_teilstationaer"
-            ]
-          }
-        ]
-      },
       "tools": {
         "name": "Werkzeuge",
         "glyphicon": "glyphicon-wrench",
         "children": {
-          "selectDistrict": {
-            "name": "Gebiet auswählen",
-            "glyphicon": "glyphicon-picture",
-            "isInitOpen": true,
-            "isActive": true,
-            "districtLayer": [
+          "filter": {
+            "name": "Filter",
+            "glyphicon": "glyphicon-filter",
+            "deactivateGFI": false,
+            "isGeneric": false,
+            "isInitOpen": false,
+            "allowMultipleQueriesPerLayer": false,
+            "predefinedQueries": [
               {
-                "name": "Stadtteile",
-                "selector": "stadtteil",
-                "layerIds": [
-                  "2763",
-                  "2769",
-                  "2768",
-                  "2771"
+                "layerId": "12868",
+                "isActive": false,
+                "isSelected": false,
+                "name": "Sportstätten",
+                "info": "Die Filter 'Baujahr' und 'Letzte Generalsanierung' können zu unvollständigen Ergebnissen führen, da diese Daten nicht für alle Einrichtungen vorliegen.",
+                "attributeWhiteList": [
+                  "bezirk",
+                  "stadtteil",
+                  "typ_zusammen",
+                  "segmente",
+                  "traegergruppe",
+                  "baujahr",
+                  "letzte_generalsanierung"
                 ]
               },
               {
-                "name": "Statistische Gebiete",
-                "selector": "statgebiet",
-                "layerIds": [
-                  "15563",
-                  "15564",
-                  "15565",
-                  "15989"
+                "layerId": "753",
+                "isActive": false,
+                "isSelected": false,
+                "name": "Kindertagesstätten",
+                "attributeWhiteList": [
+                  "Bezirk",
+                  "Stadtteil",
+                  "Traeger",
+                  "Leistungsarten",
+                  "Leistungsname"
+                ]
+              },
+              {
+                "layerId": "1534",
+                "isActive": false,
+                "isSelected": false,
+                "name": "Grünflächen",
+                "info": "Die Grünflächen sind im aktuellen digitalen Grünplan nur numerisch nach Bezirken und Stadtteilen geordnet. Diese Sortierung wurde aus Verständlichkeitsgründen im Filter deaktiviert.",
+                "attributeWhiteList": [
+                  "gruenart",
+                  "eigentum",
+                  "flaeche_qm"
+                ]
+              },
+              {
+                "layerId": "1711",
+                "isActive": false,
+                "isSelected": false,
+                "name": "Krankenhäuser",
+                "attributeWhiteList": [
+                  "geburtsklinik_differenziert",
+                  "teilnahme_notversorgung",
+                  "anzahl_planbetten",
+                  "anzahl_plaetze_teilstationaer"
                 ]
               }
             ]
@@ -251,6 +223,34 @@
       "legend": {
         "name": "Legende",
         "glyphicon": "glyphicon-book"
+      },
+      "selectDistrict": {
+        "name": "Gebiet auswählen",
+        "glyphicon": "glyphicon-picture",
+        "isInitOpen": true,
+        "isActive": true,
+        "districtLayer": [
+          {
+            "name": "Stadtteile",
+            "selector": "stadtteil",
+            "layerIds": [
+              "2763",
+              "2769",
+              "2768",
+              "2771"
+            ]
+          },
+          {
+            "name": "Statistische Gebiete",
+            "selector": "statgebiet",
+            "layerIds": [
+              "15563",
+              "15564",
+              "15565",
+              "15989"
+            ]
+          }
+        ]
       }
     },
     "scaleLine": false,
