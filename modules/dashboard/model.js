@@ -95,7 +95,6 @@ const DashboardModel = Tool.extend({
         // Todo: GFI mapping
         // Add total and mean values and filter table for excluded properties
         this.set("tableView", this.calculateTotalAndMean(Radio.request("Timeline", "fillUpTimelineGaps", table, "Array")));
-        // console.log(this.get("tableView"));
 
         // Update the filter dropdown list
         this.updateFilter();
@@ -247,27 +246,55 @@ const DashboardModel = Tool.extend({
     setSortKey: function () {
         this.set("sortKey", this.getPropertyTree()[this.getScope()].selector);
     },
-    createChart (props) {
-        Radio.trigger("Graph", "createGraph", {
-            graphType: "BarGraph",
-            selector: ".dashboard-graph",
-            scaleTypeX: "ordinal",
-            scaleTypeY: "linear",
-            data: this.get("tableView").filter(col => col[this.get("sortKey")] !== "Gesamt"),
-            attrToShowArray: props,
-            xAttr: this.get("sortKey"),
-            xAxisLabel: this.get("sortKey"),
-            yAxisLabel: props[0],
-            margin: {
-                left: 40,
-                top: 25,
-                right: 20,
-                bottom: 40
-            },
-            width: $(window).width() * 0.4,
-            height: $(window).height() * 0.4,
-            svgClass: "dashboard-grapg-svg"
-        });
+    createChart (props, type) {
+        if (type === "Linegraph") {
+            const data = this.getChartData(props);
+
+            Radio.trigger("Graph", "createGraph", {
+                graphType: type,
+                selector: ".dashboard-graph",
+                scaleTypeX: "ordinal",
+                scaleTypeY: "linear",
+                data: data.data,
+                attrToShowArray: data.xAttrs,
+                xAttr: "year",
+                xAxisLabel: "year",
+                yAxisLabel: props[0],
+                margin: {
+                    left: 40,
+                    top: 25,
+                    right: 20,
+                    bottom: 40
+                },
+                width: $(window).width() * 0.4,
+                height: $(window).height() * 0.4,
+                svgClass: "dashboard-grapg-svg",
+                selectorTooltip: ".graphTooltip"
+            });
+        }
+        else if (type === "BarGraph") {
+            Radio.trigger("Graph", "createGraph", {
+                graphType: type,
+                selector: ".dashboard-graph",
+                scaleTypeX: "ordinal",
+                scaleTypeY: "linear",
+                data: this.get("tableView").filter(col => col[this.get("sortKey")] !== "Gesamt"),
+                attrToShowArray: props,
+                xAttr: this.get("sortKey"),
+                xAxisLabel: this.get("sortKey"),
+                yAxisLabel: props[0],
+                margin: {
+                    left: 40,
+                    top: 25,
+                    right: 20,
+                    bottom: 40
+                },
+                width: $(window).width() * 0.4,
+                height: $(window).height() * 0.4,
+                svgClass: "dashboard-grapg-svg",
+                selectorTooltip: ".graphTooltip"
+            });
+        }
 
         /**
          * GraphConfig Options:
@@ -286,22 +313,40 @@ const DashboardModel = Tool.extend({
          * xAxisTicks = graphConfig.xAxisTicks,
          * yAxisTicks = graphConfig.yAxisTicks,
          * svgClass = graphConfig.svgClass,
+         * selectorTooltip
         */
     },
     getChartData (props) {
         const data = this.get("tableView").map((district) => {
-            const districtDataToGraph = district;
+                let districtDataToGraph = {};
 
-            for (const prop in districtDataToGraph) {
-                if (!props.includes(prop) && prop !== this.getPropertyTree()[this.getScope()].selector) {
-                    delete districtDataToGraph[prop];
+                for (const prop in district) {
+                    if (props.includes(prop)) {
+                        districtDataToGraph = {...districtDataToGraph, ...Object.fromEntries(district[prop])};
+                    }
+                    else if (prop === this.get("sortKey")) {
+                        districtDataToGraph[prop] = district[prop];
+                    }
+                    else {
+                        delete districtDataToGraph[prop];
+                    }
                 }
-            }
 
-            return districtDataToGraph;
-        });
+                return districtDataToGraph;
+            }),
+            districts = data.map(col => col[this.get("sortKey")]).filter(name => name !== "Gesamt"),
+            years = Object.keys(data[0]).filter(key => key !== this.get("sortKey")),
+            map = years.map(year => {
+                const yearObj = {year: year};
 
-        return data;
+                data.filter(col => col[this.get("sortKey")] !== "Gesamt").forEach(col => {
+                    yearObj[col[this.get("sortKey")]] = col[year];
+                });
+
+                return yearObj;
+            });
+
+        return {data: map, xAttrs: districts};
     },
     zoomAndHighlightFeature: function (district) {
         let extent,

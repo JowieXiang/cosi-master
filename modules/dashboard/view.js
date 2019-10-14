@@ -97,19 +97,21 @@ const DashboardView = Backbone.View.extend({
     createChart (event) {
         this.clearChart();
 
-        const row = this.$(event.target).parent("tr"),
+        const row = this.$(event.target).closest("tr"),
             firstValue = row.find("td").first().text();
 
-        if (!isNaN(parseFloat(firstValue))) {
-            this.model.createChart([row.find("th.prop").attr("id")]);
-
-            // Highlight the selected row
-            row.parent("tbody").find("tr").removeClass("selected");
-            row.addClass("selected");
-
-            // Add Header
-            this.$el.find(".basic-graph-header").html(`Diagramm: ${row.find("th.prop").text()}`);
+        if (!isNaN(parseFloat(firstValue)) && !row.find("td").hasClass("timeline-table")) {
+            this.model.createChart([row.find("th.prop").attr("id")], "BarGraph");
         }
+        else if (row.find("td").hasClass("timeline-table")) {
+            this.model.createChart([row.find("th.prop").attr("id")], "Linegraph");
+        }
+        // Highlight the selected row
+        row.parent("tbody").find("tr").removeClass("selected");
+        row.addClass("selected");
+
+        // Add Header
+        this.$el.find(".basic-graph-header").html(`Diagramm: ${row.find("th.prop").text()}`);
     },
     clearChart: function () {
         this.$el.find(".basic-graph-header").html("");

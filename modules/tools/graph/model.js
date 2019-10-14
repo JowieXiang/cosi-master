@@ -414,9 +414,10 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
         svg.select(".graph-diagram").selectAll("points")
             .data(dat)
             .enter()
-            .append(function (d) {
-                return document.createElementNS("http://www.w3.org/2000/svg", d.style);
-            })
+            // .append(function (d) {
+            //     return d.style ? document.createElementNS("http://www.w3.org/2000/svg", d.style) : "circle";
+            // })
+            .append("circle")
             .attr("cx", function (d) {
                 return scaleX(d[xAttr]) + (scaleX.bandwidth() / 2);
             })
@@ -441,14 +442,14 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
                 return d[yAttrToShow];
             })
             .on("mouseover", function (d) {
-                yAttributeToShow = d[yAttrToShow].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                yAttributeToShow = Number.isInteger(d[yAttrToShow]) ? parseInt(d[yAttrToShow], 10).toLocaleString("de-DE") : parseFloat(d[yAttrToShow]).toFixed(2).toLocaleString("de-DE");
                 tooltipDiv.transition()
                     .duration(200)
                     .style("opacity", 0.9);
-                tooltipDiv.html(yAttributeToShow)
+                tooltipDiv.html(`<strong>${yAttrToShow}:</strong> ${yAttributeToShow}`)
                     .attr("style", "background-color: buttonface; border-radius: 4px; text-align: center;")
-                    .style("left", (event.layerX - 25) + "px")
-                    .style("top", (event.layerY - 35) + "px");
+                    .style("left", (event.clientX - 25) + "px")
+                    .style("top", (event.clientY - 35) + "px");
             }, tooltipDiv)
             .on("mouseout", function () {
                 tooltipDiv.transition()
@@ -460,14 +461,16 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
                     }, tooltipDiv);
             }, tooltipDiv)
             .on("click", function (d) {
-                yAttributeToShow = d[yAttrToShow].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                yAttributeToShow = Number.isInteger(d[yAttrToShow]) ? parseInt(d[yAttrToShow], 10).toLocaleString("de-DE") : parseFloat(d[yAttrToShow]).toFixed(2).toLocaleString("de-DE");
                 tooltipDiv.transition()
                     .duration(200)
                     .style("opacity", 0.9);
-                tooltipDiv.html(yAttributeToShow)
+                tooltipDiv.html(`<strong>${yAttrToShow}:</strong> ${yAttributeToShow}`)
                     .attr("style", "background-color: buttonface; border-radius: 4px;")
-                    .style("left", (event.layerX - 25) + "px")
-                    .style("top", (event.layerY - 35) + "px");
+                    .style("left", (event.clientX - 25) + "px")
+                    .style("top", (event.clientY - 35) + "px");
+                    // .style("left", (event.layerX - 25) + "px")
+                    // .style("top", (event.layerY - 35) + "px");
             }, tooltipDiv);
     },
 
