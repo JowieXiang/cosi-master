@@ -22,7 +22,6 @@ const MouseHoverPopupView = Backbone.View.extend(/** @lends MouseHoverPopupView.
             this.createOverlayElement();
         }
     },
-
     /**
      * Checks the device type. Disable the ability on smartphones and tablets as they usually don't have a mouse to hover.
      * @fires Util#RadioRequestUtilIsAny

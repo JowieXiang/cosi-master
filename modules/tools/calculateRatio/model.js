@@ -176,8 +176,6 @@ const CalculateRatioModel = Tool.extend({
                         layer = Radio.request("ModelList", "getModelByAttributes", {id: layerId}),
                         features = layer.get("layerSource").getFeatures().filter(f => typeof f.style_ === "object" || f.style_ === null);
 
-                    // console.log(features.map(f => typeof f.style_));
-
                     _.each(features, (feature) => {
                         const geometry = feature.getGeometry(),
                             coordinate = geometry.getType() === "Point" ? geometry.getCoordinates() : Extent.getCenter(geometry.getExtent()); // Remove later for more reliable fallback

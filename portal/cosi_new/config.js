@@ -40,7 +40,6 @@ const Config = {
     {
         numFeaturesToShow: 1
     },
-    mouseHover_bev: false,
     isMenubarVisible: true,
     geoAPI: false,
     clickCounter: {}
