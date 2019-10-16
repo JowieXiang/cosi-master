@@ -10,8 +10,7 @@ const TimeSeriesModel = Tool.extend({
         attribute_prefix: "jahr_",
         isRunning: false,
         name: "Zeitstrahl Analyse",
-        glyphicon: "glyphicon-time",
-        mappingJson: MappingJson
+        glyphicon: "glyphicon-time"
     }),
 
     initialize: function () {
@@ -48,7 +47,7 @@ const TimeSeriesModel = Tool.extend({
         console.info(scope);
         this.set("scope", scope);
         const features = Radio.request("FeaturesLoader", "getDistrictsByType", scope);
-        console.info(features);
+        // console.info(features);
         this.set("category", Object.keys(MappingJson)[1]);
         console.info(this.get("mappingJson"));
         // this.setLayerList(this.get("layerIds"));
@@ -109,13 +108,16 @@ const TimeSeriesModel = Tool.extend({
      * @returns {void}
      */
     dropDownCallback: function (valueModel, isSelected) {
-        const layer = this.getLayerByName(valueModel.get("value"));
-
-        Radio.trigger("ModelList", "setModelAttributesById", layer.get("id"), {isSelected: isSelected});
-        if (isSelected) {
-            this.setSelectedLayer(layer);
-            this.setSliderModel(layer);
-        }
+        const cat = Object.keys(MappingJson).find(key => MappingJson[key] === valueModel.get("value")),
+        // const layer = this.getLayerByName(valueModel.get("value"));
+        features = Radio.request("FeaturesLoader", "getDistrictsByCategory", this.get("scope"), cat);
+        this.set("category", cat);
+        // Radio.trigger("ModelList", "setModelAttributesById", layer.get("id"), {isSelected: isSelected});
+        // if (isSelected) {
+            // this.setSelectedLayer(layer);
+        console.info(features);
+        this.setSliderModel(features);
+        // }
     },
 
     /**
@@ -173,7 +175,7 @@ const TimeSeriesModel = Tool.extend({
      * @returns {void}
      */
     sliderCallback: function (valueModel, sliderValue) {
-        console.info(this.get("category"));
+        // console.info(this.get("category"));
         const features = Radio.request("FeaturesLoader", "getDistrictsByCategory", this.get("scope"), this.get("category")),
         // const features = this.get("selectedLayer").get("layer").getSource().getFeatures(),
             graphData = [];
@@ -181,9 +183,10 @@ const TimeSeriesModel = Tool.extend({
         features.forEach(function (feature) {
             graphData.push(feature.getProperties());
         });
-console.info(features);
-console.info(graphData);
-        // this.styleFeatures(features, this.get("attribute_prefix") + sliderValue);
+// console.info(this.get("sliderModel").get("values"));
+// console.info(graphData);
+        var max = this.getMaxYAxisValue(graphData, this.get("attribute_prefix"), this.get("sliderModel").get("values"));
+        this.styleFeatures(features, this.get("attribute_prefix") + sliderValue, max);
         this.trigger("renderGraph", graphData, sliderValue, this.getMaxYAxisValue(graphData, this.get("attribute_prefix"), this.get("sliderModel").get("values")));
     },
 
@@ -193,19 +196,29 @@ console.info(graphData);
      * @param {string} attribute - style is depending on this attribute
      * @returns {void}
      */
-    styleFeatures: function (features, attribute) {
-        const values = features.map(function (feature) {
-                return feature.get(attribute);
-            }),
-            maxValue = Math.max(...values),
-            colorScale = Radio.request("ColorScale", "getColorScaleByValues", [0, maxValue]);
+    styleFeatures: function (features, attribute, max) {
+        const colorScale = Radio.request("ColorScale", "getColorScaleByValues", [0, max]);
+        const layer = Radio.request("ModelList", "getModelByAttributes", {id: "6071"});
+// console.info(layer.get("layer").getSource().getFeatures());
+        var t = layer.get("layer").getSource().getFeatures();
+// var ar = [];
+        features.forEach(function (feature) {
+            var s = t.find(function (tt) {
+                // console.info(tt.get("statgebiet"));
+                return feature.get("stat_gebiet") === tt.get("statgebiet");
+            });
 
-        _.each(features, (feature) => {
-            feature.setStyle(new Style({
-                fill: new Fill({
-                    color: colorScale.scale(feature.getProperties()[attribute])
-                })
-            }));
+            // ar.push(s);
+            feature.setGeometry(s.getGeometry());
+            if(s) {
+                // console.info(feature.getProperties()[attribute]);
+                // console.info(colorScale.scale(feature.getProperties()[attribute]));
+                s.setStyle(new Style({
+                    fill: new Fill({
+                        color: colorScale.scale(feature.getProperties()[attribute])
+                    })
+                }));
+            }
         });
     },
 
@@ -253,7 +266,7 @@ console.info(graphData);
 
         sliderValues.forEach(function (value) {
             const maxValues = graphData.map(function (data) {
-                return data[prefix + value];
+                return parseInt(data[prefix + value], 10) || 0;
             });
 
             maxValue = Math.max(...maxValues, maxValue);
