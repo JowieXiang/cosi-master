@@ -171,16 +171,6 @@
               }
             ]
           },
-          "timeSeries": {
-            "name": "Zeitstrahl Analyse",
-            "glyphicon": "glyphicon-time",
-            "layerIds": [
-              "15563",
-              "15564",
-              "15565",
-              "15989"
-            ]
-          },
           "measure": {
             "name": "Strecke / Fläche messen",
             "glyphicon": "glyphicon-resize-full"
