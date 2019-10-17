@@ -87,6 +87,10 @@ const SelectDistrict = Tool.extend({
             "getScopeAndSelector": this.getScopeAndSelector,
             "getDistrictLayer": this.getDistrictLayer
         }, this);
+
+        this.get("channel").on({
+            "zoomToDistrict": this.zoomAndHighlightFeature
+        }, this);
     },
 
     // listen  to click event and trigger setGfiParams
@@ -255,6 +259,26 @@ const SelectDistrict = Tool.extend({
             }
 
             this.set("isReady", true);
+        }
+    },
+    zoomAndHighlightFeature: async function (districtName, onlySelected = true) {
+        let districts = this.getSelectedDistricts(),
+            extent;
+
+        if (!onlySelected) {
+            const getLayerSource = Promise.resolve(Radio.request("ModelList", "getModelByAttributes", {"name": this.getScope()}).get("layerSource")),
+                layerSource = await getLayerSource;
+
+            districts = layerSource.getFeatures();
+        }
+
+        _.each(districts, (feature) => {
+            if (feature.getProperties()[this.getSelector()] === districtName) {
+                extent = feature.getGeometry().getExtent();
+            }
+        });
+        if (extent) {
+            Radio.trigger("Map", "zoomToExtent", extent, {padding: [20, 20, 20, 20]});
         }
     },
     getSelector: function () {

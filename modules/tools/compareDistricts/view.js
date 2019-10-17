@@ -14,7 +14,8 @@ const CompareDistrictsView = Backbone.View.extend({
             this.setRefDistrict();
             this.addFilterModel(e);
             this.filterLayerOptions();
-        }
+        },
+        "click #compare-results": "zoomToDistrict"
     },
 
     initialize: function () {
@@ -244,6 +245,10 @@ const CompareDistrictsView = Backbone.View.extend({
 
         newLayer.setSource(newSource);
         newLayer.setVisible(false);
+    },
+
+    zoomToDistrict (evt) {
+        Radio.trigger("SelectDistrict", "zoomToDistrict", evt.target.innerHTML.trim(), false);
     }
 
 });

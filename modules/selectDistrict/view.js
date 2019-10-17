@@ -4,8 +4,7 @@ import SnippetDropdownView from "../snippets/dropdown/view";
 
 const SelectDistrictView = Backbone.View.extend({
     events: {
-        "click button#Submit": "checkIfSelected",
-        "click span": "test"
+        "click button#Submit": "checkIfSelected"
     },
     initialize: function () {
         this.scopeDropdownView = new SnippetDropdownView({
@@ -19,9 +18,6 @@ const SelectDistrictView = Backbone.View.extend({
         if (this.model.get("isActive") === true) {
             this.render(this.model, true);
         }
-    },
-    test () {
-        Radio.trigger("MouseHover", "hide");
     },
     model: new SelectDistrictModel(),
     scopeDropdownView: {},
