@@ -21,12 +21,11 @@
             <tr>
                 <td><%= info.key %></td>
                 <td><%= info.min %></td>
-                <td><%= info.value %></td>
+                <td><input value="<%= info.value %>" class="reference-value-input" id= "<%= info.key %>"></input></td>
                 <td><%= info.max %></td>
                 <td id="<%= info.key %>-td"></td>
             </tr>
             <% }); %>
-
         </tbody>
     </table>
 </div>
