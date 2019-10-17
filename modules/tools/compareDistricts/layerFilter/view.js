@@ -15,7 +15,6 @@ const LayerFilterView = Backbone.View.extend({
         this.listenTo(this.sliderCollection, {
             "change:sliderValue": function (model) {
                 this.updateLayerFilter(model);
-                this.filterFeatures();
             }
         });
 
@@ -45,9 +44,13 @@ const LayerFilterView = Backbone.View.extend({
         });
     },
     destroySelf: function () {
+        const newLayerInfo = this.model.get("layerInfo");
+
+        newLayerInfo.layerName = newLayerInfo.layerName.replace(/ /g, "_");
+        this.model.set("layerInfo", newLayerInfo);
+        Radio.trigger("CompareDistricts", "closeFilter", this.model.get("layerInfo"));
         this.remove();
         this.model.destroy();
-        Radio.trigger("CompareDistricts", "closeFilter", this.model.get("layerInfo"));
     },
     updateLayerFilter: function (sliderModel) {
         const key = sliderModel.get("key"),

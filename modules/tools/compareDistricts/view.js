@@ -87,8 +87,10 @@ const CompareDistrictsView = Backbone.View.extend({
     },
 
     addFilterModel: function () {
+        console.log("layerInfo: ",this.layerFilterSelector.getSelectedLayer());
         const layerInfo = this.layerFilterSelector.getSelectedLayer(),
             layerFilterModel = new LayerFilterModel({ layerInfo: layerInfo });
+
 
         this.addOneToLayerFilterList(layerFilterModel);
         this.layerFilterCollection.add(layerFilterModel);
