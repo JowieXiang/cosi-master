@@ -21,6 +21,10 @@ const InfoScreenModel = Tool.extend({
             "clear": this.clear
         }, this);
 
+        this.get("channel").reply({
+            "getIsWindowOpen": this.getIsWindowOpen
+        }, this);
+
         this.listenTo(this, {
             "change:isActive": this.notifyInfoScreen
         });
@@ -41,8 +45,11 @@ const InfoScreenModel = Tool.extend({
         this.set("infoScreenOpen", true);
         this.get("channel").trigger("infoScreenOpen");
     },
-    getInfoScreenState () {
-        return this.get("infoScreenOpen"); 
+    getIsWindowOpen () {
+        return this.get("infoScreenOpen");
+    },
+    setIsWindowOpen (state) {
+        this.set("infoScreenOpen", state);
     }
 });
 

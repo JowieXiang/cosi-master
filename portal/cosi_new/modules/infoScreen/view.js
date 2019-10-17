@@ -13,8 +13,8 @@ const InfoScreen = Backbone.View.extend({
                     this.el$.remove();
                 }
             },
-            "change:content": function (isActive) {
-                if (isActive) {
+            "change:content": function () {
+                if (this.model.get("infoScreenOpen")) {
                     this.renderContent();
                     this.updateWindow();
                 }
@@ -41,12 +41,17 @@ const InfoScreen = Backbone.View.extend({
         this.$el.find('.input').append(this.model.get("content"));
     },
     castWindow () {
-        this.window = window.open("/portal/cosi_new/modules/infoScreen/hostWindow", this.model.get("title"), this.model.get("winOpts"));
+        this.window = window.open("/portal/cosi_new/modules/infoScreen/hostWindow", ".dashboard", this.model.get("winOpts"));
         this.updateWindow();
+        this.model.setIsWindowOpen(true);
     },
     updateWindow () {
-        console.log(this.window.document, this.$el, this.model.get("content"));
-        this.window.document.write(this.$el);
+        if (Object.keys(this.model.get("content")).length > 0) {
+            this.window.postMessage({
+                mode: "replace",
+                node: this.model.get("content").html()
+            });
+        }
     }
 });
 
