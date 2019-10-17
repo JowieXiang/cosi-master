@@ -6,7 +6,6 @@ const DistrictSelectorModel = Backbone.Model.extend({
     },
     initialize: function () {
         this.initializeDistrictNames();
-
     },
     initializeDistrictNames: function () {
         const selector = Radio.request("SelectDistrict", "getSelector"),

@@ -15,7 +15,7 @@ const CompareDistrictsView = Backbone.View.extend({
             this.addFilterModel(e);
             this.filterLayerOptions();
         },
-        "click #compare-results": "zoomToDistrict"
+        "click .district-name": "zoomToDistrict"
     },
 
     initialize: function () {
@@ -31,7 +31,7 @@ const CompareDistrictsView = Backbone.View.extend({
                 this.listenTo(this.layerFilterCollection, {
                     "add": this.renderLayerFilter,
                     "destroy": this.modelDestroy,
-                    "change:filter": this.updateLayerFilterList
+                    "change": this.updateLayerFilterList
                 });
                 if (value) {
                     this.selectDistrictReminder();
@@ -72,22 +72,25 @@ const CompareDistrictsView = Backbone.View.extend({
 
         if (selectedDistricts.length === 0) {
             Radio.trigger("Alert", "alert", {
-                text: "<strong> Bitte wählen Sie zuerst die Bezirke mit 'Gebiet wählen' im Werkzeugmenü aus</strong>",
+                text: "<strong> Bitte wählen Sie zuerst die Gebiet mit 'Gebiet wählen' im Werkzeugmenü aus</strong>",
                 kategorie: "alert-warning"
             });
         }
     },
-
     createSelectors: function () {
+        this.$el.find("#district-selector-container").empty();
         this.districtSelector = new DistrictSelectorView();
         this.$el.find("#district-selector-container").append(this.districtSelector.render().el);
+
         this.layerFilterSelector = new LayerFilterSelectorView({ model: new LayerFilterSelectorModel() });
         this.$el.find("#layerfilter-selector-container").append(this.layerFilterSelector.render().el);
     },
 
     addFilterModel: function () {
+        console.log("layerInfo: ",this.layerFilterSelector.getSelectedLayer());
         const layerInfo = this.layerFilterSelector.getSelectedLayer(),
             layerFilterModel = new LayerFilterModel({ layerInfo: layerInfo });
+
 
         this.addOneToLayerFilterList(layerFilterModel);
         this.layerFilterCollection.add(layerFilterModel);
@@ -130,22 +133,29 @@ const CompareDistrictsView = Backbone.View.extend({
         this.model.set("layerFilterList", JSON.stringify(newList));
     },
     setRefDistrict: function () {
-        this.model.set("refDistrict", this.districtSelector.getSelectedDistrict());
-        this.$el.find("#refdistrict").html(`
-        <span class="name-tag">${this.model.get("refDistrict")}</span>
+        if (this.districtSelector.getSelectedDistrict() !== "") {
+            this.$el.find("#refdistrict").html(`
+        <p id="Referenzgebiet"><strong>| Referenzgebiet</strong></p>
+        <p><span class="name-tag">${this.districtSelector.getSelectedDistrict()}</span></p>
         `);
+        }
+        else {
+            this.$el.find("#refdistrict").empty();
+        }
     },
     setCompareResults: function (comparableDistricts) {
-        let domString = "";
+        let domString = "<p>";
 
         this.$el.find("#compare-results").empty();
         _.each(comparableDistricts, district => {
-            domString += `<span class="name-tag">${district} </span>`;
+            domString += `<span class="name-tag district-name">${district} </span>`;
         });
+        domString += "</p>";
+        this.$el.find("#compare-results").append("<p><strong>| Vergleichbare Gebiete</strong></p>");
         this.$el.find("#compare-results").append(domString);
     },
     addOneToLayerFilterList: function (model) {
-        const newItem = { layerId: model.get("layerInfo").layerId, filter: model.get("filter") },
+        const newItem = { layerId: model.get("layerInfo").layerId, filter: model.get("filter"), districtInfo: model.get("districtInfo") },
             newList = this.model.get("layerFilterList") === "" ? [] : JSON.parse(this.model.get("layerFilterList"));
 
         newList.push(newItem);
@@ -160,6 +170,7 @@ const CompareDistrictsView = Backbone.View.extend({
             _.each(newList, layerFilter => {
                 if (layerFilter.layerId === layerId) {
                     layerFilter.filter = model.get("filter");
+                    layerFilter.districtInfo = model.get("districtInfo");
                 }
             });
             this.model.set("layerFilterList", JSON.stringify(newList));
@@ -192,27 +203,25 @@ const CompareDistrictsView = Backbone.View.extend({
     },
 
     filterOne: function (layerFilter) {
-        const selector = Radio.request("SelectDistrict", "getSelector") === "statgebiet" ? "stat_gebiet" : Radio.request("SelectDistrict", "getSelector"),
-            layerId = layerFilter.layerId,
-            refDistrictName = this.districtSelector.getSelectedDistrict(),
-            featureCollection = Radio.request("FeaturesLoader", "getAllFeaturesByAttribute", { id: layerId }),
-            refFeature = featureCollection.filter(feature => feature.getProperties()[selector] === refDistrictName)[0],
-            filterCollection = JSON.parse(layerFilter.filter);
         var filterResults = [],
             intersection = [];
+        const layerId = layerFilter.layerId,
+            featureCollection = Radio.request("FeaturesLoader", "getAllFeaturesByAttribute", {
+                id: layerId
+            }),
+            filterCollection = JSON.parse(layerFilter.filter);
 
         _.each(Object.keys(filterCollection), filterKey => {
             const tolerance = parseFloat(filterCollection[filterKey]),
-                selectedFeatures = featureCollection.filter(feature => Math.abs(feature.getProperties()[filterKey] - refFeature.getProperties()[filterKey]) < tolerance);
+                refValue = layerFilter.districtInfo.filter(item => item.key === filterKey)[0].value,
+                selectedFeatures = featureCollection.filter(feature => Math.abs(feature.getProperties()[filterKey] - refValue) < tolerance);
 
             filterResults.push(selectedFeatures);
-
         }, this);
         if (filterResults.length > 1) {
             intersection = _.intersection(...filterResults);
             return intersection;
         }
-
         return filterResults[0];
     },
 
