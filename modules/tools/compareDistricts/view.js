@@ -15,7 +15,7 @@ const CompareDistrictsView = Backbone.View.extend({
             this.addFilterModel(e);
             this.filterLayerOptions();
         },
-        "click #compare-results": "zoomToDistrict"
+        "click .district-name": "zoomToDistrict"
     },
 
     initialize: function () {
@@ -148,7 +148,7 @@ const CompareDistrictsView = Backbone.View.extend({
 
         this.$el.find("#compare-results").empty();
         _.each(comparableDistricts, district => {
-            domString += `<span class="name-tag">${district} </span>`;
+            domString += `<span class="name-tag district-name">${district} </span>`;
         });
         domString += "</p>";
         this.$el.find("#compare-results").append("<p><strong>| Vergleichbare Gebiete</strong></p>");
