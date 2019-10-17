@@ -27,7 +27,7 @@ import LayerinformationModel from "../modules/layerinformation/model";
 import FooterView from "../modules/footer/view";
 import ClickCounterModel from "../modules/ClickCounter/model";
 import MouseHoverPopupView from "../modules/mouseHover/view";
-import MouseHoverBevPopupView from "../modules/mouseHover_bev/view";
+// import MouseHoverBevPopupView from "../modules/mouseHover_bev/view";
 import QuickHelpView from "../modules/quickhelp/view";
 import ScaleLineView from "../modules/scaleline/view";
 import WindowView from "../modules/window/view";
@@ -205,9 +205,6 @@ async function loadApp() {
 
     if (_.has(Config, "mouseHover")) {
         new MouseHoverPopupView(Config.mouseHover);
-    }
-    if (_.has(Config, "mouseHover_bev")) {
-        new MouseHoverBevPopupView(Config.mouseHover_bev);
     }
 
     if (_.has(Config, "scaleLine") && Config.scaleLine === true) {

@@ -39,6 +39,7 @@ const MouseHoverPopupModel = Backbone.Model.extend(/** @lends MouseHoverPopupMod
         });
         Radio.trigger("Map", "addOverlay", this.get("overlay"));
         Radio.trigger("Map", "registerListener", "pointermove", this.checkDragging.bind(this), this);
+        document.getElementById("map").addEventListener("mouseleave", this.destroyPopup.bind(this));
         this.getMouseHoverInfosFromConfig();
     },
     /**

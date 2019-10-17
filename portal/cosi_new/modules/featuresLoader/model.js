@@ -90,8 +90,10 @@ const featuresLoader = Backbone.Model.extend({
             }, this);
             Promise.all(featurePromiseList).then((featureList) => {
                 this.set(attribute, featureList.reduce((total, feature) => total.concat(feature), []));
-                Radio.trigger("Util", "hideLoader");
                 console.info(this.get("statistischeGebiete"));
+
+                Radio.trigger("Util", "hideLoader");
+                Radio.trigger("Alert", "alert:remove");
             });
         });
     },
