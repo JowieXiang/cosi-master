@@ -251,7 +251,7 @@ const SelectDistrict = Tool.extend({
             }
         }
 
-        if (_.isEqual(this.get("districtLayerNames"), this.get("districtLayersLoaded"))) {
+        if (_.isEqual(this.get("districtLayerNames").sort(), this.get("districtLayersLoaded").sort())) {
             this.getScopeFromDropdown();
 
             if (this.get("urlQuery")) {

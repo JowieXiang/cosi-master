@@ -64,6 +64,8 @@ const DashboardView = Backbone.View.extend({
         Radio.trigger("Sidebar", "append", this.$el);
         Radio.trigger("Sidebar", "toggle", true, this.model.get("width"));
 
+        Radio.trigger("InfoScreen", "showInInfoScreen", this.$el);
+
         this.delegateEvents();
 
         return this;
