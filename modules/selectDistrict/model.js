@@ -45,7 +45,7 @@ const SelectDistrict = Tool.extend({
             name: "Bezugseinheit",
             type: "string",
             displayName: "Bezugseinheit auswählen",
-            values: this.get("districtLayerNames"),
+            values: this.get("districtLayerNames").reverse(),
             snippetType: "dropdown",
             isMultiple: false,
             preselectedValues: this.get("districtLayerNames")[0]
@@ -228,7 +228,7 @@ const SelectDistrict = Tool.extend({
     },
     toggleScopeLayers: function () {
         _.each(this.get("districtLayerNames"), (layerName) => {
-            const layer = Radio.request("ModelList", "getModelByAttributes", { "name": layerName }); 
+            const layer = Radio.request("ModelList", "getModelByAttributes", { "name": layerName });
 
             if (layerName !== this.getScope()) {
                 layer.setIsVisibleInMap(false);

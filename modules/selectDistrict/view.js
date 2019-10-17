@@ -35,6 +35,9 @@ const SelectDistrictView = Backbone.View.extend({
             this.$el.html(this.template(attr));
 
             this.$el.find(".dropdown").append(this.scopeDropdownView.render().el);
+            // hack as long as no stadtteile are available
+            this.$el.find(".dropdown-menu.inner li:nth-child(2)").addClass("disabled");
+            this.$el.find(".dropdown-menu.inner li:nth-child(2)").prop("title", "Stadtteile zurzeit noch nicht verfügbar");
         }
         return this;
     },
