@@ -2,7 +2,7 @@ import Template from "text-loader!./template.html";
 import SnippetDropdownView from "../../../../modules/snippets/dropdown/view";
 import SnippetSliderView from "../../../../modules/snippets/slider/view";
 
-const TimeSeriesView = Backbone.View.extend({
+const TimeSliderView = Backbone.View.extend({
     events: {
         "click button.btn-slider": "buttonClickCallback",
         "click button.close": function () {
@@ -58,7 +58,7 @@ const TimeSeriesView = Backbone.View.extend({
         else {
             this.setButtonToPause();
             this.model.setIsRunning(true);
-            this.model.runningTimeSeries();
+            this.model.runningTimeSlider();
         }
     },
 
@@ -102,4 +102,4 @@ const TimeSeriesView = Backbone.View.extend({
     }
 });
 
-export default TimeSeriesView;
+export default TimeSliderView;

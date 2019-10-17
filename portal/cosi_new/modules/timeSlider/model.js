@@ -4,7 +4,7 @@ import SliderModel from "../../../../modules/snippets/slider/model";
 import {Fill, Style} from "ol/style.js";
 import MappingJson from "../../assets/mapping.json";
 
-const TimeSeriesModel = Tool.extend({
+const TimeSliderModel = Tool.extend({
     defaults: _.extend({}, Tool.prototype.defaults, {
         renderToWindow: false,
         attribute_prefix: "jahr_",
@@ -14,12 +14,10 @@ const TimeSeriesModel = Tool.extend({
     }),
 
     initialize: function () {
-        // this.superInitialize();
-        console.info("init");
         this.listenTo(this, {
             "change:isActive": function (model, isActive) {
                 if (!isActive) {
-                    // this.unStyleFeatures(this.get("selectedLayer").get("layer").getSource().getFeatures());
+                    this.unStyleDistrictFeaturs(this.get("districtFeatures"));
                     Radio.trigger("ModelList", "setModelAttributesById", this.get("selectedLayer"), {isSelected: false});
                     this.trigger("remove");
                 }
@@ -27,10 +25,6 @@ const TimeSeriesModel = Tool.extend({
                     this.run();
                 }
             }
-        });
-
-        this.listenTo(Radio.channel("Layer"), {
-            "featuresLoaded": this.checkLayerById
         });
 
         if (this.get("isActive")) {
@@ -43,55 +37,27 @@ const TimeSeriesModel = Tool.extend({
      * @returns {void}
      */
     run: function () {
-        const scope = Radio.request("SelectDistrict", "getScope");
-        console.info(scope);
-        this.set("scope", scope);
-        const features = Radio.request("FeaturesLoader", "getDistrictsByType", scope);
-        // console.info(features);
-        this.set("category", Object.keys(MappingJson)[1]);
-        console.info(this.get("mappingJson"));
-        // this.setLayerList(this.get("layerIds"));
+        // the used features
+        this.setFeaturesByCategoryAndScope(Object.keys(MappingJson)[0], Radio.request("SelectDistrict", "getScope"));
+        // data for the graph
+        this.setFeaturesProperties(this.get("features"));
         this.trigger("render");
-        this.setDropDownModel(MappingJson);
-        // this.setSelectedLayer(this.get("layerList").at(0));
-        // Radio.trigger("ModelList", "setModelAttributesById", this.get("layerList").at(0), {isSelected: true});
-        this.setSliderModel(features);
+        this.setDropDownModel();
+        this.setSliderModel(this.get("features"));
     },
 
     /**
-     * sets the list of layers that are to be displayed in the time series
-     * @param {string[]} layerIds - the ids for the layer
+     * sets the selection list for the time slider
      * @returns {void}
      */
-    setLayerList: function (layerIds) {
-        const layerList = [];
-
-        layerIds.forEach(function (layerId) {
-            let layer = Radio.request("ModelList", "getModelByAttributes", {id: layerId});
-
-            if (layer === undefined) {
-                Radio.trigger("ModelList", "addModelsByAttributes", {id: layerId});
-                layer = Radio.request("ModelList", "getModelByAttributes", {id: layerId});
-            }
-            layerList.push(layer);
-        });
-
-        this.set("layerList", new Backbone.Collection(layerList));
-    },
-
-    /**
-     * sets the selection list for the time series
-     * @param {Backbone.Collection} layerList - list of available layers
-     * @returns {void}
-     */
-    setDropDownModel: function (layerList) {
+    setDropDownModel: function () {
         const dropdownModel = new DropdownModel({
             name: "Thema",
             type: "string",
-            values: Object.values(layerList),
+            values: Object.values(MappingJson),
             snippetType: "dropdown",
             isMultiple: false,
-            preselectedValues: Object.values(layerList)[1]
+            preselectedValues: Object.values(MappingJson)[0]
         });
 
         this.listenTo(dropdownModel, {
@@ -102,142 +68,143 @@ const TimeSeriesModel = Tool.extend({
 
     /**
      * callback function for the "valuesChanged" event in the dropdown model
-     * selects or deselects the layer based on the dropdown selection
+     * sets the features based on the dropdown selection (category)
      * @param {Backbone.Model} valueModel - the value model which was selected or deselected
      * @param {boolean} isSelected - flag if value model is selected or not
      * @returns {void}
      */
     dropDownCallback: function (valueModel, isSelected) {
-        const cat = Object.keys(MappingJson).find(key => MappingJson[key] === valueModel.get("value")),
-        // const layer = this.getLayerByName(valueModel.get("value"));
-        features = Radio.request("FeaturesLoader", "getDistrictsByCategory", this.get("scope"), cat);
-        this.set("category", cat);
-        // Radio.trigger("ModelList", "setModelAttributesById", layer.get("id"), {isSelected: isSelected});
-        // if (isSelected) {
-            // this.setSelectedLayer(layer);
-        console.info(features);
-        this.setSliderModel(features);
-        // }
+        if (isSelected) {
+            const category = Object.keys(MappingJson).find(key => {
+                return MappingJson[key] === valueModel.get("value");
+            });
+
+            // the used features
+            this.setFeaturesByCategoryAndScope(category, Radio.request("SelectDistrict", "getScope"));
+            // data for the graph
+            this.setFeaturesProperties(this.get("features"));
+            this.setSliderModel(this.get("features"));
+        }
     },
 
     /**
-     * sets the slider for the time series
-     * @param {Backbone.Model} layer - the selected layer
+     * sets the slider for the time slider
+     * @param {ol.Feature[]} features - the used features
      * @returns {void}
      */
     setSliderModel: function (features) {
-        // const features = layer.get("layer").getSource().getFeatures();
+        const sliderValues = this.getSliderValues(features, this.get("attribute_prefix")),
+            sliderModel = new SliderModel({
+                snippetType: "slider",
+                values: sliderValues,
+                type: "integer",
+                preselectedValues: sliderValues[1]
+            });
 
-        // if (features.length > 0) {
-            const sliderValues = this.getSliderValues(features[0], this.get("attribute_prefix")),
-                sliderModel = new SliderModel({
-                    snippetType: "slider",
-                    values: sliderValues,
-                    type: "integer",
-                    preselectedValues: sliderValues[0]
-                });
+        this.listenTo(sliderModel, {
+            "valuesChanged": this.sliderCallback
+        }, this);
 
-            this.listenTo(sliderModel, {
-                "valuesChanged": this.sliderCallback
-            }, this);
-
-            this.set("sliderModel", sliderModel);
-            this.sliderCallback(undefined, sliderValues[0]);
-            this.trigger("renderSliderView", sliderModel);
-        // }
+        this.set("sliderModel", sliderModel);
+        this.setMaxYAxisValue(this.get("featuresProperties"), this.get("attribute_prefix"), sliderValues);
+        // for the init call
+        this.sliderCallback(undefined, sliderValues[1]);
+        this.trigger("renderSliderView", sliderModel);
     },
 
     /**
      * gets the values for the time slider
-     * @param {ol.Feature} feature - just a ol feature
+     * @param {ol.Feature[]} features - the used features
      * @param {string} attribute_prefix - time unit prefix
      * @returns {string[]} values of the given time unit
      */
-    getSliderValues: function (feature, attribute_prefix) {
+    getSliderValues: function (features, attribute_prefix) {
         const values = [];
 
-        Object.keys(feature.getProperties()).forEach(function (key) {
-            if (key.includes(attribute_prefix)) {
-                const index = key.indexOf("_") + 1;
+        features.forEach(function (feature) {
+            Object.keys(feature.getProperties()).forEach(function (key) {
+                if (key.includes(attribute_prefix)) {
+                    const index = key.indexOf("_") + 1;
 
-                values.push(parseInt(key.substr(index), 10));
-            }
+                    values.push(parseInt(key.substr(index), 10));
+                }
+            });
         });
 
-        return values.sort();
+        // get all unique values
+        return [...new Set(values.sort())];
     },
 
     /**
      * callback function for the "valuesChanged" event in the slider model
-     * collects the data for the graph
+     * calls the styling function for the features and triggers renderGraph to the view
      * @param {Backbone.Model} valueModel - the value model which is selected
      * @param {number} sliderValue - the current value of the slider
      * @returns {void}
      */
     sliderCallback: function (valueModel, sliderValue) {
-        // console.info(this.get("category"));
-        const features = Radio.request("FeaturesLoader", "getDistrictsByCategory", this.get("scope"), this.get("category")),
-        // const features = this.get("selectedLayer").get("layer").getSource().getFeatures(),
-            graphData = [];
-
-        features.forEach(function (feature) {
-            graphData.push(feature.getProperties());
-        });
-// console.info(this.get("sliderModel").get("values"));
-// console.info(graphData);
-        var max = this.getMaxYAxisValue(graphData, this.get("attribute_prefix"), this.get("sliderModel").get("values"));
-        this.styleFeatures(features, this.get("attribute_prefix") + sliderValue, max);
-        this.trigger("renderGraph", graphData, sliderValue, this.getMaxYAxisValue(graphData, this.get("attribute_prefix"), this.get("sliderModel").get("values")));
+        this.styleDistrictFeaturs(this.get("features"), this.get("attribute_prefix") + sliderValue, this.get("maxYAxisValue"));
+        this.trigger("renderGraph", this.get("featuresProperties"), sliderValue, this.get("maxYAxisValue"));
     },
 
     /**
-     * styles the features as well as the bar chart
-     * @param {Object[]} features - the features of the selected layer
+     * styles the equivalent district features (have a geometry) of the used features (have no geometry)
+     * use the same style for the district features as well as the bar chart
+     * @param {ol.Features[]} features - the used features
      * @param {string} attribute - style is depending on this attribute
+     * @param {number} max - max value for the color scale
      * @returns {void}
      */
-    styleFeatures: function (features, attribute, max) {
-        const colorScale = Radio.request("ColorScale", "getColorScaleByValues", [0, max]);
-        const layer = Radio.request("ModelList", "getModelByAttributes", {id: "6071"});
-// console.info(layer.get("layer").getSource().getFeatures());
-        var t = layer.get("layer").getSource().getFeatures();
-// var ar = [];
+    styleDistrictFeaturs: function (features, attribute, max) {
+        const districtFeatures = this.getDistrictFeaturesByScope(Radio.request("SelectDistrict", "getScope")),
+            foundDistrictFeatures = [],
+            colorScale = Radio.request("ColorScale", "getColorScaleByValues", [0, max]);
+
         features.forEach(function (feature) {
-            var s = t.find(function (tt) {
-                // console.info(tt.get("statgebiet"));
-                return feature.get("stat_gebiet") === tt.get("statgebiet");
+            // find the equivalent district feature -> to do for stadtteile
+            const foundFeature = districtFeatures.find(function (districtFeature) {
+                return feature.get("stat_gebiet") === districtFeature.get("statgebiet");
             });
 
-            // ar.push(s);
-            feature.setGeometry(s.getGeometry());
-            if(s) {
-                // console.info(feature.getProperties()[attribute]);
-                // console.info(colorScale.scale(feature.getProperties()[attribute]));
-                s.setStyle(new Style({
-                    fill: new Fill({
-                        color: colorScale.scale(feature.getProperties()[attribute])
-                    })
-                }));
-            }
+            foundFeature.setStyle(new Style({
+                fill: new Fill({
+                    color: colorScale.scale(feature.getProperties()[attribute])
+                })
+            }));
+            foundDistrictFeatures.push(foundFeature);
+        });
+        this.set("districtFeatures", foundDistrictFeatures);
+    },
+
+    /**
+     * gives the district features a "null-style"
+     * @param {Object[]} features - all styled features
+     * @returns {void}
+     */
+    unStyleDistrictFeaturs: function (features) {
+        features.forEach((feature) => {
+            feature.setStyle(null);
         });
     },
 
-    /**
-     * checks if the selected layer is equal to the layer of the loaded features
-     * @param {string} id - the id of a layer
-     * @returns {void}
-     */
-    checkLayerById: function (id) {
-        if (this.get("selectedLayer") && this.get("selectedLayer").get("id") === id) {
-            this.setSliderModel(this.get("selectedLayer"));
+    getDistrictFeaturesByScope: function (scope) {
+        let districtLayer;
+
+        if (scope === "Statistische Gebiete") {
+            districtLayer = Radio.request("ModelList", "getModelByAttributes", {id: "6071"});
         }
+        // Stadtteile
+        else {
+            districtLayer = Radio.request("ModelList", "getModelByAttributes", {id: "1694"});
+        }
+        return districtLayer.get("layer").getSource().getFeatures();
     },
 
     /**
-     * starts the running of the time series
+     * starts the running of the time slider
      * @returns {void}
      */
-    runningTimeSeries: function () {
+    runningTimeSlider: function () {
         const sliderModel = this.get("sliderModel"),
             sliderModelValues = sliderModel.get("values"),
             sliderModelValue = sliderModel.get("valuesCollection").at(0).get("value"),
@@ -245,7 +212,7 @@ const TimeSeriesModel = Tool.extend({
 
         if (indexOfValue < sliderModelValues.length - 1 && this.get("isRunning")) {
             sliderModel.get("valuesCollection").trigger("updateValue", sliderModelValues[indexOfValue + 1]);
-            setTimeout(this.runningTimeSeries.bind(this), 1500);
+            setTimeout(this.runningTimeSlider.bind(this), 1500);
         }
         // stop the running
         else {
@@ -254,54 +221,45 @@ const TimeSeriesModel = Tool.extend({
         }
     },
 
+    setIsRunning: function (value) {
+        this.set("isRunning", value);
+    },
+
+    setFeaturesByCategoryAndScope: function (category, scope) {
+        this.set("features", Radio.request("FeaturesLoader", "getDistrictsByCategory", scope, category));
+    },
+
+    // collects the data for the graph
+    setFeaturesProperties: function (features) {
+        const featuresProperties = [];
+
+        features.forEach(function (feature) {
+            featuresProperties.push(feature.getProperties());
+        });
+        this.set("featuresProperties", featuresProperties);
+    },
+
     /**
-     * gets the max value for the y-axis
-     * @param {object[]} graphData - data for graph
+     * sets the max value for the y-axis
+     * @param {object[]} featuresProperties - data for graph
      * @param {string} prefix - time unit prefix
      * @param {number[]} sliderValues - values of the slider
-     * @returns {number} max
+     * @returns {void}
      */
-    getMaxYAxisValue: function (graphData, prefix, sliderValues) {
+    setMaxYAxisValue: function (featuresProperties, prefix, sliderValues) {
+        // to do für prozente
         let maxValue = 0;
 
         sliderValues.forEach(function (value) {
-            const maxValues = graphData.map(function (data) {
+            const maxValues = featuresProperties.map(function (data) {
                 return parseInt(data[prefix + value], 10) || 0;
             });
 
             maxValue = Math.max(...maxValues, maxValue);
         });
 
-        return maxValue;
-    },
-
-    /**
-     * gets a layer by name
-     * @param {string} layerName - the name of a layer
-     * @returns {Backbone.Model} the layer
-     */
-    getLayerByName: function (layerName) {
-        return this.get("layerList").findWhere({name: layerName});
-    },
-
-    /**
-     * gives the features a "null-style"
-     * @param {Object[]} features - all styled features
-     * @returns {void}
-     */
-    unStyleFeatures: function (features) {
-        _.each(features, (feature) => {
-            feature.setStyle(null);
-        });
-    },
-
-    setSelectedLayer: function (layer) {
-        this.set("selectedLayer", layer);
-    },
-
-    setIsRunning: function (value) {
-        this.set("isRunning", value);
+        this.set("maxYAxisValue", maxValue);
     }
 });
 
-export default TimeSeriesModel;
+export default TimeSliderModel;

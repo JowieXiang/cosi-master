@@ -35,6 +35,7 @@ const featuresLoader = Backbone.Model.extend({
      * @returns {void}
      */
     checkDistrictType: function (bbox, type, districtNameList) {
+        // to do - nur einmal laden und dann speichern
         if (type === "Stadtteile") {
             this.loadDistricts(bbox, this.get("stadtteileUrl"), "stadtteile", districtNameList);
         }
