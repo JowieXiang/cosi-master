@@ -2,7 +2,7 @@
 
 <label for="district-selector"><strong>Referenzgebiet</strong></label>
 <select class="form-control input-sm selectpicker" data-size="5" title="Demografische Daten anzeigen" id="district-selector" data-live-search="true">
-    <option disabled selected value> - </option>
+    <option selected value="Leeren"> -Leeren- </option>
     <% _.each( districtNames, function (name) { %>
     <option value=<%= name %>><%= name %></option>
     <% }); %>

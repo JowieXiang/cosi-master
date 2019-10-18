@@ -15,14 +15,19 @@ const CompareDistrictsView = Backbone.View.extend({
             this.addFilterModel(e);
             this.filterLayerOptions();
         },
-        "click .district-name": "zoomToDistrict"
+        "click .district-name": "zoomToDistrict",
+        "click #compare-district-help": "showHelp"
     },
 
     initialize: function () {
         const channel = Radio.channel("CompareDistricts");
 
         this.listenTo(channel, {
-            "closeFilter": this.addLayerOption
+            "closeFilter": this.addLayerOption,
+            "selectRefDistrict": function () {
+                this.updateLayerFilterCollection();
+                this.setRefDistrict();
+            }
         });
         this.listenTo(this.model, {
             "change:isActive": function (model, value) {
@@ -77,6 +82,11 @@ const CompareDistrictsView = Backbone.View.extend({
             });
         }
     },
+    updateLayerFilterCollection: function () {
+        this.layerFilterCollection.each(function (layerFilter) {
+            layerFilter.updateRefDistrictValue();
+        });
+    },
     createSelectors: function () {
         this.$el.find("#district-selector-container").empty();
         this.districtSelector = new DistrictSelectorView();
@@ -87,7 +97,6 @@ const CompareDistrictsView = Backbone.View.extend({
     },
 
     addFilterModel: function () {
-        console.log("layerInfo: ",this.layerFilterSelector.getSelectedLayer());
         const layerInfo = this.layerFilterSelector.getSelectedLayer(),
             layerFilterModel = new LayerFilterModel({ layerInfo: layerInfo });
 
@@ -133,7 +142,7 @@ const CompareDistrictsView = Backbone.View.extend({
         this.model.set("layerFilterList", JSON.stringify(newList));
     },
     setRefDistrict: function () {
-        if (this.districtSelector.getSelectedDistrict() !== "") {
+        if (this.districtSelector.getSelectedDistrict() !== "Leeren") {
             this.$el.find("#refdistrict").html(`
         <p id="Referenzgebiet"><strong>| Referenzgebiet</strong></p>
         <p><span class="name-tag">${this.districtSelector.getSelectedDistrict()}</span></p>
@@ -200,6 +209,9 @@ const CompareDistrictsView = Backbone.View.extend({
             }
             this.showComparableDistricts(comparableFeatures);
         }
+        else {
+            this.$el.find("#compare-results").empty();
+        }
     },
 
     filterOne: function (layerFilter) {
@@ -256,10 +268,16 @@ const CompareDistrictsView = Backbone.View.extend({
         newLayer.setVisible(false);
     },
 
-    zoomToDistrict (evt) {
+    zoomToDistrict: function (evt) {
         Radio.trigger("SelectDistrict", "zoomToDistrict", evt.target.innerHTML.trim(), false);
-    }
+    },
 
+    showHelp: function () {
+        Radio.trigger("Alert", "alert", {
+            text: "<strong> So funktioniert diese Funktion: </strong>",
+            kategorie: "alert-info"
+        });
+    }
 });
 
 

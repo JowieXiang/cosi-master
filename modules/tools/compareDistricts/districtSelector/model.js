@@ -15,6 +15,7 @@ const DistrictSelectorModel = Backbone.Model.extend({
     },
     setSelectedDistrict: function (value) {
         this.set("selectedDistrict", value);
+        Radio.trigger("CompareDistricts", "selectRefDistrict");
     }
 });
 
