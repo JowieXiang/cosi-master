@@ -18,6 +18,7 @@ const DistrictSelectorView = Backbone.View.extend({
     render: function () {
         this.model = new Model();
         this.$el.html(this.template(this.model.toJSON()));
+        this.$el.find("#district-selector").selectpicker("refresh");
         return this;
     },
     setSelectedDistrict: function (evt) {

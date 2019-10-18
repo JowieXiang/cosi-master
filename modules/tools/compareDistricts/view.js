@@ -34,7 +34,7 @@ const CompareDistrictsView = Backbone.View.extend({
                     "change": this.updateLayerFilterList
                 });
                 if (value) {
-                    this.selectDistrictReminder();
+                    // this.selectDistrictReminder();
                     this.render();
                 }
                 else {
