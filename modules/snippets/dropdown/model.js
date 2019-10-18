@@ -17,6 +17,7 @@ const DropdownModel = SnippetModel.extend(/** @lends DropdownModel.prototype */{
         // number of entries displayed
         numOfOptions: 10,
         isMultiple: true,
+        isGrouped: false,
         liveSearch: false
     },
 
@@ -38,38 +39,55 @@ const DropdownModel = SnippetModel.extend(/** @lends DropdownModel.prototype */{
     },
 
     postInitialize: function () {
-        this.updateValueModels(this.get("values"));
+        this.updateValueModels(this.get("values"), this.get("isGrouped"));
         if (this.get("preselectedValues").length > 0) {
             this.updateSelectedValues(this.get("preselectedValues"));
         }
-        this.setValueModelsToShow(this.get("valuesCollection").where({isSelectable: true}));
+        this.setValueModelsToShow(this.get("valuesCollection").where({isSelectable: true}), this.get("isGrouped"));
     },
 
     /**
      * checks for each value whether it already exists and removes the models that are not in the valueList anymore
-     * @param {string[]} valueList - init dropdown values
+     * @param {string[] | object[]} valueList - init dropdown values
+     * @param {boolean} isGrouped - flag if the objects should be grouped
      * @returns {void}
      */
-    updateValueModels: function (valueList) {
-        _.each(valueList, function (value) {
-            if (!this.get("valuesCollection").models.map(model => model.get("value")).includes(value)) {
-                this.addValueModel(value);
-            }
-            else {
-                this.get("valuesCollection").remove(this.get("valuesCollection").models.filter((model) => !valueList.includes(model.get("value"))));
-            }
-        }, this);
+    updateValueModels: function (valueList, isGrouped) {
+        if (isGrouped) {
+            // array of objects
+            _.each(valueList, function (obj) {
+                if (!this.get("valuesCollection").models.map(model => model.get("value")).includes(obj.value)) {
+                    this.addValueModel(obj.value, obj.group);
+                }
+                else {
+                    this.get("valuesCollection").remove(this.get("valuesCollection").models.filter((model) => !valueList.includes(model.get("value"))));
+                }
+            }, this);
+        }
+        else {
+            // array of strings
+            _.each(valueList, function (value) {
+                if (!this.get("valuesCollection").models.map(model => model.get("value")).includes(value)) {
+                    this.addValueModel(value);
+                }
+                else {
+                    this.get("valuesCollection").remove(this.get("valuesCollection").models.filter((model) => !valueList.includes(model.get("value"))));
+                }
+            }, this);
+        }
     },
 
     /**
      * creates a model value and adds it to the value collection
-     * @param  {string} value - value
+     * @param {string} value - value
+     * @param {string|undefined} group - name of its group
      * @returns {void}
      */
-    addValueModel: function (value) {
+    addValueModel: function (value, group) {
         this.get("valuesCollection").add(new ValueModel({
             attr: this.get("name"),
             value: value,
+            group: group ? group : undefined,
             displayName: this.getDisplayName(value),
             isSelected: false,
             isSelectable: true,
@@ -163,7 +181,7 @@ const DropdownModel = SnippetModel.extend(/** @lends DropdownModel.prototype */{
             }
         }, this);
 
-        this.setValueModelsToShow(this.get("valuesCollection").where({isSelectable: true}));
+        this.setValueModelsToShow(this.get("valuesCollection").where({isSelectable: true}), this.get("isGrouped"));
         this.trigger("render");
     },
 
@@ -178,11 +196,19 @@ const DropdownModel = SnippetModel.extend(/** @lends DropdownModel.prototype */{
 
     /**
      * sets the valueModelsToShow attribute
-     * @param  {Backbone.Model[]} value - all value models that can be selected
+     * @param {Backbone.Model[]} models - all value models that can be selected
+     * @param {boolean} isGrouped - flag if the objects should be grouped
      * @returns {void}
      */
-    setValueModelsToShow: function (value) {
-        this.set("valueModelsToShow", value);
+    setValueModelsToShow: function (models, isGrouped) {
+        if (isGrouped) {
+            this.set("valueModelsToShow", _.groupBy(models, function (model) {
+                return model.get("group");
+            }));
+        }
+        else {
+            this.set("valueModelsToShow", models);
+        }
     },
 
     /**
