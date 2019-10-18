@@ -21,8 +21,8 @@ const LayerFilterModel = Backbone.Model.extend({
                 id: layerId
             });
         let refValue = 0;
-
-        if (Radio.request("DistrictSelector", "getSelectedDistrict") !== "") {
+            console.log("selected: ",Radio.request("DistrictSelector", "getSelectedDistrict"));
+        if (Radio.request("DistrictSelector", "getSelectedDistrict") !== "Leeren") {
             const districtName = $("#district-selector").children("option:selected").val(),
                 refFeature = featureCollection.filter(feature => feature.getProperties()[selector] === districtName)[0];
 

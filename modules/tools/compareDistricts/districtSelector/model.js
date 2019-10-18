@@ -1,7 +1,7 @@
 const DistrictSelectorModel = Backbone.Model.extend({
     defaults: {
         districtNames: [], // all select options (vector layers in the map)
-        selectedDistrict: "" // selected option
+        selectedDistrict: "Leeren" // selected option
 
     },
     initialize: function () {
