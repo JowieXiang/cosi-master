@@ -1,7 +1,7 @@
 <select class="selectpicker" title="<%= displayName %>" data-live-search="<%= liveSearch ? true : false %>" <%isMultiple? print("multiple") : print("")%>>
     <% _.each(valueModelsToShow, function (value, key) {  %>
         <optgroup label="<%= key %>">
-            <% _.each(value, function (model) { console.info(model); %>
+            <% _.each(value, function (model) { %>
                 <option value="<%= model.get('value') %>"><%= model.get('displayName') %></option>
             <% }); %>
         </optgroup>

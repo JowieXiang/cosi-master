@@ -2,7 +2,6 @@ import Tool from "../../../../modules/core/modelList/tool/model";
 import DropdownModel from "../../../../modules/snippets/dropdown/model";
 import SliderModel from "../../../../modules/snippets/slider/model";
 import {Fill, Style} from "ol/style.js";
-import MappingJson from "../../assets/mapping.json";
 
 const TimeSliderModel = Tool.extend({
     defaults: _.extend({}, Tool.prototype.defaults, {
@@ -18,7 +17,6 @@ const TimeSliderModel = Tool.extend({
             "change:isActive": function (model, isActive) {
                 if (!isActive) {
                     this.unStyleDistrictFeaturs(this.get("districtFeatures"));
-                    Radio.trigger("ModelList", "setModelAttributesById", this.get("selectedLayer"), {isSelected: false});
                     this.trigger("remove");
                 }
                 else {
@@ -26,10 +24,6 @@ const TimeSliderModel = Tool.extend({
                 }
             }
         });
-
-        if (this.get("isActive")) {
-            this.run();
-        }
     },
 
     /**
@@ -38,26 +32,29 @@ const TimeSliderModel = Tool.extend({
      */
     run: function () {
         // the used features
-        this.setFeaturesByCategoryAndScope(Object.keys(MappingJson)[0], Radio.request("SelectDistrict", "getScope"));
+        this.setFeaturesByValueAndScope("Bevölkerung insgesamt", Radio.request("SelectDistrict", "getScope"));
         // data for the graph
         this.setFeaturesProperties(this.get("features"));
         this.trigger("render");
-        this.setDropDownModel();
+        // to do for stadtteile
+        this.setDropDownModel(Radio.request("FeaturesLoader", "getAllValuesByScope", "stat_gebiet"));
         this.setSliderModel(this.get("features"));
     },
 
     /**
      * sets the selection list for the time slider
+     * @param {object[]} valueList - available values
      * @returns {void}
      */
-    setDropDownModel: function () {
+    setDropDownModel: function (valueList) {
         const dropdownModel = new DropdownModel({
             name: "Thema",
             type: "string",
-            values: Object.values(MappingJson),
+            values: valueList,
             snippetType: "dropdown",
             isMultiple: false,
-            preselectedValues: Object.values(MappingJson)[0]
+            isGrouped: true,
+            preselectedValues: valueList[0].value
         });
 
         this.listenTo(dropdownModel, {
@@ -68,19 +65,15 @@ const TimeSliderModel = Tool.extend({
 
     /**
      * callback function for the "valuesChanged" event in the dropdown model
-     * sets the features based on the dropdown selection (category)
+     * sets the features based on the dropdown selection
      * @param {Backbone.Model} valueModel - the value model which was selected or deselected
      * @param {boolean} isSelected - flag if value model is selected or not
      * @returns {void}
      */
     dropDownCallback: function (valueModel, isSelected) {
         if (isSelected) {
-            const category = Object.keys(MappingJson).find(key => {
-                return MappingJson[key] === valueModel.get("value");
-            });
-
             // the used features
-            this.setFeaturesByCategoryAndScope(category, Radio.request("SelectDistrict", "getScope"));
+            this.setFeaturesByValueAndScope(valueModel.get("value"), Radio.request("SelectDistrict", "getScope"));
             // data for the graph
             this.setFeaturesProperties(this.get("features"));
             this.setSliderModel(this.get("features"));
@@ -187,6 +180,11 @@ const TimeSliderModel = Tool.extend({
         });
     },
 
+    /**
+     * gets the district features (which have a geometry) by scope
+     * @param {string} scope - Statischtische Gebiete | Stadtteile
+     * @returns {ol.Feature[]} district features
+     */
     getDistrictFeaturesByScope: function (scope) {
         let districtLayer;
 
@@ -225,11 +223,21 @@ const TimeSliderModel = Tool.extend({
         this.set("isRunning", value);
     },
 
-    setFeaturesByCategoryAndScope: function (category, scope) {
-        this.set("features", Radio.request("FeaturesLoader", "getDistrictsByCategory", scope, category));
+    /**
+     * sets the used features
+     * @param {string} value - the selected value in the dropdown
+     * @param {string} scope - stat_gebiet | stadttteil
+     * @returns {void}
+     */
+    setFeaturesByValueAndScope: function (value, scope) {
+        this.set("features", Radio.request("FeaturesLoader", "getDistrictsByValue", scope, value));
     },
 
-    // collects the data for the graph
+    /**
+     * collects the data for the graph, conforms to the features properties
+     * @param {ol.Feature[]} features - the used features
+     * @returns {void}
+     */
     setFeaturesProperties: function (features) {
         const featuresProperties = [];
 

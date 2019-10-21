@@ -1,3 +1,4 @@
+import MappingJson from "./mapping.json";
 import {WFS} from "ol/format.js";
 import "whatwg-fetch";
 
@@ -15,31 +16,32 @@ const featuresLoader = Backbone.Model.extend({
         const channel = Radio.channel("FeaturesLoader");
 
         channel.reply({
-            "getDistrictsByType": this.getDistrictsByType,
-            "getDistrictsByCategory": this.getDistrictsByCategory,
-            "getAllFeaturesByAttribute": this.getAllFeaturesByAttribute
+            "getDistrictsByScope": this.getDistrictsByScope,
+            "getDistrictsByValue": this.getDistrictsByValue,
+            "getAllFeaturesByAttribute": this.getAllFeaturesByAttribute,
+            "getAllValuesByScope": this.getAllValuesByScope
         }, this);
         channel.on({
             "districtsLoaded": this.districtsLoaded
         }, this);
         this.listenTo(Radio.channel("SelectDistrict"), {
-            "selectionChanged": this.checkDistrictType
+            "selectionChanged": this.checkDistrictScope
         });
     },
 
     /**
-     * checks which type of districts are selected
+     * checks which scope of districts are selected
      * @param {number[]} bbox - extent of the selected areas
-     * @param {string} type - type of the selected areas (Stadtteile or Statistische Gebiete)
+     * @param {string} scope - scope of the selected areas (Stadtteile or Statistische Gebiete)
      * @param {string[]} districtNameList - the names of the Stadtteile or of the Statistische Gebiete
      * @returns {void}
      */
-    checkDistrictType: function (bbox, type, districtNameList) {
+    checkDistrictScope: function (bbox, scope, districtNameList) {
         // to do - nur einmal laden und dann speichern
-        if (type === "Stadtteile") {
+        if (scope === "Stadtteile") {
             this.loadDistricts(bbox, this.get("stadtteileUrl"), "stadtteile", districtNameList);
         }
-        else if (type === "Statistische Gebiete") {
+        else if (scope === "Statistische Gebiete") {
             this.loadDistricts(bbox, this.get("statistischeGebieteUrl"), "statistischeGebiete", districtNameList);
         }
     },
@@ -154,25 +156,27 @@ const featuresLoader = Backbone.Model.extend({
 
     /**
      * returns the district features
-     * @param {string} type - type of districts
+     * @param {string} scope - scope of districts, Stadtteile | Statistische Gebiete
      * @returns {ol.Feature[]} the district features
      */
-    getDistrictsByType: function (type) {
-        if (type === "Stadtteile") {
+    getDistrictsByScope: function (scope) {
+        if (scope === "Stadtteile") {
             return this.get("stadtteile");
         }
         return this.get("statistischeGebiete");
     },
 
     /**
-     * returns district features of a category
-     * @param {string} type - type of districts
-     * @param {string} category - the category to be filtered by
+     * returns district features by a value
+     * @param {string} scope - scope of districts, Stadtteile | Statistische Gebiet
+     * @param {string} value - the value to be filtered by
      * @returns {ol.Feature[]} the district features
      */
-    getDistrictsByCategory: function (type, category) {
-        return this.getDistrictsByType(type).filter(function (feature) {
-            return feature.getProperties().kategorie === category;
+    getDistrictsByValue: function (scope, value) {
+        const mappingObject = this.findMappingObjectByValue(value);
+
+        return this.getDistrictsByScope(scope).filter(function (feature) {
+            return feature.getProperties().kategorie === mappingObject.category;
         });
     },
 
@@ -188,7 +192,7 @@ const featuresLoader = Backbone.Model.extend({
             featureList = this.get("featureList"),
             layer = Radio.request("RawLayerList", "getLayerWhere", obj),
             xhr = new XMLHttpRequest();
-        console.log("getLayerWhere: ",layer);
+
         if (featureList.hasOwnProperty(valueOfLayer)) {
             return featureList[valueOfLayer];
         }
@@ -217,6 +221,28 @@ const featuresLoader = Backbone.Model.extend({
      */
     districtsLoaded: function (layerList) {
         return layerList;
+    },
+
+    /**
+     * finds a mapping object by its value
+     * @param {string} value - value of the mapping object
+     * @returns {object} the mapping object
+     */
+    findMappingObjectByValue: function (value) {
+        return MappingJson.find(obj => {
+            return obj.value === value;
+        });
+    },
+
+    /**
+     * get all available values by scope
+     * @param {string} scope - stat_gebiet | stadtteil
+     * @returns {object[]} list of all available values
+     */
+    getAllValuesByScope: function (scope) {
+        return MappingJson.filter(obj => {
+            return obj[scope] === true;
+        });
     }
 
 });

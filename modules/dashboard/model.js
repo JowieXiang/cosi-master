@@ -91,7 +91,7 @@ const DashboardModel = Tool.extend({
             }
             return [...newTable, Radio.request("Timeline", "createTimelineTable", [properties])[0]];
         }, []);
-        
+
         // Todo: GFI mapping
         // Add total and mean values and filter table for excluded properties
         this.set("tableView", this.calculateTotalAndMean(Radio.request("Timeline", "fillUpTimelineGaps", table, "Array")));
@@ -202,7 +202,7 @@ const DashboardModel = Tool.extend({
     },
 
     getData: function () {
-        const features = Radio.request("FeaturesLoader", "getDistrictsByType", Radio.request("SelectDistrict", "getScope"));
+        const features = Radio.request("FeaturesLoader", "getDistrictsByScope", Radio.request("SelectDistrict", "getScope"));
 
         this.updateTable(features);
     },
