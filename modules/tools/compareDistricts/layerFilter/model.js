@@ -1,9 +1,8 @@
 const LayerFilterModel = Backbone.Model.extend({
     defaults: {
-        districtName: "", // selected district name
-        districtInfo: [], // [{key:...,value:..., max: ..., min: ..., space: ...},{},...]
+        districtInfo: [], // [{key:...,value:..., max: ..., min: ...},{},...]
         layerInfo: {},
-        filter: ""// e.g {filterKey:value,filterKey:value,filterKey:value,...}
+        filter: "" // e.g {filterKey:value,filterKey:value,filterKey:value,...},
     },
     initialize: function () {
         this.initializeFilter();
@@ -17,26 +16,55 @@ const LayerFilterModel = Backbone.Model.extend({
     },
     initializeDistrictInfo: function () {
         const selector = Radio.request("SelectDistrict", "getSelector") === "statgebiet" ? "stat_gebiet" : Radio.request("SelectDistrict", "getSelector"),
-            districtName = $("#district-selector").children("option:selected").val(),
+            layerId = this.get("layerInfo").layerId,
+            featureCollection = Radio.request("FeaturesLoader", "getAllFeaturesByAttribute", {
+                id: layerId
+            });
+        let refValue = 0;
+            console.log("selected: ",Radio.request("DistrictSelector", "getSelectedDistrict"));
+        if (Radio.request("DistrictSelector", "getSelectedDistrict") !== "Leeren") {
+            const districtName = $("#district-selector").children("option:selected").val(),
+                refFeature = featureCollection.filter(feature => feature.getProperties()[selector] === districtName)[0];
+
+            refValue = parseInt(refFeature.getProperties().jahr_2018, 10);
+        }
+        else {
+            refValue = 0;
+        }
+        const districtInfo = [],
+            values = featureCollection.map(feature => parseFloat(feature.getProperties().jahr_2018)),
+            max = parseInt(Math.max(...values), 10),
+            min = parseInt(Math.min(...values), 10),
+            newInfo = {
+                key: "jahr_2018", value: refValue, max: max, min: min
+            };
+
+        districtInfo.push(newInfo);
+        this.set("districtInfo", districtInfo);
+        console.log("disInfo intial: ", this.get("districtInfo"));
+
+    },
+    updateRefDistrictValue: function () {
+        const selector = Radio.request("SelectDistrict", "getSelector") === "statgebiet" ? "stat_gebiet" : Radio.request("SelectDistrict", "getSelector"),
             layerId = this.get("layerInfo").layerId,
             featureCollection = Radio.request("FeaturesLoader", "getAllFeaturesByAttribute", {
                 id: layerId
             }),
-            refFeature = featureCollection.filter(feature => feature.getProperties()[selector] === districtName)[0],
-            districtInfo = [],
-            values = featureCollection.map(feature => parseFloat(feature.getProperties().jahr_2018)),
-            max = parseInt(Math.max(...values), 10),
-            min = parseInt(Math.min(...values), 10),
-            refValue = parseInt(refFeature.getProperties().jahr_2018, 10),
-            space = Math.max(max - refValue, refValue - min),
-            newInfo = {
-                key: "jahr_2018", value: refValue, max: max, min: min, space: space
-            };
+            newDistrictInfo = _.map(this.get("districtInfo"), _.clone);
 
-        districtInfo.push(newInfo);
+        let refValue = 0;
+        console.log("selected value: ", Radio.request("DistrictSelector", "getSelectedDistrict"));
+        if (Radio.request("DistrictSelector", "getSelectedDistrict") !== "Leeren") {
+            const districtName = $("#district-selector").children("option:selected").val(),
+                refFeature = featureCollection.filter(feature => feature.getProperties()[selector] === districtName)[0];
 
-        this.set("districtInfo", districtInfo);
-        this.set("districtName", districtName);
+            refValue = parseInt(refFeature.getProperties().jahr_2018, 10);
+        }
+        else {
+            refValue = 0;
+        }
+        newDistrictInfo.filter(item => item.key === "jahr_2018")[0].value = refValue;
+        this.set("districtInfo", newDistrictInfo);
     }
 
 });

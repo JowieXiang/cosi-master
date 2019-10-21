@@ -97,7 +97,7 @@ const AgeGroupSliderModel = Tool.extend({
 
         if (selectedDistricts.length === 0) {
             Radio.trigger("Alert", "alert", {
-                text: "<strong> Bitte wählen Sie zuerst die Bezirke mit 'Gebiet wählen' im Werkzeugmenü aus</strong>",
+                text: "<strong> Bitte wählen Sie zuerst die Gebiet mit 'Gebiet wählen' im Werkzeugmenü aus</strong>",
                 kategorie: "alert-warning"
             });
         }

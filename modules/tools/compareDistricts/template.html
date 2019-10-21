@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <div class="compare-districts container">
-	<div class="row">
+	<div class="row compare-district-row">
 		<form>
-			<div class="form-row" id="district-selector-container">
-			</div>
 			<div class="form-row" id="layerfilter-selector-container">
 			</div>
+			<div class="form-row" id="district-selector-container">
+			</div>
 			<div class="form-row">
-				<div class="form-group col-md-4" id="add-filter-button-group">
+				<div class="form-group col-md-3" id="add-filter-button-group">
 					<br />
 					<div id="add-filter">
 						<span class="glyphicon glyphicon-plus"></span>
@@ -15,22 +15,27 @@
 					</div>
 				</div>
 			</div>
+			<div class="form-row">
+				<div class="form-group col-md-1" >
+					<br />
+					<div id="compare-district-help">
+						<span class="glyphicon glyphicon-question-sign"></span>
+					</div>
+				</div>
+			</div>
 		</form>
-	</div>
-	<div class="row">
-		<div class="col">
-			<p id="Referenzgebiet"><strong>| Referenzgebiet</strong></p>
-			<p id="refdistrict"></p>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col">
-			<p><strong>| Vergleichbare Gebiete</strong></p>
-			<p id="compare-results"></p>
-		</div>
 	</div>
 	<br />
 	<div class="row">
 		<div id="layerfilter-container"></div>
 	</div>
+	<div class="row">
+		<div class="col" id="refdistrict">
+		</div>
+	</div>
+	<div class="row">
+		<div class="col" id="compare-results">
+		</div>
+	</div>
+
 </div>

@@ -44,18 +44,34 @@
 }
 
 #add-filter {
-	padding         : 5px;
+	padding-top     : 8px;
 	background-color: white;
-	border-radius   : 5px;
-	height          : 30px;
-	box-shadow      : rgba(0, 0, 0, 0.3) 0px 1px 2px 0px;
-	border          : none;
-	cursor: pointer;
+	margin          : 5px 0 0 0;
+	height          : 34px;
+	border          : 1px solid #ccc;
+	cursor          : pointer;
+	text-align      : center;
 }
 
 #add-filter:hover {
 	background-color: #d3d3d3;
 }
+
+#compare-district-help {
+	padding-top     : 8px;
+	background-color: white;
+	margin          : 5px 0 0 0;
+	height          : 34px;
+	border          : 1px solid #ccc;
+	cursor          : pointer;
+	text-align      : center;
+	min-width       : 34px;
+}
+
+#compare-district-help:hover {
+	background-color: #d3d3d3;
+}
+
 
 .form-group {
 	padding-left: 0px;
@@ -67,12 +83,28 @@
 
 .name-tag {
 	border-radius   : 5px;
-	background-color: #d3d3d3;
+	background-color: black;
 	color           : white;
 	padding         : 2px 4px;
 	margin          : 2px;
 }
 
+.name-tag.district-name {
+	cursor: pointer;
+}
+
+.name-tag.district-name:hover {
+	background-color: #D3D3D3;
+	color           : black;
+}
+
 #Referenzgebiet {
 	margin-top: 10px;
+}
+
+.compare-district-row {
+	min-width: 400px;
+}
+.compare-districts{
+	min-height: 300px;
 }

@@ -1,12 +1,11 @@
 const DistrictSelectorModel = Backbone.Model.extend({
     defaults: {
         districtNames: [], // all select options (vector layers in the map)
-        selectedDistrict: "" // selected option
+        selectedDistrict: "Leeren" // selected option
 
     },
     initialize: function () {
         this.initializeDistrictNames();
-
     },
     initializeDistrictNames: function () {
         const selector = Radio.request("SelectDistrict", "getSelector"),
@@ -16,6 +15,7 @@ const DistrictSelectorModel = Backbone.Model.extend({
     },
     setSelectedDistrict: function (value) {
         this.set("selectedDistrict", value);
+        Radio.trigger("CompareDistricts", "selectRefDistrict");
     }
 });
 

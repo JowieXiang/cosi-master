@@ -222,23 +222,11 @@
         "districtLayer": [
           {
             "name": "Stadtteile",
-            "selector": "stadtteil",
-            "layerIds": [
-              "2763",
-              "2769",
-              "2768",
-              "2771"
-            ]
+            "selector": "stadtteil"
           },
           {
             "name": "Statistische Gebiete",
-            "selector": "statgebiet",
-            "layerIds": [
-              "15563",
-              "15564",
-              "15565",
-              "15989"
-            ]
+            "selector": "statgebiet"
           }
         ]
       }

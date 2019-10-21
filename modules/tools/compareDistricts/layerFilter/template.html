@@ -11,8 +11,8 @@
             <tr>
                 <th scope="col">Parameter</th>
                 <th scope="col">min.</th>
-                <th scope="col">Referenzwert</th>
                 <th scope="col">max.</th>
+                <th scope="col">Referenzwert</th>
                 <th scope="col">Toleranz</th>
             </tr>
         </thead>
@@ -21,13 +21,12 @@
             <tr>
                 <td><%= info.key %></td>
                 <td><%= info.min %></td>
-                <td><%= info.value %></td>
                 <td><%= info.max %></td>
+                <td><input value="<%= info.value %>" class="reference-value-input" id="<%= info.key %>"></input></td>
                 <td id="<%= info.key %>-td"></td>
             </tr>
             <% }); %>
-
         </tbody>
     </table>
 </div>
-<br/>
+<br />

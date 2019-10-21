@@ -1,16 +1,9 @@
 import template from "text-loader!./template.html";
-import Model from "./model";
+// import Model from "./model";
 
 const LayerFilterSelectorView = Backbone.View.extend({
     events: {
         "change select": "setSelectedLayer"
-    },
-
-    initialize: function () {
-        this.listenTo(this.model, {
-            "change:selectedLayer": function (model, value) {
-            }
-        });
     },
 
     tagName: "div",
@@ -21,6 +14,7 @@ const LayerFilterSelectorView = Backbone.View.extend({
 
     render: function () {
         this.$el.html(this.template(this.model.toJSON()));
+        this.$el.find("#layer-selection").selectpicker("refresh");
         return this;
     },
 

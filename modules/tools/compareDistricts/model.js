@@ -4,16 +4,12 @@ const CompareDistrictsModel = Tool.extend({
     defaults: _.extend({}, Tool.prototype.defaults, {
         // selectedLayers: [],
         layerFilterList: "", // e.g [{layerId: "", filter: [{key: value},...]},...]
-        mapLayerName: "compare-district"
+        mapLayerName: "compare-district",
+        mode: "" // "DISTRICTMODE", "VALUEMODE"
     }),
-
     initialize: function () {
-
         this.superInitialize();
-
     }
-
-
 });
 
 export default CompareDistrictsModel;

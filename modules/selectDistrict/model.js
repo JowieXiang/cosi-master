@@ -45,7 +45,7 @@ const SelectDistrict = Tool.extend({
             name: "Bezugseinheit",
             type: "string",
             displayName: "Bezugseinheit auswählen",
-            values: this.get("districtLayerNames"),
+            values: this.get("districtLayerNames").reverse(),
             snippetType: "dropdown",
             isMultiple: false,
             preselectedValues: this.get("districtLayerNames")[0]
@@ -86,6 +86,10 @@ const SelectDistrict = Tool.extend({
             "getSelector": this.getSelector,
             "getScopeAndSelector": this.getScopeAndSelector,
             "getDistrictLayer": this.getDistrictLayer
+        }, this);
+
+        this.get("channel").on({
+            "zoomToDistrict": this.zoomAndHighlightFeature
         }, this);
     },
 
@@ -228,7 +232,7 @@ const SelectDistrict = Tool.extend({
     },
     toggleScopeLayers: function () {
         _.each(this.get("districtLayerNames"), (layerName) => {
-            const layer = Radio.request("ModelList", "getModelByAttributes", { "name": layerName }); 
+            const layer = Radio.request("ModelList", "getModelByAttributes", { "name": layerName });
 
             if (layerName !== this.getScope()) {
                 layer.setIsVisibleInMap(false);
@@ -247,7 +251,7 @@ const SelectDistrict = Tool.extend({
             }
         }
 
-        if (_.isEqual(this.get("districtLayerNames"), this.get("districtLayersLoaded"))) {
+        if (_.isEqual(this.get("districtLayerNames").sort(), this.get("districtLayersLoaded").sort())) {
             this.getScopeFromDropdown();
 
             if (this.get("urlQuery")) {
@@ -255,6 +259,26 @@ const SelectDistrict = Tool.extend({
             }
 
             this.set("isReady", true);
+        }
+    },
+    zoomAndHighlightFeature: async function (districtName, onlySelected = true) {
+        let districts = this.getSelectedDistricts(),
+            extent;
+
+        if (!onlySelected) {
+            const getLayerSource = Promise.resolve(Radio.request("ModelList", "getModelByAttributes", {"name": this.getScope()}).get("layerSource")),
+                layerSource = await getLayerSource;
+
+            districts = layerSource.getFeatures();
+        }
+
+        _.each(districts, (feature) => {
+            if (feature.getProperties()[this.getSelector()] === districtName) {
+                extent = feature.getGeometry().getExtent();
+            }
+        });
+        if (extent) {
+            Radio.trigger("Map", "zoomToExtent", extent, {padding: [20, 20, 20, 20]});
         }
     },
     getSelector: function () {

@@ -4,8 +4,7 @@ import SnippetDropdownView from "../snippets/dropdown/view";
 
 const SelectDistrictView = Backbone.View.extend({
     events: {
-        "click button#Submit": "checkIfSelected",
-        "click span": "test"
+        "click button#Submit": "checkIfSelected"
     },
     initialize: function () {
         this.scopeDropdownView = new SnippetDropdownView({
@@ -20,9 +19,6 @@ const SelectDistrictView = Backbone.View.extend({
             this.render(this.model, true);
         }
     },
-    test () {
-        Radio.trigger("MouseHover", "hide");
-    },
     model: new SelectDistrictModel(),
     scopeDropdownView: {},
     template: _.template(Template),
@@ -35,6 +31,9 @@ const SelectDistrictView = Backbone.View.extend({
             this.$el.html(this.template(attr));
 
             this.$el.find(".dropdown").append(this.scopeDropdownView.render().el);
+            // hack as long as no stadtteile are available
+            this.$el.find(".dropdown-menu.inner li:nth-child(2)").addClass("disabled");
+            this.$el.find(".dropdown-menu.inner li:nth-child(2)").prop("title", "Stadtteile zurzeit noch nicht verfügbar");
         }
         return this;
     },
@@ -55,7 +54,7 @@ const SelectDistrictView = Backbone.View.extend({
     },
     selectDistrictReminder: function () {
         Radio.trigger("Alert", "alert", {
-            text: "<strong>Warnung: Sie haben noch keine Bezirke ausgewählt. Bitte klicken Sie auf die Karte, um die Stadtteile auszuwählen, mit denen Sie arbeiten möchten.</strong>",
+            text: "<strong>Warnung: Sie haben noch keine Gebiete ausgewählt. Bitte wählen Sie auf welcher Ebene Sie arbeiten möchten (**Stadtteile oder statistische Gebiete)* *und klicken Sie entsprechend auf die Karte, um die Gebiete auszuwählen, mit denen Sie arbeiten möchten.</strong>",
             kategorie: "alert-warning"
         });
     }

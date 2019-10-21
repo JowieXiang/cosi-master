@@ -61,8 +61,13 @@ const DashboardView = Backbone.View.extend({
 
         this.renderFilter();
 
-        Radio.trigger("Sidebar", "append", this.$el);
-        Radio.trigger("Sidebar", "toggle", true, this.model.get("width"));
+        if (Radio.request("InfoScreen", "getIsWindowOpen")) {
+            Radio.trigger("InfoScreen", "showInInfoScreen", this.$el);
+        }
+        else {
+            Radio.trigger("Sidebar", "append", this.$el);
+            Radio.trigger("Sidebar", "toggle", true, this.model.get("width"));
+        }
 
         this.delegateEvents();
 
@@ -90,9 +95,9 @@ const DashboardView = Backbone.View.extend({
         });
     },
     zoomToFeature (event) {
-        const scope = event.target.innerHTML;
+        const districtName = event.target.innerHTML;
 
-        this.model.zoomAndHighlightFeature(scope);
+        Radio.trigger("SelectDistrict", "zoomToDistrict", districtName);
     },
     createChart (event) {
         this.clearChart();

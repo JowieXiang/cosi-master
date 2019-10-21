@@ -6,7 +6,8 @@ import SliderView from "./slider/view";
 
 const LayerFilterView = Backbone.View.extend({
     events: {
-        "click .close": "destroySelf"
+        "click .close": "destroySelf",
+        "change .reference-value-input": "updateRefInputValue"
     },
 
     initialize: function () {
@@ -14,15 +15,16 @@ const LayerFilterView = Backbone.View.extend({
         this.listenTo(this.sliderCollection, {
             "change:sliderValue": function (model) {
                 this.updateLayerFilter(model);
-                this.filterFeatures();
             }
+        });
+        this.listenTo(this.model, {
+            "change:districtInfo": this.render
         });
 
     },
 
     tagName: "div",
     className: "row",
-
     // model: new FilterSelectorModel(),
     template: _.template(template),
 
@@ -37,19 +39,26 @@ const LayerFilterView = Backbone.View.extend({
         const filterData = JSON.parse(this.model.get("filter"));
 
         _.each(Object.keys(filterData), filterKey => {
-            const thisInfo = this.model.get("districtInfo").filter(disInfo => disInfo.key === filterKey)[0],
-                space = thisInfo.space,
-                newSliderModel = new SliderModel({ key: filterKey, space: space }),
-                silderView = new SliderView({ model: newSliderModel });
+            const newSliderModel = new SliderModel({
+                    key: filterKey,
+                    sliderValue: parseInt(filterData[filterKey], 10)
+                }),
+                silderView = new SliderView({
+                    model: newSliderModel
+                });
 
             this.sliderCollection.add(newSliderModel);
             this.$el.find("#" + filterKey + "-td").append(silderView.render().el);
         });
     },
     destroySelf: function () {
+        const newLayerInfo = this.model.get("layerInfo");
+
+        newLayerInfo.layerName = newLayerInfo.layerName.replace(/ /g, "_");
+        this.model.set("layerInfo", newLayerInfo);
+        Radio.trigger("CompareDistricts", "closeFilter", this.model.get("layerInfo"));
         this.remove();
         this.model.destroy();
-        Radio.trigger("CompareDistricts", "closeFilter", this.model.get("layerInfo"));
     },
     updateLayerFilter: function (sliderModel) {
         const key = sliderModel.get("key"),
@@ -59,20 +68,17 @@ const LayerFilterView = Backbone.View.extend({
         newFilter[key] = sliderModel.get("sliderValue");
         this.model.set("filter", JSON.stringify(newFilter));
     },
-    filterFeatures: function () {
-        // const filterArray = JSON.parse(this.model.get("filter")),
-        //     layerInfo = this.model.get("layerInfo"),
-        //     featureCollection = Radio.request("FeatureLoader", "getFeaturesByLayerId", layerInfo.layerId);
+    updateRefInputValue: function (e) {
+        var key = $(e.currentTarget).attr("id");
+        const newInfo = this.model.get("districtInfo").slice();
 
-        // _.each(Object.keys(filterArray), key => {
-        //     const tolerance = filterArray[key];
-
-        // });
-
-        // console.log("filterArray: ", filterArray);
-        // console.log("layerInfo: ", layerInfo);
-
-
+        e.preventDefault();
+        _.each(newInfo, item => {
+            if (item.key === key) {
+                item.value = e.target.value;
+            }
+        });
+        this.model.set("districtInfo", newInfo);
     }
 
 });

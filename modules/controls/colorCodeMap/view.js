@@ -1,7 +1,7 @@
 import template from "text-loader!./template.html";
 import LayerList from "./layer/list";
 import VectorSource from "ol/source/Vector";
-import { Fill, Stroke, Style } from "ol/style.js";
+import { Fill, Stroke, Style, Text } from "ol/style.js";
 import * as Chromatic from "d3-scale-chromatic";
 
 const ColorCodeMapView = Backbone.View.extend({
@@ -116,6 +116,17 @@ const ColorCodeMapView = Backbone.View.extend({
                     stroke: new Stroke({
                         color: colorScale.scale(parseFloat(feature.getProperties()[field])),
                         width: 3
+                    }),
+                    text: new Text({
+                        font: "16px Calibri,sans-serif",
+                        fill: new Fill({
+                            color: "#FFF"
+                        }),
+                        stroke: new Stroke({
+                            color: "black",
+                            width: 3
+                        }),
+                        text: feature.getProperties()[field]
                     })
                 }));
             });
@@ -144,8 +155,8 @@ const ColorCodeMapView = Backbone.View.extend({
         for (let i = 0; i < data.values.length; i++) {
             this.$el.find("#color-code-legend").append(`
             <li style="display:inline;">
-                <svg width="8" height="8">
-                    <rect width="8" height="8" style="fill:${data.colors[i]};stroke-width:.5;stroke:rgb(0,0,0)" />
+                <svg width="12" height="12">
+                    <rect width="12" height="12" style="fill:${data.colors[i]};stroke-width:.5;stroke:rgb(0,0,0)" />
                 </svg>
                     ${data.values[i]}
             </li>
