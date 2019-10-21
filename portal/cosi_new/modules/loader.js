@@ -1,6 +1,6 @@
 
 import FeaturesLoader from "./featuresLoader/model";
-
+import ColorCodeMapView from "./colorCodeMap/view";
 import SaveSelectionCosiView from "./saveSelection/view";
 import SaveSelectionCosi from "./saveSelection/model";
 import TimeSliderView from "./timeSlider/view";
@@ -22,6 +22,7 @@ const tools = {
  */
 function initializeCosi () {
     new FeaturesLoader();
+    new ColorCodeMapView();
 
     Radio.trigger("ModelList", "addModelsAndUpdate", Object.values(tools));
 
