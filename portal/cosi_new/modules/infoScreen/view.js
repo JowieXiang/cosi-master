@@ -1,58 +1,44 @@
 import Template from "text-loader!./template.html";
+import InfoScreenModel from "./model";
 
-const InfoScreen = Backbone.View.extend({
-    events: {},
-    initialize () {
+const InfoScreenView = Backbone.View.extend({
+    events: {
+        "click #title": "renderContent"
+    },
+    initialize (opts) {
+        this.model = new InfoScreenModel(opts);
+
+        this.render();
+
         this.listenTo(this.model, {
-            "change:isActive": function (isActive) {
-                if (isActive) {
-                    this.render();
-                    this.castWindow();
-                }
-                else {
-                    this.el$.remove();
-                }
-            },
-            "change:content": function () {
-                if (this.model.get("infoScreenOpen")) {
-                    this.renderContent();
-                    this.updateWindow();
-                }
+            "updateContent": function () {
+                this.renderContent();
             }
         });
     },
-    id: "infoscreen-view",
-    className: "infoscreen",
     model: {},
+    contentContainer: {},
     template: _.template(Template),
-    window: {},
     render () {
         var attr = this.model.toJSON();
 
+        this.setElement(document.getElementById("info-screen"));
         this.$el.html(this.template(attr));
-        this.renderContent();
 
-        this.delegateEvents();
+        this.contentContainer = this.$el.find(".info-screen-children");
 
         return this;
     },
     renderContent () {
-        this.$el.find('.input').empty();
-        this.$el.find('.input').append(this.model.get("content"));
+        console.log("trigger");
+        this.contentContainer.empty();
+        this.model.getChildren().forEach(child => {
+            this.renderChild(child);
+        });
     },
-    castWindow () {
-        this.window = window.open("/portal/cosi_new/modules/infoScreen/hostWindow", ".dashboard", this.model.get("winOpts"));
-        this.updateWindow();
-        this.model.setIsWindowOpen(true);
-    },
-    updateWindow () {
-        if (Object.keys(this.model.get("content")).length > 0) {
-            this.window.postMessage({
-                mode: "replace",
-                node: this.model.get("content").html()
-            });
-        }
+    renderChild (child) {
+        this.contentContainer.append(child.$el);
     }
 });
 
-export default InfoScreen;
+export default InfoScreenView;

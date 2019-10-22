@@ -1,55 +1,44 @@
-import Tool from "../../../../modules/core/modelList/tool/model";
+import { runInThisContext } from "vm";
 
-const InfoScreenModel = Tool.extend({
-    defaults: _.extend({}, Tool.prototype.defaults, {
+const InfoScreenModel = Backbone.Model.extend({
+    defaults: {
         id: "infoScreen",
-        name: "Zweites Fenster öffnen",
-        content: {},
-        windowOpts: {},
-        channel: Radio.channel("InfoScreen"),
-        title: "",
-        windowName: "",
-        winOpts: {},
-        infoScreenOpen: false
-    }),
-    initialize () {
-        this.superInitialize();
+        name: "CoSI Infoscreen",
+        children: [],
+        data: {}
+    },
+    initialize (opts) {
+        for (const attr in opts) {
+            this.set(attr, opts[attr]);
+        }
 
-        this.listenTo(this.get("channel"), {
-            "showInInfoScreen": this.setContent,
-            "addToInfoScreen": this.addContent,
-            "clear": this.clear
-        }, this);
+        window.onmessage = this.receiveData;
 
-        this.get("channel").reply({
-            "getIsWindowOpen": this.getIsWindowOpen
-        }, this);
-
-        this.listenTo(this, {
-            "change:isActive": this.notifyInfoScreen
+        this.initChildren(this.getChildren());
+    },
+    initChildren (children) {
+        children.forEach(child => {
+            console.log(child);
+            if (child.model.get("isActive")) {
+                child.model.set("isActive");
+            }
+            else {
+                child.render();
+            }
         });
+
+        setTimeout(() => {
+            this.trigger("updateContent");
+        }, 2000); // Fix later
     },
-    setContent (content) {
-        this.set("content", content);
+    updateWindow () {
+
     },
-    addContent (content) {
-        console.log(content);
+    receiveData (data) {
+        console.log(data);
     },
-    clear () {
-        this.set("content", {});
-    },
-    getContent () {
-        return this.get("content");
-    },
-    notifyInfoScreen () {
-        this.set("infoScreenOpen", true);
-        this.get("channel").trigger("infoScreenOpen");
-    },
-    getIsWindowOpen () {
-        return this.get("infoScreenOpen");
-    },
-    setIsWindowOpen (state) {
-        this.set("infoScreenOpen", state);
+    getChildren () {
+        return this.get("children");
     }
 });
 

@@ -1,36 +1,33 @@
 
 import FeaturesLoader from "./featuresLoader/model";
+import tools from "./tools";
 
+import DashboardView from "./dashboard/view";
+import SelectDistrictView from "./selectDistrict/view";
 import SaveSelectionCosiView from "./saveSelection/view";
-import SaveSelectionCosi from "./saveSelection/model";
-import InfoScreen from "./infoScreen/view";
-import InfoScreenModel from "./infoScreen/model";
-
-const tools = {
-    SaveSelectionCosi: new SaveSelectionCosi({
-        parentId: "tools",
-        type: "tool"
-    }),
-    InfoScreenModel: new InfoScreenModel({
-        windowName: "CoSI Info Screen",
-        title: "CoSI Info Screen",
-        name: "Zweites Fenster öffnen",
-        parentId: "root",
-        type: "tool",
-        glyphicon: "glyphicon-new-window"
-    })
-};
+import InfoScreenView from "./infoScreen/view";
 
 /**
  * @returns {void}
  */
 function initializeCosi () {
-    new FeaturesLoader();
+    const dashboard = new DashboardView({model: tools.Dashboard});
 
-    Radio.trigger("ModelList", "addModelsAndUpdate", Object.values(tools));
+    // Handle TouchScreen / InfoScreen Loading
+    if (!window.location.pathname.includes("infoscreen.html")) {
+        new FeaturesLoader();
 
-    new SaveSelectionCosiView({model: tools.SaveSelectionCosi});
-    new InfoScreen({model: tools.InfoScreenModel});
+        Radio.trigger("ModelList", "addModelsAndUpdate", Object.values(tools));
+
+        new SaveSelectionCosiView({model: tools.SaveSelectionCosi});
+        new SelectDistrictView({model: tools.SelectDistrict});
+    }
+    else {
+        new InfoScreenView({
+            title: "CoSI InfoScreen",
+            children: [dashboard]
+        });
+    }
 }
 
 export default initializeCosi;

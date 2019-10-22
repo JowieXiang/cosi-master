@@ -1,11 +1,12 @@
 import { Fill, Stroke, Style } from "ol/style.js";
 import GeometryCollection from "ol/geom/GeometryCollection";
 import Geometry from 'ol/geom/Geometry';
-import Tool from "../core/modelList/tool/model";
-import SnippetDropdownModel from "../snippets/dropdown/model";
+import Tool from "../../../../modules/core/modelList/tool/model";
+import SnippetDropdownModel from "../../../../modules/snippets/dropdown/model";
 
 const SelectDistrict = Tool.extend({
     defaults: _.extend({}, Tool.prototype.defaults, {
+        id: "selectDistrict",
         selectedDistricts: [],
         districtLayer: [], // e.g.  {name: "Statistische Gebiete", selector: "statgebiet", layerIds:[]}
         districtLayerNames: [],
@@ -61,7 +62,6 @@ const SelectDistrict = Tool.extend({
                         Radio.trigger("Map", "zoomToExtent", this.getSelectedGeometries().getExtent());
                         const layerlist = _.union(Radio.request("Parser", "getItemsByAttributes", { typ: "WFS", isBaseLayer: false }), Radio.request("Parser", "getItemsByAttributes", { typ: "GeoJSON", isBaseLayer: false }));
 
-                        console.log("changed yo");
                         this.setBboxGeometryToLayer(Radio.request("ModelList", "getCollection"), layerlist);
                         this.get("channel").trigger("selectionChanged", this.getSelectedGeometries().getExtent().toString(), this.get("activeScope"), this.getSelectedDistrictNames(this.get("selectedDistricts")));
                     }
@@ -225,7 +225,6 @@ const SelectDistrict = Tool.extend({
         this.set("activeScope", scope);
         if (scope && scope !== "" && this.get("districtLayer").length !== 0) {
             this.set("activeSelector", this.get("districtLayer").find(el => el.name === scope).selector);
-            console.log(this.getSelector());
         }
         this.toggleScopeLayers();
     },
@@ -284,7 +283,6 @@ const SelectDistrict = Tool.extend({
         }
     },
     getSelector: function () {
-        console.log(this.get("activeSelector"))
         return this.get("activeSelector");
     },
     getScopeAndSelector: function () {

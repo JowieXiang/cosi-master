@@ -32,15 +32,18 @@ const MouseHoverPopupModel = Backbone.Model.extend(/** @lends MouseHoverPopupMod
      */
 
     initialize: function () {
-        var channel = Radio.channel("MouseHover");
+        if (document.getElementById("map")) {
+            var channel = Radio.channel("MouseHover");
 
-        this.listenTo(channel, {
-            "hide": this.destroyPopup
-        });
-        Radio.trigger("Map", "addOverlay", this.get("overlay"));
-        Radio.trigger("Map", "registerListener", "pointermove", this.checkDragging.bind(this), this);
-        document.getElementById("map").addEventListener("mouseleave", this.destroyPopup.bind(this));
-        this.getMouseHoverInfosFromConfig();
+            this.listenTo(channel, {
+                "hide": this.destroyPopup
+            });
+            Radio.trigger("Map", "addOverlay", this.get("overlay"));
+            Radio.trigger("Map", "registerListener", "pointermove", this.checkDragging.bind(this), this);
+            document.getElementById("map").addEventListener("mouseleave", this.destroyPopup.bind(this));
+
+            this.getMouseHoverInfosFromConfig();
+        }
     },
     /**
     * Gets MouseHoverInfos from config.

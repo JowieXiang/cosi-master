@@ -12,14 +12,16 @@ const MouseHoverPopupView = Backbone.View.extend(/** @lends MouseHoverPopupView.
      * @listens MouseHover#destroy
      */
     initialize: function () {
-        if (!this.isTouchdevice()) {
-            this.model = new MouseHoverPopup();
-            this.listenTo(this.model, {
-                "render": this.render,
-                "destroy": this.destroy
-            });
+        if (document.getElementById("map")) {
+            if (!this.isTouchdevice()) {
+                this.model = new MouseHoverPopup();
+                this.listenTo(this.model, {
+                    "render": this.render,
+                    "destroy": this.destroy
+                });
 
-            this.createOverlayElement();
+                this.createOverlayElement();
+            }
         }
     },
     /**
