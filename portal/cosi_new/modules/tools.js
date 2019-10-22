@@ -11,16 +11,16 @@ const tools = {
         type: "tool",
         name: "Gebiet auswählen",
         glyphicon: "glyphicon-picture",
-        // isInitOpen: true, // DOES NOT WORK IN CUSTOM MODULES DUE TO BEING LOADED BEFORE THE MENU IS INITIALLY GENERATED
-        isActive: true,
         districtLayer: [
             {
                 name: "Stadtteile",
-                selector: "stadtteil"
+                selector: "stadtteil",
+                id: "1694"
             },
             {
                 name: "Statistische Gebiete",
-                selector: "statgebiet"
+                selector: "statgebiet",
+                id: "6071"
             }
         ]
     }),

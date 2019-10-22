@@ -213,7 +213,6 @@ async function loadApp() {
     new SidebarView();
 
     _.each(Radio.request("ModelList", "getModelsByAttributes", { type: "tool" }), function (tool) {
-        // console.log(tool);
         switch (tool.id) {
             case "calculateRatio": {
                 new CalculateRatioView({ model: tool });
@@ -511,14 +510,6 @@ async function loadApp() {
     new HighlightFeature();
 
     /* eslint-enable no-undef */
-
-    /*
-    *   Loclstorage so far only used in the context of CoSI
-    */
-    if (_.has(Config, "isLocalStorage")) {
-        new LocalStorageView();
-    }
-
     /*
     *   Charting so far only used in the context of CoSI
     */

@@ -83,7 +83,7 @@ const featuresLoader = Backbone.Model.extend({
                     .then(features => {
                         return features.filter((feature) => {
                             // to do for stadtteile
-                            return districtNameList.includes(feature.get("stat_gebiet"));
+                            return districtNameList.includes(feature.get("statgebiet"));
                         });
                     })
                     .catch(function (error) {
@@ -236,7 +236,7 @@ const featuresLoader = Backbone.Model.extend({
 
     /**
      * get all available values by scope
-     * @param {string} scope - stat_gebiet | stadtteil
+     * @param {string} scope - statgebiet | stadtteil
      * @returns {object[]} list of all available values
      */
     getAllValuesByScope: function (scope) {

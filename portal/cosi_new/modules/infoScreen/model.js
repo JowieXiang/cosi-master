@@ -32,7 +32,7 @@ const InfoScreenModel = Backbone.Model.extend({
         }, 2000); // Fix later
     },
     updateWindow () {
-
+        
     },
     receiveData (data) {
         console.log(data);

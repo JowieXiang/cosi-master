@@ -1,7 +1,7 @@
 
-import FeaturesLoader from "./featuresLoader/model";
 import tools from "./tools";
 
+import FeaturesLoader from "./featuresLoader/model";
 import DashboardView from "./dashboard/view";
 import SelectDistrictView from "./selectDistrict/view";
 import SaveSelectionCosiView from "./saveSelection/view";
@@ -23,8 +23,8 @@ function initializeCosi () {
         Radio.trigger("ModelList", "addModelsAndUpdate", Object.values(tools));
 
         new SaveSelectionCosiView({model: tools.SaveSelectionCosi});
-        new SelectDistrictView({model: tools.SelectDistrict});
         new TimeSliderView({model: tools.TimeSlider});
+        new SelectDistrictView({model: tools.SelectDistrict});
     }
     else {
         new InfoScreenView({

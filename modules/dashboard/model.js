@@ -60,7 +60,7 @@ const DashboardModel = Tool.extend({
         this.listenTo(Radio.channel("SelectDistrict"), {
             "districtSelectionChanged": function () {
                 this.set("scope", Radio.request("SelectDistrict", "getScope"));
-                this.set("sortKey", Radio.request("SelectDistrict", "getSelector") === "statgebiet" ? "stat_gebiet" : Radio.request("SelectDistrict", "getSelector"));
+                this.set("sortKey", Radio.request("SelectDistrict", "getSelector"));
             }
         }, this);
 
@@ -305,8 +305,8 @@ const DashboardModel = Tool.extend({
         return {data: map, xAttrs: districts};
     },
     zoomAndHighlightFeature: function (district) {
-        const selector = this.get("sortKey") === "stat_gebiet" ? "statgebiet" : this.get("sortKey");
-        let extent
+        const selector = this.get("sortKey");
+        let extent;
 
         _.each(Radio.request("SelectDistrict", "getSelectedDistricts"), (feature) => {
             if (feature.getProperties()[selector] === district) {

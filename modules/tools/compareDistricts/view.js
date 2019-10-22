@@ -189,7 +189,7 @@ const CompareDistrictsView = Backbone.View.extend({
     setCompareFeatures: function (model, value) {
         if (JSON.parse(value).length > 0) {
             const layerFilterList = JSON.parse(value),
-                selector = Radio.request("SelectDistrict", "getSelector") === "statgebiet" ? "stat_gebiet" : Radio.request("SelectDistrict", "getSelector"),
+                selector = Radio.request("SelectDistrict", "getSelector"),
                 results = [],
                 resultNames = [];
             let intersection = [],

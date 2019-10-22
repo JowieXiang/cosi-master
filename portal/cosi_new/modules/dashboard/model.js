@@ -60,8 +60,8 @@ const DashboardModel = Tool.extend({
         this.listenTo(Radio.channel("SelectDistrict"), {
             "selectionChanged": function () {
                 this.set("scope", Radio.request("SelectDistrict", "getScope"));
-                this.set("sortKey", Radio.request("SelectDistrict", "getSelector") === "statgebiet" ? "stat_gebiet" : Radio.request("SelectDistrict", "getSelector"));
-                console.log(Radio.request("SelectDistrict", "getSelector"));
+                this.set("sortKey", Radio.request("SelectDistrict", "getSelector"));
+                console.log(Radio.request("SelectDistrict", "getScope"));
             }
         }, this);
 
@@ -80,7 +80,6 @@ const DashboardModel = Tool.extend({
         const table = features.reduce((newTable, feature) => {
             const properties = feature.getProperties(),
                 distCol = newTable.find(col => col[this.get("sortKey")] === properties[this.get("sortKey")]);
-            console.log(this.get("sortKey"));
 
             if (distCol) {
                 return newTable.map((col) => {
@@ -183,7 +182,7 @@ const DashboardModel = Tool.extend({
     },
 
     getData: function () {
-        const features = Radio.request("FeaturesLoader", "getDistrictsByType", Radio.request("SelectDistrict", "getScope"));
+        const features = Radio.request("FeaturesLoader", "getDistrictsByScope", Radio.request("SelectDistrict", "getScope"));
 
         this.updateTable(features);
     },
@@ -307,7 +306,7 @@ const DashboardModel = Tool.extend({
         return {data: map, xAttrs: districts};
     },
     zoomAndHighlightFeature: function (district) {
-        const selector = this.get("sortKey") === "stat_gebiet" ? "statgebiet" : this.get("sortKey");
+        const selector = this.get("sortKey");
         let extent;
 
         _.each(Radio.request("SelectDistrict", "getSelectedDistricts"), (feature) => {

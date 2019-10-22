@@ -61,7 +61,6 @@ const SelectDistrict = Tool.extend({
                         Radio.trigger("Map", "zoomToExtent", this.getSelectedGeometries().getExtent());
                         const layerlist = _.union(Radio.request("Parser", "getItemsByAttributes", { typ: "WFS", isBaseLayer: false }), Radio.request("Parser", "getItemsByAttributes", { typ: "GeoJSON", isBaseLayer: false }));
 
-                        console.log("changed yo");
                         this.setBboxGeometryToLayer(Radio.request("ModelList", "getCollection"), layerlist);
                         this.get("channel").trigger("selectionChanged", this.getSelectedGeometries().getExtent().toString(), this.get("activeScope"), this.getSelectedDistrictNames(this.get("selectedDistricts")));
                     }
@@ -317,7 +316,6 @@ const SelectDistrict = Tool.extend({
         var names = [];
 
         districts.forEach(function (district) {
-            // to do - change statgebiet to stat_gebiet someday in the future
             if (district.get("statgebiet")) {
                 names.push(district.get("statgebiet"));
             }
