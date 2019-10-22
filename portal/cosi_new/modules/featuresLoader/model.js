@@ -61,7 +61,7 @@ const featuresLoader = Backbone.Model.extend({
             kategorie: "alert-info"
         });
 
-        const layerList = Radio.request("RawLayerList", "getLayerListWhere", { url: serviceUrl }),
+        const layerList = Radio.request("RawLayerList", "getLayerListWhere", {url: serviceUrl}),
             wfsReader = new WFS({
                 featureNS: layerList[0].get("featureNS")
             }),
@@ -83,7 +83,7 @@ const featuresLoader = Backbone.Model.extend({
                     .then(features => {
                         return features.filter((feature) => {
                             // to do for stadtteile
-                            return districtNameList.includes(feature.get("stat_gebiet"));
+                            return districtNameList.includes(feature.get("statgebiet"));
                         });
                     })
                     .catch(function (error) {

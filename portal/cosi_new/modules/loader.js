@@ -1,6 +1,7 @@
 
 import FeaturesLoader from "./featuresLoader/model";
 import ColorCodeMapView from "./colorCodeMap/view";
+import ColorCodeMap from "./colorCodeMap/model";
 import SaveSelectionCosiView from "./saveSelection/view";
 import SaveSelectionCosi from "./saveSelection/model";
 import TimeSliderView from "./timeSlider/view";
@@ -32,10 +33,10 @@ const tools = {
  */
 function initializeCosi () {
     new FeaturesLoader();
-    new ColorCodeMapView();
 
     Radio.trigger("ModelList", "addModelsAndUpdate", Object.values(tools));
 
+    new ColorCodeMapView({model: new ColorCodeMap()});
     new SaveSelectionCosiView({model: tools.SaveSelectionCosi});
     new TimeSliderView({model: tools.TimeSlider});
     new InfoScreen({model: tools.InfoScreenModel});
