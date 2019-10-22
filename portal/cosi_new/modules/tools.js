@@ -2,6 +2,7 @@ import Dashboard from "./dashboard/model";
 import SelectDistrict from "./selectDistrict/model";
 import SaveSelectionCosi from "./saveSelection/model";
 import InfoScreenHandler from "./infoScreen/infoScreenHandler/model";
+import TimeSlider from "./timeSlider/model";
 
 const tools = {
     SelectDistrict: new SelectDistrict({
@@ -32,6 +33,10 @@ const tools = {
         renderToWindow: false
     }),
     SaveSelectionCosi: new SaveSelectionCosi({
+        parentId: "tools",
+        type: "tool"
+    }),
+    TimeSlider: new TimeSlider({
         parentId: "tools",
         type: "tool"
     }),

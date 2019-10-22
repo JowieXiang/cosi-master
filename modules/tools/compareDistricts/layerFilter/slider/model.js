@@ -1,6 +1,6 @@
 const SliderModel = Backbone.Model.extend({
     defaults: {
-        sliderValue: null,
+        sliderValue: 0,
         key: null,
         space: 0
     }

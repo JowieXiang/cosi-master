@@ -90,7 +90,6 @@ import Button3DView from "../modules/controls/button3d/view";
 import ButtonObliqueView from "../modules/controls/buttonoblique/view";
 import Orientation3DView from "../modules/controls/orientation3d/view";
 import BackForwardView from "../modules/controls/backforward/view";
-import ColorCodeMapView from "../modules/controls/colorCodeMap/view";
 
 import "es6-promise/auto";
 import VirtualcityModel from "../modules/tools/virtualcity/model";
@@ -526,7 +525,6 @@ async function loadApp() {
     new PieView();
     new BarView();
     new ChartUtil();
-    new ColorCodeMapView();
 
     Radio.trigger("Util", "hideLoader");
 }

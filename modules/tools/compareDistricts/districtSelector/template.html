@@ -1,9 +1,15 @@
 <!DOCTYPE html>
 
-<label for="district-selector"><strong>Referenzgebiet</strong></label>
-<select class="form-control input-sm" id="district-selector">
-    <option disabled selected value> - </option>
+<label for="district-selector" id="district-selection-label"><strong>Referenzgebiet</strong></label>
+<select class="form-control input-sm selectpicker" data-size="5" title="Demografische Daten anzeigen" id="district-selector" data-live-search="true">
+    <option selected value="Leeren"> -Leeren- </option>
     <% _.each( districtNames, function (name) { %>
     <option value=<%= name %>><%= name %></option>
     <% }); %>
 </select>
+<!-- <select class="form-control input-sm" id="district-selector">
+    <option disabled selected value> - </option>
+    <% _.each( districtNames, function (name) { %>
+    <option value=<%= name %>><%= name %></option>
+    <% }); %>
+</select> -->

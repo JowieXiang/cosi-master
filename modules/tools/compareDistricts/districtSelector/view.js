@@ -18,11 +18,12 @@ const DistrictSelectorView = Backbone.View.extend({
     render: function () {
         this.model = new Model();
         this.$el.html(this.template(this.model.toJSON()));
+        this.$el.find("#district-selector").selectpicker("refresh");
         return this;
     },
     setSelectedDistrict: function (evt) {
         this.model.setSelectedDistrict(evt.target.value);
-        $("#district-selector").prop("disabled", "disabled");
+        // $("#district-selector").prop("disabled", "disabled");
     },
     getSelectedDistrict: function () {
         return this.model.get("selectedDistrict");

@@ -7,7 +7,7 @@ import SliderView from "./slider/view";
 const LayerFilterView = Backbone.View.extend({
     events: {
         "click .close": "destroySelf",
-        "change .reference-value-input": "updateDistrictInfo"
+        "change .reference-value-input": "updateRefInputValue"
     },
 
     initialize: function () {
@@ -16,6 +16,9 @@ const LayerFilterView = Backbone.View.extend({
             "change:sliderValue": function (model) {
                 this.updateLayerFilter(model);
             }
+        });
+        this.listenTo(this.model, {
+            "change:districtInfo": this.render
         });
 
     },
@@ -36,8 +39,13 @@ const LayerFilterView = Backbone.View.extend({
         const filterData = JSON.parse(this.model.get("filter"));
 
         _.each(Object.keys(filterData), filterKey => {
-            const newSliderModel = new SliderModel({ key: filterKey }),
-                silderView = new SliderView({ model: newSliderModel });
+            const newSliderModel = new SliderModel({
+                    key: filterKey,
+                    sliderValue: parseInt(filterData[filterKey], 10)
+                }),
+                silderView = new SliderView({
+                    model: newSliderModel
+                });
 
             this.sliderCollection.add(newSliderModel);
             this.$el.find("#" + filterKey + "-td").append(silderView.render().el);
@@ -60,7 +68,7 @@ const LayerFilterView = Backbone.View.extend({
         newFilter[key] = sliderModel.get("sliderValue");
         this.model.set("filter", JSON.stringify(newFilter));
     },
-    updateDistrictInfo: function (e) {
+    updateRefInputValue: function (e) {
         var key = $(e.currentTarget).attr("id");
         const newInfo = this.model.get("districtInfo").slice();
 

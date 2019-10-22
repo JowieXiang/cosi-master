@@ -181,7 +181,7 @@ const DashboardModel = Tool.extend({
     },
 
     getData: function () {
-        const features = Radio.request("FeaturesLoader", "getDistrictsByType", Radio.request("SelectDistrict", "getScope"));
+        const features = Radio.request("FeaturesLoader", "getDistrictsByScope", Radio.request("SelectDistrict", "getScope"));
 
         this.updateTable(features);
     },
