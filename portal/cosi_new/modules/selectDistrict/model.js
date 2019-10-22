@@ -216,13 +216,12 @@ const SelectDistrict = Tool.extend({
     },
     getScopeFromDropdown () {
         const scope = this.get("scopeDropdownModel").getSelectedValues().values[0];
-        console.info(scope);
+
         if (this.get("isActive")) {
             this.setScope(scope);
         }
     },
     setScope: function (scope) {
-        console.info(scope);
         this.set("activeScope", scope);
         if (scope && scope !== "" && this.get("districtLayer").length !== 0) {
             this.set("activeSelector", this.get("districtLayer").find(el => el.name === scope).selector);
@@ -230,7 +229,6 @@ const SelectDistrict = Tool.extend({
         this.toggleScopeLayers();
     },
     getScope: function () {
-        console.info(this.get("activeScope"));
         return this.get("activeScope");
     },
     toggleScopeLayers: function () {

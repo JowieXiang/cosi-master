@@ -240,7 +240,6 @@ const featuresLoader = Backbone.Model.extend({
      * @returns {object[]} list of all available values
      */
     getAllValuesByScope: function (scope) {
-        console.info(scope);
         return MappingJson.filter(obj => {
             return obj[scope] === true;
         });

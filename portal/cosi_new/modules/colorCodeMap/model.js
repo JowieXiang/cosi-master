@@ -72,13 +72,11 @@ const LayerModel = Backbone.Model.extend({
      * @returns {void}
      */
     styleDistrictFeaturs: function (features, attribute) {
-        const districtFeatures = this.getDistrictFeaturesByScope(Radio.request("SelectDistrict", "getScope")),
+        const districtFeatures = this.getDistrictFeaturesByScope("Statistische Gebiete"),
             foundDistrictFeatures = [],
             values = features.map(feature => feature.getProperties()[attribute]),
             colorScale = Radio.request("ColorScale", "getColorScaleByValues", values, Chromatic.interpolateBlues);
-console.info(values);
-console.info(features);
-console.info(districtFeatures);
+
         features.forEach(function (feature) {
             // find the equivalent district feature -> to do for stadtteile
             const foundFeature = districtFeatures.find(function (districtFeature) {

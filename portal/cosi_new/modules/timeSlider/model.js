@@ -47,7 +47,6 @@ const TimeSliderModel = Tool.extend({
      * @returns {void}
      */
     setDropDownModel: function (valueList) {
-        console.info(valueList);
         const dropdownModel = new DropdownModel({
             name: "Thema",
             type: "string",
@@ -150,12 +149,10 @@ const TimeSliderModel = Tool.extend({
      * @returns {void}
      */
     styleDistrictFeaturs: function (features, attribute, max) {
-        console.info(Radio.request("SelectDistrict", "getScope"));
         const districtFeatures = this.getDistrictFeaturesByScope("Statistische Gebiete"),
             foundDistrictFeatures = [],
             colorScale = Radio.request("ColorScale", "getColorScaleByValues", [0, max]);
-console.info(districtFeatures);
-console.info(features);
+
         features.forEach(function (feature) {
             // find the equivalent district feature -> to do for stadtteile
             const foundFeature = districtFeatures.find(function (districtFeature) {
