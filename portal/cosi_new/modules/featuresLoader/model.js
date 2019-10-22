@@ -61,7 +61,7 @@ const featuresLoader = Backbone.Model.extend({
             kategorie: "alert-info"
         });
 
-        const layerList = Radio.request("RawLayerList", "getLayerListWhere", { url: serviceUrl }),
+        const layerList = Radio.request("RawLayerList", "getLayerListWhere", {url: serviceUrl}),
             wfsReader = new WFS({
                 featureNS: layerList[0].get("featureNS")
             }),

@@ -149,7 +149,7 @@ const TimeSliderModel = Tool.extend({
      * @returns {void}
      */
     styleDistrictFeaturs: function (features, attribute, max) {
-        const districtFeatures = this.getDistrictFeaturesByScope(Radio.request("SelectDistrict", "getScope")),
+        const districtFeatures = this.getDistrictFeaturesByScope("Statistische Gebiete"),
             foundDistrictFeatures = [],
             colorScale = Radio.request("ColorScale", "getColorScaleByValues", [0, max]);
 
