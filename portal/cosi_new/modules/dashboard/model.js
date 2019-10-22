@@ -1,9 +1,9 @@
-import Tool from "../core/modelList/tool/model";
-import ExportButtonModel from "../snippets/exportButton/model";
-import DropdownModel from "../snippets/dropdown/model";
+import Tool from "../../../../modules/core/modelList/tool/model";
+import ExportButtonModel from "../../../../modules/snippets/exportButton/model";
+import DropdownModel from "../../../../modules/snippets/dropdown/model";
 import {TileLayer, VectorLayer} from "ol/layer";
 import VectorSource from "ol/source/Vector";
-import TimelineModel from "../tools/timeline/model";
+import TimelineModel from "../../../../modules/tools/timeline/model";
 
 const DashboardModel = Tool.extend({
     defaults: _.extend({}, Tool.prototype.defaults, {
@@ -58,15 +58,16 @@ const DashboardModel = Tool.extend({
         });
 
         this.listenTo(Radio.channel("SelectDistrict"), {
-            "districtSelectionChanged": function () {
+            "selectionChanged": function () {
                 this.set("scope", Radio.request("SelectDistrict", "getScope"));
                 this.set("sortKey", Radio.request("SelectDistrict", "getSelector") === "statgebiet" ? "stat_gebiet" : Radio.request("SelectDistrict", "getSelector"));
+                console.log(Radio.request("SelectDistrict", "getSelector"));
             }
         }, this);
 
         this.listenTo(this, {
             "change:isActive": this.getData
-        });
+        }, this);
     },
 
     /**
@@ -79,6 +80,7 @@ const DashboardModel = Tool.extend({
         const table = features.reduce((newTable, feature) => {
             const properties = feature.getProperties(),
                 distCol = newTable.find(col => col[this.get("sortKey")] === properties[this.get("sortKey")]);
+            console.log(this.get("sortKey"));
 
             if (distCol) {
                 return newTable.map((col) => {
@@ -181,7 +183,7 @@ const DashboardModel = Tool.extend({
     },
 
     getData: function () {
-        const features = Radio.request("FeaturesLoader", "getDistrictsByScope", Radio.request("SelectDistrict", "getScope"));
+        const features = Radio.request("FeaturesLoader", "getDistrictsByType", Radio.request("SelectDistrict", "getScope"));
 
         this.updateTable(features);
     },
@@ -306,7 +308,7 @@ const DashboardModel = Tool.extend({
     },
     zoomAndHighlightFeature: function (district) {
         const selector = this.get("sortKey") === "stat_gebiet" ? "statgebiet" : this.get("sortKey");
-        let extent
+        let extent;
 
         _.each(Radio.request("SelectDistrict", "getSelectedDistricts"), (feature) => {
             if (feature.getProperties()[selector] === district) {

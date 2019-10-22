@@ -236,10 +236,11 @@ const featuresLoader = Backbone.Model.extend({
 
     /**
      * get all available values by scope
-     * @param {string} scope - stat_gebiet | stadtteil
+     * @param {string} scope - statgebiet | stadtteil
      * @returns {object[]} list of all available values
      */
     getAllValuesByScope: function (scope) {
+        console.info(scope);
         return MappingJson.filter(obj => {
             return obj[scope] === true;
         });

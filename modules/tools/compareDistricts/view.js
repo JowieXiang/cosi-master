@@ -7,6 +7,7 @@ import { Fill, Stroke, Style } from "ol/style.js";
 import LayerFilterModel from "./layerFilter/model";
 import LayerFilterView from "./layerFilter/view";
 import LayerFilterCollection from "./layerFilter/list";
+import InfoTemplate from "text-loader!./info.html";
 
 const CompareDistrictsView = Backbone.View.extend({
     events: {
@@ -274,8 +275,18 @@ const CompareDistrictsView = Backbone.View.extend({
 
     showHelp: function () {
         Radio.trigger("Alert", "alert", {
-            text: "<strong> So funktioniert diese Funktion: </strong>",
+            text: InfoTemplate,
             kategorie: "alert-info"
+        });
+
+        $('.infoBox a').hover(function() {
+            $($(this).attr('data')).css({
+                "text-decoration":"underline"
+            });
+        }, function() {
+            $($(this).attr('data')).css({
+                "text-decoration": "none"
+            });
         });
     }
 });

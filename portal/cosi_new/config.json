@@ -67,43 +67,6 @@
         "glyphicon": "glyphicon-list",
         "isInitOpen": false
       },
-      "dashboard": {
-        "name": "Dashboard",
-        "glyphicon": "glyphicon-dashboard",
-        "propertyTree": {
-          "Stadtteile": {
-            "id": 1694,
-            "selector": "stadtteil",
-            "layerIds": [
-              "2763",
-              "2769",
-              "2768",
-              "2771"
-            ],
-            "exclude": [
-              "geom",
-              "stadtteil_1"
-            ]
-          },
-          "Statistische Gebiete": {
-            "id": 6071,
-            "selector": "stat_gebiet",
-            "layerIds": [
-              "15563",
-              "15564",
-              "15565",
-              "15989"
-            ],
-            "exclude": [
-              "geometry",
-              "geom",
-              "extent",
-              "statgebiet"
-            ]
-          }
-        },
-        "renderToWindow": false
-      },
       "tools": {
         "name": "Werkzeuge",
         "glyphicon": "glyphicon-wrench",
@@ -213,22 +176,6 @@
       "legend": {
         "name": "Legende",
         "glyphicon": "glyphicon-book"
-      },
-      "selectDistrict": {
-        "name": "Gebiet auswählen",
-        "glyphicon": "glyphicon-picture",
-        "isInitOpen": true,
-        "isActive": true,
-        "districtLayer": [
-          {
-            "name": "Stadtteile",
-            "selector": "stadtteil"
-          },
-          {
-            "name": "Statistische Gebiete",
-            "selector": "statgebiet"
-          }
-        ]
       }
     },
     "scaleLine": false,

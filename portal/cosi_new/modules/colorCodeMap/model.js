@@ -12,7 +12,7 @@ const LayerModel = Backbone.Model.extend({
     },
     initialize: function () {
         // to do for stadtteil
-        this.setDropDownModel(Radio.request("FeaturesLoader", "getAllValuesByScope", "stat_gebiet"));
+        this.setDropDownModel(Radio.request("FeaturesLoader", "getAllValuesByScope", "statgebiet"));
     },
 
     /**
@@ -76,7 +76,9 @@ const LayerModel = Backbone.Model.extend({
             foundDistrictFeatures = [],
             values = features.map(feature => feature.getProperties()[attribute]),
             colorScale = Radio.request("ColorScale", "getColorScaleByValues", values, Chromatic.interpolateBlues);
-
+console.info(values);
+console.info(features);
+console.info(districtFeatures);
         features.forEach(function (feature) {
             // find the equivalent district feature -> to do for stadtteile
             const foundFeature = districtFeatures.find(function (districtFeature) {
@@ -126,7 +128,7 @@ const LayerModel = Backbone.Model.extend({
     /**
      * sets the used features
      * @param {string} value - the selected value in the dropdown
-     * @param {string} scope - stat_gebiet | stadttteil
+     * @param {string} scope - statgebiet | stadttteil
      * @returns {void}
      */
     setFeaturesByValueAndScope: function (value, scope) {

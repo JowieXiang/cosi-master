@@ -60,14 +60,11 @@ import Formular from "../modules/formular/view";
 import FeatureLister from "../modules/featurelister/view";
 import PrintView from "../modules/tools/print_/view";
 import TimeSeries from "../modules/tools/timeSeries/view";
-import SelectDistrictView from "../modules/selectDistrict/view";
 import CalculateRatioView from "../modules/tools/calculateRatio/selectView";
 import LocalStorageView from "../modules/localStorage/view";
 import PieView from "../modules/charting/chartRenderer/pie/view";
 import BarView from "../modules/charting/chartRenderer/bar-line/view";
 import ChartUtil from "../modules/charting/chartRenderer/util/util";
-import DashboardView from "../modules/dashboard/view";
-// import WsClientInputView from "../modules/tools/wsClientInput/view";
 import CompareDistrictsView from "../modules/tools/compareDistricts/view";
 
 // @deprecated in version 3.0.0
@@ -187,7 +184,6 @@ async function loadApp() {
     new SliderRangeView();
     new DropdownView();
     new AdjustParamterView();
-    // new ExportButtonView();
 
     if (_.has(Config, "metaDataCatalogueId")) {
         layerInformationModelSettings.metaDataCatalogueId = Config.metaDataCatalogueId;
@@ -219,10 +215,6 @@ async function loadApp() {
     _.each(Radio.request("ModelList", "getModelsByAttributes", { type: "tool" }), function (tool) {
         // console.log(tool);
         switch (tool.id) {
-            case "dashboard": {
-                new DashboardView({ model: tool });
-                break;
-            }
             case "calculateRatio": {
                 new CalculateRatioView({ model: tool });
                 break;
@@ -352,16 +344,8 @@ async function loadApp() {
                 new AgeGroupSliderView({ model: tool });
                 break;
             }
-            // case "wsClientInput": {
-            //     new WsClientInputView({ model: tool });
-            //     break;
-            // }
             case "compareDistricts": {
                 new CompareDistrictsView({ model: tool });
-                break;
-            }
-            case "selectDistrict": {
-                new SelectDistrictView({ model: tool });
                 break;
             }
             case "timeSeries": {

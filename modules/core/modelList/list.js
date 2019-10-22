@@ -31,7 +31,6 @@ import SearchByCoord from "../../tools/searchByCoord/model";
 import SaveSelection from "../../tools/saveSelection/model";
 import KmlImport from "../../tools/kmlimport/model";
 import Routing from "../../tools/viomRouting/model";
-import SelectDistrict from "../../selectDistrict/model";
 import WfsFeatureFilter from "../../wfsfeaturefilter/model";
 import TreeFilter from "../../treefilter/model";
 import ExtendedFilter from "../../tools/extendedFilter/model";
@@ -51,7 +50,6 @@ import GFI from "../../tools/gfi/model";
 import Viewpoint from "./viewpoint/model";
 import TimeSeries from "../../tools/timeSeries/model";
 import CalcuateRatio from "../../tools/calculateRatio/model";
-import Dashboard from "../../dashboard/model";
 import ColorScale from "../../tools/colorScale/model";
 // import WsClientInput from "../../tools/wsClientInput/model";
 import CompareDistricts from "../../tools/compareDistricts/model";
@@ -335,9 +333,6 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
             else if (attrs.id === "timeline") {
                 return new Timeline(attrs, options);
             }
-            else if (attrs.id === "dashboard") {
-                return new Dashboard(attrs, options);
-            }
             /**
              * layerslider
              * @deprecated in 3.0.0
@@ -351,9 +346,6 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
             }
             else if (attrs.id === "ageGroupSlider") {
                 return new AgeGroupSliderModel(attrs, options);
-            }
-            else if (attrs.id === "selectDistrict") {
-                return new SelectDistrict(attrs, options);
             }
             // else if (attrs.id === "wsClientInput") {
             //     return new WsClientInput(attrs, options);

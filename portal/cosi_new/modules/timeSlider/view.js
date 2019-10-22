@@ -82,7 +82,7 @@ const TimeSliderView = Backbone.View.extend({
             scaleTypeY: "linear",
             data: graphData,
             attrToShowArray: ["jahr_" + value],
-            xAttr: "stat_gebiet",
+            xAttr: "statgebiet",
             xAxisLabel: {
                 "rotate": 45
             },

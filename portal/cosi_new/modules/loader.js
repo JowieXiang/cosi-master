@@ -2,44 +2,35 @@
 import FeaturesLoader from "./featuresLoader/model";
 import ColorCodeMapView from "./colorCodeMap/view";
 import ColorCodeMap from "./colorCodeMap/model";
+import tools from "./tools";
+import DashboardView from "./dashboard/view";
+import SelectDistrictView from "./selectDistrict/view";
 import SaveSelectionCosiView from "./saveSelection/view";
-import SaveSelectionCosi from "./saveSelection/model";
+import InfoScreenView from "./infoScreen/view";
 import TimeSliderView from "./timeSlider/view";
-import TimeSlider from "./timeSlider/model";
-import InfoScreen from "./infoScreen/view";
-import InfoScreenModel from "./infoScreen/model";
-
-const tools = {
-    SaveSelectionCosi: new SaveSelectionCosi({
-        parentId: "tools",
-        type: "tool"
-    }),
-    TimeSlider: new TimeSlider({
-        parentId: "tools",
-        type: "tool"
-    }),
-    InfoScreenModel: new InfoScreenModel({
-        windowName: "CoSI Info Screen",
-        title: "CoSI Info Screen",
-        name: "Zweites Fenster öffnen",
-        parentId: "root",
-        type: "tool",
-        glyphicon: "glyphicon-new-window"
-    })
-};
 
 /**
  * @returns {void}
  */
 function initializeCosi () {
-    new FeaturesLoader();
+    const dashboard = new DashboardView({model: tools.Dashboard});
 
-    Radio.trigger("ModelList", "addModelsAndUpdate", Object.values(tools));
+    // Handle TouchScreen / InfoScreen Loading
+    if (!window.location.pathname.includes("infoscreen.html")) {
+        new FeaturesLoader();
+        Radio.trigger("ModelList", "addModelsAndUpdate", Object.values(tools));
 
-    new ColorCodeMapView({model: new ColorCodeMap()});
-    new SaveSelectionCosiView({model: tools.SaveSelectionCosi});
-    new TimeSliderView({model: tools.TimeSlider});
-    new InfoScreen({model: tools.InfoScreenModel});
+        new ColorCodeMapView({model: new ColorCodeMap()});
+        new SaveSelectionCosiView({model: tools.SaveSelectionCosi});
+        new SelectDistrictView({model: tools.SelectDistrict});
+        new TimeSliderView({model: tools.TimeSlider});
+    }
+    else {
+        new InfoScreenView({
+            title: "CoSI InfoScreen",
+            children: [dashboard]
+        });
+    }
 }
 
 export default initializeCosi;

@@ -37,7 +37,7 @@ const TimeSliderModel = Tool.extend({
         this.setFeaturesProperties(this.get("features"));
         this.trigger("render");
         // to do for stadtteile
-        this.setDropDownModel(Radio.request("FeaturesLoader", "getAllValuesByScope", "stat_gebiet"));
+        this.setDropDownModel(Radio.request("FeaturesLoader", "getAllValuesByScope", "statgebiet"));
         this.setSliderModel(this.get("features"));
     },
 
@@ -47,6 +47,7 @@ const TimeSliderModel = Tool.extend({
      * @returns {void}
      */
     setDropDownModel: function (valueList) {
+        console.info(valueList);
         const dropdownModel = new DropdownModel({
             name: "Thema",
             type: "string",
@@ -149,14 +150,16 @@ const TimeSliderModel = Tool.extend({
      * @returns {void}
      */
     styleDistrictFeaturs: function (features, attribute, max) {
-        const districtFeatures = this.getDistrictFeaturesByScope(Radio.request("SelectDistrict", "getScope")),
+        console.info(Radio.request("SelectDistrict", "getScope"));
+        const districtFeatures = this.getDistrictFeaturesByScope("Statistische Gebiete"),
             foundDistrictFeatures = [],
             colorScale = Radio.request("ColorScale", "getColorScaleByValues", [0, max]);
-
+console.info(districtFeatures);
+console.info(features);
         features.forEach(function (feature) {
             // find the equivalent district feature -> to do for stadtteile
             const foundFeature = districtFeatures.find(function (districtFeature) {
-                return feature.get("stat_gebiet") === districtFeature.get("statgebiet");
+                return feature.get("statgebiet") === districtFeature.get("statgebiet");
             });
 
             foundFeature.setStyle(new Style({
@@ -226,7 +229,7 @@ const TimeSliderModel = Tool.extend({
     /**
      * sets the used features
      * @param {string} value - the selected value in the dropdown
-     * @param {string} scope - stat_gebiet | stadttteil
+     * @param {string} scope - statgebiet | stadttteil
      * @returns {void}
      */
     setFeaturesByValueAndScope: function (value, scope) {
