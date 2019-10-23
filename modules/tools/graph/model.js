@@ -21,7 +21,7 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
     initialize: function () {
         var channel = Radio.channel("Graph");
 
-        channel.on({
+        channel.reply({
             "createGraph": this.createGraph
         }, this);
         channel.reply({
@@ -39,12 +39,16 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
      * @returns {void}
      */
     createGraph: function (graphConfig) {
+        var svg = select(graphConfig.selector);
+
         if (graphConfig.graphType === "Linegraph") {
             this.createLineGraph(graphConfig);
         }
         else if (graphConfig.graphType === "BarGraph") {
             this.createBarGraph(graphConfig);
         }
+
+        return svg;
     },
 
     /**
@@ -656,6 +660,8 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             margin: margin,
             offset: offset
         });
+
+        return svg;
     },
 
     /**
@@ -715,6 +721,8 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
         this.drawBars(svg, data, scaleX, scaleY, height, selector, barWidth, xAttr, attrToShowArray);
         this.appendYAxisToSvg(svg, yAxis, yAxisLabel, offset);
         this.appendXAxisToSvg(svg, xAxis, xAxisLabel, offset);
+
+        return svg;
     },
 
     /**

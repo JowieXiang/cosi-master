@@ -45,12 +45,13 @@ const InfoScreenHandler = Tool.extend({
         });
     },
     castWindow () {
-        this.window = window.open("/portal/cosi_new/infoscreen.html", "InfoScreen", this.get("winOpts"));
+        // this.window = window.open("", "myWin");
+        this.window = window.open("/portal/cosi_new/infoscreen.html", "InfoScreen");
 
-        this.updateWindow();
         this.setIsWindowOpen(true);
     },
     sendData (data, target, attr) {
+        console.log(data, target, attr);
         this.window.postMessage({
             target: target,
             attr: attr,
