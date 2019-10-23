@@ -1,8 +1,6 @@
 import Tool from "../../../../modules/core/modelList/tool/model";
 import ExportButtonModel from "../../../../modules/snippets/exportButton/model";
 import DropdownModel from "../../../../modules/snippets/dropdown/model";
-import {TileLayer, VectorLayer} from "ol/layer";
-import VectorSource from "ol/source/Vector";
 import TimelineModel from "../../../../modules/tools/timeline/model";
 
 const DashboardModel = Tool.extend({
@@ -50,7 +48,8 @@ const DashboardModel = Tool.extend({
             values: [],
             snippetType: "dropdown",
             isMultiple: true,
-            liveSearch: true
+            liveSearch: true,
+            isGrouped: true
         }));
 
         this.listenTo(this.get("filterDropdownModel"), {
@@ -322,9 +321,10 @@ const DashboardModel = Tool.extend({
         this.trigger("tableViewFilter", this.get("filterDropdownModel").getSelectedValues());
     },
     updateFilter: function () {
-        const properties = _.allKeys(this.get("tableView")[0]);
+        // const properties = _.allKeys(this.get("tableView")[0]);
 
-        this.get("filterDropdownModel").set("values", properties.filter(prop => prop !== this.get("sortKey")));
+        this.get("filterDropdownModel").set("values", Radio.request("FeaturesLoader", "getAllValuesByScope", "statgebiet"));
+        // this.get("filterDropdownModel").set("values", properties.filter(prop => prop !== this.get("sortKey")));
         this.trigger("updateProperties");
     },
     getScope: function () {
