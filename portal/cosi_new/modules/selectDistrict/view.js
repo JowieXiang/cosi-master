@@ -19,7 +19,7 @@ const SelectDistrictView = Backbone.View.extend({
             this.render(this.model, true);
         }
     },
-    model: new SelectDistrictModel(),
+    // model: new SelectDistrictModel(),
     scopeDropdownView: {},
     template: _.template(Template),
 

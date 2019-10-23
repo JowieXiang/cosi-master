@@ -19,10 +19,9 @@ function initializeCosi () {
     if (!window.location.pathname.includes("infoscreen.html")) {
         new FeaturesLoader();
         Radio.trigger("ModelList", "addModelsAndUpdate", Object.values(tools));
-
+        new SelectDistrictView({model: tools.SelectDistrict});
         new ColorCodeMapView({model: new ColorCodeMap()});
         new SaveSelectionCosiView({model: tools.SaveSelectionCosi});
-        new SelectDistrictView({model: tools.SelectDistrict});
         new TimeSliderView({model: tools.TimeSlider});
     }
     else {
