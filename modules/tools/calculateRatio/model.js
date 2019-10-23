@@ -139,7 +139,7 @@ const CalculateRatioModel = Tool.extend({
         if (this.getDenominators().length > 0) {
             this.getDenominators().forEach((den) => {
                 const districtFeature = Radio.request("FeaturesLoader", "getAllFeaturesByAttribute", {name: den})
-                    .filter(feature => feature.getProperties()[selector === "statgebiet" ? "stat_gebiet" : selector] === district.getProperties()[selector]);
+                    .filter(feature => feature.getProperties()[selector] === district.getProperties()[selector]);
 
                 if (districtFeature) {
                     const districtProperties = districtFeature[0].getProperties(),

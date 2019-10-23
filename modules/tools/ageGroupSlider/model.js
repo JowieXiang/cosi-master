@@ -148,7 +148,7 @@ const AgeGroupSliderModel = Tool.extend({
     addFeaturesToColorCodeLayers: function () {
         console.log("styling");
         // Workaround for inconsistent naming of "Statistische Gebiete"-selector
-        const selector = Radio.request("SelectDistrict", "getSelector") === "statgebiet" ? "stat_gebiet" : Radio.request("SelectDistrict", "getSelector"),
+        const selector = Radio.request("SelectDistrict", "getSelector"),
             districtNames = Radio.request("SelectDistrict", "getSelectedDistricts").map(feature => feature.getProperties()[selector]);
 
         if (this.get("layerIds")[this.get("scope")].length === this.get("featureCollections").length) {

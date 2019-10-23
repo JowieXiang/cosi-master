@@ -9,7 +9,8 @@ const SelectDistrict = Tool.extend({
         id: "selectDistrict",
         selectedDistricts: [],
         districtLayer: [], // e.g.  {name: "Statistische Gebiete", selector: "statgebiet", layerIds:[]}
-        districtLayerNames: [],
+        districtLayerNames: ["Statistische Gebiete", "Stadtteile"],
+        districtLayerIds: ["6071", "1694"],
         districtLayersLoaded: [],
         isReady: false,
         scopeDropdownModel: {},
@@ -39,14 +40,11 @@ const SelectDistrict = Tool.extend({
     initialize: function () {
         this.superInitialize();
         this.getUrlQuery();
-        this.set({
-            "districtLayerNames": this.get("districtLayer").map(layer => layer.name)
-        });
         this.set("scopeDropdownModel", new SnippetDropdownModel({
             name: "Bezugseinheit",
             type: "string",
             displayName: "Bezugseinheit auswählen",
-            values: this.get("districtLayerNames").reverse(),
+            values: this.get("districtLayerNames"),
             snippetType: "dropdown",
             isMultiple: false,
             preselectedValues: this.get("districtLayerNames")[0]
@@ -56,6 +54,7 @@ const SelectDistrict = Tool.extend({
             "change:isActive": function (model, value) {
                 if (value) {
                     this.listen();
+                    this.getScopeFromDropdown();
                 }
                 else {
                     if (this.get("selectedDistricts").length > 0) {
@@ -94,11 +93,11 @@ const SelectDistrict = Tool.extend({
             "zoomToDistrict": this.zoomAndHighlightFeature
         }, this);
 
-        if (this.get("isActive") === true) {
-            Radio.trigger("Window", "showTool", this);
-            Radio.trigger("Window", "setIsVisible", true);
-            this.listen();
-        }
+        // if (this.get("isActive") === true) {
+        //     Radio.trigger("Window", "showTool", this);
+        //     Radio.trigger("Window", "setIsVisible", true);
+        //     // this.listen();
+        // }
     },
 
     // listen  to click event and trigger setGfiParams
@@ -145,7 +144,6 @@ const SelectDistrict = Tool.extend({
         });
     },
     setFeaturesByScopeAndIds (scope, ids) {
-        console.info(scope);
         this.setScope(scope);
         const layer = Radio.request("ModelList", "getModelByAttributes", {name: scope}),
             features = layer.get("layerSource").getFeatures().filter(feature => ids.includes(feature.getProperties()[this.getSelector()]));
@@ -230,7 +228,6 @@ const SelectDistrict = Tool.extend({
         }
     },
     setScope: function (scope) {
-        console.info(scope);
         this.set("activeScope", scope);
         if (scope && scope !== "" && this.get("districtLayer").length !== 0) {
             this.set("activeSelector", this.get("districtLayer").find(el => el.name === scope).selector);
@@ -238,7 +235,6 @@ const SelectDistrict = Tool.extend({
         this.toggleScopeLayers();
     },
     getScope: function () {
-        console.info(this);
         return this.get("activeScope");
     },
     toggleScopeLayers: function () {
@@ -263,13 +259,13 @@ const SelectDistrict = Tool.extend({
         }
 
         if (_.isEqual(this.get("districtLayerNames").sort(), this.get("districtLayersLoaded").sort())) {
-            this.getScopeFromDropdown();
+            this.setIsActive(true);
+            this.set("isReady", true);
 
             if (this.get("urlQuery")) {
                 this.setFeaturesByScopeAndIds(...this.get("urlQuery"));
+                this.getScopeFromDropdown();
             }
-
-            this.set("isReady", true);
         }
     },
     zoomAndHighlightFeature: async function (districtName, onlySelected = true) {

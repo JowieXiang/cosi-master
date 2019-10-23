@@ -90,7 +90,7 @@ const ColorCodeMapView = Backbone.View.extend({
     },
     setColorLayerFeatures: function (selectedLayer) {
         const layerId = selectedLayer.get("layerId"),
-            WFSselector = Radio.request("SelectDistrict", "getSelector") === "statgebiet" ? "stat_gebiet" : Radio.request("SelectDistrict", "getSelector"),
+            WFSselector = Radio.request("SelectDistrict", "getSelector"),
             districtSelector = Radio.request("SelectDistrict", "getSelector"),
             districtNames = Radio.request("SelectDistrict", "getSelectedDistricts").map(feature => feature.getProperties()[districtSelector]),
             featureCollection = Radio.request("FeaturesLoader", "getAllFeaturesByAttribute", { id: layerId }),

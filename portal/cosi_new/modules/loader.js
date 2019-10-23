@@ -1,8 +1,9 @@
 
+import tools from "./tools";
+
 import FeaturesLoader from "./featuresLoader/model";
 import ColorCodeMapView from "./colorCodeMap/view";
 import ColorCodeMap from "./colorCodeMap/model";
-import tools from "./tools";
 import DashboardView from "./dashboard/view";
 import SelectDistrictView from "./selectDistrict/view";
 import SaveSelectionCosiView from "./saveSelection/view";
@@ -19,10 +20,10 @@ function initializeCosi () {
     if (!window.location.pathname.includes("infoscreen.html")) {
         new FeaturesLoader();
         Radio.trigger("ModelList", "addModelsAndUpdate", Object.values(tools));
-        new SelectDistrictView({model: tools.SelectDistrict});
         new ColorCodeMapView({model: new ColorCodeMap()});
         new SaveSelectionCosiView({model: tools.SaveSelectionCosi});
         new TimeSliderView({model: tools.TimeSlider});
+        new SelectDistrictView({model: tools.SelectDistrict});
     }
     else {
         new InfoScreenView({

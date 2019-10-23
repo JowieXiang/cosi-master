@@ -1,6 +1,6 @@
 import DropdownModel from "../../../../modules/snippets/dropdown/model";
 import * as Chromatic from "d3-scale-chromatic";
-import {Fill, Style} from "ol/style.js";
+import {Fill, Stroke, Style, Text} from "ol/style.js";
 
 const LayerModel = Backbone.Model.extend({
     defaults: {
@@ -85,7 +85,22 @@ const LayerModel = Backbone.Model.extend({
 
             foundFeature.setStyle(new Style({
                 fill: new Fill({
-                    color: colorScale.scale(feature.getProperties()[attribute])
+                    color: colorScale.scale(feature.getProperties()[attribute]).replace("rgb", "rgba").replace(")", ", 0.8)")
+                }),
+                stroke: new Stroke({
+                    color: colorScale.scale(feature.getProperties()[attribute]),
+                    width: 3
+                }),
+                text: new Text({
+                    font: "16px Calibri,sans-serif",
+                    fill: new Fill({
+                        color: "#000"
+                    }),
+                    stroke: new Stroke({
+                        color: "#FFF",
+                        width: 3
+                    }),
+                    text: feature.getProperties()[attribute]
                 })
             }));
             foundDistrictFeatures.push(foundFeature);
@@ -101,7 +116,15 @@ const LayerModel = Backbone.Model.extend({
      */
     unStyleDistrictFeaturs: function (features) {
         features.forEach((feature) => {
-            feature.setStyle(null);
+            feature.setStyle(new Style({
+                fill: new Fill({
+                    color: "rgba(255, 255, 255, 0)"
+                }),
+                stroke: new Stroke({
+                    color: "#3399CC",
+                    width: 5
+                })
+            }));
         });
     },
 

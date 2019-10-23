@@ -15,7 +15,7 @@ const LayerFilterModel = Backbone.Model.extend({
         this.set("filter", JSON.stringify(newFilter));
     },
     initializeDistrictInfo: function () {
-        const selector = Radio.request("SelectDistrict", "getSelector") === "statgebiet" ? "stat_gebiet" : Radio.request("SelectDistrict", "getSelector"),
+        const selector = Radio.request("SelectDistrict", "getSelector"),
             layerId = this.get("layerInfo").layerId,
             featureCollection = Radio.request("FeaturesLoader", "getAllFeaturesByAttribute", {
                 id: layerId
@@ -45,7 +45,7 @@ const LayerFilterModel = Backbone.Model.extend({
 
     },
     updateRefDistrictValue: function () {
-        const selector = Radio.request("SelectDistrict", "getSelector") === "statgebiet" ? "stat_gebiet" : Radio.request("SelectDistrict", "getSelector"),
+        const selector = Radio.request("SelectDistrict", "getSelector"),
             layerId = this.get("layerInfo").layerId,
             featureCollection = Radio.request("FeaturesLoader", "getAllFeaturesByAttribute", {
                 id: layerId
