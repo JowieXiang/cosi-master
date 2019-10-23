@@ -3,8 +3,16 @@ import SelectDistrict from "./selectDistrict/model";
 import SaveSelectionCosi from "./saveSelection/model";
 import InfoScreenHandler from "./infoScreen/infoScreenHandler/model";
 import TimeSlider from "./timeSlider/model";
+import IsoChrones from "./isochrones/model";
 
 const tools = {
+    Isochrones: new IsoChrones({
+        id: "Isochrones",
+        parentId: "tools",
+        type: "tool",
+        name: "Isochrome",
+        glyphicon: "glyphicon-move"
+    }),
     SelectDistrict: new SelectDistrict({
         id: "selectDistrict",
         parentId: "root",

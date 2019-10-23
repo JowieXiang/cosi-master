@@ -42,5 +42,8 @@ const Config = {
     },
     isMenubarVisible: true,
     geoAPI: false,
-    clickCounter: {}
+    clickCounter: {},
+    remoteInterface: {
+        postMessageUrl: "https://localhost:9001/portal/cosi_new/infoscreen.html"
+    }
 };

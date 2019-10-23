@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<div class="isochrones container">
+    <div class="row" id="isochrones-row">
+        <form>
+            <div class="form-row" id="layerfilter-selector-container">
+                <div class="form-group col-md-4">
+                    <label for="path-parameter" id="path-parameter-label"><strong>Path Type</strong></label>
+                    <select class="form-control input-sm" title="Demografische Daten anzeigen" id="path-type">
+                        <option selected value="Leeren"> -Leeren- </option>
+                        <option value="driving-car">driving-car</option>
+                        <option value="driving-hgv">driving-hgv</option>
+                        <option value="cycling-regular">cycling-regular</option>
+                        <option value="cycling-road">cycling-road</option>
+                        <option value="cycling-mountain">cycling-mountain</option>
+                        <option value="cycling-electric">cycling-electric</option>
+                        <option value="foot-walking">foot-walking</option>
+                        <option value="foot-hiking">foot-hiking</option>
+                        <option value="wheelchair">wheelchair</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row" id="range-input-container">
+                <div class="form-group col-md-4">
+                    <label for="range" id="range-label"><strong>Range</strong></label>
+                    <input class="form-control input-sm" title="range" id="range" type="number" min="0" >
+                    </input>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-3" id="add-filter-button-group">
+                    <br />
+                    <div id="create-isochrones">
+                        <span class="glyphicon glyphicon-plus"></span>
+                        create
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-1">
+                    <br />
+                    <div id="isochrones-help">
+                        <span class="glyphicon glyphicon-question-sign"></span>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

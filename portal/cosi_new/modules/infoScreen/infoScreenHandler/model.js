@@ -39,7 +39,7 @@ const InfoScreenHandler = Tool.extend({
             "change:content": function () {
                 if (this.get("infoScreenOpen")) {
                     this.renderContent();
-                    this.updateWindow();
+                    // this.updateWindow();
                 }
             }
         });
@@ -47,7 +47,7 @@ const InfoScreenHandler = Tool.extend({
     castWindow () {
         this.window = window.open("/portal/cosi_new/infoscreen.html", "InfoScreen", this.get("winOpts"));
 
-        this.updateWindow();
+        // this.updateWindow();
         this.setIsWindowOpen(true);
     },
     sendData (data, target, attr) {

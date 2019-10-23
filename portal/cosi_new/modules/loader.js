@@ -9,6 +9,7 @@ import SelectDistrictView from "./selectDistrict/view";
 import SaveSelectionCosiView from "./saveSelection/view";
 import InfoScreenView from "./infoScreen/view";
 import TimeSliderView from "./timeSlider/view";
+import IsoChronesView from "./isochrones/view";
 
 /**
  * @returns {void}
@@ -20,13 +21,14 @@ function initializeCosi () {
     if (!window.location.pathname.includes("infoscreen.html")) {
         new FeaturesLoader();
         Radio.trigger("ModelList", "addModelsAndUpdate", Object.values(tools));
-
+        new IsoChronesView({model: tools.Isochrones});
         new ColorCodeMapView({model: new ColorCodeMap()});
         new SaveSelectionCosiView({model: tools.SaveSelectionCosi});
         new TimeSliderView({model: tools.TimeSlider});
         new SelectDistrictView({model: tools.SelectDistrict});
     }
     else {
+        // load dashboard content into infoscreen window
         new InfoScreenView({
             title: "CoSI InfoScreen",
             children: [dashboard]
