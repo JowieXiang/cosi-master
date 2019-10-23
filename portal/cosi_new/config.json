@@ -26,14 +26,6 @@
         "timeout": 10000,
         "definitions": [
           {
-            "url": "/geodienste_hamburg_de/MRH_WFS_Rotenburg",
-            "typeName": "app:mrh_row_bplan",
-            "propertyNames": [
-              "app:name"
-            ],
-            "name": "B-Plan"
-          },
-          {
             "url": "/geodienste_hamburg_de/HH_WFS_Bebauungsplaene",
             "typeName": "app:hh_hh_festgestellt",
             "propertyNames": [
