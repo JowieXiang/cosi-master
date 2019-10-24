@@ -13,6 +13,12 @@ const LayerModel = Backbone.Model.extend({
     initialize: function () {
         // to do for stadtteil
         this.setDropDownModel(Radio.request("FeaturesLoader", "getAllValuesByScope", "statgebiet"));
+
+        this.listenTo(Radio.channel("FeaturesLoader"), {
+            "districtsLoaded": function () {
+                this.updateDropDownModel(Radio.request("FeaturesLoader", "getAllValuesByScope", "statgebiet"));
+            }
+        }, this);
     },
 
     /**
@@ -37,6 +43,10 @@ const LayerModel = Backbone.Model.extend({
         }, this);
 
         this.set("dropDownModel", dropdownModel);
+    },
+
+    updateDropDownModel: function (valueList) {
+        this.get("dropDownModel").set("values", valueList);
     },
 
     /**

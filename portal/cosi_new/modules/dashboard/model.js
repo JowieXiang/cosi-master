@@ -255,7 +255,7 @@ const DashboardModel = Tool.extend({
         }
 
         Radio.trigger("Dashboard", "append", graph, "#dashboard-containers", {
-            id: "view",
+            id: "",
             name: title,
             glyphicon: "glyphicon-info-sign"
         });

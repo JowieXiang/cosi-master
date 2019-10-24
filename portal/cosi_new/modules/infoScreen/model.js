@@ -18,9 +18,8 @@ const InfoScreenModel = Backbone.Model.extend({
     },
     initChildren (children) {
         children.forEach(child => {
-            console.log(child);
-            if (child.model.get("isActive")) {
-                child.model.set("isActive");
+            if (!child.model.get("isActive")) {
+                child.model.set("isActive", true);
             }
             else {
                 child.render();
@@ -31,11 +30,14 @@ const InfoScreenModel = Backbone.Model.extend({
             this.trigger("updateContent");
         }, 2000); // Fix later
     },
-    updateWindow () {
-        
+    updateWindow (children) {
+        this.initChildren(children);
     },
     receiveData (data) {
         console.log(data);
+    },
+    sendData (data) {
+        window.parent.sendMessage(data);
     },
     getChildren () {
         return this.get("children");

@@ -1,4 +1,5 @@
 import Template from "text-loader!./template.html";
+import "./style.less";
 import DropdownView from "../../../../modules/snippets/dropdown/view";
 import ExportButtonView from "../../../../modules/snippets/exportButton/view";
 

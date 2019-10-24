@@ -10,12 +10,11 @@ const InfoScreenHandler = Tool.extend({
         title: "",
         windowName: "",
         winOpts: {},
-        infoScreenOpen: false
+        infoScreenOpen: false,
+        widgets: []
     }),
     initialize () {
         this.superInitialize();
-
-        console.log(window.location);
 
         this.listenTo(this.get("channel"), {
             "sendData": this.sendData,
@@ -45,9 +44,8 @@ const InfoScreenHandler = Tool.extend({
         });
     },
     castWindow () {
-        // this.window = window.open("", "myWin");
         this.window = window.open("/portal/cosi_new/infoscreen.html", "InfoScreen");
-
+        window.onmessage = this.receiveData;
         this.setIsWindowOpen(true);
     },
     sendData (data, target, attr) {
@@ -57,6 +55,15 @@ const InfoScreenHandler = Tool.extend({
             attr: attr,
             data: data
         });
+    },
+    receiveData (data) {
+        if (!data.target) {
+            for (const attr in data) {
+                if (this.get("attr")) {
+                    this.set("attr", data[attr]);
+                }
+            }
+        }
     },
     clear () {
         this.set("content", {});
@@ -69,6 +76,9 @@ const InfoScreenHandler = Tool.extend({
         if (this.get("infoScreenOpen")) {
             this.get("channel").trigger("infoScreenOpen");
         }
+    },
+    getWidgets () {
+        return this.get("widgets");
     }
 });
 

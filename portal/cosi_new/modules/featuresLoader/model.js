@@ -66,7 +66,6 @@ const featuresLoader = Backbone.Model.extend({
             propertyListPromise = this.getPropertyListWithoutGeometry(serviceUrl),
             featurePromiseList = [];
 
-        Radio.trigger("FeaturesLoader", "districtsLoaded", layerList);
         propertyListPromise.then(propertyList => {
             layerList.forEach(function (layer) {
                 const getFeatureUrl = Radio.request("Util", "getProxyURL", this.getUrl(layer, bbox, propertyList));
@@ -100,6 +99,7 @@ const featuresLoader = Backbone.Model.extend({
                 this.set(attribute, featureList.reduce((total, feature) => total.concat(feature), []));
                 console.info(this.get("statistischeGebiete"));
 
+                Radio.trigger("FeaturesLoader", "districtsLoaded", layerList);
                 Radio.trigger("Util", "hideLoader");
                 Radio.trigger("Alert", "alert:remove");
             });
