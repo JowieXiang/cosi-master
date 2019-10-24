@@ -4,7 +4,8 @@ import "./style.less";
 
 const DashboardWidgetView = Backbone.View.extend({
     events: {
-        "click .dashboard-widget-close": "remove"
+        "click .dashboard-widget-close": "remove",
+        "click .open": "toggleOpen"
     },
     initialize (content, parent, opts = {}) {
         const attrs = content.model ? content.model.defaults : opts;
@@ -26,19 +27,15 @@ const DashboardWidgetView = Backbone.View.extend({
         this.$el.append(this.template(this.attrs));
 
         if (this.content instanceof Backbone.View) {
-            console.log("view");
             this.renderView();
         }
         else if (this.content instanceof $) {
-            console.log("$");
             this.render$el();
         }
         else if (typeof this.content === "string") {
-            console.log("html");
             this.renderHtml();
         }
         else if (this.content instanceof selection) {
-            console.log("d3");
             this.renderD3();
         }
 
@@ -46,8 +43,8 @@ const DashboardWidgetView = Backbone.View.extend({
     },
     initializeDOMElement (parent) {
         const widget = document.createElement("div");
-        widget.className = "dashboard-widget";
 
+        widget.className = "dashboard-widget";
         $(parent).append($(widget));
         this.setElement(widget);
     },
@@ -63,6 +60,9 @@ const DashboardWidgetView = Backbone.View.extend({
     },
     renderD3 () {
         this.$el.find("#content").html(this.content.node());
+    },
+    toggleOpen () {
+        this.$el.toggleClass("open");
     }
 });
 
