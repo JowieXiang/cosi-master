@@ -202,13 +202,15 @@ const DashboardModel = Tool.extend({
             isVisibleInMap: status
         });
     },
-    createChart (props, type) {
+    createChart (props, type, title) {
+        let graph;
+
         if (type === "Linegraph") {
             const data = this.getChartData(props);
 
-            Radio.trigger("Graph", "createGraph", {
+            graph = Radio.request("Graph", "createGraph", {
                 graphType: type,
-                selector: ".dashboard-graph",
+                selector: document.createElement("div"),
                 scaleTypeX: "ordinal",
                 scaleTypeY: "linear",
                 data: data.data,
@@ -224,12 +226,12 @@ const DashboardModel = Tool.extend({
                 },
                 width: $(window).width() * 0.4,
                 height: $(window).height() * 0.4,
-                svgClass: "dashboard-grapg-svg",
+                svgClass: "dashboard-graph-svg",
                 selectorTooltip: ".graphTooltip"
             });
         }
         else if (type === "BarGraph") {
-            Radio.trigger("Graph", "createGraph", {
+            graph = Radio.request("Graph", "createGraph", {
                 graphType: type,
                 selector: ".dashboard-graph",
                 scaleTypeX: "ordinal",
@@ -247,30 +249,16 @@ const DashboardModel = Tool.extend({
                 },
                 width: $(window).width() * 0.4,
                 height: $(window).height() * 0.4,
-                svgClass: "dashboard-grapg-svg",
+                svgClass: "dashboard-graph-svg",
                 selectorTooltip: ".graphTooltip"
             });
         }
 
-        /**
-         * GraphConfig Options:
-         * graphType = graphConfig.graphType,
-         * selector = graphConfig.selector,
-         * scaleTypeX = graphConfig.scaleTypeX,
-         * scaleTypeY = graphConfig.scaleTypeY,
-         * data = graphConfig.data,
-         * xAttr = graphConfig.xAttr,
-         * xAxisLabel = graphConfig.xAxisLabel
-         * yAxisLabel = graphConfig.yAxisLabel
-         * attrToShowArray = graphConfig.attrToShowArray,
-         * margin = graphConfig.margin,
-         * width = graphConfig.width
-         * height = graphConfig.height
-         * xAxisTicks = graphConfig.xAxisTicks,
-         * yAxisTicks = graphConfig.yAxisTicks,
-         * svgClass = graphConfig.svgClass,
-         * selectorTooltip
-        */
+        Radio.trigger("Dashboard", "append", graph, "#dashboard-containers", {
+            id: "view",
+            name: title,
+            glyphicon: "glyphicon-info-sign"
+        });
     },
     getChartData (props) {
         const data = this.get("tableView").map((district) => {
@@ -321,10 +309,7 @@ const DashboardModel = Tool.extend({
         this.trigger("tableViewFilter", this.get("filterDropdownModel").getSelectedValues());
     },
     updateFilter: function () {
-        // const properties = _.allKeys(this.get("tableView")[0]);
-
         this.get("filterDropdownModel").set("values", Radio.request("FeaturesLoader", "getAllValuesByScope", "statgebiet"));
-        // this.get("filterDropdownModel").set("values", properties.filter(prop => prop !== this.get("sortKey")));
         this.trigger("updateProperties");
     },
     getScope: function () {

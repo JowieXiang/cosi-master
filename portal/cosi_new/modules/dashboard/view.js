@@ -9,7 +9,8 @@ const DashboardView = Backbone.View.extend({
         "click .row": "createChart",
         "click .prop button.open": "toggleTimelineTable",
         "click .figure > .header > button.open": "toggleFigure",
-        "mousedown .drag-bar": "dragStart"
+        "mousedown .drag-bar": "dragStart",
+        "click .tool-name": "test"
     },
     initialize: function () {
         this.exportButtonView = new ExportButtonView({model: this.model.get("exportButtonModel")});
@@ -45,6 +46,9 @@ const DashboardView = Backbone.View.extend({
             this.dragMove(event);
         });
     },
+    test () {
+        console.log(Radio.request("Dashboard", "getChildren"));
+    },
     id: "dashboard-view",
     className: "dashboard",
     model: {},
@@ -62,7 +66,7 @@ const DashboardView = Backbone.View.extend({
         this.renderFilter();
 
         if (Radio.request("InfoScreen", "getIsWindowOpen")) {
-            Radio.trigger("InfoScreen", "sendToInfoScreen", attr.tableView, "dashboard", "tableView");
+            Radio.trigger("InfoScreen", "sendData", attr.tableView, "dashboard", "tableView");
         }
         else {
             Radio.trigger("Sidebar", "append", this.$el);
@@ -106,17 +110,14 @@ const DashboardView = Backbone.View.extend({
             firstValue = row.find("td").first().text();
 
         if (!isNaN(parseFloat(firstValue)) && !row.find("td").hasClass("timeline-table")) {
-            this.model.createChart([row.find("th.prop").attr("id")], "BarGraph");
+            this.model.createChart([row.find("th.prop").attr("id")], "BarGraph", row.find("th.prop").text());
         }
         else if (row.find("td").hasClass("timeline-table")) {
-            this.model.createChart([row.find("th.prop").attr("id")], "Linegraph");
+            this.model.createChart([row.find("th.prop").attr("id")], "Linegraph", row.find("th.prop").text());
         }
         // Highlight the selected row
         row.parent("tbody").find("tr").removeClass("selected");
         row.addClass("selected");
-
-        // Add Header
-        this.$el.find(".basic-graph-header").html(`Diagramm: ${row.find("th.prop").text()}`);
     },
     clearChart: function () {
         this.$el.find(".basic-graph-header").html("");

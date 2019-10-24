@@ -30,7 +30,6 @@ const InfoScreenView = Backbone.View.extend({
         return this;
     },
     renderContent () {
-        console.log("trigger");
         this.contentContainer.empty();
         this.model.getChildren().forEach(child => {
             this.renderChild(child);
