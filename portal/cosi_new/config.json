@@ -3,7 +3,7 @@
     "portalTitle": {
       "title": "CoSI",
       "link": "http://geoinfo.hamburg.de",
-      "tooltip": "Landesbetrieb Geoinformation und Vermessung"
+      "toolTip": "Landesbetrieb Geoinformation und Vermessung"
     },
     "searchBar": {
       "gazetteer": {
@@ -276,7 +276,22 @@
             "Traeger",
             "Leistungsarten",
             "Name"
-          ]
+          ],
+          "gfiAttributes": {
+            "Name": "Name",
+            "Telefon": "Telefon",
+            "Fax": "Fax",
+            "Strasse": "Straße",
+            "Hausnr": "Hausnummer",
+            "PLZ": "PLZ",
+            "Stadtteil": "Stadtteil",
+            "Bezirk": "Bezirk",
+            "Traeger": "Träger",
+            "Spitzenverband": "Spitzenverband",
+            "Informationen": "Informationen",
+            "E-Mail": "E-Mail",
+            "Leistungsarten": "Leistungsarten"
+          }
         },
         {
           "id": "1750"
