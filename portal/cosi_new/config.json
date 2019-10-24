@@ -3,7 +3,7 @@
     "portalTitle": {
       "title": "CoSI",
       "link": "http://geoinfo.hamburg.de",
-      "tooltip": "Landesbetrieb Geoinformation und Vermessung"
+      "toolTip": "Landesbetrieb Geoinformation und Vermessung"
     },
     "searchBar": {
       "gazetteer": {
