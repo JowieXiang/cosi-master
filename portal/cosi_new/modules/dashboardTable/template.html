@@ -1,18 +1,8 @@
 <!DOCTYPE html>
-<div class="drag-bar">&#8942;</div>
 <div class="dashboard">
-        <div class="btn-group header">
-                <span class="glyphicon <%=glyphicon%>"></span>
-                <span class="tool-name"><%= name %></span>
-                <% if (isVisibleInMenu === true) { %>
-                        <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <% } %>
-        </div>
-        <!-- <div class="simple-views-container">
+        <div class="simple-views-container">
                 <div class="overview figure open">
                         <div class="btn-group header" style="border-bottom: none;">
-                                <span class="figure-name">Übersicht</span>
-                                <button type="button" class="btn btn-outline-secondary open"><span></span></button>
                                 <span class="filter-dropdown"></span>
                         </div>
                         <div class="content">
@@ -52,18 +42,5 @@
                                 <div id="export-button"></div>
                         </div>
                 </div>
-        </div> -->
-        <!-- <div class="detail-view-container">
-                <div class="figure open">
-                        <div class="btn-group header">
-                                <span class="basic-graph-header"></span>
-                                <button type="button" class="btn btn-outline-secondary open"><span></span></button>
-                        </div>
-                        <div class="content">
-                                <svg class="dashboard-graph"></svg>
-                                <div class="graphTooltip"></div>
-                        </div>
-                </div>
-        </div> -->
-        <div id="dashboard-containers"></div>
+        </div>
 </div>

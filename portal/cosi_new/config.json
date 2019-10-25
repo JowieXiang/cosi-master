@@ -3,7 +3,7 @@
     "portalTitle": {
       "title": "CoSI",
       "link": "http://geoinfo.hamburg.de",
-      "tooltip": "Landesbetrieb Geoinformation und Vermessung"
+      "toolTip": "Landesbetrieb Geoinformation und Vermessung"
     },
     "searchBar": {
       "gazetteer": {
@@ -25,14 +25,6 @@
         "minChars": 3,
         "timeout": 10000,
         "definitions": [
-          {
-            "url": "/geodienste_hamburg_de/MRH_WFS_Rotenburg",
-            "typeName": "app:mrh_row_bplan",
-            "propertyNames": [
-              "app:name"
-            ],
-            "name": "B-Plan"
-          },
           {
             "url": "/geodienste_hamburg_de/HH_WFS_Bebauungsplaene",
             "typeName": "app:hh_hh_festgestellt",
@@ -173,9 +165,10 @@
           }
         }
       },
-      "legend": {
-        "name": "Legende",
-        "glyphicon": "glyphicon-book"
+      "utilities": {
+        "name": "Dienste",
+        "glyphicon": "glyphicon-cog",
+        "children": {}
       }
     },
     "scaleLine": false,
@@ -284,7 +277,22 @@
             "Traeger",
             "Leistungsarten",
             "Name"
-          ]
+          ],
+          "gfiAttributes": {
+            "Name": "Name",
+            "Telefon": "Telefon",
+            "Fax": "Fax",
+            "Strasse": "Straße",
+            "Hausnr": "Hausnummer",
+            "PLZ": "PLZ",
+            "Stadtteil": "Stadtteil",
+            "Bezirk": "Bezirk",
+            "Traeger": "Träger",
+            "Spitzenverband": "Spitzenverband",
+            "Informationen": "Informationen",
+            "E-Mail": "E-Mail",
+            "Leistungsarten": "Leistungsarten"
+          }
         },
         {
           "id": "1750"

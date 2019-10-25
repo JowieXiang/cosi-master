@@ -21,9 +21,7 @@ const featuresLoader = Backbone.Model.extend({
             "getAllFeaturesByAttribute": this.getAllFeaturesByAttribute,
             "getAllValuesByScope": this.getAllValuesByScope
         }, this);
-        channel.on({
-            "districtsLoaded": this.districtsLoaded
-        }, this);
+
         this.listenTo(Radio.channel("SelectDistrict"), {
             "selectionChanged": this.checkDistrictScope
         });
@@ -68,7 +66,6 @@ const featuresLoader = Backbone.Model.extend({
             propertyListPromise = this.getPropertyListWithoutGeometry(serviceUrl),
             featurePromiseList = [];
 
-        Radio.trigger("FeaturesLoader", "districtsLoaded", layerList);
         propertyListPromise.then(propertyList => {
             layerList.forEach(function (layer) {
                 const getFeatureUrl = Radio.request("Util", "getProxyURL", this.getUrl(layer, bbox, propertyList));
@@ -79,6 +76,13 @@ const featuresLoader = Backbone.Model.extend({
                     })
                     .then(responseString => {
                         return wfsReader.readFeatures(responseString);
+                    })
+                    // mapping feature kategorie value
+                    .then(features => {
+                        features.forEach(function (feature) {
+                            feature.set("kategorie", this.findMappingObjectByCategory(feature.get("kategorie")).value);
+                        }, this);
+                        return features;
                     })
                     .then(features => {
                         return features.filter((feature) => {
@@ -95,6 +99,7 @@ const featuresLoader = Backbone.Model.extend({
                 this.set(attribute, featureList.reduce((total, feature) => total.concat(feature), []));
                 console.info(this.get("statistischeGebiete"));
 
+                Radio.trigger("FeaturesLoader", "districtsLoaded", layerList);
                 Radio.trigger("Util", "hideLoader");
                 Radio.trigger("Alert", "alert:remove");
             });
@@ -173,10 +178,8 @@ const featuresLoader = Backbone.Model.extend({
      * @returns {ol.Feature[]} the district features
      */
     getDistrictsByValue: function (scope, value) {
-        const mappingObject = this.findMappingObjectByValue(value);
-
         return this.getDistrictsByScope(scope).filter(function (feature) {
-            return feature.getProperties().kategorie === mappingObject.category;
+            return feature.getProperties().kategorie === value;
         });
     },
 
@@ -213,24 +216,13 @@ const featuresLoader = Backbone.Model.extend({
     },
 
     /**
-     * returns all raw layers within the scope of respective district selection
-     * e.g. if selected district is of type statistishe gebiet
-     * returns all WFS layers on the level of statistishe gebiet
-     * @param {array} layerList - layerList of selected type
-     * @returns {array} layerList of selected type
-     */
-    districtsLoaded: function (layerList) {
-        return layerList;
-    },
-
-    /**
-     * finds a mapping object by its value
-     * @param {string} value - value of the mapping object
+     * finds a mapping object by its category
+     * @param {string} value - category of the mapping object
      * @returns {object} the mapping object
      */
-    findMappingObjectByValue: function (value) {
+    findMappingObjectByCategory: function (value) {
         return MappingJson.find(obj => {
-            return obj.value === value;
+            return obj.category === value;
         });
     },
 

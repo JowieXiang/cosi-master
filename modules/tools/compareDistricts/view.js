@@ -279,12 +279,12 @@ const CompareDistrictsView = Backbone.View.extend({
             kategorie: "alert-info"
         });
 
-        $('.infoBox a').hover(function() {
-            $($(this).attr('data')).css({
-                "text-decoration":"underline"
+        $(".infoBox a").hover(function () {
+            $($(this).attr("data")).css({
+                "text-decoration": "underline"
             });
-        }, function() {
-            $($(this).attr('data')).css({
+        }, function () {
+            $($(this).attr("data")).css({
                 "text-decoration": "none"
             });
         });

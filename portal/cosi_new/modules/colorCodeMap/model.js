@@ -13,6 +13,12 @@ const LayerModel = Backbone.Model.extend({
     initialize: function () {
         // to do for stadtteil
         this.setDropDownModel(Radio.request("FeaturesLoader", "getAllValuesByScope", "statgebiet"));
+
+        this.listenTo(Radio.channel("FeaturesLoader"), {
+            "districtsLoaded": function () {
+                this.updateDropDownModel(Radio.request("FeaturesLoader", "getAllValuesByScope", "statgebiet"));
+            }
+        }, this);
     },
 
     /**
@@ -37,6 +43,10 @@ const LayerModel = Backbone.Model.extend({
         }, this);
 
         this.set("dropDownModel", dropdownModel);
+    },
+
+    updateDropDownModel: function (valueList) {
+        this.get("dropDownModel").set("values", valueList);
     },
 
     /**
@@ -72,7 +82,7 @@ const LayerModel = Backbone.Model.extend({
      * @returns {void}
      */
     styleDistrictFeaturs: function (features, attribute) {
-        const districtFeatures = this.getDistrictFeaturesByScope("Statistische Gebiete"),
+        const districtFeatures = this.getDistrictFeaturesByScope(Radio.request("SelectDistrict", "getScope")),
             foundDistrictFeatures = [],
             values = features.map(feature => feature.getProperties()[attribute]),
             colorScale = Radio.request("ColorScale", "getColorScaleByValues", values, Chromatic.interpolateBlues);

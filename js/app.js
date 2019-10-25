@@ -141,6 +141,7 @@ async function loadApp() {
     new Map();
     new WPS();
     new AddGeoJSON();
+    new WindowView();
 
     if (_.has(Config, "cswId")) {
         cswParserSettings.cswId = Config.cswId;
@@ -206,7 +207,7 @@ async function loadApp() {
         new ScaleLineView();
     }
 
-    new WindowView();
+
     // Module laden
     // Tools
 

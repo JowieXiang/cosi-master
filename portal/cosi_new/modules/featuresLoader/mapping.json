@@ -156,13 +156,13 @@
     "statgebiet": true
   },
   {
-    "category": "soz_sozverpflichtig_besch_frauen_15_bis_u65_ant",
+    "category": "soz_sozverpflichtig_beschaeftigte_frauen_15_bis_u65_ant",
     "value": "Anteil der Sozialversicherungspflichtig beschäftigten Frauen 15 bis unter 65 Jahren",
     "group": "Sozialversicherungspflichtige",
     "statgebiet": true
   },
   {
-    "category": "soz_sozverpflichtig_besch_maenner_15_bis_u65_ant",
+    "category": "soz_sozverpflichtig_beschaeftigte_maenner_15_bis_u65_ant",
     "value": "Anteil der Sozialversicherungspflichtig beschäftigten Männern 15 bis unter 65 Jahren",
     "group": "Sozialversicherungspflichtige",
     "statgebiet": true
@@ -258,7 +258,7 @@
     "statgebiet": true
   },
   {
-    "category": "sgb_anteil_an_der_ausl_bev_erw_15_bis_u65_proz",
+    "category": "sgb_anteil_an_der_auslaendischen_bev_erw_15_bis_u65_proz",
     "value": "Anteil der ausländischen Bevölkerung 15 bis unter 65 Jahren",
     "group": "SGB II Leistungen",
     "statgebiet": true
@@ -276,7 +276,7 @@
     "statgebiet": true
   },
   {
-    "category": "sgb_auslaend_erwerbsf_leistungsempfaenger_anz",
+    "category": "sgb_auslaendische_erwerbsf_leistungsempfaenger_anz",
     "value": "Ausländische erwerbsfähige Leistungsempfänger/-innen nach SGB II",
     "group": "SGB II Leistungen",
     "statgebiet": true
@@ -348,7 +348,7 @@
     "statgebiet": true
   },
   {
-    "category": "ver_anteil_pkw_schadstkl_4_bis_6_gruene_pl_proz",
+    "category": "ver_anteil_pkw_schadstoffkl_4_bis_6_gruene_plakette_proz",
     "value": "Anteil der PKW mit Schadstoffklasse 4 is 6",
     "group": "Verkehr",
     "statgebiet": true
@@ -372,7 +372,7 @@
     "statgebiet": true
   },
   {
-    "category": "ver_private_pkw_je_1000_ew_anz",
+    "category": "ver_private_pkw_je_1000_EW_anz",
     "value": "Private PKW je 1000 Einwohner",
     "group": "Verkehr",
     "statgebiet": true
