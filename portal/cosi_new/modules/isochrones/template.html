@@ -3,6 +3,17 @@
     <div class="row" id="isochrones-row">
         <form>
             <div class="form-row" id="layerfilter-selector-container">
+                <div class="form-group col-md-12">
+                    <label for="coordinate" id="coordinate-label"><strong>Ref coordinate</strong></label>
+                    <input class="form-control input-sm" title="range" id="coordinate" type="text" min="0">
+                    </input>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="row" id="isochrones-row">
+        <form>
+            <div class="form-row" id="layerfilter-selector-container">
                 <div class="form-group col-md-4">
                     <label for="path-parameter" id="path-parameter-label"><strong>Path Type</strong></label>
                     <select class="form-control input-sm" title="Demografische Daten anzeigen" id="path-type">
@@ -15,14 +26,14 @@
                         <option value="cycling-electric">cycling-electric</option>
                         <option value="foot-walking">foot-walking</option>
                         <option value="foot-hiking">foot-hiking</option>
-                        <option value="wheelchair">wheelchair</option>
+                        <!-- <option value="wheelchair">wheelchair</option> -->
                     </select>
                 </div>
             </div>
             <div class="form-row" id="range-input-container">
                 <div class="form-group col-md-4">
                     <label for="range" id="range-label"><strong>Range</strong></label>
-                    <input class="form-control input-sm" title="range" id="range" type="number" min="0" >
+                    <input class="form-control input-sm" title="range" id="range" type="number" min="0">
                     </input>
                 </div>
             </div>

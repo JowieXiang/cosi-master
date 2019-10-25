@@ -1,13 +1,16 @@
 import Template from "text-loader!./template.html";
 import SnippetDropdownView from "../../../../modules/snippets/dropdown/view";
 import * as Proj from "ol/proj.js";
+import "./style.less";
+import { Fill, Stroke, Style } from "ol/style.js";
+import GeoJSON from "ol/format/GeoJSON";
 
 const IsoChronesView = Backbone.View.extend({
     events: {
         "click #create-isochrones": "createIsochrones",
         "click button#Submit": "checkIfSelected",
-        "focus #range": "registerClickListener",
-        "blur #range": "unregisterClickListener",
+        "focus #coordinate": "registerClickListener",
+        "blur #coordinate": "unregisterClickListener",
         "change #path-type": "setPathType",
         "change #range": "setRange"
     },
@@ -19,9 +22,12 @@ const IsoChronesView = Backbone.View.extend({
         this.listenTo(this.model, {
             "change:isActive": function (model, value) {
                 this.render(model, value);
+                this.createMapLayer("IsoChrones_name");
+            },
+            "change:coordinate": function (model, value) {
+                this.rerenderCoordinate(value);
             }
         });
-
     },
     model: {},
     template: _.template(Template),
@@ -34,6 +40,11 @@ const IsoChronesView = Backbone.View.extend({
         }
         return this;
     },
+    createMapLayer: function (name) {
+        const newLayer = Radio.request("Map", "createLayerIfNotExists", name);
+
+        newLayer.setVisible(false);
+    },
     createIsochrones: function () {
         const openrouteUrl = this.model.get("openrouteUrl"),
             key = this.model.get("key"),
@@ -42,8 +53,51 @@ const IsoChronesView = Backbone.View.extend({
             range = this.model.get("range");
 
         if (coordinate.length > 0 && pathType !== "" && range !== 0) {
-            this.makeRequest(openrouteUrl, key, pathType, coordinate, range).then(res => {
-                console.log("res: ", res);
+            this.openRouteRequest(openrouteUrl, key, pathType, coordinate, range).then(res => {
+
+                const mapLayer = Radio.request("Map", "getLayerByName", "IsoChrones_name");
+
+                let newFeatures = this.parseDataToFeatures(res);
+
+                newFeatures = this.transformFeatures(newFeatures, "EPSG:4326", "EPSG:25832");
+                mapLayer.getSource().clear();
+                newFeatures.forEach(function (feature) {
+                    feature.setStyle(new Style({
+                        fill: new Fill({
+                            color: "rgba(0, 255, 0, 0.8)"
+                        }),
+                        stroke: new Stroke({
+                            color: "red",
+                            width: 3
+                        })
+                    }));
+                });
+
+                mapLayer.getSource().addFeatures(newFeatures);
+                mapLayer.setVisible(true);
+                // this.styleFeatures(features);
+                // const layer = Radio.request("ModelList", "getModelByAttributes", {
+                //     id: "isochrone1"
+                // });
+
+                // Radio.trigger("Map", "addLayerOnTop", layer.get("layer"));
+
+                // // console.log("layer properties before: ", layer.get("layer").getProperties());
+
+                // // console.log("maplayer: ", Radio.request("Map", "getLayerByName", "isochrone"));
+
+                // layer.createLayer();
+                // layer.showAllFeatures();
+                // this.styleFeatures(layer.get("layer").getSource().getFeatures());
+
+                // // console.log("layer properties: ", layer.get("layer").getSource());
+
+                // const map = Radio.request("Map", "getMap");
+                // // console.log(map.getLayers().getArray());
+                // _.each(map.getLayers().getArray(), mapLayer => {
+                //     // console.log(mapLayer.getProperties());
+                // });
+                // // console.log("newGeoJsonLayer: ", layer);
             });
         }
     },
@@ -72,9 +126,17 @@ const IsoChronesView = Backbone.View.extend({
         this.model.set("coordinate", coordinate);
     },
     /**
+     * rerender coordinate input box
+     * @param {object} value - coordinate value
+     * @returns {void}
+     */
+    rerenderCoordinate: function (value) {
+        this.$el.find("#coordinate").val(`${value[0]},${value[1]}`);
+    },
+    /**
      * set pathType value in model
      * @param {object} evt - select change event
-     * @returns {void}
+     * @returns {void}\
      */
     setPathType: function (evt) {
         this.model.set("pathType", evt.target.value);
@@ -87,8 +149,7 @@ const IsoChronesView = Backbone.View.extend({
     setRange: function (evt) {
         this.model.set("range", evt.target.value);
     },
-
-    makeRequest: function (baseUrl, key, pathType, coordinate, range) {
+    openRouteRequest: function (baseUrl, key, pathType, coordinate, range) {
         return new Promise(function (resolve, reject) {
             // const body = '{"locations":[[9.9937,53.5511],[9.9937,53.5511]],"range":[300,200]}',
             const queryBody = `{"locations":[${JSON.stringify(coordinate)},[8.686507,49.41943]],"range":[${range}]}`,
@@ -118,6 +179,42 @@ const IsoChronesView = Backbone.View.extend({
             };
             xhr.send(queryBody);
         });
+    },
+    /**
+     * Tries to parse data string to ol.format.GeoJson
+     * @param   {string} data string to parse
+     * @throws Will throw an error if the argument cannot be parsed.
+     * @returns {object}    ol/format/GeoJSON/features
+     */
+    parseDataToFeatures: function (data) {
+        const geojsonReader = new GeoJSON();
+        let jsonObjects;
+
+        try {
+            jsonObjects = geojsonReader.readFeatures(data);
+        }
+        catch (err) {
+            console.error("GeoJSON cannot be parsed.");
+        }
+
+        return jsonObjects;
+    },
+    /**
+     * Transforms features between CRS
+     * @param   {feature[]} features Array of ol.features
+     * @param   {string}    crs      EPSG-Code of feature
+     * @param   {string}    mapCrs   EPSG-Code of ol.map
+     * @returns {void}
+     */
+    transformFeatures: function (features, crs, mapCrs) {
+        _.each(features, function (feature) {
+            var geometry = feature.getGeometry();
+
+            if (geometry) {
+                geometry.transform(crs, mapCrs);
+            }
+        });
+        return features;
     }
 });
 
