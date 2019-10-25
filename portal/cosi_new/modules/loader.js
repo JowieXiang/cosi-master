@@ -12,6 +12,7 @@ import TimeSliderView from "./timeSlider/view";
 
 /**
  * @returns {void}
+ * @summary that is incredibly unelegant!
  */
 function initializeCosi () {
     const dashboard = new DashboardView({model: general.dashboard});
@@ -19,11 +20,12 @@ function initializeCosi () {
     new DashboardTableView({model: general.dashboardTable});
     new DashboardWidgetHandler();
 
+    Radio.trigger("ModelList", "addModelsAndUpdate", Object.values(general));
+
     // Handle TouchScreen / InfoScreen Loading
     if (!window.location.pathname.includes("infoscreen.html")) {
         new FeaturesLoader();
         Radio.trigger("ModelList", "addModelsAndUpdate", Object.values(tools));
-        Radio.trigger("ModelList", "addModelsAndUpdate", [general.dashboard]);
 
         new ColorCodeMapView({model: tools.colorCodeMap});
         new SaveSelectionCosiView({model: tools.saveSelectionCosi});

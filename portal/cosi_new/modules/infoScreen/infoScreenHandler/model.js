@@ -22,17 +22,16 @@ const InfoScreenHandler = Tool.extend({
         }, this);
 
         this.get("channel").reply({
-            "getIsWindowOpen": this.getIsWindowOpen
+            "getIsWindowOpen": this.getIsWindowOpen,
+            "getIsInfoScreen": function () {
+                return false;
+            }
         }, this);
 
         this.listenTo(this, {
-            "change:isActive": function (isActive) {
+            "change:isActive": function (model, isActive) {
                 if (isActive) {
                     this.castWindow();
-                    this.setIsWindowOpen(true);
-                }
-                else {
-                    this.setIsWindowOpen(false);
                 }
             },
             "change:content": function () {
@@ -40,27 +39,31 @@ const InfoScreenHandler = Tool.extend({
                     this.renderContent();
                     this.updateWindow();
                 }
+            },
+            "change:infoScreenOpen": function (model, isOpen) {
+                if (!isOpen) {
+                    this.setIsActive(false);
+                }
             }
         });
     },
     castWindow () {
         this.window = window.open("/portal/cosi_new/infoscreen.html", "InfoScreen");
-        window.onmessage = this.receiveData;
+        window.addEventListener("message", this.receiveData.bind(this), false);
         this.setIsWindowOpen(true);
     },
     sendData (data, target, attr) {
-        console.log(data, target, attr);
         this.window.postMessage({
-            target: target,
-            attr: attr,
-            data: data
+            [target]: {
+                [attr]: data
+            }
         });
     },
-    receiveData (data) {
-        if (!data.target) {
-            for (const attr in data) {
-                if (this.get("attr")) {
-                    this.set("attr", data[attr]);
+    receiveData (event) {
+        if (!event.data.target) {
+            for (const attr in event.data) {
+                if (this.get(attr)) {
+                    this.set(attr, event.data[attr]);
                 }
             }
         }

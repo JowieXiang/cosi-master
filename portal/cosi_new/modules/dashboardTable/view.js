@@ -34,16 +34,17 @@ const DashboardTableView = Backbone.View.extend({
     render: async function () {
         var attr = this.model.toJSON();
 
-        this.$el.html(this.template(attr));
-        this.$el.find("#export-button").append(this.exportButtonView.render().el);
+        if (!Radio.request("InfoScreen", "getIsWindowOpen")) {
+            this.$el.html(this.template(attr));
+            this.$el.find("#export-button").append(this.exportButtonView.render().el);
 
-        this.renderFilter();
-
-        Radio.trigger("Dashboard", "append", this.$el, "#dashboard-containers", {
-            id: "",
-            name: "Übersicht",
-            glyphicon: "glyphicon-stats"
-        });
+            this.renderFilter();
+            Radio.trigger("Dashboard", "append", this.$el, "#dashboard-containers", {
+                id: "",
+                name: "Übersicht",
+                glyphicon: "glyphicon-stats"
+            });
+        }
 
         this.delegateEvents();
 

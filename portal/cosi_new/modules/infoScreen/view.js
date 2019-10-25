@@ -14,7 +14,7 @@ const InfoScreenView = Backbone.View.extend({
             "updateContent": function () {
                 this.renderContent();
             }
-        });
+        }, this);
     },
     model: {},
     contentContainer: {},

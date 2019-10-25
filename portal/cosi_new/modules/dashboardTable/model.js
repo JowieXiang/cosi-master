@@ -5,8 +5,6 @@ import TimelineModel from "../../../../modules/tools/timeline/model";
 
 const DashboardTableModel = Tool.extend({
     defaults: _.extend({}, Tool.prototype.defaults, {
-        graphModels: [],
-        selectedDistricts: [],
         tableView: [],
         name: "",
         glyphicon: "",
@@ -20,11 +18,12 @@ const DashboardTableModel = Tool.extend({
     }),
 
     /**
-     * @class DasboardModel
+     * @class DasboardTableModel
      * @extends Core.ModelList.Tool
      * @constructs
      * @property
      * @listens SelectDistrict#RadioTriggerSelectionChanged
+     * @listens Dashboard#RadioTriggerDashboardOpen
      * @fires
      */
 
@@ -63,9 +62,17 @@ const DashboardTableModel = Tool.extend({
             }
         }, this);
 
-        this.listenTo(channel, {
-            "dashboardOpen": this.getData
+        this.listenTo(Radio.channel("FeaturesLoader"), {
+            "districtsLoaded": this.getData
         }, this);
+
+        this.listenTo(channel, {
+            "dashboardOpen": this.prepareRendering
+        }, this);
+
+        this.listenTo(this, {
+            "change:tableView": this.prepareRendering
+        });
     },
 
     /**
@@ -94,6 +101,16 @@ const DashboardTableModel = Tool.extend({
         // Add total and mean values and filter table for excluded properties
         this.set("tableView", this.calculateTotalAndMean(Radio.request("Timeline", "fillUpTimelineGaps", table, "Array")));
 
+        if (Radio.request("InfoScreen", "getIsWindowOpen")) {
+            Radio.trigger("InfoScreen", "sendData", this.get("tableView"), "dashboardTable", "tableView");
+        }
+    },
+
+    /**
+     * @description prepares all nested views for rendering and triggers view
+     * @returns {void}
+     */
+    prepareRendering: function () {
         // Update the filter dropdown list
         this.updateFilter();
 
@@ -184,7 +201,9 @@ const DashboardTableModel = Tool.extend({
     getData: function () {
         const features = Radio.request("FeaturesLoader", "getDistrictsByScope", Radio.request("SelectDistrict", "getScope"));
 
-        this.updateTable(features);
+        if (features) {
+            this.updateTable(features);
+        }
     },
 
     /**

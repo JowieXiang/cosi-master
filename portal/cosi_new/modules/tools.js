@@ -18,15 +18,6 @@ const general = {
             id: "dashboard",
             glyphicon: "glyphicon-dashboard",
             renderToWindow: false
-        }),
-        infoScreenHandler: new InfoScreenHandler({
-            windowName: "CoSI Info Screen",
-            title: "CoSI Info Screen",
-            name: "Zweites Fenster öffnen",
-            parentId: "root",
-            type: "tool",
-            glyphicon: "glyphicon-new-window",
-            renderToWindow: false
         })
     },
     tools = !window.location.pathname.includes("infoscreen.html") ? {
@@ -48,6 +39,15 @@ const general = {
                     id: "6071"
                 }
             ]
+        }),
+        infoScreenHandler: new InfoScreenHandler({
+            parentId: "utilities",
+            type: "tool",
+            windowName: "CoSI Info Screen",
+            title: "CoSI Info Screen",
+            name: "Zweites Fenster öffnen",
+            glyphicon: "glyphicon-new-window",
+            renderToWindow: false
         }),
         colorCodeMap: new ColorCodeMap(),
         saveSelectionCosi: new SaveSelectionCosi({

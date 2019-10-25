@@ -165,9 +165,10 @@
           }
         }
       },
-      "legend": {
-        "name": "Legende",
-        "glyphicon": "glyphicon-book"
+      "utilities": {
+        "name": "Dienste",
+        "glyphicon": "glyphicon-cog",
+        "children": {}
       }
     },
     "scaleLine": false,
