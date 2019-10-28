@@ -241,6 +241,10 @@
             "name",
             "typ_zusammen"
           ],
+          "mouseHoverField": [
+            "name",
+            "typ_zusammen"
+          ],
           "isFacility": true,
           "styleId": "12868",
           "topic": "basic",
@@ -263,6 +267,11 @@
             "anlagenname",
             "eigentum",
             "gruenart"
+          ],
+          "mouseHoverField": [
+            "anlagenname",
+            "eigentum",
+            "flaeche_qm"
           ]
         },
         {
@@ -278,6 +287,11 @@
             "Traeger",
             "Leistungsarten",
             "Name"
+          ],
+          "mouseHoverField": [
+            "Name",
+            "Traeger",
+            "Leistungsarten"
           ],
           "gfiAttributes": {
             "Name": "Name",
