@@ -13,7 +13,7 @@ const DistrictSelectorView = Backbone.View.extend({
         }, this);
     },
     tagName: "div",
-    className: "form-group col-md-4",
+    className: "form-group col-sm-4",
     template: _.template(template),
     render: function () {
         this.model = new Model();

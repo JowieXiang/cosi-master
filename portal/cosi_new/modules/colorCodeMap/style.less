@@ -1,46 +1,53 @@
-@color_1: rgb(0, 0, 0);
-@background_color_1:none;
+@color_1           : rgb(0, 0, 0);
+@background_color_1: none;
 
 .color-code {
-    left: 0;
-    bottom: 28px;
-    position: absolute;
+    left            : 0;
+    bottom          : 28px;
+    position        : absolute;
     background-color: @background_color_1;
-    color: @color_1;
-    font-size: 11px;
-    padding: 4px;
+    color           : @color_1;
+    font-size       : 11px;
+    padding         : 4px;
 
     .dropdown-container {
-        float: left;
+        float        : left;
         padding-right: 0px;
     }
 
     .btn-reset {
         margin-top: 4px;
-        padding: 6px 10px 5px 8px;
+        padding   : 6px 10px 5px 8px;
     }
 
     .bootstrap-select {
         width: 25vw !important;
+
         .dropdown-menu.open {
             width: 25vw;
         }
-        ul{
-            padding:5px;
-            margin-left: 5px;
-            margin-bottom: 0;
+
+        ul {
+            padding        : 5px;
+            margin-left    : 5px;
+            margin-bottom  : 0;
             list-style-type: none;
-            overflow-x: hidden !important;
+            overflow-x     : hidden !important;
         }
     }
 
     >div {
-        padding: 4px 8px;
+        padding     : 4px 8px;
         border-right: 1px solid rgb(255, 255, 255);
     }
-    >label{
+
+    >label {
         padding: 4px;
     }
 
 }
 
+#color-code-legend {
+    position: relative;
+    padding: 7px;
+}

@@ -139,15 +139,6 @@
             "name": "Vergleichbare Stadtteile ermitteln",
             "glyphicon": "glyphicon-screenshot"
           },
-          "print": {
-            "name": "Karte drucken",
-            "glyphicon": "glyphicon-print",
-            "mapfishServiceId": "mapfish_qs",
-            "printAppId": "master",
-            "filename": "Ausdruck",
-            "title": "Mein Titel",
-            "version": "mapfish_print_3"
-          },
           "gfi": {
             "name": "Informationen abfragen",
             "glyphicon": "glyphicon-info-sign",
@@ -168,7 +159,17 @@
       "utilities": {
         "name": "Dienste",
         "glyphicon": "glyphicon-cog",
-        "children": {}
+        "children": {
+          "print": {
+            "name": "Karte drucken",
+            "glyphicon": "glyphicon-print",
+            "mapfishServiceId": "mapfish_qs",
+            "printAppId": "master",
+            "filename": "Ausdruck",
+            "title": "Mein Titel",
+            "version": "mapfish_print_3"
+          }
+        }
       }
     },
     "scaleLine": false,

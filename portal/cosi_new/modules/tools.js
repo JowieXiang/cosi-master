@@ -59,7 +59,7 @@ const general = {
         }),
         colorCodeMap: new ColorCodeMap(),
         saveSelectionCosi: new SaveSelectionCosi({
-            parentId: "tools",
+            parentId: "utilities",
             type: "tool"
         }),
         timeSlider: new TimeSlider({
