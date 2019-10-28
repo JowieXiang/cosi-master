@@ -9,6 +9,7 @@ const IsoChronesView = Backbone.View.extend({
     events: {
         "click #create-isochrones": "createIsochrones",
         "click button#Submit": "checkIfSelected",
+        "change #coordinate": "setCoordinateFromInput",
         "focus #coordinate": "registerClickListener",
         "blur #coordinate": "unregisterClickListener",
         "change #path-type": "setPathType",
@@ -106,7 +107,7 @@ const IsoChronesView = Backbone.View.extend({
      * @returns {void}
      */
     registerClickListener: function () {
-        this.clickListener = Radio.request("Map", "registerListener", "singleclick", this.setCoordinate.bind(this));
+        this.clickListener = Radio.request("Map", "registerListener", "singleclick", this.setCoordinateFromClick.bind(this));
     },
     /**
      * unlisten click events when range input is blurred
@@ -116,12 +117,22 @@ const IsoChronesView = Backbone.View.extend({
         Radio.trigger("Map", "unregisterListener", this.clickListener);
     },
     /**
-     * set coordinate value in model
+     * set coordinate value in model according to click
      * @param {object} evt - click-on-map event
      * @returns {void}
      */
-    setCoordinate: function (evt) {
+    setCoordinateFromClick: function (evt) {
         const coordinate = Proj.transform(evt.coordinate, "EPSG:25832", "EPSG:4326");
+
+        this.model.set("coordinate", coordinate);
+    },
+    /**
+     * set coordinate value in model according to input value
+     * @param {object} evt - change coordinate input event
+     * @returns {void}
+     */
+    setCoordinateFromInput: function (evt) {
+        const coordinate = [evt.target.value.split(",")[0].trim(), evt.target.value.split(",")[1].trim()];
 
         this.model.set("coordinate", coordinate);
     },
