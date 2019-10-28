@@ -54,7 +54,7 @@ const general = {
             id: "Isochrones",
             parentId: "tools",
             type: "tool",
-            name: "Isochrome",
+            name: "Erreichbarkeit",
             glyphicon: "glyphicon-move"
         }),
         colorCodeMap: new ColorCodeMap(),

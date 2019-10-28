@@ -16,9 +16,7 @@ const DashboardTableView = Backbone.View.extend({
         this.listenTo(this.model, {
             "isReady": this.render,
             "updateProperties": function () {
-                if (this.model.get("isActive")) {
-                    this.renderFilter();
-                }
+                this.renderFilter();
             },
             "tableViewFilter": function (selectedValues) {
                 this.showFilteredTable(selectedValues.values);

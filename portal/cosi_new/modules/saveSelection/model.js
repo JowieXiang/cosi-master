@@ -3,7 +3,7 @@ import SaveSelection from "../../../../modules/tools/saveSelection/model";
 const SaveSelectionCosi = SaveSelection.extend({
     defaults: _.extend({}, SaveSelection.prototype.defaults, {
         id: "saveSelectionCosi",
-        name: "Auswahl speichern",
+        name: "Sitzung speichern",
         selectedDistrictIds: [],
         scope: ""
     }),
