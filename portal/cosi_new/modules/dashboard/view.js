@@ -4,7 +4,10 @@ import "./style.less";
 const DashboardView = Backbone.View.extend({
     events: {
         "click .close": "close",
-        "mousedown .drag-bar": "dragStart"
+        "mousedown .drag-bar": "dragStart",
+        "click .tool-name": function () {
+            console.log(Radio.request("FeaturesLoader", "getDistrictsByValue"));
+        }
     },
     initialize: function () {
         this.listenTo(this.model, {

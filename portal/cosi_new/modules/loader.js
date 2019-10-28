@@ -18,13 +18,22 @@ function initializeCosi () {
     const dashboard = new DashboardView({model: general.dashboard});
 
     new DashboardTableView({model: general.dashboardTable});
-    new DashboardWidgetHandler();
+    new DashboardWidgetHandler({
+        replies: {
+            FeaturesLoader: [
+                "getDistrictsByScope",
+                "getDistrictsByValue",
+                "getAllFeaturesByAttribute",
+                "getAllValuesByScope"
+            ]
+        }
+    });
+    new FeaturesLoader();
 
     Radio.trigger("ModelList", "addModelsAndUpdate", Object.values(general));
 
     // Handle TouchScreen / InfoScreen Loading
     if (!window.location.pathname.includes("infoscreen.html")) {
-        new FeaturesLoader();
         Radio.trigger("ModelList", "addModelsAndUpdate", Object.values(tools));
 
         new ColorCodeMapView({model: tools.colorCodeMap});
