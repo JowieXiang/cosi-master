@@ -4,7 +4,7 @@
         <form>
             <div class="form-row" id="layerfilter-selector-container">
                 <div class="form-group col-md-12">
-                    <label for="coordinate" id="coordinate-label"><strong>Ref coordinate</strong></label>
+                    <label for="coordinate" id="coordinate-label"><strong>Referenzpunkt</strong></label>
                     <input class="form-control input-sm" title="range" id="coordinate" type="text" min="0">
                     </input>
                 </div>
@@ -15,24 +15,24 @@
         <form>
             <div class="form-row" id="layerfilter-selector-container">
                 <div class="form-group col-md-4">
-                    <label for="path-parameter" id="path-parameter-label"><strong>Path Type</strong></label>
+                    <label for="path-parameter" id="path-parameter-label"><strong>Transportmittel</strong></label>
                     <select class="form-control input-sm" title="Demografische Daten anzeigen" id="path-type">
                         <option selected value="Leeren"> -Leeren- </option>
-                        <option value="driving-car">driving-car</option>
-                        <option value="driving-hgv">driving-hgv</option>
-                        <option value="cycling-regular">cycling-regular</option>
-                        <option value="cycling-road">cycling-road</option>
-                        <option value="cycling-mountain">cycling-mountain</option>
-                        <option value="cycling-electric">cycling-electric</option>
-                        <option value="foot-walking">foot-walking</option>
-                        <option value="foot-hiking">foot-hiking</option>
-                        <!-- <option value="wheelchair">wheelchair</option> -->
+                        <option value="driving-car">Auto</option>
+                        <!-- <option value="driving-hgv">LKW</option> -->
+                        <option value="cycling-regular">Rad</option>
+                        <!-- <option value="cycling-road">Rad (Rennrad)</option> -->
+                        <!-- <option value="cycling-mountain">Rad (Mountainbike)</option> -->
+                        <option value="cycling-electric">Rad (elektrisch)</option>
+                        <option value="foot-walking">Gehen</option>
+                        <!-- <option value="foot-hiking">Wandern</option> -->
+                        <option value="wheelchair">Rollstuhl</option>
                     </select>
                 </div>
             </div>
             <div class="form-row" id="range-input-container">
                 <div class="form-group col-md-4">
-                    <label for="range" id="range-label"><strong>Range</strong></label>
+                    <label for="range" id="range-label"><strong>Zeit (in min)</strong></label>
                     <input class="form-control input-sm" title="range" id="range" type="number" min="0">
                     </input>
                 </div>
@@ -42,7 +42,7 @@
                     <br />
                     <div id="create-isochrones">
                         <span class="glyphicon glyphicon-plus"></span>
-                        create
+                        berechnen
                     </div>
                 </div>
             </div>

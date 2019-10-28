@@ -51,7 +51,7 @@ const IsoChronesView = Backbone.View.extend({
             key = this.model.get("key"),
             coordinate = this.model.get("coordinate"),
             pathType = this.model.get("pathType"),
-            range = this.model.get("range");
+            range = this.model.get("range") * 60;
 
         if (coordinate.length > 0 && pathType !== "" && range !== 0) {
             this.openRouteRequest(openrouteUrl, key, pathType, coordinate, range).then(res => {
