@@ -38,7 +38,7 @@ const InfoScreenHandler = Tool.extend({
             "change:content": function () {
                 if (this.get("infoScreenOpen")) {
                     this.renderContent();
-                    this.updateWindow();
+                    // this.updateWindow();
                 }
             },
             "change:infoScreenOpen": function (model, isOpen) {

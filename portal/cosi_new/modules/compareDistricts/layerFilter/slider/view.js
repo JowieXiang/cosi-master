@@ -1,27 +1,18 @@
-import FilterSliderTemplate from "text-loader!./template.html";
-import FilterSliderModel from "./model";
+import template from "text-loader!./template.html";
 
-const FilterView = Backbone.View.extend({
+const SliderView = Backbone.View.extend({
     events: {
         "change .slider": function (evt) {
             this.renderValue(evt);
             this.setSliderValue(evt);
         }
     },
-    initialize: function () {
-        this.listenTo(this.model, {
-            // "change:sliderValue": somefunction
-        });
-    },
 
     tagName: "div",
     className: "filter-slider",
-
-    model: new FilterSliderModel(),
-    template: _.template(FilterSliderTemplate),
+    template: _.template(template),
 
     render: function () {
-
         this.$el.html(this.template(this.model.toJSON()));
 
         return this;
@@ -32,10 +23,10 @@ const FilterView = Backbone.View.extend({
     },
 
     setSliderValue: function (evt) {
-        this.model.setSliderValue(evt.target.value);
+        this.model.set("sliderValue", evt.target.value);
     }
 
 
 });
 
-export default FilterView;
+export default SliderView;

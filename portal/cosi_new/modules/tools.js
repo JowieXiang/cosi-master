@@ -5,6 +5,7 @@ import SelectDistrict from "./selectDistrict/model";
 import SaveSelectionCosi from "./saveSelection/model";
 import TimeSlider from "./timeSlider/model";
 import InfoScreenHandler from "./infoScreen/infoScreenHandler/model";
+import IsoChrones from "./isochrones/model";
 
 const general = {
         dashboardTable: new DashboardTable({
@@ -48,6 +49,13 @@ const general = {
             name: "Zweites Fenster öffnen",
             glyphicon: "glyphicon-new-window",
             renderToWindow: false
+        }),
+        Isochrones: new IsoChrones({
+            id: "Isochrones",
+            parentId: "tools",
+            type: "tool",
+            name: "Isochrome",
+            glyphicon: "glyphicon-move"
         }),
         colorCodeMap: new ColorCodeMap(),
         saveSelectionCosi: new SaveSelectionCosi({
