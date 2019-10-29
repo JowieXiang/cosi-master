@@ -33,10 +33,10 @@ const ColorCodeMapView = Backbone.View.extend({
         for (let i = 0; i < data.values.length; i++) {
             this.$el.find("#color-code-legend").append(`
             <li style="display:inline;">
-                <svg width="8" height="8">
-                    <rect width="8" height="8" style="fill:${data.colors[i]};stroke-width:.5;stroke:rgb(0,0,0)" />
+                <svg width="20" height="20">
+                    <rect width="20"  height="20" style="fill:${data.colors[i]};stroke-width:.5;stroke:rgb(0,0,0)" />
                 </svg>
-                    ${data.values[i]}
+                    <span style="font-size: 20px;">${data.values[i]}</span>
             </li>
             `);
         }
