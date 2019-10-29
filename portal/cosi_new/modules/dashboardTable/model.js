@@ -107,6 +107,7 @@ const DashboardTableModel = Tool.extend({
 
         if (Radio.request("InfoScreen", "getIsWindowOpen")) {
             Radio.trigger("InfoScreen", "sendData", this.get("tableView"), "dashboardTable", "tableView");
+            Radio.trigger("InfoScreen", "sendData", this.get("unsortedTable"), "dashboardTable", "unsortedTable");
         }
     },
 
