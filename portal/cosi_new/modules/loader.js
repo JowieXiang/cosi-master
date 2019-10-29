@@ -10,6 +10,7 @@ import SaveSelectionCosiView from "./saveSelection/view";
 import InfoScreenView from "./infoScreen/view";
 import TimeSliderView from "./timeSlider/view";
 import IsoChronesView from "./isochrones/view";
+import PrintView from "../../../modules/tools/print/view";
 
 /**
  * @returns {void}
@@ -41,6 +42,7 @@ function initializeCosi () {
         new SaveSelectionCosiView({model: tools.saveSelectionCosi});
         new TimeSliderView({model: tools.timeSlider});
         new SelectDistrictView({model: tools.selectDistrict});
+        new PrintView({model: tools.print});
     }
     else {
         // load dashboard content into infoscreen window

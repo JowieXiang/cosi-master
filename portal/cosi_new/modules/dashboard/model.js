@@ -1,5 +1,4 @@
 import Tool from "../../../../modules/core/modelList/tool/model";
-import TimelineModel from "../../../../modules/tools/timeline/model";
 
 const DashboardModel = Tool.extend({
     defaults: _.extend({}, Tool.prototype.defaults, {

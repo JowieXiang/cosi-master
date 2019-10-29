@@ -5,7 +5,7 @@ import "./style.less";
 const DashboardWidgetView = Backbone.View.extend({
     events: {
         "click .dashboard-widget-close": "remove",
-        "click .open": "toggleOpen"
+        "click .win-control.open": "toggleOpen"
     },
     initialize (content, parent, opts = {}) {
         const attrs = content.model ? content.model.defaults : opts;
@@ -61,7 +61,8 @@ const DashboardWidgetView = Backbone.View.extend({
     renderD3 () {
         this.$el.find("#content").html(this.content.node());
     },
-    toggleOpen () {
+    toggleOpen (evt) {
+        evt.stopPropagation();
         this.$el.toggleClass("open");
     }
 });
