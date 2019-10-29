@@ -136,7 +136,7 @@
             "isVisibleInMenu": false
           },
           "compareDistricts": {
-            "name": "Vergleichbare Stadtteile ermitteln",
+            "name": "Vergleichbare Gebiete ermitteln",
             "glyphicon": "glyphicon-screenshot"
           },
           "gfi": {

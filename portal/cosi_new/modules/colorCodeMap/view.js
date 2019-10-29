@@ -36,7 +36,7 @@ const ColorCodeMapView = Backbone.View.extend({
                 <svg width="20" height="20">
                     <rect width="20"  height="20" style="fill:${data.colors[i]};stroke-width:.5;stroke:rgb(0,0,0)" />
                 </svg>
-                    <span style="font-size: 20px;">${data.values[i]}</span>
+                    <span style="font-size: 20px;">${Number.isInteger(data.values[i]) ? data.values[i] : data.values[i].toFixed(2)}</span>
             </li>
             `);
         }
