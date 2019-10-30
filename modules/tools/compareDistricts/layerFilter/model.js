@@ -21,9 +21,9 @@ const LayerFilterModel = Backbone.Model.extend({
                 id: layerId
             });
         let refValue = 0;
-            console.log("selected: ",Radio.request("DistrictSelector", "getSelectedDistrict"));
+
         if (Radio.request("DistrictSelector", "getSelectedDistrict") !== "Leeren") {
-            const districtName = $("#district-selector").children("option:selected").val(),
+            const districtName = Radio.request("DistrictSelector", "getSelectedDistrict"),
                 refFeature = featureCollection.filter(feature => feature.getProperties()[selector] === districtName)[0];
 
             refValue = parseInt(refFeature.getProperties().jahr_2018, 10);
@@ -41,7 +41,6 @@ const LayerFilterModel = Backbone.Model.extend({
 
         districtInfo.push(newInfo);
         this.set("districtInfo", districtInfo);
-        console.log("disInfo intial: ", this.get("districtInfo"));
 
     },
     updateRefDistrictValue: function () {
@@ -53,9 +52,9 @@ const LayerFilterModel = Backbone.Model.extend({
             newDistrictInfo = _.map(this.get("districtInfo"), _.clone);
 
         let refValue = 0;
-        console.log("selected value: ", Radio.request("DistrictSelector", "getSelectedDistrict"));
+        
         if (Radio.request("DistrictSelector", "getSelectedDistrict") !== "Leeren") {
-            const districtName = $("#district-selector").children("option:selected").val(),
+            const districtName = Radio.request("DistrictSelector", "getSelectedDistrict"),
                 refFeature = featureCollection.filter(feature => feature.getProperties()[selector] === districtName)[0];
 
             refValue = parseInt(refFeature.getProperties().jahr_2018, 10);

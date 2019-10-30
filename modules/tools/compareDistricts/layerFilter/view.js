@@ -1,7 +1,7 @@
 import template from "text-loader!./template.html";
-import SliderCollection from "./slider/list";
-import SliderModel from "./slider/model";
-import SliderView from "./slider/view";
+import ToleranceCollection from "./tolerance/list";
+import ToleranceModel from "./tolerance/model";
+import ToleranceView from "./tolerance/view";
 
 
 const LayerFilterView = Backbone.View.extend({
@@ -11,8 +11,8 @@ const LayerFilterView = Backbone.View.extend({
     },
 
     initialize: function () {
-        this.sliderCollection = new SliderCollection();
-        this.listenTo(this.sliderCollection, {
+        this.toleranceCollection = new ToleranceCollection();
+        this.listenTo(this.toleranceCollection, {
             "change:sliderValue": function (model) {
                 this.updateLayerFilter(model);
             }
@@ -31,23 +31,23 @@ const LayerFilterView = Backbone.View.extend({
     render: function () {
         this.$el.html(this.template(this.model.toJSON()));
 
-        this.renderSliders();
+        this.renderToleranceViews();
         return this;
     },
 
-    renderSliders: function () {
+    renderToleranceViews: function () {
         const filterData = JSON.parse(this.model.get("filter"));
 
         _.each(Object.keys(filterData), filterKey => {
-            const newSliderModel = new SliderModel({
+            const newToleranceModel = new ToleranceModel({
                     key: filterKey,
                     sliderValue: parseInt(filterData[filterKey], 10)
                 }),
-                silderView = new SliderView({
-                    model: newSliderModel
+                silderView = new ToleranceView({
+                    model: newToleranceModel
                 });
 
-            this.sliderCollection.add(newSliderModel);
+            this.toleranceCollection.add(newToleranceModel);
             this.$el.find("#" + filterKey + "-td").append(silderView.render().el);
         });
     },
@@ -60,12 +60,11 @@ const LayerFilterView = Backbone.View.extend({
         this.remove();
         this.model.destroy();
     },
-    updateLayerFilter: function (sliderModel) {
-        const key = sliderModel.get("key"),
+    updateLayerFilter: function (toleranceModel) {
+        const key = toleranceModel.get("key"),
             newFilter = JSON.parse(this.model.get("filter"));
 
-
-        newFilter[key] = sliderModel.get("sliderValue");
+        newFilter[key] = toleranceModel.get("sliderValue");
         this.model.set("filter", JSON.stringify(newFilter));
     },
     updateRefInputValue: function (e) {
