@@ -65,7 +65,7 @@ const IsoChronesView = Backbone.View.extend({
                 newFeatures.forEach(function (feature) {
                     feature.setStyle(new Style({
                         fill: new Fill({
-                            color: "rgba(0, 255, 0, 0.8)"
+                            color: "rgba(0, 255, 0, 0.3)"
                         }),
                         stroke: new Stroke({
                             color: "red",

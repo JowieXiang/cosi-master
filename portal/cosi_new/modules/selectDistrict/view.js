@@ -4,7 +4,8 @@ import SnippetDropdownView from "../../../../modules/snippets/dropdown/view";
 
 const SelectDistrictView = Backbone.View.extend({
     events: {
-        "click button#Submit": "checkIfSelected"
+        "click button#Submit": "checkIfSelected",
+        "click button#Reset": "reset"
     },
     initialize: function () {
         this.scopeDropdownView = new SnippetDropdownView({
@@ -60,6 +61,9 @@ const SelectDistrictView = Backbone.View.extend({
             text: "<strong>Warnung: Sie haben noch keine Gebiete ausgewählt. Bitte wählen Sie auf welcher Ebene Sie arbeiten möchten (**Stadtteile oder statistische Gebiete)* *und klicken Sie entsprechend auf die Karte, um die Gebiete auszuwählen, mit denen Sie arbeiten möchten.</strong>",
             kategorie: "alert-warning"
         });
+    },
+    reset () {
+        this.model.resetSelectedDistricts();
     }
 });
 

@@ -43,7 +43,7 @@ const DashboardTableModel = Tool.extend({
         this.set("filterDropdownModel", new DropdownModel({
             name: "Filter",
             type: "string",
-            displayName: "Filter",
+            displayName: "Tabelle filtern",
             values: [],
             snippetType: "dropdown",
             isMultiple: true,
@@ -97,12 +97,17 @@ const DashboardTableModel = Tool.extend({
             return [...newTable, Radio.request("Timeline", "createTimelineTable", [properties])[0]];
         }, []);
 
-        // Todo: GFI mapping
+        // Fill up gaps in the data due to data inconsistencies
         // Add total and mean values and filter table for excluded properties
-        this.set("tableView", this.calculateTotalAndMean(Radio.request("Timeline", "fillUpTimelineGaps", table, "Array")));
+        this.set("unsortedTable", this.calculateTotalAndMean(Radio.request("Timeline", "fillUpTimelineGaps", table, "Array")));
+
+        // group table according to mapping.json
+        // Set table
+        this.set("tableView", this.groupTable(this.get("unsortedTable")));
 
         if (Radio.request("InfoScreen", "getIsWindowOpen")) {
             Radio.trigger("InfoScreen", "sendData", this.get("tableView"), "dashboardTable", "tableView");
+            Radio.trigger("InfoScreen", "sendData", this.get("unsortedTable"), "dashboardTable", "unsortedTable");
         }
     },
 
@@ -198,6 +203,35 @@ const DashboardTableModel = Tool.extend({
         return table;
     },
 
+    groupTable (table) {
+        const values = Radio.request("FeaturesLoader", "getAllValuesByScope", "statgebiet"),
+            groups = values.reduce((res, val) => {
+                var match = res.find(el => el.group === val.group);
+
+                if (match) {
+                    match.values[val.value] = {};
+                    table.forEach(col => {
+                        match.values[val.value][col[this.get("sortKey")]] = col[val.value];
+                    });
+                    return res;
+                }
+                const newGroup = {
+                    group: val.group,
+                    values: {
+                        [val.value]: {}
+                    }
+                };
+
+                table.forEach(col => {
+                    newGroup.values[val.value][col[this.get("sortKey")]] = col[val.value];
+                });
+
+                return [...res, newGroup];
+            }, []);
+
+        return groups;
+    },
+
     getData: function () {
         const features = Radio.request("FeaturesLoader", "getDistrictsByScope", Radio.request("SelectDistrict", "getScope"));
 
@@ -275,13 +309,13 @@ const DashboardTableModel = Tool.extend({
         }
 
         Radio.trigger("Dashboard", "append", graph, "#dashboard-containers", {
-            id: "",
+            id: title,
             name: title,
             glyphicon: "glyphicon-info-sign"
         });
     },
     getChartData (props) {
-        const data = this.get("tableView").map((district) => {
+        const data = this.get("unsortedTable").map((district) => {
                 let districtDataToGraph = {};
 
                 for (const prop in district) {

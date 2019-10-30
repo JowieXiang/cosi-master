@@ -8,7 +8,9 @@ const DashboardTableView = Backbone.View.extend({
         "click .district": "zoomToFeature",
         "click .row": "createChart",
         "click .prop button.open": "toggleTimelineTable",
-        "click .figure > .header > button.open": "toggleFigure"
+        "click thead button.open": "toggleGroup",
+        "click .figure > .header > button.open": "toggleFigure",
+        "click .btn-reset": "resetDropDown"
     },
     initialize: function () {
         this.exportButtonView = new ExportButtonView({model: this.model.get("exportButtonModel")});
@@ -49,12 +51,13 @@ const DashboardTableView = Backbone.View.extend({
         return this;
     },
     renderFilter () {
+        this.$el.find(".dropdown-container").remove();
         this.filterDropdownView = new DropdownView({model: this.model.get("filterDropdownModel")});
-        this.$el.find(".filter-dropdown").html(this.filterDropdownView.render().el);
+        this.$el.find(".filter-dropdown").prepend(this.filterDropdownView.render().el);
     },
     showFilteredTable (selectedValues) {
         _.each(this.$el.find(".overview tr"), (row, i) => {
-            if (i > 2) {
+            if (i > 0) {
                 if (selectedValues.length > 0) {
                     if (!selectedValues.includes($(row).find("th.prop").attr("id"))) {
                         $(row).addClass("hidden");
@@ -87,7 +90,7 @@ const DashboardTableView = Backbone.View.extend({
             this.model.createChart([row.find("th.prop").attr("id")], "Linegraph", row.find("th.prop").text());
         }
         // Highlight the selected row
-        row.parent("tbody").find("tr").removeClass("selected");
+        row.parent("tbody").parent("table").find("tr").removeClass("selected");
         row.addClass("selected");
     },
     clearChart: function () {
@@ -97,6 +100,13 @@ const DashboardTableView = Backbone.View.extend({
     toggleTimelineTable: function (event) {
         event.stopPropagation();
         this.$(event.target).parent(".prop").parent("tr").toggleClass("open");
+    },
+    toggleGroup: function (event) {
+        event.stopPropagation();
+        const group = this.$(event.target).closest("thead").attr("id");
+
+        // this.$(event.target).toggleClass("open");
+        this.$el.find(`tbody#${group}`).toggleClass("open");
     },
     toggleFigure: function (event) {
         this.$(event.target).parent(".header").parent(".figure").toggleClass("open");
@@ -115,6 +125,16 @@ const DashboardTableView = Backbone.View.extend({
     dragEnd: function () {
         this.isDragging = false;
         this.$el.find(".drag-bar").removeClass("dragging");
+    },
+
+    /**
+     * adds the 'bs-placeholder' class to the dropdown,
+     * sets the placeholder text and unstyle the district features
+     * @returns {void}
+     */
+    resetDropDown: function () {
+        this.model.get("filterDropdownModel").updateSelectedValues([]);
+        this.el$.find(".filter-dropdown ul.dropdown-menu > li").removeClass("selected");
     }
 });
 

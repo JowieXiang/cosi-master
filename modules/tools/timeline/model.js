@@ -18,6 +18,9 @@ const Timeline = Tool.extend({
             "getLatestFieldFromProperties": function (input) {
                 return this.getLatestField(input);
             },
+            "getLatestFieldFromCollection": function (input) {
+                // .. todo
+            },
             "fillUpTimelineGaps": function (inputTable, outputType = "Object") {
                 return this.fillUpTimelineGaps(inputTable, outputType);
             }

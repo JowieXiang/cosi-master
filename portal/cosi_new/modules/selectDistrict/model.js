@@ -102,7 +102,6 @@ const SelectDistrict = Tool.extend({
 
     // listen  to click event and trigger setGfiParams
     listen: function () {
-        this.resetSelectedDistricts();
         this.setClickEventKey(Radio.request("Map", "registerListener", "click", this.select.bind(this)));
     },
 

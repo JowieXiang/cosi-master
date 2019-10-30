@@ -2,44 +2,34 @@
 @font_family_1: "UniversNextW04-620CondB","Arial Narrow",Arial,sans-serif;
 @background_color_1: rgba(0, 0, 0,.5);
 
-/*SimpleView*/
-.drag-bar {
-    display: inline-block;
-    height: calc(100vh - 50px);
-    line-height: calc(100vh - 50px);
-    vertical-align: top;
-    width:10px;
-    text-align: center;
-    font-size: 24px;
-    border-right: 1px solid #fafafa;
-    cursor: grab;
-    &:hover {
-        background: rgb(250, 250, 250);
-    }
-    &.dragging {
-        cursor:grabbing;
-    }
-}
 .dashboard {
     display:inline-block;
     width:calc(100% - 15px);
     .header {
         width: 100%;
         border-bottom: 1px solid rgb(229,229,229);
-        padding: 10px;
-    }
-    .figure {
+        padding: 10px 0;
         .filter-dropdown {
             width: 40%;
             min-width: 320px;
             float: right;
+            display: flex;
+            justify-content: flex-end;
             .dropdown-container {
                 padding: 0;
+                display: inline-block;
+                width: 85%;
                 .dropdown-toggle {
                     line-height: 14px;
                 }
             }
+            .btn-reset {
+                display: inline-block;
+                height: 26px;
+            }
         }
+    }
+    .figure {
         button.open {
             float:right;
             padding: 12px;
@@ -59,17 +49,6 @@
                 pointer-events: none;
             }
         }
-        .content {
-            display:none;
-        }
-        &.open {
-            .header button.open {
-                transform: rotate(180deg);
-            }
-            .content {
-                display:block;
-            }
-        }
     }
     .simple-views-container {
         .btn-default {
@@ -77,12 +56,25 @@
                 outline: none;
             }
         }
-        padding: 8px 15px;
+        padding: 8px 0px;
         width: 100%;
         border-bottom: 1px solid rgb(229, 229, 229);
         table {
+            thead tr {
+                background: rgb(250, 250, 250);
+            }
+            tbody {
+                display: none;
+                &.open {
+                    display: table-row-group;
+                }
+            }
             th.prop {
                 width: 25%;
+                font-weight: 300;
+                &#statgebiet {
+                    font-weight: bold;
+                } 
             }
             th, td {
                 &.district {
@@ -121,6 +113,9 @@
             }
         }
         tr {
+            &:before {
+                display:none;
+            }
             &.open {
                 .timeline-table {
                     ul {

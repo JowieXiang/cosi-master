@@ -110,7 +110,7 @@ const LayerModel = Backbone.Model.extend({
                         color: "#FFF",
                         width: 3
                     }),
-                    text: feature.getProperties()[attribute]
+                    text: feature.getProperties()[attribute] ? feature.getProperties()[attribute] : "Kein Wert vorhanden"
                 })
             }));
             foundDistrictFeatures.push(foundFeature);
