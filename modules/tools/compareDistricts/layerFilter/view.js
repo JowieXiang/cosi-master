@@ -36,13 +36,13 @@ const LayerFilterView = Backbone.View.extend({
     },
 
     renderToleranceViews: function () {
-        const filterData = JSON.parse(this.model.get("filter"));
+        const filterData = this.model.get("filter");
 
         _.each(Object.keys(filterData), filterKey => {
             const newToleranceModel = new ToleranceModel({
-                    key: filterKey,
-                    sliderValue: parseInt(filterData[filterKey], 10)
-                }),
+                key: filterKey,
+                sliderValue: parseInt(filterData[filterKey], 10)
+            }),
                 silderView = new ToleranceView({
                     model: newToleranceModel
                 });
@@ -62,10 +62,10 @@ const LayerFilterView = Backbone.View.extend({
     },
     updateLayerFilter: function (toleranceModel) {
         const key = toleranceModel.get("key"),
-            newFilter = JSON.parse(this.model.get("filter"));
+            newFilter = _.clone(this.model.get("filter"));
 
         newFilter[key] = toleranceModel.get("sliderValue");
-        this.model.set("filter", JSON.stringify(newFilter));
+        this.model.set("filter", newFilter);
     },
     updateRefInputValue: function (e) {
         var key = $(e.currentTarget).attr("id");

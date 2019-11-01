@@ -222,7 +222,7 @@ const CompareDistrictsView = Backbone.View.extend({
             featureCollection = Radio.request("FeaturesLoader", "getAllFeaturesByAttribute", {
                 id: layerId
             }),
-            filterCollection = JSON.parse(layerFilter.filter);
+            filterCollection = layerFilter.filter;
 
         _.each(Object.keys(filterCollection), filterKey => {
             const tolerance = parseFloat(filterCollection[filterKey]),

@@ -2,7 +2,7 @@ const LayerFilterModel = Backbone.Model.extend({
     defaults: {
         districtInfo: [], // [{key:...,value:..., max: ..., min: ...},{},...]
         layerInfo: {},
-        filter: "" // e.g {filterKey:value,filterKey:value,filterKey:value,...},
+        filter: {} // e.g {filterKey:value,filterKey:value,filterKey:value,...},
     },
     initialize: function () {
         this.initializeFilter();
@@ -12,7 +12,7 @@ const LayerFilterModel = Backbone.Model.extend({
         const newFilter = {};
 
         newFilter.jahr_2018 = 0;
-        this.set("filter", JSON.stringify(newFilter));
+        this.set("filter", newFilter);
     },
     initializeDistrictInfo: function () {
         const selector = Radio.request("SelectDistrict", "getSelector"),
