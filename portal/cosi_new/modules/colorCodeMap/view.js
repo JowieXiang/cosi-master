@@ -50,15 +50,24 @@ const ColorCodeMapView = Backbone.View.extend({
     prevNext: function (evt) {
         const options = this.$el.find(".selectpicker option"),
             direction = $(evt.target).attr("title") === "next" ? 1 : -1,
-            currentIndex = this.$el.find(".selectpicker").get(0).selectedIndex,
-            newIndex = currentIndex + direction === 0 ? currentIndex + direction * 2 : currentIndex + direction,
-            selOption = options.get(newIndex);
+            currentIndex = this.$el.find(".selectpicker").get(0).selectedIndex;
+        let newIndex = currentIndex + direction === 0 ? currentIndex + direction * 2 : currentIndex + direction;
+
+        if (newIndex >= options.length) {
+            newIndex = 1;
+        }
+        else if (newIndex <= 0) {
+            newIndex = options.length - 1;
+        }
 
         options.prop("selected", false);
-        selOption.setAttribute("selected", true);
-        this.$el.find(".selectpicker").get(0).selectedIndex = newIndex;
-        this.$el.find(".dropdown-toggle span.filter-option").text(selOption.value);
-        this.model.get("dropDownModel").updateSelectedValues(selOption.value);
+        options.get(newIndex).setAttribute("selected", true);
+        this.setDropdownValues(newIndex, options.get(newIndex).value);
+    },
+    setDropdownValues: function (index, value) {
+        this.$el.find(".selectpicker").get(0).selectedIndex = index;
+        this.$el.find(".dropdown-toggle span.filter-option").text(value);
+        this.model.get("dropDownModel").updateSelectedValues(value);
     },
 
     /**
@@ -67,9 +76,9 @@ const ColorCodeMapView = Backbone.View.extend({
      * @returns {void}
      */
     resetDropDown: function () {
-        this.$el.find(".dropdown-toggle").addClass("bs-placeholder");
-        this.$el.find(".dropdown-toggle span.filter-option").text("Demografische Daten anzeigen");
         this.model.unStyleDistrictFeaturs(this.model.get("districtFeatures"));
+        this.$el.find(".dropdown-toggle").addClass("bs-placeholder");
+        this.setDropdownValues(0, "Demografische Daten anzeigen");
         this.clearLegend();
     },
     checkDistrictSelection (extent) {
