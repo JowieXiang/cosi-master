@@ -1,7 +1,7 @@
 import template from "text-loader!./template.html";
-import SliderCollection from "./slider/list";
-import SliderModel from "./slider/model";
-import SliderView from "./slider/view";
+import ToleranceCollection from "./tolerance/list";
+import ToleranceModel from "./tolerance/model";
+import ToleranceView from "./tolerance/view";
 
 
 const LayerFilterView = Backbone.View.extend({
@@ -11,9 +11,9 @@ const LayerFilterView = Backbone.View.extend({
     },
 
     initialize: function () {
-        this.sliderCollection = new SliderCollection();
-        this.listenTo(this.sliderCollection, {
-            "change:sliderValue": function (model) {
+        this.toleranceCollection = new ToleranceCollection();
+        this.listenTo(this.toleranceCollection, {
+            "change": function (model) {
                 this.updateLayerFilter(model);
             }
         });
@@ -31,24 +31,25 @@ const LayerFilterView = Backbone.View.extend({
     render: function () {
         this.$el.html(this.template(this.model.toJSON()));
 
-        this.renderSliders();
+        this.renderToleranceViews();
         return this;
     },
 
-    renderSliders: function () {
+    renderToleranceViews: function () {
         const filterData = JSON.parse(this.model.get("filter"));
 
         _.each(Object.keys(filterData), filterKey => {
-            const newSliderModel = new SliderModel({
-                    key: filterKey,
-                    sliderValue: parseInt(filterData[filterKey], 10)
-                }),
-                silderView = new SliderView({
-                    model: newSliderModel
+            const newToleranceModel = new ToleranceModel({
+                key: filterKey,
+                lowerTolerance: parseInt(filterData[filterKey][0], 10),
+                upperTolerance: parseInt(filterData[filterKey][1], 10)
+            }),
+                toleranceView = new ToleranceView({
+                    model: newToleranceModel
                 });
 
-            this.sliderCollection.add(newSliderModel);
-            this.$el.find("#" + filterKey + "-td").append(silderView.render().el);
+            this.toleranceCollection.add(newToleranceModel);
+            this.$el.find("#" + filterKey + "-td").append(toleranceView.render().el);
         });
     },
     destroySelf: function () {
@@ -60,22 +61,22 @@ const LayerFilterView = Backbone.View.extend({
         this.remove();
         this.model.destroy();
     },
-    updateLayerFilter: function (sliderModel) {
-        const key = sliderModel.get("key"),
+    updateLayerFilter: function (toleranceModel) {
+        const key = toleranceModel.get("key"),
             newFilter = JSON.parse(this.model.get("filter"));
 
-
-        newFilter[key] = sliderModel.get("sliderValue");
+        newFilter[key] = [toleranceModel.get("lowerTolerance"), toleranceModel.get("upperTolerance")];
         this.model.set("filter", JSON.stringify(newFilter));
     },
     updateRefInputValue: function (e) {
         var key = $(e.currentTarget).attr("id");
-        const newInfo = this.model.get("districtInfo").slice();
+        // deep copying districtInfo array
+        const newInfo = _.map(this.model.get("districtInfo"), _.clone);
 
         e.preventDefault();
         _.each(newInfo, item => {
             if (item.key === key) {
-                item.value = e.target.value;
+                item.value = parseInt(e.target.value, 10);
             }
         });
         this.model.set("districtInfo", newInfo);
