@@ -12,12 +12,17 @@ const ColorCodeMapView = Backbone.View.extend({
             "setLegend": this.setLegend
         });
 
+        this.listenTo(Radio.channel("SelectDistrict"), {
+            "selectionChanged": this.checkDistrictSelection
+        });
+
         this.render();
     },
     template: _.template(template),
     render: function () {
         $(".masterportal-container").append(this.$el.html(this.template()));
         this.renderDropDownView(this.model.get("dropDownModel"));
+        this.$el.find("button").prop("disabled", true);
         return this;
     },
     renderDropDownView: function (dropdownModel) {
@@ -52,6 +57,14 @@ const ColorCodeMapView = Backbone.View.extend({
         this.$el.find(".dropdown-toggle span.filter-option").text("Demografische Daten anzeigen");
         this.model.unStyleDistrictFeaturs(this.model.get("districtFeatures"));
         this.clearLegend();
+    },
+    checkDistrictSelection (extent) {
+        if (extent) {
+            this.$el.find("button").prop("disabled", false);
+        }
+        else {
+            this.$el.find("button").prop("disabled", true);
+        }
     }
 });
 

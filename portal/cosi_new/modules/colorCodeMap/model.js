@@ -35,7 +35,8 @@ const LayerModel = Backbone.Model.extend({
             isMultiple: false,
             isGrouped: true,
             displayName: "Demografische Daten anzeigen",
-            liveSearch: true
+            liveSearch: true,
+            isDropup: true
         });
 
         this.listenTo(dropdownModel, {
@@ -47,6 +48,7 @@ const LayerModel = Backbone.Model.extend({
 
     updateDropDownModel: function (valueList) {
         this.get("dropDownModel").set("values", valueList);
+        this.get("dropDownModel").trigger("render");
     },
 
     /**
