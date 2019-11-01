@@ -29,7 +29,7 @@ const DistrictSelectorModel = Backbone.Model.extend({
             snippetType: "dropdown",
             isMultiple: false,
             isGrouped: false,
-            displayName: "Demografische Daten anzeigen",
+            displayName: "Referenzgebiet",
             liveSearch: true
         });
 
@@ -55,10 +55,6 @@ const DistrictSelectorModel = Backbone.Model.extend({
             Radio.trigger("CompareDistricts", "selectRefDistrict");
         }
     }
-    // setSelectedDistrict: function (value) {
-    //     this.set("selectedDistrict", value);
-    //     Radio.trigger("CompareDistricts", "selectRefDistrict");
-    // }
 });
 
 export default DistrictSelectorModel;

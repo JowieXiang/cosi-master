@@ -30,10 +30,6 @@ const DistrictSelectorView = Backbone.View.extend({
         this.$el.append(dropdownObj);
         this.$el.find("#dropdown-container").addClass("form-control input-sm");
     },
-    // setSelectedDistrict: function (evt) {
-    //     this.model.setSelectedDistrict(evt.target.value);
-    //     // $("#district-selector").prop("disabled", "disabled");
-    // },
     getSelectedDistrict: function () {
         return this.model.get("selectedDistrict");
     }

@@ -13,7 +13,7 @@ const LayerFilterView = Backbone.View.extend({
     initialize: function () {
         this.toleranceCollection = new ToleranceCollection();
         this.listenTo(this.toleranceCollection, {
-            "change:sliderValue": function (model) {
+            "change": function (model) {
                 this.updateLayerFilter(model);
             }
         });
@@ -36,19 +36,20 @@ const LayerFilterView = Backbone.View.extend({
     },
 
     renderToleranceViews: function () {
-        const filterData = this.model.get("filter");
+        const filterData = JSON.parse(this.model.get("filter"));
 
         _.each(Object.keys(filterData), filterKey => {
             const newToleranceModel = new ToleranceModel({
                 key: filterKey,
-                sliderValue: parseInt(filterData[filterKey], 10)
+                lowerTolerance: parseInt(filterData[filterKey][0], 10),
+                upperTolerance: parseInt(filterData[filterKey][1], 10)
             }),
-                silderView = new ToleranceView({
+                toleranceView = new ToleranceView({
                     model: newToleranceModel
                 });
 
             this.toleranceCollection.add(newToleranceModel);
-            this.$el.find("#" + filterKey + "-td").append(silderView.render().el);
+            this.$el.find("#" + filterKey + "-td").append(toleranceView.render().el);
         });
     },
     destroySelf: function () {
@@ -62,19 +63,20 @@ const LayerFilterView = Backbone.View.extend({
     },
     updateLayerFilter: function (toleranceModel) {
         const key = toleranceModel.get("key"),
-            newFilter = _.clone(this.model.get("filter"));
+            newFilter = JSON.parse(this.model.get("filter"));
 
-        newFilter[key] = toleranceModel.get("sliderValue");
-        this.model.set("filter", newFilter);
+        newFilter[key] = [toleranceModel.get("lowerTolerance"), toleranceModel.get("upperTolerance")];
+        this.model.set("filter", JSON.stringify(newFilter));
     },
     updateRefInputValue: function (e) {
         var key = $(e.currentTarget).attr("id");
-        const newInfo = this.model.get("districtInfo").slice();
+        // deep copying districtInfo array
+        const newInfo = _.map(this.model.get("districtInfo"), _.clone);
 
         e.preventDefault();
         _.each(newInfo, item => {
             if (item.key === key) {
-                item.value = e.target.value;
+                item.value = parseInt(e.target.value, 10);
             }
         });
         this.model.set("districtInfo", newInfo);

@@ -42,7 +42,7 @@ const LayerFilterSelectorModel = Backbone.Model.extend({
             snippetType: "dropdown",
             isMultiple: false,
             isGrouped: true,
-            displayName: "Demografische Daten anzeigen",
+            displayName: "Auswahl demografischer Daten",
             liveSearch: true
         });
 

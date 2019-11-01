@@ -12,7 +12,6 @@ import InfoTemplate from "text-loader!./info.html";
 const CompareDistrictsView = Backbone.View.extend({
     events: {
         "click #add-filter": function (e) {
-            this.setRefDistrict();
             this.addFilterModel(e);
             this.filterLayerOptions();
         },
@@ -27,7 +26,6 @@ const CompareDistrictsView = Backbone.View.extend({
             "closeFilter": this.addLayerOption,
             "selectRefDistrict": function () {
                 this.updateLayerFilterCollection();
-                this.setRefDistrict();
             }
         });
         this.listenTo(this.model, {
@@ -142,17 +140,6 @@ const CompareDistrictsView = Backbone.View.extend({
         });
         this.model.set("layerFilterList", JSON.stringify(newList));
     },
-    setRefDistrict: function () {
-        if (this.districtSelector.getSelectedDistrict() !== "Leeren") {
-            this.$el.find("#refdistrict").html(`
-        <p id="Referenzgebiet"><strong>| Referenzgebiet</strong></p>
-        <p><span class="name-tag">${this.districtSelector.getSelectedDistrict()}</span></p>
-        `);
-        }
-        else {
-            this.$el.find("#refdistrict").empty();
-        }
-    },
     setCompareResults: function (comparableDistricts) {
         let domString = "<p>";
 
@@ -184,6 +171,7 @@ const CompareDistrictsView = Backbone.View.extend({
                 }
             });
             this.model.set("layerFilterList", JSON.stringify(newList));
+
         }
     },
     setCompareFeatures: function (model, value) {
@@ -212,9 +200,9 @@ const CompareDistrictsView = Backbone.View.extend({
         }
         else {
             this.$el.find("#compare-results").empty();
+            this.clearMapLayer();
         }
     },
-
     filterOne: function (layerFilter) {
         var filterResults = [],
             intersection = [];
@@ -222,12 +210,14 @@ const CompareDistrictsView = Backbone.View.extend({
             featureCollection = Radio.request("FeaturesLoader", "getAllFeaturesByAttribute", {
                 id: layerId
             }),
-            filterCollection = layerFilter.filter;
+            filterCollection = JSON.parse(layerFilter.filter);
 
         _.each(Object.keys(filterCollection), filterKey => {
-            const tolerance = parseFloat(filterCollection[filterKey]),
+            const tolerance = [parseFloat(filterCollection[filterKey][0]), parseFloat(filterCollection[filterKey][1])],
                 refValue = layerFilter.districtInfo.filter(item => item.key === filterKey)[0].value,
-                selectedFeatures = featureCollection.filter(feature => Math.abs(feature.getProperties()[filterKey] - refValue) < tolerance);
+                selectedFeatures = featureCollection.filter(feature => {
+                    return feature.getProperties()[filterKey] >= refValue - tolerance[0] && feature.getProperties()[filterKey] <= refValue + tolerance[1];
+                });
 
             filterResults.push(selectedFeatures);
         }, this);
@@ -237,12 +227,16 @@ const CompareDistrictsView = Backbone.View.extend({
         }
         return filterResults[0];
     },
+    clearMapLayer: function () {
+        const mapLayer = Radio.request("Map", "getLayerByName", this.model.get("mapLayerName"));
 
+        mapLayer.getSource().clear();
+    },
     showComparableDistricts: function (districtFeatures) {
         const mapLayer = Radio.request("Map", "getLayerByName", this.model.get("mapLayerName")),
             cloneCollection = [];
 
-        mapLayer.getSource().clear();
+        this.clearMapLayer();
         _.each(districtFeatures, (feature) => {
             const featureClone = feature.clone();
 
