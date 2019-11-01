@@ -62,7 +62,7 @@ const SelectDistrictView = Backbone.View.extend({
     },
     selectDistrictReminder: function () {
         Radio.trigger("Alert", "alert", {
-            text: "<strong>Warnung: Sie haben noch keine Gebiete ausgewählt. Bitte wählen Sie auf welcher Ebene Sie arbeiten möchten (**Stadtteile oder statistische Gebiete)* *und klicken Sie entsprechend auf die Karte, um die Gebiete auszuwählen, mit denen Sie arbeiten möchten.</strong>",
+            text: "Warnung: Sie haben noch keine Gebiete ausgewählt. Bitte wählen Sie auf welcher Ebene Sie arbeiten möchten (**Stadtteile oder statistische Gebiete)* *und klicken Sie entsprechend auf die Karte, um die Gebiete auszuwählen, mit denen Sie arbeiten möchten.",
             kategorie: "alert-warning"
         });
     },
