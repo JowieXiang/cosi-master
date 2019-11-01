@@ -4,7 +4,8 @@ import SnippetDropdownView from "../../../../modules/snippets/dropdown/view";
 
 const ColorCodeMapView = Backbone.View.extend({
     events: {
-        "click .btn-reset": "resetDropDown"
+        "click .btn-reset": "resetDropDown",
+        "click .btn-prev-next": "prevNext"
     },
     initialize: function () {
         this.listenTo(this.model, {
@@ -46,6 +47,19 @@ const ColorCodeMapView = Backbone.View.extend({
             `);
         }
     },
+    prevNext: function (evt) {
+        const options = this.$el.find(".selectpicker option"),
+            direction = $(evt.target).attr("title") === "next" ? 1 : -1,
+            currentIndex = this.$el.find(".selectpicker").get(0).selectedIndex,
+            newIndex = currentIndex + direction === 0 ? currentIndex + direction * 2 : currentIndex + direction,
+            selOption = options.get(newIndex);
+
+        options.prop("selected", false);
+        selOption.setAttribute("selected", true);
+        this.$el.find(".selectpicker").get(0).selectedIndex = newIndex;
+        this.$el.find(".dropdown-toggle span.filter-option").text(selOption.value);
+        this.model.get("dropDownModel").updateSelectedValues(selOption.value);
+    },
 
     /**
      * adds the 'bs-placeholder' class to the dropdown,
@@ -59,7 +73,7 @@ const ColorCodeMapView = Backbone.View.extend({
         this.clearLegend();
     },
     checkDistrictSelection (extent) {
-        if (extent) {
+        if (extent.length > 0) {
             this.$el.find("button").prop("disabled", false);
         }
         else {
