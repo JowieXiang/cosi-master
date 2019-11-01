@@ -1,6 +1,4 @@
 import {tools, general} from "./tools";
-
-import FeaturesLoader from "./featuresLoader/model";
 import ColorCodeMapView from "./colorCodeMap/view";
 import DashboardView from "./dashboard/view";
 import DashboardTableView from "./dashboardTable/view";
@@ -30,7 +28,6 @@ function initializeCosi () {
             ]
         }
     });
-    new FeaturesLoader();
 
     Radio.trigger("ModelList", "addModelsAndUpdate", Object.values(general));
 

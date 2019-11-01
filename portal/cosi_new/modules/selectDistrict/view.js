@@ -1,4 +1,3 @@
-import SelectDistrictModel from "./model";
 import Template from "text-loader!./template.html";
 import SnippetDropdownView from "../../../../modules/snippets/dropdown/view";
 
@@ -14,6 +13,14 @@ const SelectDistrictView = Backbone.View.extend({
 
         this.listenTo(this.model, {
             "change:isActive": this.render
+        });
+
+        // hack as long as no stadtteile are available
+        this.listenTo(this.scopeDropdownView.model, {
+            "change:isOpen": function () {
+                this.$el.find(".dropdown-menu.inner li:nth-child(2)").addClass("disabled");
+                this.$el.find(".dropdown-menu.inner li:nth-child(2)").prop("title", "Stadtteile zurzeit noch nicht verfügbar");
+            }
         });
 
         if (this.model.get("isActive") === true) {
@@ -35,9 +42,6 @@ const SelectDistrictView = Backbone.View.extend({
             this.$el.html(this.template(attr));
 
             this.$el.find(".dropdown").append(this.scopeDropdownView.render().el);
-            // hack as long as no stadtteile are available
-            this.$el.find(".dropdown-menu.inner li:nth-child(2)").addClass("disabled");
-            this.$el.find(".dropdown-menu.inner li:nth-child(2)").prop("title", "Stadtteile zurzeit noch nicht verfügbar");
         }
         return this;
     },
@@ -58,7 +62,7 @@ const SelectDistrictView = Backbone.View.extend({
     },
     selectDistrictReminder: function () {
         Radio.trigger("Alert", "alert", {
-            text: "<strong>Warnung: Sie haben noch keine Gebiete ausgewählt. Bitte wählen Sie auf welcher Ebene Sie arbeiten möchten (**Stadtteile oder statistische Gebiete)* *und klicken Sie entsprechend auf die Karte, um die Gebiete auszuwählen, mit denen Sie arbeiten möchten.</strong>",
+            text: "Warnung: Sie haben noch keine Gebiete ausgewählt. Bitte wählen Sie auf welcher Ebene Sie arbeiten möchten (**Stadtteile oder statistische Gebiete)* *und klicken Sie entsprechend auf die Karte, um die Gebiete auszuwählen, mit denen Sie arbeiten möchten.",
             kategorie: "alert-warning"
         });
     },

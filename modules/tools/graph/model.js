@@ -21,6 +21,9 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
     initialize: function () {
         var channel = Radio.channel("Graph");
 
+        channel.on({
+            "createGraph": this.createGraph
+        }, this);
         channel.reply({
             "createGraph": this.createGraph
         }, this);

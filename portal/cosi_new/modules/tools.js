@@ -1,3 +1,4 @@
+import FeaturesLoader from "./featuresLoader/model";
 import ColorCodeMap from "./colorCodeMap/model";
 import Dashboard from "./dashboard/model";
 import DashboardTable from "./dashboardTable/model";
@@ -7,6 +8,7 @@ import TimeSlider from "./timeSlider/model";
 import InfoScreenHandler from "./infoScreen/infoScreenHandler/model";
 import IsoChrones from "./isochrones/model";
 
+new FeaturesLoader();
 const general = {
         dashboardTable: new DashboardTable({
             name: "Übersicht",
