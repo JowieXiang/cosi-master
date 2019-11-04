@@ -21,7 +21,7 @@ const DashboardTableView = Backbone.View.extend({
                 this.renderFilter();
             },
             "tableViewFilter": function (selectedValues) {
-                this.showFilteredTable(selectedValues.values);
+                // this.showFilteredTable(selectedValues.values);
             }
         });
     },
@@ -55,23 +55,23 @@ const DashboardTableView = Backbone.View.extend({
         this.filterDropdownView = new DropdownView({model: this.model.get("filterDropdownModel")});
         this.$el.find(".filter-dropdown").prepend(this.filterDropdownView.render().el);
     },
-    showFilteredTable (selectedValues) {
-        _.each(this.$el.find(".overview tr"), (row, i) => {
-            if (i > 0) {
-                if (selectedValues.length > 0) {
-                    if (!selectedValues.includes($(row).find("th.prop").attr("id"))) {
-                        $(row).addClass("hidden");
-                    }
-                    else {
-                        $(row).removeClass("hidden");
-                    }
-                }
-                else {
-                    $(row).removeClass("hidden");
-                }
-            }
-        });
-    },
+    // showFilteredTable (selectedValues) {
+    //     _.each(this.$el.find(".overview tr"), (row, i) => {
+    //         if (i > 0) {
+    //             if (selectedValues.length > 0) {
+    //                 if (!selectedValues.includes($(row).find("th.prop").attr("id"))) {
+    //                     $(row).addClass("hidden");
+    //                 }
+    //                 else {
+    //                     $(row).removeClass("hidden");
+    //                 }
+    //             }
+    //             else {
+    //                 $(row).removeClass("hidden");
+    //             }
+    //         }
+    //     });
+    // },
     zoomToFeature (event) {
         const districtName = event.target.innerHTML;
 

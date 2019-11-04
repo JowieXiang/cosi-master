@@ -13,6 +13,7 @@ const SelectDistrict = Tool.extend({
         districtLayerNames: ["Statistische Gebiete", "Stadtteile"],
         districtLayerIds: ["6071", "1694"],
         districtLayersLoaded: [],
+        buffer: 1000,
         isReady: false,
         scopeDropdownModel: {},
         activeScope: "", // e.g. "Stadtteile" or "Statistische Gebiete"
