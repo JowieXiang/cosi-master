@@ -62,9 +62,6 @@ import PrintView from "../modules/tools/print_/view";
 import TimeSeries from "../modules/tools/timeSeries/view";
 import CalculateRatioView from "../modules/tools/calculateRatio/selectView";
 import LocalStorageView from "../modules/localStorage/view";
-import PieView from "../modules/charting/chartRenderer/pie/view";
-import BarView from "../modules/charting/chartRenderer/bar-line/view";
-import ChartUtil from "../modules/charting/chartRenderer/util/util";
 import CompareDistrictsView from "../modules/tools/compareDistricts/view";
 
 // @deprecated in version 3.0.0
@@ -511,12 +508,6 @@ async function loadApp() {
     new HighlightFeature();
 
     /* eslint-enable no-undef */
-    /*
-    *   Charting so far only used in the context of CoSI
-    */
-    new PieView();
-    new BarView();
-    new ChartUtil();
 
     Radio.trigger("Util", "hideLoader");
 }
