@@ -1,10 +1,14 @@
 import Template from "text-loader!./template.html";
+import InfoTemplate from "text-loader!./info.html";
+import "./style.less";
 import SnippetDropdownView from "../../../../modules/snippets/dropdown/view";
 
 const SelectDistrictView = Backbone.View.extend({
     events: {
         "click button#Submit": "checkIfSelected",
-        "click button#Reset": "reset"
+        "click button#Reset": "reset",
+        "click button#Help": "showHelp",
+        "change input#buffer": "setBuffer"
     },
     initialize: function () {
         this.scopeDropdownView = new SnippetDropdownView({
@@ -52,6 +56,7 @@ const SelectDistrictView = Backbone.View.extend({
     checkIfSelected: function () {
         if (this.model.get("selectedDistricts").length === 0) {
             this.selectDistrictReminder();
+            this.toggleIsActive();
         }
         else {
             this.toggleIsActive();
@@ -62,12 +67,21 @@ const SelectDistrictView = Backbone.View.extend({
     },
     selectDistrictReminder: function () {
         Radio.trigger("Alert", "alert", {
-            text: "Warnung: Sie haben noch keine Gebiete ausgewählt. Bitte wählen Sie auf welcher Ebene Sie arbeiten möchten (**Stadtteile oder statistische Gebiete)* *und klicken Sie entsprechend auf die Karte, um die Gebiete auszuwählen, mit denen Sie arbeiten möchten.",
+            text: "<strong>Warnung: Sie haben noch keine Gebiete ausgewählt. Es werden keine Datensätze geladen. <br /> Sie können trotzdem Fachdaten-Ebenen für die gesamte Stadt anzeigen lassen und Gebiete nach Parametern ermitteln.</strong>",
             kategorie: "alert-warning"
         });
     },
     reset () {
         this.model.resetSelectedDistricts();
+    },
+    showHelp: function () {
+        Radio.trigger("Alert", "alert", {
+            text: InfoTemplate,
+            kategorie: "alert-info"
+        });
+    },
+    setBuffer: function (evt) {
+        this.model.set("buffer", evt.target.value);
     }
 });
 

@@ -5,7 +5,7 @@ const InfoScreenView = Backbone.View.extend({
     events: {
         "click #title": "renderContent"
     },
-    initialize(opts) {
+    initialize (opts) {
         this.model = new InfoScreenModel(opts);
 
         this.render();
@@ -19,7 +19,7 @@ const InfoScreenView = Backbone.View.extend({
     model: {},
     contentContainer: {},
     template: _.template(Template),
-    render() {
+    render () {
         var attr = this.model.toJSON();
 
         this.setElement(document.getElementById("info-screen"));
@@ -35,9 +35,9 @@ const InfoScreenView = Backbone.View.extend({
             this.renderChild(child);
         });
     },
-    renderChild(child) {
+    renderChild (child) {
         this.contentContainer.append(child.$el);
-        console.log("child.$el: ", child.$el)
+        console.log("child.$el: ", child.$el);
     }
 });
 

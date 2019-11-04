@@ -166,6 +166,12 @@
             "version": "mapfish_print_3"
           }
         }
+      },
+      "legend":
+      {
+        "name": "Legende",
+        "glyphicon": "glyphicon-book",
+        "isVisibleInMenu": false
       }
     },
     "scaleLine": false,
