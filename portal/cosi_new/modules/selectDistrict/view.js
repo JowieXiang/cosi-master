@@ -81,7 +81,7 @@ const SelectDistrictView = Backbone.View.extend({
         });
     },
     setBuffer: function (evt) {
-        this.model.set("buffer", evt.target.value);
+        this.model.set("buffer", parseInt(evt.target.value, 10));
     }
 });
 

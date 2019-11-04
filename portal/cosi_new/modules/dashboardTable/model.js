@@ -360,7 +360,11 @@ const DashboardTableModel = Tool.extend({
         }
     },
     filterTableView: function () {
-        this.trigger("tableViewFilter", this.get("filterDropdownModel").getSelectedValues());
+        // this.trigger("tableViewFilter", this.get("filterDropdownModel").getSelectedValues());
+        const values = this.get("filterDropdownModel").getSelectedValues().values,
+            filteredTable = this.get("tableView").filter(group => {
+                return group;
+            });
     },
     updateFilter: function () {
         this.get("filterDropdownModel").set("values", Radio.request("FeaturesLoader", "getAllValuesByScope", "statgebiet"));
