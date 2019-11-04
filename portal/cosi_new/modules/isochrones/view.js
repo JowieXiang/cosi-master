@@ -4,6 +4,7 @@ import * as Proj from "ol/proj.js";
 import "./style.less";
 import { Fill, Stroke, Style } from "ol/style.js";
 import GeoJSON from "ol/format/GeoJSON";
+import GeometryCollection from "ol/geom/GeometryCollection";
 
 const IsoChronesView = Backbone.View.extend({
     events: {
@@ -76,8 +77,33 @@ const IsoChronesView = Backbone.View.extend({
                 mapLayer.getSource().addFeatures(newFeatures.reverse());
                 mapLayer.setVisible(true);
                 this.model.set("isochroneFeatures", newFeatures);
+                this.setBbox();
             });
         }
+    },
+    /*
+     * temporary solution, later will merge with SelectDistrict function
+     */
+    setBbox: function () {
+        const layerlist = _.union(Radio.request("Parser", "getItemsByAttributes", { typ: "WFS", isBaseLayer: false }), Radio.request("Parser", "getItemsByAttributes", { typ: "GeoJSON", isBaseLayer: false })),
+            modelList = Radio.request("ModelList", "getCollection"),
+            polygonGeometry = this.model.get("isochroneFeatures")[this.model.get("steps") - 1].getGeometry();
+
+        layerlist.forEach(function (item) {
+            const model = modelList.get(item.id),
+                geometryCollection = new GeometryCollection([polygonGeometry]);
+
+            if (model) {
+                model.set("bboxGeometry", geometryCollection);
+                // updates layers that have already been loaded
+                if (model.has("layer") && model.get("layer").getSource().getFeatures().length > 0) {
+                    model.updateSource();
+                }
+            }
+            else {
+                item.bboxGeometry = geometryCollection;
+            }
+        }, this);
     },
     styleFeatures: function (features) {
         for (let i = features.length - 1; i >= 0; i--) {

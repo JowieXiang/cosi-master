@@ -1,6 +1,3 @@
-import { Fill, Stroke, Style } from "../../../../node_modules/ol/style.js";
-import GeometryCollection from "../../../../node_modules/ol/geom/GeometryCollection";
-import Geometry from '../../../../node_modules/ol/geom/Geometry';
 import Tool from "../../../../modules/core/modelList/tool/model";
 import DropdownModel from "../../../../modules/snippets/dropdown/model";
 
@@ -41,39 +38,34 @@ const IsoChrones = Tool.extend({
         });
 
         this.listenTo(dropdownModel, {
-            "valuesChanged": this.dropDownCallback
+            "valuesChanged": this.displayLayer
         }, this);
 
         this.set("dropDownModel", dropdownModel);
     },
     /**
-     * callback function for the "valuesChanged" event in the dropdown model
-     * sets the features based on the dropdown selection
+     * display corresponding facility layer
      * @param {Backbone.Model} valueModel - the value model which was selected or deselected
      * @param {boolean} isSelected - flag if value model is selected or not
      * @returns {void}
      */
-    dropDownCallback: function (valueModel, isSelected) {
-        if (isSelected) {
-            const selectedId = Radio.request("RawLayerList", "getLayerAttributesWhere", { featureType: valueModel.get("value") }).id,
-                featureCollection = Radio.request("FeaturesLoader", "getAllFeaturesByAttribute", { id: selectedId }),
-                polygonGeometry = this.get("isochroneFeatures")[this.get("steps") - 1].getGeometry(),
-                selectedFeatures = [];
+    displayLayer: function (valueModel, isSelected) {
+        // if (isSelected) {
+        //     const selectedId = Radio.request("RawLayerList", "getLayerAttributesWhere", { featureType: valueModel.get("value") }).id,
+        //         featureCollection = Radio.request("FeaturesLoader", "getAllFeaturesByAttribute", { id: selectedId }),
+        //         polygonGeometry = this.get("isochroneFeatures")[this.get("steps") - 1].getGeometry(),
+        //         selectedFeatures = [];
 
-            console.log("featureCollection: ", featureCollection);
-            _.each(featureCollection, feature => {
-                if (feature.getGeometry()) {
-                    const featureGeometry = feature.getGeometry();
+        //     _.each(featureCollection, feature => {
+        //         if (feature.getGeometry()) {
+        //             const featureGeometry = feature.getGeometry();
 
-                    if (polygonGeometry.intersectsExtent(featureGeometry.getExtent())) {
-                        selectedFeatures.push(feature);
-                    }
-                }
-            });
-
-            console.log("featureLength: ", featureCollection.length);
-            console.log("featureLength: ", selectedFeatures.length);
-        }
+        //             if (polygonGeometry.intersectsExtent(featureGeometry.getExtent())) {
+        //                 selectedFeatures.push(feature);
+        //             }
+        //         }
+        //     });
+        // }
     }
 
 });
