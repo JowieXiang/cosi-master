@@ -24,6 +24,10 @@ const IsoChronesView = Backbone.View.extend({
             "change:isActive": function (model, value) {
                 this.render(model, value);
                 this.createMapLayer("IsoChrones_name");
+                this.featureCollection = Radio.request("FeaturesLoader", "getAllFeaturesByAttribute", {
+                    id: "12868"
+                });
+                console.log("this.featureCollection: ", this.featureCollection);
             },
             "change:coordinate": function (model, value) {
                 this.rerenderCoordinate(value);
@@ -55,51 +59,32 @@ const IsoChronesView = Backbone.View.extend({
 
         if (coordinate.length > 0 && pathType !== "" && range !== 0) {
             this.openRouteRequest(openrouteUrl, key, pathType, coordinate, range).then(res => {
+                const mapLayer = Radio.request("Map", "getLayerByName", "IsoChrones_name"),
+                    json = JSON.parse(res),
+                    reversedFeatures = [...json.features].reverse();
 
-                const mapLayer = Radio.request("Map", "getLayerByName", "IsoChrones_name");
-
-                let newFeatures = this.parseDataToFeatures(res);
+                json.features = reversedFeatures;
+                let newFeatures = this.parseDataToFeatures(JSON.stringify(json));
 
                 newFeatures = this.transformFeatures(newFeatures, "EPSG:4326", "EPSG:25832");
                 mapLayer.getSource().clear();
-                newFeatures.forEach(function (feature) {
-                    feature.setStyle(new Style({
-                        fill: new Fill({
-                            color: "rgba(0, 255, 0, 0.3)"
-                        }),
-                        stroke: new Stroke({
-                            color: "red",
-                            width: 3
-                        })
-                    }));
-                });
-
-                mapLayer.getSource().addFeatures(newFeatures);
+                this.styleFeatures(newFeatures);
+                mapLayer.getSource().addFeatures(newFeatures.reverse());
                 mapLayer.setVisible(true);
-                // this.styleFeatures(features);
-                // const layer = Radio.request("ModelList", "getModelByAttributes", {
-                //     id: "isochrone1"
-                // });
-
-                // Radio.trigger("Map", "addLayerOnTop", layer.get("layer"));
-
-                // // console.log("layer properties before: ", layer.get("layer").getProperties());
-
-                // // console.log("maplayer: ", Radio.request("Map", "getLayerByName", "isochrone"));
-
-                // layer.createLayer();
-                // layer.showAllFeatures();
-                // this.styleFeatures(layer.get("layer").getSource().getFeatures());
-
-                // // console.log("layer properties: ", layer.get("layer").getSource());
-
-                // const map = Radio.request("Map", "getMap");
-                // // console.log(map.getLayers().getArray());
-                // _.each(map.getLayers().getArray(), mapLayer => {
-                //     // console.log(mapLayer.getProperties());
-                // });
-                // // console.log("newGeoJsonLayer: ", layer);
             });
+        }
+    },
+    styleFeatures: function (features) {
+        for (let i = features.length - 1; i >= 0; i--) {
+            features[i].setStyle(new Style({
+                fill: new Fill({
+                    color: `rgba(${200 - 100 * i}, ${100 * i}, 3, ${0.1 * i + 0.3})`
+                }),
+                stroke: new Stroke({
+                    color: "white",
+                    width: 1
+                })
+            }));
         }
     },
     /**
@@ -163,7 +148,7 @@ const IsoChronesView = Backbone.View.extend({
     openRouteRequest: function (baseUrl, key, pathType, coordinate, range) {
         return new Promise(function (resolve, reject) {
             // const body = '{"locations":[[9.9937,53.5511],[9.9937,53.5511]],"range":[300,200]}',
-            const queryBody = `{"locations":[${JSON.stringify(coordinate)},[8.686507,49.41943]],"range":[${range}]}`,
+            const queryBody = `{"locations":[${JSON.stringify(coordinate)}],"range":[${range / 4},${range / 2},${range}]}`,
                 url = baseUrl + pathType.trim();
             var xhr = new XMLHttpRequest();
 
