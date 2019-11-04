@@ -1,8 +1,9 @@
 import {Fill, Stroke, Style} from "ol/style.js";
 import GeometryCollection from "ol/geom/GeometryCollection";
-// import Geometry from 'ol/geom/Geometry';
 import Tool from "../../../../modules/core/modelList/tool/model";
 import SnippetDropdownModel from "../../../../modules/snippets/dropdown/model";
+import * as Extent from "ol/extent";
+import * as Polygon from "ol/geom/Polygon";
 
 const SelectDistrict = Tool.extend({
     defaults: _.extend({}, Tool.prototype.defaults, {
@@ -207,7 +208,7 @@ const SelectDistrict = Tool.extend({
 
             // layer already exists in the model list
             if (model) {
-                model.set("bboxGeometry", this.getSelectedGeometries());
+                model.set("bboxGeometry", Polygon.fromExtent(Extent.buffer(this.getSelectedGeometries().getExtent(), this.getBuffer())));
                 // updates layers that have already been loaded
                 if (model.has("layer") && model.get("layer").getSource().getFeatures().length > 0) {
                     model.updateSource();
@@ -215,7 +216,7 @@ const SelectDistrict = Tool.extend({
             }
             // for layers that are not yet in the model list
             else {
-                item.bboxGeometry = this.getSelectedGeometries();
+                item.bboxGeometry = Polygon.fromExtent(Extent.buffer(this.getSelectedGeometries().getExtent(), this.getBuffer()));
             }
         }, this);
     },
@@ -328,6 +329,10 @@ const SelectDistrict = Tool.extend({
             }
         });
         return names;
+    },
+
+    getBuffer: function () {
+        return this.get("buffer");
     },
 
     getSelectedStyle: function () {
