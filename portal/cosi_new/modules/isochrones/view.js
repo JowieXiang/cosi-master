@@ -16,9 +16,7 @@ const IsoChronesView = Backbone.View.extend({
         "change #range": "setRange"
     },
     initialize: function () {
-        this.scopeDropdownView = new SnippetDropdownView({
-            model: this.model.get("scopeDropdownModel")
-        });
+
 
         this.listenTo(this.model, {
             "change:isActive": function (model, value) {
@@ -42,8 +40,14 @@ const IsoChronesView = Backbone.View.extend({
         if (value) {
             this.setElement(document.getElementsByClassName("win-body")[0]);
             this.$el.html(this.template(attr));
+            this.renderDropDownView(this.model.get("dropDownModel"));
         }
         return this;
+    },
+    renderDropDownView: function (dropdownModel) {
+        const dropdownView = new SnippetDropdownView({ model: dropdownModel });
+
+        this.$el.find("#isochrones-layer").html(dropdownView.render().el);
     },
     createMapLayer: function (name) {
         const newLayer = Radio.request("Map", "createLayerIfNotExists", name);
@@ -71,6 +75,7 @@ const IsoChronesView = Backbone.View.extend({
                 this.styleFeatures(newFeatures);
                 mapLayer.getSource().addFeatures(newFeatures.reverse());
                 mapLayer.setVisible(true);
+                this.model.set("isochroneFeatures", newFeatures);
             });
         }
     },

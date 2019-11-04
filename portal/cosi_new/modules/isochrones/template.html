@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <div class="isochrones container">
-    <div class="row" id="isochrones-row">
+    <div class="row">
         <form>
             <div class="form-row" id="layerfilter-selector-container">
                 <div class="form-group col-md-12">
@@ -11,7 +11,7 @@
             </div>
         </form>
     </div>
-    <div class="row" id="isochrones-row">
+    <div class="row">
         <form>
             <div class="form-row" id="layerfilter-selector-container">
                 <div class="form-group col-md-4">
@@ -19,13 +19,9 @@
                     <select class="form-control input-sm" title="Demografische Daten anzeigen" id="path-type">
                         <option selected value="Leeren"> -Leeren- </option>
                         <option value="driving-car">Auto</option>
-                        <!-- <option value="driving-hgv">LKW</option> -->
                         <option value="cycling-regular">Rad</option>
-                        <!-- <option value="cycling-road">Rad (Rennrad)</option> -->
-                        <!-- <option value="cycling-mountain">Rad (Mountainbike)</option> -->
                         <option value="cycling-electric">Rad (elektrisch)</option>
                         <option value="foot-walking">Gehen</option>
-                        <!-- <option value="foot-hiking">Wandern</option> -->
                         <option value="wheelchair">Rollstuhl</option>
                     </select>
                 </div>
@@ -38,7 +34,7 @@
                 </div>
             </div>
             <div class="form-row">
-                <div class="form-group col-md-4" id="add-filter-button-group">
+                <div class="form-group col-md-4">
                     <br />
                     <div id="create-isochrones">
                         <span class="glyphicon glyphicon-plus"></span>
@@ -55,5 +51,14 @@
                 </div>
             </div>
         </form>
+    </div>
+    <div class="row">
+        <div class="form-row">
+            <div class="form-group col">
+                <br />
+                <div id="isochrones-layer">
+                </div>
+            </div>
+        </div>
     </div>
 </div>
