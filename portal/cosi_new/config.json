@@ -60,7 +60,7 @@
         "isInitOpen": false
       },
       "tools": {
-        "name": "Werkzeuge",
+        "name": "Analyse",
         "glyphicon": "glyphicon-wrench",
         "children": {
           "filter": {
@@ -151,6 +151,11 @@
             "modifierInfoText": "<h3>Gewichtung:</h3><p>Hiermit können Sie eine beliebige Gewichtung für die Berechnung der Angebots/Zielgruppen-Verhältnisse festlegen um die Deckung der Nachfrage zu überprüfen.<br />z.B.: 'Wieviele Qudaratmeter pädagogische Fläche benötigt ein Kitakind?'<br />Sie können zwischen 'geteilt' ('/') und 'multipliziert' ('x') wählen.</p><p><strong>Der eingegebene Wert entspricht keinem offiziellen, rechtlich bindenden Schlüssel, sonder dient rein der explorativen Analyse.</strong></p>"
           }
         }
+      },
+      "simulation": {
+        "name": "Simulation",
+        "glyphicon": "glyphicon-grain",
+        "children": {}
       },
       "utilities": {
         "name": "Dienste",
