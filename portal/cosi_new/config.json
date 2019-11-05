@@ -360,13 +360,15 @@
           "Titel": "Bebauungspläne",
           "Layer": [
             {
-              "id": "1561"
+              "id": "1561",
+              "name": "Festgestellte Bebauungspläne (PLIS)"
             },
             {
               "id": "1562"
             },
             {
-              "id": "11094"
+              "id": "11094",
+              "name": "PLIS Geodaten - FHHNET"
             }
           ]
         },
