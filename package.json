@@ -30,7 +30,6 @@
     "d3": "4.9.x",
     "d3-scale-chromatic": "^1.5.0",
     "dom-parser": "^0.1.5",
-    "highcharts": "^6.0.7",
     "jquery": "^3.4.1",
     "jquery-ui": "1.x",
     "moment": "2.x",
