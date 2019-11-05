@@ -17,7 +17,9 @@ const FilterView = Backbone.View.extend({
                     this.renderDetailView();
                 }
                 else {
-                    this.model.get("detailView").$el[0].remove();
+                    if (this.model.get("detailView")) {
+                        this.model.get("detailView").removeView();
+                    }
                     this.$el.remove();
                     Radio.trigger("Sidebar", "toggle", false);
                 }
@@ -98,6 +100,7 @@ const FilterView = Backbone.View.extend({
         }
     },
     closeFilter: function () {
+        console.info("close");
         this.model.setIsActive(false);
         this.model.collapseOpenSnippet();
         Radio.trigger("ModelList", "toggleDefaultTool");
