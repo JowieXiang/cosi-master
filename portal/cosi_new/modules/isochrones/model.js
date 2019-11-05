@@ -10,7 +10,8 @@ const IsoChrones = Tool.extend({
         range: 0,
         steps: 3, // step of subIsochrones
         isochroneFeatures: [], // isochrone features
-        dropDownModel: {}
+        dropDownModel: {},
+        mapLayerName: "IsoChrones_name"
     }),
     initialize: function () {
         this.superInitialize();

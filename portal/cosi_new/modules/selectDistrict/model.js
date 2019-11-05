@@ -1,4 +1,4 @@
-import {Fill, Stroke, Style} from "ol/style.js";
+import { Fill, Stroke, Style } from "ol/style.js";
 import GeometryCollection from "ol/geom/GeometryCollection";
 import Tool from "../../../../modules/core/modelList/tool/model";
 import SnippetDropdownModel from "../../../../modules/snippets/dropdown/model";
@@ -60,11 +60,14 @@ const SelectDistrict = Tool.extend({
                 }
                 else {
                     if (this.get("selectedDistricts").length > 0) {
-                        Radio.trigger("Map", "zoomToExtent", this.getSelectedGeometries().getExtent());
-                        const layerlist = _.union(Radio.request("Parser", "getItemsByAttributes", {typ: "WFS", isBaseLayer: false}), Radio.request("Parser", "getItemsByAttributes", {typ: "GeoJSON", isBaseLayer: false}));
+                        // calls "BboxSettor" channel
+                        const layerlist = _.union(Radio.request("Parser", "getItemsByAttributes", { typ: "WFS", isBaseLayer: false }), Radio.request("Parser", "getItemsByAttributes", { typ: "GeoJSON", isBaseLayer: false })),
+                            bboxGeometry = Polygon.fromExtent(Extent.buffer(this.getSelectedGeometries().getExtent(), this.getBuffer()));
 
-                        this.setBboxGeometryToLayer(Radio.request("ModelList", "getCollection"), layerlist);
+                        Radio.trigger("BboxSettor", "setBboxGeometryToLayer", layerlist, bboxGeometry);
+                        // triggers "selectionChanged"
                         this.get("channel").trigger("selectionChanged", this.getSelectedGeometries().getExtent().toString(), this.get("activeScope"), this.getSelectedDistrictNames(this.get("selectedDistricts")));
+                        Radio.trigger("Map", "zoomToExtent", this.getSelectedGeometries().getExtent());
                     }
                     this.unlisten();
                 }
@@ -114,7 +117,7 @@ const SelectDistrict = Tool.extend({
 
     // select districts on click
     select: function (evt) {
-        const districtLayer = Radio.request("ModelList", "getModelByAttributes", {"name": this.getScope()}),
+        const districtLayer = Radio.request("ModelList", "getModelByAttributes", { "name": this.getScope() }),
             features = Radio.request("Map", "getFeaturesAtPixel", evt.map.getEventPixel(evt.originalEvent), {
                 layerFilter: function (layer) {
                     return layer.get("name") === districtLayer.get("name");
@@ -144,9 +147,9 @@ const SelectDistrict = Tool.extend({
             "selectedDistricts": this.get("selectedDistricts").concat(feature)
         });
     },
-    setFeaturesByScopeAndIds (scope, ids) {
+    setFeaturesByScopeAndIds(scope, ids) {
         this.setScope(scope);
-        const layer = Radio.request("ModelList", "getModelByAttributes", {name: scope}),
+        const layer = Radio.request("ModelList", "getModelByAttributes", { name: scope }),
             features = layer.get("layerSource").getFeatures().filter(feature => ids.includes(feature.getProperties()[this.getSelector()]));
 
         if (features && features.length !== 0) {
@@ -197,31 +200,8 @@ const SelectDistrict = Tool.extend({
         this.get("channel").trigger("selectionChanged", this.getSelectedDistricts());
     },
 
-    /**
-     * sets the bbox geometry for all vector layers and updates already loaded layers
-     * @param {Backbone.Collection} modelList - the whole model list
-     * @param {Object[]} itemList - all available vector layers(WFS)
-     * @returns {void}
-     */
-    setBboxGeometryToLayer: function (modelList, itemList) {
-        itemList.forEach(function (item) {
-            const model = modelList.get(item.id);
 
-            // layer already exists in the model list
-            if (model) {
-                model.set("bboxGeometry", Polygon.fromExtent(Extent.buffer(this.getSelectedGeometries().getExtent(), this.getBuffer())));
-                // updates layers that have already been loaded
-                if (model.has("layer") && model.get("layer").getSource().getFeatures().length > 0) {
-                    model.updateSource();
-                }
-            }
-            // for layers that are not yet in the model list
-            else {
-                item.bboxGeometry = Polygon.fromExtent(Extent.buffer(this.getSelectedGeometries().getExtent(), this.getBuffer()));
-            }
-        }, this);
-    },
-    getScopeFromDropdown () {
+    getScopeFromDropdown: function () {
         const scope = this.get("scopeDropdownModel").getSelectedValues().values[0];
 
         if (this.get("isActive")) {
@@ -240,7 +220,7 @@ const SelectDistrict = Tool.extend({
     },
     toggleScopeLayers: function () {
         _.each(this.get("districtLayerNames"), (layerName) => {
-            const layer = Radio.request("ModelList", "getModelByAttributes", {"name": layerName});
+            const layer = Radio.request("ModelList", "getModelByAttributes", { "name": layerName });
 
             if (layerName !== this.getScope()) {
                 layer.setIsVisibleInMap(false);
@@ -251,7 +231,7 @@ const SelectDistrict = Tool.extend({
         });
     },
     checkDistrictLayersLoaded: function (id) {
-        const name = Radio.request("ModelList", "getModelByAttributes", {"id": id}).get("name");
+        const name = Radio.request("ModelList", "getModelByAttributes", { "id": id }).get("name");
 
         if (this.get("districtLayerNames").includes(name)) {
             if (!this.get("districtLayersLoaded").includes(name)) {
@@ -274,7 +254,7 @@ const SelectDistrict = Tool.extend({
             extent;
 
         if (!onlySelected) {
-            const getLayerSource = Promise.resolve(Radio.request("ModelList", "getModelByAttributes", {"name": this.getScope()}).get("layerSource")),
+            const getLayerSource = Promise.resolve(Radio.request("ModelList", "getModelByAttributes", { "name": this.getScope() }).get("layerSource")),
                 layerSource = await getLayerSource;
 
             districts = layerSource.getFeatures();
@@ -286,7 +266,7 @@ const SelectDistrict = Tool.extend({
             }
         });
         if (extent) {
-            Radio.trigger("Map", "zoomToExtent", extent, {padding: [20, 20, 20, 20]});
+            Radio.trigger("Map", "zoomToExtent", extent, { padding: [20, 20, 20, 20] });
         }
     },
     getSelector: function () {
@@ -345,7 +325,7 @@ const SelectDistrict = Tool.extend({
     getDistrictLayer: function () {
         return this.get("districtLayer");
     },
-    getUrlQuery () {
+    getUrlQuery() {
         const query = window.location.search.split("&").filter(q => q.includes("scope") || q.includes("selectedDistricts"));
 
         if (query.length > 0) {

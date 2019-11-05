@@ -21,12 +21,13 @@ const IsoChronesView = Backbone.View.extend({
 
         this.listenTo(this.model, {
             "change:isActive": function (model, value) {
-                this.render(model, value);
-                this.createMapLayer("IsoChrones_name");
-                this.featureCollection = Radio.request("FeaturesLoader", "getAllFeaturesByAttribute", {
-                    id: "12868"
-                });
-                console.log("this.featureCollection: ", this.featureCollection);
+                if (value) {
+                    this.render(model, value);
+                    this.createMapLayer(this.model.get("mapLayerName"));
+                }
+                else {
+                    this.clearMapLayer(this.model.get("mapLayerName"));
+                }
             },
             "change:coordinate": function (model, value) {
                 this.rerenderCoordinate(value);
@@ -55,6 +56,12 @@ const IsoChronesView = Backbone.View.extend({
 
         newLayer.setVisible(false);
     },
+    clearMapLayer: function (name) {
+        const mapLayer = Radio.request("Map", "getLayerByName", name);
+
+        mapLayer.getSource().clear();
+        mapLayer.setVisible(false);
+    },
     createIsochrones: function () {
         const openrouteUrl = this.model.get("openrouteUrl"),
             key = this.model.get("key"),
@@ -64,6 +71,7 @@ const IsoChronesView = Backbone.View.extend({
 
         if (coordinate.length > 0 && pathType !== "" && range !== 0) {
             this.openRouteRequest(openrouteUrl, key, pathType, coordinate, range).then(res => {
+                // reverse JSON object sequence to render the isochrones in the correct order
                 const mapLayer = Radio.request("Map", "getLayerByName", "IsoChrones_name"),
                     json = JSON.parse(res),
                     reversedFeatures = [...json.features].reverse();
@@ -72,38 +80,20 @@ const IsoChronesView = Backbone.View.extend({
                 let newFeatures = this.parseDataToFeatures(JSON.stringify(json));
 
                 newFeatures = this.transformFeatures(newFeatures, "EPSG:4326", "EPSG:25832");
-                mapLayer.getSource().clear();
                 this.styleFeatures(newFeatures);
+
+                mapLayer.getSource().clear();
                 mapLayer.getSource().addFeatures(newFeatures.reverse());
                 mapLayer.setVisible(true);
                 this.model.set("isochroneFeatures", newFeatures);
-                this.setBbox();
+
+                const layerlist = _.union(Radio.request("Parser", "getItemsByAttributes", { typ: "WFS", isBaseLayer: false }), Radio.request("Parser", "getItemsByAttributes", { typ: "GeoJSON", isBaseLayer: false })),
+                    polygonGeometry = this.model.get("isochroneFeatures")[this.model.get("steps") - 1].getGeometry(),
+                    geometryCollection = new GeometryCollection([polygonGeometry]);
+
+                Radio.trigger("BboxSettor", "setBboxGeometryToLayer", layerlist, geometryCollection);
             });
         }
-    },
-    /*
-     * temporary solution, later will merge with SelectDistrict function
-     */
-    setBbox: function () {
-        const layerlist = _.union(Radio.request("Parser", "getItemsByAttributes", { typ: "WFS", isBaseLayer: false }), Radio.request("Parser", "getItemsByAttributes", { typ: "GeoJSON", isBaseLayer: false })),
-            modelList = Radio.request("ModelList", "getCollection"),
-            polygonGeometry = this.model.get("isochroneFeatures")[this.model.get("steps") - 1].getGeometry();
-
-        layerlist.forEach(function (item) {
-            const model = modelList.get(item.id),
-                geometryCollection = new GeometryCollection([polygonGeometry]);
-
-            if (model) {
-                model.set("bboxGeometry", geometryCollection);
-                // updates layers that have already been loaded
-                if (model.has("layer") && model.get("layer").getSource().getFeatures().length > 0) {
-                    model.updateSource();
-                }
-            }
-            else {
-                item.bboxGeometry = geometryCollection;
-            }
-        }, this);
     },
     styleFeatures: function (features) {
         for (let i = features.length - 1; i >= 0; i--) {
