@@ -1,8 +1,5 @@
-import { Fill, Stroke, Style } from "../../../../node_modules/ol/style.js";
-import GeometryCollection from "../../../../node_modules/ol/geom/GeometryCollection";
-import Geometry from '../../../../node_modules/ol/geom/Geometry';
 import Tool from "../../../../modules/core/modelList/tool/model";
-import SnippetDropdownModel from "../../../../modules/snippets/dropdown/model";
+import DropdownModel from "../../../../modules/snippets/dropdown/model";
 
 const IsoChrones = Tool.extend({
     defaults: _.extend({}, Tool.prototype.defaults, {
@@ -11,79 +8,64 @@ const IsoChrones = Tool.extend({
         coordinate: [],
         pathType: "",
         range: 0,
-        geojsonObject: {
-            'type': 'FeatureCollection',
-            'crs': {
-                'type': 'name',
-                'properties': {
-                    'name': 'EPSG:3857'
-                }
-            },
-            'features': [{
-                'type': 'Feature',
-                'geometry': {
-                    'type': 'Point',
-                    'coordinates': [0, 0]
-                }
-            }, {
-                'type': 'Feature',
-                'geometry': {
-                    'type': 'LineString',
-                    'coordinates': [[4e6, -2e6], [8e6, 2e6]]
-                }
-            }, {
-                'type': 'Feature',
-                'geometry': {
-                    'type': 'LineString',
-                    'coordinates': [[4e6, 2e6], [8e6, -2e6]]
-                }
-            }, {
-                'type': 'Feature',
-                'geometry': {
-                    'type': 'Polygon',
-                    'coordinates': [[[-5e6, -1e6], [-4e6, 1e6], [-3e6, -1e6]]]
-                }
-            }, {
-                'type': 'Feature',
-                'geometry': {
-                    'type': 'MultiLineString',
-                    'coordinates': [
-                        [[-1e6, -7.5e5], [-1e6, 7.5e5]],
-                        [[1e6, -7.5e5], [1e6, 7.5e5]],
-                        [[-7.5e5, -1e6], [7.5e5, -1e6]],
-                        [[-7.5e5, 1e6], [7.5e5, 1e6]]
-                    ]
-                }
-            }, {
-                'type': 'Feature',
-                'geometry': {
-                    'type': 'MultiPolygon',
-                    'coordinates': [
-                        [[[-5e6, 6e6], [-5e6, 8e6], [-3e6, 8e6], [-3e6, 6e6]]],
-                        [[[-2e6, 6e6], [-2e6, 8e6], [0, 8e6], [0, 6e6]]],
-                        [[[1e6, 6e6], [1e6, 8e6], [3e6, 8e6], [3e6, 6e6]]]
-                    ]
-                }
-            }, {
-                'type': 'Feature',
-                'geometry': {
-                    'type': 'GeometryCollection',
-                    'geometries': [{
-                        'type': 'LineString',
-                        'coordinates': [[-5e6, -5e6], [0, -5e6]]
-                    }, {
-                        'type': 'Point',
-                        'coordinates': [4e6, -5e6]
-                    }, {
-                        'type': 'Polygon',
-                        'coordinates': [[[1e6, -6e6], [2e6, -4e6], [3e6, -6e6]]]
-                    }]
-                }
-            }]
-        }
+        steps: 3, // step of subIsochrones
+        isochroneFeatures: [], // isochrone features
+        dropDownModel: {}
     }),
     initialize: function () {
         this.superInitialize();
+        const layerList = _.union(Radio.request("Parser", "getItemsByAttributes", { typ: "WFS", isBaseLayer: false }), Radio.request("Parser", "getItemsByAttributes", { typ: "GeoJSON", isBaseLayer: false })),
+            layerNames = layerList.map(layer => layer.featureType.trim());
+
+        this.setDropDownModel(layerNames);
+    },
+    /**
+     * sets the selection list for the time slider
+     * @param {object[]} valueList - available values
+     * @returns {void}
+     */
+    setDropDownModel: function (valueList) {
+        const dropdownModel = new DropdownModel({
+            name: "Thema",
+            type: "string",
+            values: valueList,
+            snippetType: "dropdown",
+            isMultiple: false,
+            isGrouped: false,
+            displayName: "Facility type",
+            liveSearch: true,
+            isDropup: true
+        });
+
+        this.listenTo(dropdownModel, {
+            "valuesChanged": this.displayLayer
+        }, this);
+
+        this.set("dropDownModel", dropdownModel);
+    },
+    /**
+     * display corresponding facility layer
+     * @param {Backbone.Model} valueModel - the value model which was selected or deselected
+     * @param {boolean} isSelected - flag if value model is selected or not
+     * @returns {void}
+     */
+    displayLayer: function (valueModel, isSelected) {
+        // if (isSelected) {
+        //     const selectedId = Radio.request("RawLayerList", "getLayerAttributesWhere", { featureType: valueModel.get("value") }).id,
+        //         featureCollection = Radio.request("FeaturesLoader", "getAllFeaturesByAttribute", { id: selectedId }),
+        //         polygonGeometry = this.get("isochroneFeatures")[this.get("steps") - 1].getGeometry(),
+        //         selectedFeatures = [];
+
+        //     _.each(featureCollection, feature => {
+        //         if (feature.getGeometry()) {
+        //             const featureGeometry = feature.getGeometry();
+
+        //             if (polygonGeometry.intersectsExtent(featureGeometry.getExtent())) {
+        //                 selectedFeatures.push(feature);
+        //             }
+        //         }
+        //     });
+        // }
     }
 
 });
