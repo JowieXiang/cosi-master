@@ -1,19 +1,5 @@
-import { Fill, Stroke, Style } from "ol/style.js";
-import GeometryCollection from "ol/geom/GeometryCollection";
-import Tool from "../../../../modules/core/modelList/tool/model";
-import SnippetDropdownModel from "../../../../modules/snippets/dropdown/model";
-import * as Extent from "ol/extent";
-import * as Polygon from "ol/geom/Polygon";
-
 const bboxSettor = Backbone.Model.extend({
     defaults: {
-        statistischeGebieteUrl: "https://geodienste.hamburg.de/HH_WFS_Statistische_Gebiete_Test",
-        statistischeGebiete: [],
-        // does not exist yet
-        stadtteileUrl: "",
-        stadtteile: [],
-        // store for all features
-        featureList: {}
     },
     initialize: function () {
         const channel = Radio.channel("BboxSettor");
