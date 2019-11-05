@@ -68,10 +68,10 @@ const ReachabilityView = Backbone.View.extend({
             range = this.model.get("range") * 60;
 
         if (coordinate.length > 0 && pathType !== "" && range !== 0) {
-            Radio.request("OpenRoute", "requestIsochrones", pathType, coordinate, range)
+            Radio.request("OpenRoute", "requestIsochrones", pathType, coordinate, [range / 4, range / 2, range])
                 .then(res => {
                     // reverse JSON object sequence to render the isochrones in the correct order
-                    const mapLayer = Radio.request("Map", "getLayerByName", "IsoChrones_name"),
+                    const mapLayer = Radio.request("Map", "getLayerByName", this.model.get("mapLayerName")),
                         json = JSON.parse(res),
                         reversedFeatures = [...json.features].reverse();
 

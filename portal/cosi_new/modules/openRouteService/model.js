@@ -9,13 +9,19 @@ const openRouteService = Backbone.Model.extend({
             "requestIsochrones": this.requestIsochrones
         }, this);
     },
-
-    requestIsochrones: function (pathType, coordinate, range) {
+    /**
+     * send request to get Isochrone geoJSON
+     * @param {String} pathType - type of transportation
+     * @param {Array} coordinate - coordinate of origin
+     * @param {Array} rangeArray - array of time range values
+     * @returns {void}
+     */
+    requestIsochrones: function (pathType, coordinate, rangeArray) {
         var that = this;
 
         return new Promise(function (resolve, reject) {
             // const body = '{"locations":[[9.9937,53.5511],[9.9937,53.5511]],"range":[300,200]}',
-            const queryBody = `{"locations":[${JSON.stringify(coordinate)}],"range":[${range / 4},${range / 2},${range}]}`,
+            const queryBody = `{"locations":[${JSON.stringify(coordinate)}],"range":${JSON.stringify(rangeArray)}}`,
                 url = that.get("baseUrl") + pathType.trim();
             var xhr = new XMLHttpRequest();
 
