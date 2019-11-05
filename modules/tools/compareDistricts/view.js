@@ -268,6 +268,7 @@ const CompareDistrictsView = Backbone.View.extend({
     },
 
     showHelp: function () {
+        Radio.trigger("Alert", "alert:remove");
         Radio.trigger("Alert", "alert", {
             text: InfoTemplate,
             kategorie: "alert-info"
