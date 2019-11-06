@@ -1,4 +1,5 @@
 import FeaturesLoader from "./featuresLoader/model";
+import BboxSettor from "./bboxSettor/model";
 import ColorCodeMap from "./colorCodeMap/model";
 import Dashboard from "./dashboard/model";
 import DashboardTable from "./dashboardTable/model";
@@ -6,9 +7,14 @@ import SelectDistrict from "./selectDistrict/model";
 import SaveSelectionCosi from "./saveSelection/model";
 import TimeSlider from "./timeSlider/model";
 import InfoScreenHandler from "./infoScreen/infoScreenHandler/model";
-import IsoChrones from "./isochrones/model";
+import Reachability from "./reachability/model";
+import ServiceCoverage from "./serviceCoverage/model";
+import OpenRouteService from "./openRouteService/model";
 
 new FeaturesLoader();
+new BboxSettor();
+new OpenRouteService();
+
 const general = {
         dashboardTable: new DashboardTable({
             name: "Übersicht",
@@ -52,12 +58,19 @@ const general = {
             glyphicon: "glyphicon-new-window",
             renderToWindow: false
         }),
-        Isochrones: new IsoChrones({
-            id: "Isochrones",
+        reachability: new Reachability({
+            id: "reachability",
             parentId: "tools",
             type: "tool",
             name: "Erreichbarkeit",
-            glyphicon: "glyphicon-move"
+            glyphicon: "glyphicon-road"
+        }),
+        serviceCoverage: new ServiceCoverage({
+            id: "serviceCoverage",
+            parentId: "tools",
+            type: "tool",
+            name: "serviceCoverage",
+            glyphicon: "glyphicon-time"
         }),
         colorCodeMap: new ColorCodeMap(),
         saveSelectionCosi: new SaveSelectionCosi({

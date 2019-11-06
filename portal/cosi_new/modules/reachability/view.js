@@ -6,7 +6,7 @@ import { Fill, Stroke, Style } from "ol/style.js";
 import GeoJSON from "ol/format/GeoJSON";
 import GeometryCollection from "ol/geom/GeometryCollection";
 
-const IsoChronesView = Backbone.View.extend({
+const ReachabilityView = Backbone.View.extend({
     events: {
         "click #create-isochrones": "createIsochrones",
         "click button#Submit": "checkIfSelected",
@@ -21,12 +21,13 @@ const IsoChronesView = Backbone.View.extend({
 
         this.listenTo(this.model, {
             "change:isActive": function (model, value) {
-                this.render(model, value);
-                this.createMapLayer("IsoChrones_name");
-                this.featureCollection = Radio.request("FeaturesLoader", "getAllFeaturesByAttribute", {
-                    id: "12868"
-                });
-                console.log("this.featureCollection: ", this.featureCollection);
+                if (value) {
+                    this.render(model, value);
+                    this.createMapLayer(this.model.get("mapLayerName"));
+                }
+                else {
+                    this.clearMapLayer(this.model.get("mapLayerName"));
+                }
             },
             "change:coordinate": function (model, value) {
                 this.rerenderCoordinate(value);
@@ -55,55 +56,43 @@ const IsoChronesView = Backbone.View.extend({
 
         newLayer.setVisible(false);
     },
+    clearMapLayer: function (name) {
+        const mapLayer = Radio.request("Map", "getLayerByName", name);
+
+        mapLayer.getSource().clear();
+        mapLayer.setVisible(false);
+    },
     createIsochrones: function () {
-        const openrouteUrl = this.model.get("openrouteUrl"),
-            key = this.model.get("key"),
-            coordinate = this.model.get("coordinate"),
+        const coordinate = this.model.get("coordinate"),
             pathType = this.model.get("pathType"),
             range = this.model.get("range") * 60;
 
         if (coordinate.length > 0 && pathType !== "" && range !== 0) {
-            this.openRouteRequest(openrouteUrl, key, pathType, coordinate, range).then(res => {
-                const mapLayer = Radio.request("Map", "getLayerByName", "IsoChrones_name"),
-                    json = JSON.parse(res),
-                    reversedFeatures = [...json.features].reverse();
+            Radio.request("OpenRoute", "requestIsochrones", pathType, coordinate, range)
+                .then(res => {
+                    // reverse JSON object sequence to render the isochrones in the correct order
+                    const mapLayer = Radio.request("Map", "getLayerByName", "IsoChrones_name"),
+                        json = JSON.parse(res),
+                        reversedFeatures = [...json.features].reverse();
 
-                json.features = reversedFeatures;
-                let newFeatures = this.parseDataToFeatures(JSON.stringify(json));
+                    json.features = reversedFeatures;
+                    let newFeatures = this.parseDataToFeatures(JSON.stringify(json));
 
-                newFeatures = this.transformFeatures(newFeatures, "EPSG:4326", "EPSG:25832");
-                mapLayer.getSource().clear();
-                this.styleFeatures(newFeatures);
-                mapLayer.getSource().addFeatures(newFeatures.reverse());
-                mapLayer.setVisible(true);
-                this.model.set("isochroneFeatures", newFeatures);
-                this.setBbox();
-            });
+                    newFeatures = this.transformFeatures(newFeatures, "EPSG:4326", "EPSG:25832");
+                    this.styleFeatures(newFeatures);
+
+                    mapLayer.getSource().clear();
+                    mapLayer.getSource().addFeatures(newFeatures.reverse());
+                    mapLayer.setVisible(true);
+                    this.model.set("isochroneFeatures", newFeatures);
+
+                    const layerlist = _.union(Radio.request("Parser", "getItemsByAttributes", { typ: "WFS", isBaseLayer: false }), Radio.request("Parser", "getItemsByAttributes", { typ: "GeoJSON", isBaseLayer: false })),
+                        polygonGeometry = this.model.get("isochroneFeatures")[this.model.get("steps") - 1].getGeometry(),
+                        geometryCollection = new GeometryCollection([polygonGeometry]);
+
+                    Radio.trigger("BboxSettor", "setBboxGeometryToLayer", layerlist, geometryCollection);
+                });
         }
-    },
-    /*
-     * temporary solution, later will merge with SelectDistrict function
-     */
-    setBbox: function () {
-        const layerlist = _.union(Radio.request("Parser", "getItemsByAttributes", { typ: "WFS", isBaseLayer: false }), Radio.request("Parser", "getItemsByAttributes", { typ: "GeoJSON", isBaseLayer: false })),
-            modelList = Radio.request("ModelList", "getCollection"),
-            polygonGeometry = this.model.get("isochroneFeatures")[this.model.get("steps") - 1].getGeometry();
-
-        layerlist.forEach(function (item) {
-            const model = modelList.get(item.id),
-                geometryCollection = new GeometryCollection([polygonGeometry]);
-
-            if (model) {
-                model.set("bboxGeometry", geometryCollection);
-                // updates layers that have already been loaded
-                if (model.has("layer") && model.get("layer").getSource().getFeatures().length > 0) {
-                    model.updateSource();
-                }
-            }
-            else {
-                item.bboxGeometry = geometryCollection;
-            }
-        }, this);
     },
     styleFeatures: function (features) {
         for (let i = features.length - 1; i >= 0; i--) {
@@ -176,37 +165,7 @@ const IsoChronesView = Backbone.View.extend({
     setRange: function (evt) {
         this.model.set("range", evt.target.value);
     },
-    openRouteRequest: function (baseUrl, key, pathType, coordinate, range) {
-        return new Promise(function (resolve, reject) {
-            // const body = '{"locations":[[9.9937,53.5511],[9.9937,53.5511]],"range":[300,200]}',
-            const queryBody = `{"locations":[${JSON.stringify(coordinate)}],"range":[${range / 4},${range / 2},${range}]}`,
-                url = baseUrl + pathType.trim();
-            var xhr = new XMLHttpRequest();
 
-            xhr.open("POST", url);
-            xhr.setRequestHeader('Accept', 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8');
-            xhr.setRequestHeader('Content-Type', 'application/json');
-            xhr.setRequestHeader('Authorization', key);
-            xhr.onload = function () {
-                if (this.status >= 200 && this.status < 300) {
-                    resolve(xhr.response);
-                }
-                else {
-                    reject({
-                        status: this.status,
-                        statusText: xhr.statusText
-                    });
-                }
-            };
-            xhr.onerror = function () {
-                reject({
-                    status: this.status,
-                    statusText: xhr.statusText
-                });
-            };
-            xhr.send(queryBody);
-        });
-    },
     /**
      * Tries to parse data string to ol.format.GeoJson
      * @param   {string} data string to parse
@@ -245,4 +204,4 @@ const IsoChronesView = Backbone.View.extend({
     }
 });
 
-export default IsoChronesView;
+export default ReachabilityView;

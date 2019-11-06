@@ -1,5 +1,4 @@
 import ResultTemplate from "text-loader!./resultTemplate.html";
-import VectorSource from "ol/source/Vector";
 import {Fill, Stroke, Style, Text} from "ol/style.js";
 import ExportButtonView from "../../snippets/exportButton/view";
 
@@ -30,9 +29,7 @@ const ResultView = Backbone.View.extend({
      * @returns {void}
      */
     createTextLabels: function (results) {
-        var layer = Radio.request("Map", "createLayerIfNotExists", "ratio_info_layer"),
-            source = new VectorSource(),
-            features = Radio.request("SelectDistrict", "getSelectedDistricts"),
+        var features = Radio.request("SelectDistrict", "getSelectedDistricts"),
             values = [],
             selector = Radio.request("SelectDistrict", "getSelector");
 
@@ -44,6 +41,9 @@ const ResultView = Backbone.View.extend({
 
         _.each(features, (feature) => {
             feature.setStyle(new Style({
+                fill: new Fill({
+                    color: "rgba(255, 255, 255, 0)"
+                }),
                 stroke: new Stroke({
                     color: colorScale.scale(results[feature.getProperties()[selector]].ratio),
                     width: 5
@@ -61,9 +61,6 @@ const ResultView = Backbone.View.extend({
                 })
             }));
         });
-        source.addFeatures(features);
-        layer.setSource(source);
-        layer.setZIndex(10);
     }
 });
 

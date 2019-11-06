@@ -2,10 +2,7 @@ import Tool from "../../core/modelList/tool/model";
 import SnippetDropdownModel from "../../snippets/dropdown/model";
 import AdjustParameterView from "../../snippets/adjustParameter/view";
 import ExportButtonModel from "../../snippets/exportButton/model";
-import Geometry from "ol/geom/Geometry";
-import Feature from "ol/Feature";
 import * as Extent from "ol/extent";
-import VectorSource from "ol/source/Vector";
 
 const CalculateRatioModel = Tool.extend({
     defaults: _.extend({}, Tool.prototype.defaults, {
