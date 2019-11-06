@@ -38,7 +38,7 @@ const DashboardTableView = Backbone.View.extend({
         if (!Radio.request("InfoScreen", "getIsWindowOpen")) {
             if (!Radio.request("Dashboard", "getWidgetById", "dashboard") && Radio.request("Dashboard", "dashboardOpen")) {
                 this.$el.html(this.template(attr));
-                this.$el.find(".filter-dropdown").html(this.filterDropdownView.render().el);
+                this.$el.find(".filter-dropdown").prepend(this.filterDropdownView.render().el);
 
 
                 Radio.trigger("Dashboard", "append", this.$el, "#dashboard-containers", {
@@ -135,7 +135,7 @@ const DashboardTableView = Backbone.View.extend({
      */
     resetDropDown: function () {
         this.model.get("filterDropdownModel").updateSelectedValues([]);
-        this.el$.find(".filter-dropdown ul.dropdown-menu > li").removeClass("selected");
+        this.$el.find(".filter-dropdown ul.dropdown-menu > li").removeClass("selected");
     },
     contextMenuTable: function (event) {
         const row = this.$(event.target).closest("tr"),

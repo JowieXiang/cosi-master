@@ -464,10 +464,10 @@ const DashboardTableModel = Tool.extend({
         }
     },
     filterTableView: function () {
-        this.trigger("tableViewFilter", this.get("filterDropdownModel").getSelectedValues());
+        // this.trigger("tableViewFilter", this.get("filterDropdownModel").getSelectedValues());
 
         const filterValues = this.get("filterDropdownModel").getSelectedValues().values,
-            filteredTable = this.get("tableView").map(group => {
+            filteredTable = filterValues.length > 0 ? this.get("tableView").map(group => {
                 const filteredGroup = {
                     group: group.group,
                     values: {}
@@ -480,7 +480,7 @@ const DashboardTableModel = Tool.extend({
                 }
 
                 return filteredGroup;
-            }).filter(group => Object.keys(group.values).length > 0);
+            }).filter(group => Object.keys(group.values).length > 0) : this.get("tableView");
 
         this.set("filteredTableView", filteredTable);
         this.prepareExportLink();
