@@ -1,10 +1,8 @@
 import Tool from "../../../../modules/core/modelList/tool/model";
 import DropdownModel from "../../../../modules/snippets/dropdown/model";
 
-const IsoChrones = Tool.extend({
+const Reachability = Tool.extend({
     defaults: _.extend({}, Tool.prototype.defaults, {
-        openrouteUrl: "https://api.openrouteservice.org/v2/isochrones/",
-        key: "5b3ce3597851110001cf6248043991d7b17346a38c8d50822087a2c0",
         coordinate: [],
         pathType: "",
         range: 0,
@@ -51,24 +49,20 @@ const IsoChrones = Tool.extend({
      * @returns {void}
      */
     displayLayer: function (valueModel, isSelected) {
-        // if (isSelected) {
-        //     const selectedId = Radio.request("RawLayerList", "getLayerAttributesWhere", { featureType: valueModel.get("value") }).id,
-        //         featureCollection = Radio.request("FeaturesLoader", "getAllFeaturesByAttribute", { id: selectedId }),
-        //         polygonGeometry = this.get("isochroneFeatures")[this.get("steps") - 1].getGeometry(),
-        //         selectedFeatures = [];
+        if (isSelected) {
+            const selectedItem = Radio.request("RawLayerList", "getLayerAttributesWhere", { featureType: valueModel.get("value") }),
+                selectedLayerModel = Radio.request("ModelList", "getModelByAttributes", { id: selectedItem.id });
+            console.log("selectedItem: ", selectedItem);
+            console.log("selectedLayerModel: ", selectedLayerModel);
 
-        //     _.each(featureCollection, feature => {
-        //         if (feature.getGeometry()) {
-        //             const featureGeometry = feature.getGeometry();
-
-        //             if (polygonGeometry.intersectsExtent(featureGeometry.getExtent())) {
-        //                 selectedFeatures.push(feature);
-        //             }
-        //         }
-        //     });
-        // }
+            if (selectedLayerModel) {
+                selectedLayerModel.setIsSelected(true);
+            } else {
+                selectedItem.setIsSelected(true);
+            }
+        }
     }
 
 });
 
-export default IsoChrones;
+export default Reachability;

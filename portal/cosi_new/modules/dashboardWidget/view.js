@@ -19,6 +19,8 @@ const DashboardWidgetView = Backbone.View.extend({
 
         this.initializeDOMElement(parent);
         this.render();
+
+        Radio.trigger("ContextMenu", "addContextMenu", this.el);
     },
     content: {},
     attrs: {},
