@@ -351,9 +351,7 @@ const DashboardTableModel = Tool.extend({
     },
     createCorrelation () {
         const attrsToShow = this.getAttrsForCorrelation(),
-            data = this.getBarChartData(this.getAttrsForCorrelation()).sort((a, b) => {
-                return a[attrsToShow[0]] - b[attrsToShow[0]];
-            }),
+            data = this.getCorrelationChartData(this.getAttrsForCorrelation()),
             graph = Radio.request("Graph", "createGraph", {
                 graphType: "Linegraph",
                 selector: document.createElement("div"),
@@ -376,7 +374,7 @@ const DashboardTableModel = Tool.extend({
                 selectorTooltip: ".dashboard-tooltip"
             });
 
-        console.log(this.getCorrelationChartData(this.getAttrsForCorrelation()));
+        // console.log(this.getCorrelationChartData(this.getAttrsForCorrelation()));
             
         Radio.trigger("Dashboard", "append", graph, "#dashboard-containers", {
             id: "Korrelation",
@@ -400,23 +398,28 @@ const DashboardTableModel = Tool.extend({
             });
     },
     getCorrelationChartData (props) {
-        const years = Object.keys(this.get("unsortedTable")[0][props[0]]);
+        const correlationData = this.get("unsortedTable")[0][props[0]].reduce((data, yearValue) => {
+            const year = yearValue[0];
 
-        console.log(years);
+            return [...data, ...this.get("unsortedTable")
+                .filter(district => district[this.get("sortKey")] !== "Gesamt")
+                .map((district) => {
+                    const districtProps = {
+                        [this.get("sortKey")]: district[this.get("sortKey")]
+                    };
 
-        return this.get("unsortedTable")
-            .filter(district => district[this.get("sortKey")] !== "Gesamt")
-            .map((district) => {
-                const districtProps = {
-                    [this.get("sortKey")]: district[this.get("sortKey")]
-                };
+                    props.forEach(prop => {
+                        districtProps[prop] = district[prop].filter(value => value[0] === year)[0][1];
+                    });
 
-                props.forEach(prop => {
-                    districtProps[prop] = district[prop];
-                });
-
-                return districtProps;
+                    return districtProps;
+                })];
+        }, [])
+            .sort((a, b) => {
+                return a[props[0]] - b[props[0]];
             });
+
+        return correlationData;
     },
     getLineChartData (props) {
         const data = this.get("unsortedTable").map((district) => {
@@ -464,8 +467,6 @@ const DashboardTableModel = Tool.extend({
         }
     },
     filterTableView: function () {
-        // this.trigger("tableViewFilter", this.get("filterDropdownModel").getSelectedValues());
-
         const filterValues = this.get("filterDropdownModel").getSelectedValues().values,
             filteredTable = filterValues.length > 0 ? this.get("tableView").map(group => {
                 const filteredGroup = {
