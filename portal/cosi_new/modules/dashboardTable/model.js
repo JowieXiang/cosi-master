@@ -6,6 +6,7 @@ import TimelineModel from "../../../../modules/tools/timeline/model";
 const DashboardTableModel = Tool.extend({
     defaults: _.extend({}, Tool.prototype.defaults, {
         tableView: [],
+        filteredTableView: [],
         name: "",
         glyphicon: "",
         width: "60%",
@@ -14,7 +15,8 @@ const DashboardTableModel = Tool.extend({
         sortKey: "",
         timelineModel: new TimelineModel(),
         filterDropdownModel: {},
-        scopeLayersLoaded: 0
+        scopeLayersLoaded: 0,
+        correlationAttrs: []
     }),
 
     /**
@@ -71,7 +73,10 @@ const DashboardTableModel = Tool.extend({
         }, this);
 
         this.listenTo(this, {
-            "change:tableView": this.prepareRendering
+            "change:tableView": function () {
+                this.set("filteredTableView", this.get("tableView"));
+            },
+            "change:filteredTableView": this.prepareRendering
         });
     },
 
@@ -118,12 +123,15 @@ const DashboardTableModel = Tool.extend({
     prepareRendering: function () {
         // Update the filter dropdown list
         this.updateFilter();
-
-        // Update Export Link
-        this.get("exportButtonModel").set("rawData", this.get("tableView"));
-        this.get("exportButtonModel").prepareForExport();
+        this.prepareExportLink();
 
         this.trigger("isReady");
+    },
+
+    prepareExportLink () {
+        // Update Export Link
+        this.get("exportButtonModel").set("rawData", this.get("filteredTableView"));
+        this.get("exportButtonModel").prepareForExport();
     },
 
     /**
@@ -203,6 +211,11 @@ const DashboardTableModel = Tool.extend({
         return table;
     },
 
+    /**
+     * @description groups the table Object according to mapping.json
+     * @param {object} table the unsorted table
+     * @returns {object} the grouped table
+     */
     groupTable (table) {
         const values = Radio.request("FeaturesLoader", "getAllValuesByScope", "statgebiet"),
             groups = values.reduce((res, val) => {
@@ -232,6 +245,10 @@ const DashboardTableModel = Tool.extend({
         return groups;
     },
 
+    /**
+     * @description gets the data features from featuresLoader
+     * @returns {void}
+     */
     getData: function () {
         const features = Radio.request("FeaturesLoader", "getDistrictsByScope", Radio.request("SelectDistrict", "getScope"));
 
@@ -242,9 +259,9 @@ const DashboardTableModel = Tool.extend({
 
     /**
      * loades the relevant layers for the dashboard, according to scope
-     * @param {string} layerId
+     * @param {string} layerId the layer to add to ModelList
+     * @returns {void}
      */
-
     addLayerModel: function (layerId) {
         Radio.trigger("ModelList", "addModelsByAttributes", {id: layerId});
         this.sendModification(layerId, true);
@@ -256,11 +273,19 @@ const DashboardTableModel = Tool.extend({
             isVisibleInMap: status
         });
     },
+
+    /**
+     * @description appends a chart to the dashboard widgets
+     * @param {string[]} props the array of attributes to visualize
+     * @param {string} type the diagram type (BarGraph, Linegraph)
+     * @param {string} title the label for the diagram
+     * @returns {void}
+     */
     createChart (props, type, title) {
-        let graph;
+        let data, graph;
 
         if (type === "Linegraph") {
-            const data = this.getChartData(props);
+            data = this.getLineChartData(props);
 
             graph = Radio.request("Graph", "createGraph", {
                 graphType: type,
@@ -268,7 +293,12 @@ const DashboardTableModel = Tool.extend({
                 scaleTypeX: "ordinal",
                 scaleTypeY: "linear",
                 data: data.data,
-                attrToShowArray: data.xAttrs,
+                attrToShowArray: data.xAttrs.map(prop => {
+                    return {
+                        attrName: prop,
+                        attrClass: prop === "Durchschnitt" ? "average" : "district"
+                    };
+                }),
                 xAttr: "year",
                 xAxisLabel: "year",
                 yAxisLabel: props[0],
@@ -281,16 +311,21 @@ const DashboardTableModel = Tool.extend({
                 width: $(window).width() * 0.4,
                 height: $(window).height() * 0.4,
                 svgClass: "dashboard-graph-svg",
-                selectorTooltip: ".graphTooltip"
+                selectorTooltip: ".dashboard-tooltip",
+                hasLineLabel: true
             });
+
+            console.log(data.data, data.xAttrs);
         }
         else if (type === "BarGraph") {
+            data = this.getBarChartData(props);
+
             graph = Radio.request("Graph", "createGraph", {
                 graphType: type,
-                selector: ".dashboard-graph",
+                selector: document.createElement("div"),
                 scaleTypeX: "ordinal",
                 scaleTypeY: "linear",
-                data: this.get("tableView").filter(col => col[this.get("sortKey")] !== "Gesamt"),
+                data: data,
                 attrToShowArray: props,
                 xAttr: this.get("sortKey"),
                 xAxisLabel: this.get("sortKey"),
@@ -304,7 +339,7 @@ const DashboardTableModel = Tool.extend({
                 width: $(window).width() * 0.4,
                 height: $(window).height() * 0.4,
                 svgClass: "dashboard-graph-svg",
-                selectorTooltip: ".graphTooltip"
+                selectorTooltip: ".dashboard-tooltip"
             });
         }
 
@@ -314,7 +349,79 @@ const DashboardTableModel = Tool.extend({
             glyphicon: "glyphicon-info-sign"
         });
     },
-    getChartData (props) {
+    createCorrelation () {
+        const attrsToShow = this.getAttrsForCorrelation(),
+            data = this.getCorrelationChartData(this.getAttrsForCorrelation()),
+            graph = Radio.request("Graph", "createGraph", {
+                graphType: "Linegraph",
+                selector: document.createElement("div"),
+                scaleTypeX: "linear",
+                scaleTypeY: "linear",
+                data: data,
+                attrToShowArray: [attrsToShow[1]],
+                xAttr: attrsToShow[0],
+                xAxisLabel: attrsToShow[0],
+                yAxisLabel: attrsToShow[1],
+                margin: {
+                    left: 40,
+                    top: 25,
+                    right: 20,
+                    bottom: 40
+                },
+                width: $(window).width() * 0.4,
+                height: $(window).height() * 0.4,
+                svgClass: "dashboard-graph-svg",
+                selectorTooltip: ".dashboard-tooltip"
+            });
+
+        // console.log(this.getCorrelationChartData(this.getAttrsForCorrelation()));
+            
+        Radio.trigger("Dashboard", "append", graph, "#dashboard-containers", {
+            id: "Korrelation",
+            name: "Korrelation",
+            glyphicon: "glyphicon-info-sign"
+        });
+    },
+    getBarChartData (props, year = "2018") {
+        return this.get("unsortedTable")
+            .filter(district => district[this.get("sortKey")] !== "Gesamt")
+            .map((district) => {
+                const districtProps = {
+                    [this.get("sortKey")]: district[this.get("sortKey")]
+                };
+
+                props.forEach(prop => {
+                    districtProps[prop] = district[prop].filter(value => value[0] === year)[0][1];
+                });
+
+                return districtProps;
+            });
+    },
+    getCorrelationChartData (props) {
+        const correlationData = this.get("unsortedTable")[0][props[0]].reduce((data, yearValue) => {
+            const year = yearValue[0];
+
+            return [...data, ...this.get("unsortedTable")
+                .filter(district => district[this.get("sortKey")] !== "Gesamt")
+                .map((district) => {
+                    const districtProps = {
+                        [this.get("sortKey")]: district[this.get("sortKey")]
+                    };
+
+                    props.forEach(prop => {
+                        districtProps[prop] = district[prop].filter(value => value[0] === year)[0][1];
+                    });
+
+                    return districtProps;
+                })];
+        }, [])
+            .sort((a, b) => {
+                return a[props[0]] - b[props[0]];
+            });
+
+        return correlationData;
+    },
+    getLineChartData (props) {
         const data = this.get("unsortedTable").map((district) => {
                 let districtDataToGraph = {};
 
@@ -360,21 +467,49 @@ const DashboardTableModel = Tool.extend({
         }
     },
     filterTableView: function () {
-        // this.trigger("tableViewFilter", this.get("filterDropdownModel").getSelectedValues());
-        const values = this.get("filterDropdownModel").getSelectedValues().values,
-            filteredTable = this.get("tableView").filter(group => {
-                return group;
-            });
+        const filterValues = this.get("filterDropdownModel").getSelectedValues().values,
+            filteredTable = filterValues.length > 0 ? this.get("tableView").map(group => {
+                const filteredGroup = {
+                    group: group.group,
+                    values: {}
+                };
+
+                for (const value in group.values) {
+                    if (filterValues.includes(value)) {
+                        filteredGroup.values[value] = group.values[value];
+                    }
+                }
+
+                return filteredGroup;
+            }).filter(group => Object.keys(group.values).length > 0) : this.get("tableView");
+
+        this.set("filteredTableView", filteredTable);
+        this.prepareExportLink();
     },
     updateFilter: function () {
         this.get("filterDropdownModel").set("values", Radio.request("FeaturesLoader", "getAllValuesByScope", "statgebiet"));
-        this.trigger("updateProperties");
     },
     getScope: function () {
         return this.get("scope");
     },
     setIsActive: function (state) {
         this.set("isActive", state);
+    },
+    addAttrForCorrelation (attr) {
+        if (this.getAttrsForCorrelation().length < 2) {
+            this.getAttrsForCorrelation().push(attr);
+        }
+        else {
+            this.set("correlationAttrs", [attr]);
+        }
+        this.trigger("correlationValuesUpdated");
+    },
+    getAttrsForCorrelation () {
+        return this.get("correlationAttrs");
+    },
+    deleteAttrsForCorrelation () {
+        this.set("correlationAttrs", []);
+        this.trigger("correlationValuesUpdated");
     }
 });
 

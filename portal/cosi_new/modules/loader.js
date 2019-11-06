@@ -3,6 +3,7 @@ import ColorCodeMapView from "./colorCodeMap/view";
 import DashboardView from "./dashboard/view";
 import DashboardTableView from "./dashboardTable/view";
 import DashboardWidgetHandler from "./dashboardWidget/handler";
+import ContextMenuView from "./contextMenu/view";
 import SelectDistrictView from "./selectDistrict/view";
 import SaveSelectionCosiView from "./saveSelection/view";
 import InfoScreenView from "./infoScreen/view";
@@ -29,6 +30,7 @@ function initializeCosi () {
             ]
         }
     });
+    new ContextMenuView();
 
     Radio.trigger("ModelList", "addModelsAndUpdate", Object.values(general));
 

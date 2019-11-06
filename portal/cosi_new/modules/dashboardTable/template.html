@@ -8,39 +8,10 @@
                                 </button>
                         </span>
                 </div>
-                <div class="overview figure">
-                        <table class="table group">
-                        <% tableView.forEach(function (group) { %>
-                                <thead id="<%= group.group.replace(/\s/g, '') %>">
-                                        <tr>
-                                                <th scope="col"><span><%= group.group %></span><button type="button" class="btn btn-outline-secondary open"><span></span></th>
-                                                <% for (var dist in Object.values(group.values)[0]) { %>
-                                                        <th scope="col" style="text-align:right;" class="district"><%= dist %></th>
-                                                <% } %>
-                                        </tr>
-                                </thead>
-                                <tbody id="<%= group.group.replace(/\s/g, '') %>">
-                                <% for (var val in group.values) { %>
-                                        <tr class="row">
-                                                <th class="prop" scope="row" title="<%= val %>" id="<%= val %>"><span class="prop-name"><%= val %></span><button type="button" class="btn btn-outline-secondary open"><span></span></button></th>
-                                                <% for (var dist in group.values[val]) { %>
-                                                        <td class="timeline-table">
-                                                                <ul class="list-group list-group-flush">
-                                                                <% group.values[val][dist].forEach(function (val) { %>
-                                                                        <li class="list-group-item nowrap">
-                                                                                <span class="val"><%= isNaN(val[1]) ? val[1] : Number.isInteger(parseFloat(val[1])) ? parseFloat(val[1]) : parseFloat(val[1]).toFixed(2) %></span>
-                                                                                <small class="year">(<%= val[0] %>)</small>
-                                                                        </li>
-                                                                <% }); %>
-                                                                </ul>
-                                                        </td>
-                                                <% } %>
-                                        </tr>
-                                <% } %>
-                                </tbody>
-                        <% }) %>
-                        </table>
-                        <div id="export-button"></div>
+                <div class="overview table figure"></div>
+                <div class="btn-group header" style="width:100%;">
+                        <div id="correlation" style="width:100%;"></div>
                 </div>
+                <div id="export-button"></div>
         </div>
 </div>

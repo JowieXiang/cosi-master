@@ -17,6 +17,14 @@ const DashboardModel = Tool.extend({
 
     initialize: function () {
         this.superInitialize();
+
+        const channel = Radio.channel("Dashboard");
+
+        channel.reply({
+            "dashboardOpen": function () {
+                return this.get("isActive");
+            }
+        }, this);
     },
     setIsActive: function (state) {
         this.set("isActive", state);
