@@ -17,8 +17,6 @@ const ReachabilityView = Backbone.View.extend({
         "change #range": "setRange"
     },
     initialize: function () {
-
-
         this.listenTo(this.model, {
             "change:isActive": function (model, value) {
                 if (value) {
@@ -63,7 +61,8 @@ const ReachabilityView = Backbone.View.extend({
         mapLayer.setVisible(false);
     },
     createIsochrones: function () {
-        const coordinate = this.model.get("coordinate"),
+        // coordinate has to be in the format of [[lat,lon]] for the request
+        const coordinate = [this.model.get("coordinate")],
             pathType = this.model.get("pathType"),
             range = this.model.get("range") * 60;
 

@@ -18,15 +18,13 @@ const ServiceCoverageView = Backbone.View.extend({
         this.listenTo(this.model, {
             "change:isActive": function (model, value) {
                 if (value) {
+                    this.model.setDropDownModel();
                     this.render(model, value);
                     this.createMapLayer(this.model.get("mapLayerName"));
                 }
                 else {
                     this.clearMapLayer(this.model.get("mapLayerName"));
                 }
-            },
-            "change:coordinate": function (model, value) {
-                this.rerenderCoordinate(value);
             }
         });
     },
@@ -45,7 +43,7 @@ const ServiceCoverageView = Backbone.View.extend({
     renderDropDownView: function (dropdownModel) {
         const dropdownView = new SnippetDropdownView({ model: dropdownModel });
 
-        this.$el.find("#layer-selection").html(dropdownView.render().el);
+        this.$el.find("#select-layer").html(dropdownView.render().el);
     },
     createMapLayer: function (name) {
         const newLayer = Radio.request("Map", "createLayerIfNotExists", name);
@@ -59,43 +57,51 @@ const ServiceCoverageView = Backbone.View.extend({
         mapLayer.setVisible(false);
     },
     createIsochrones: function () {
-        const openrouteUrl = this.model.get("openrouteUrl"),
-            key = this.model.get("key"),
-            coordinate = this.model.get("coordinate"),
-            pathType = this.model.get("pathType"),
-            range = this.model.get("range") * 60;
+        const pathType = this.model.get("pathType"),
+            range = this.model.get("range") * 60,
+            coordinatesList = [],
+            promiseList = [];
 
-        if (coordinate.length > 0 && pathType !== "" && range !== 0) {
-            this.openRouteRequest(openrouteUrl, key, pathType, coordinate, range).then(res => {
-                // reverse JSON object sequence to render the isochrones in the correct order
-                const mapLayer = Radio.request("Map", "getLayerByName", "IsoChrones_name"),
-                    json = JSON.parse(res),
-                    reversedFeatures = [...json.features].reverse();
+        // group coordinates into groups of 5
+        for (let i = 0; i < this.model.get("coordinates").length; i += 5) {
+            const arrayItem = this.model.get("coordinates").slice(i, i + 5);
 
-                json.features = reversedFeatures;
-                let newFeatures = this.parseDataToFeatures(JSON.stringify(json));
-
-                newFeatures = this.transformFeatures(newFeatures, "EPSG:4326", "EPSG:25832");
-                this.styleFeatures(newFeatures);
-
-                mapLayer.getSource().clear();
-                mapLayer.getSource().addFeatures(newFeatures.reverse());
-                mapLayer.setVisible(true);
-                this.model.set("isochroneFeatures", newFeatures);
-
-                const layerlist = _.union(Radio.request("Parser", "getItemsByAttributes", { typ: "WFS", isBaseLayer: false }), Radio.request("Parser", "getItemsByAttributes", { typ: "GeoJSON", isBaseLayer: false })),
-                    polygonGeometry = this.model.get("isochroneFeatures")[this.model.get("steps") - 1].getGeometry(),
-                    geometryCollection = new GeometryCollection([polygonGeometry]);
-
-                Radio.trigger("BboxSettor", "setBboxGeometryToLayer", layerlist, geometryCollection);
-            });
+            coordinatesList.push(arrayItem);
         }
+
+        console.log("coordinatesArray: ", coordinatesList);
+        _.each(coordinatesList, coordinates => {
+            promiseList.push(Radio.request("OpenRoute", "requestIsochrones", pathType, coordinates, [range])
+                .then(res => {
+                    // reverse JSON object sequence to render the isochrones in the correct order
+                    const json = JSON.parse(res),
+                        reversedFeatures = [...json.features].reverse();
+
+                    json.features = reversedFeatures;
+                    let newFeatures = this.parseDataToFeatures(JSON.stringify(json));
+
+                    newFeatures = this.transformFeatures(newFeatures, "EPSG:4326", "EPSG:25832");
+                    this.styleFeatures(newFeatures);
+                    return newFeatures;
+                }));
+        });
+
+        Promise.all(promiseList).then((featuresList) => {
+            const mapLayer = Radio.request("Map", "getLayerByName", this.model.get("mapLayerName"));
+
+            console.info("promise all featuresList: ", featuresList);
+            mapLayer.getSource().clear();
+            mapLayer.getSource().addFeatures(featuresList.flat().reverse());
+            mapLayer.setVisible(true);
+            this.model.set("isochroneFeatures", featuresList.flat());
+        });
+
     },
     styleFeatures: function (features) {
         for (let i = features.length - 1; i >= 0; i--) {
             features[i].setStyle(new Style({
                 fill: new Fill({
-                    color: `rgba(${200 - 100 * i}, ${100 * i}, 3, ${0.1 * i + 0.3})`
+                    color: "rgba(200 , 3, 3, 0.3)"
                 }),
                 stroke: new Stroke({
                     color: "white",
@@ -139,14 +145,6 @@ const ServiceCoverageView = Backbone.View.extend({
         this.model.set("coordinate", coordinate);
     },
     /**
-     * rerender coordinate input box
-     * @param {object} value - coordinate value
-     * @returns {void}
-     */
-    rerenderCoordinate: function (value) {
-        this.$el.find("#coordinate").val(`${value[0]},${value[1]}`);
-    },
-    /**
      * set pathType value in model
      * @param {object} evt - select change event
      * @returns {void}\
@@ -161,37 +159,6 @@ const ServiceCoverageView = Backbone.View.extend({
      */
     setRange: function (evt) {
         this.model.set("range", evt.target.value);
-    },
-    openRouteRequest: function (baseUrl, key, pathType, coordinate, range) {
-        return new Promise(function (resolve, reject) {
-            // const body = '{"locations":[[9.9937,53.5511],[9.9937,53.5511]],"range":[300,200]}',
-            const queryBody = `{"locations":[${JSON.stringify(coordinate)}],"range":[${range / 4},${range / 2},${range}]}`,
-                url = baseUrl + pathType.trim();
-            var xhr = new XMLHttpRequest();
-
-            xhr.open("POST", url);
-            xhr.setRequestHeader('Accept', 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8');
-            xhr.setRequestHeader('Content-Type', 'application/json');
-            xhr.setRequestHeader('Authorization', key);
-            xhr.onload = function () {
-                if (this.status >= 200 && this.status < 300) {
-                    resolve(xhr.response);
-                }
-                else {
-                    reject({
-                        status: this.status,
-                        statusText: xhr.statusText
-                    });
-                }
-            };
-            xhr.onerror = function () {
-                reject({
-                    status: this.status,
-                    statusText: xhr.statusText
-                });
-            };
-            xhr.send(queryBody);
-        });
     },
     /**
      * Tries to parse data string to ol.format.GeoJson

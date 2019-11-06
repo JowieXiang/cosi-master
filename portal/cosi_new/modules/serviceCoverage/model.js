@@ -3,9 +3,7 @@ import DropdownModel from "../../../../modules/snippets/dropdown/model";
 
 const ServiceCoverage = Tool.extend({
     defaults: _.extend({}, Tool.prototype.defaults, {
-        openrouteUrl: "https://api.openrouteservice.org/v2/isochrones/",
-        key: "5b3ce3597851110001cf6248043991d7b17346a38c8d50822087a2c0",
-        coordinate: [],
+        coordinates: [],
         pathType: "",
         range: 0,
         steps: 3, // step of subIsochrones
@@ -15,29 +13,27 @@ const ServiceCoverage = Tool.extend({
     }),
     initialize: function () {
         this.superInitialize();
-        const layerList = _.union(Radio.request("Parser", "getItemsByAttributes", { typ: "WFS", isBaseLayer: false }), Radio.request("Parser", "getItemsByAttributes", { typ: "GeoJSON", isBaseLayer: false })),
-            layerNames = layerList.map(layer => layer.featureType.trim());
-
-        this.setDropDownModel(layerNames);
+        this.setDropDownModel();
     },
     /**
      * sets the selection list for the time slider
      * @param {object[]} valueList - available values
      * @returns {void}
      */
-    setDropDownModel: function (valueList) {
-        const dropdownModel = new DropdownModel({
-            name: "Thema",
-            type: "string",
-            values: valueList,
-            snippetType: "dropdown",
-            isMultiple: false,
-            isGrouped: false,
-            displayName: "Facility type",
-            liveSearch: true,
-            isDropup: false
-        });
+    setDropDownModel: function () {
+        const layerList = _.union(Radio.request("Parser", "getItemsByAttributes", { typ: "WFS", isBaseLayer: false }), Radio.request("Parser", "getItemsByAttributes", { typ: "GeoJSON", isBaseLayer: false })),
+            layerNames = layerList.map(layer => layer.featureType.trim()),
+            dropdownModel = new DropdownModel({
+                name: "FacilityType",
+                type: "string",
+                values: layerNames,
+                snippetType: "dropdown",
+                isMultiple: false,
+                displayName: "Facility type",
+                liveSearch: true
+            });
 
+        console.log("layerList: ", layerList);
         this.listenTo(dropdownModel, {
             "valuesChanged": this.displayLayer
         }, this);
@@ -52,15 +48,19 @@ const ServiceCoverage = Tool.extend({
      */
     displayLayer: function (valueModel, isSelected) {
         if (isSelected) {
+            console.log("new selection", valueModel.get("value"));
             const selectedItem = Radio.request("RawLayerList", "getLayerAttributesWhere", { featureType: valueModel.get("value") }),
                 selectedLayerModel = Radio.request("ModelList", "getModelByAttributes", { id: selectedItem.id });
-            console.log("selectedItem: ", selectedItem);
-            console.log("selectedLayerModel: ", selectedLayerModel);
 
             if (selectedLayerModel) {
-                selectedLayerModel.setIsSelected(true);
-            } else {
-                selectedItem.setIsSelected(true);
+                const features = selectedLayerModel.get("layer").getSource().getFeatures(),
+                    coordinatesBefore = features.map(feature => feature.getGeometry().getCoordinates().splice(0, 2)),
+                    coordinates = coordinatesBefore.map(coord => Radio.request("CRS", "transform", { fromCRS: "EPSG:25832", toCRS: "EPSG:4326", point: coord }));
+
+                console.log("features: ", features);
+
+                console.log("coordinates: ", coordinates);
+                this.set("coordinates", coordinates);
             }
         }
     }
