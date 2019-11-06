@@ -46,7 +46,7 @@ const ExportButtonModel = SnippetModel.extend({
         try {
             const csv = Radio.request("Util", "convertArrayOfObjectsToCsv", dataAsObjArr);
 
-            this.setData(csv, "text/csv");
+            this.setData(csv, "text/csv;charset=utf-8;");
         }
         catch (err) {
             console.error(err);
