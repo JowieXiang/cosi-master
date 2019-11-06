@@ -1,3 +1,6 @@
+@color_avg: #e74d10;
+@color_dist: rgb(8, 88, 158);
+
 .win-control {
     padding: 0;
     cursor: pointer;
@@ -37,5 +40,25 @@
     .graphTooltip {
         position: fixed;
         pointer-events: none;
+    }
+}
+
+svg {
+    overflow: visible !important;
+    path.average {
+        stroke: @color_avg;
+        stroke-width: 3px;
+        fill: none;
+    }
+    path.district {
+        stroke: @color_dist;
+        stroke-width: 3px;
+        fill: none;
+    }
+    circle.average {
+        fill: @color_avg;
+    }
+    circle.district {
+        fill: @color_dist;
     }
 }

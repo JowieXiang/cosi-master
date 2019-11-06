@@ -279,9 +279,11 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
      * @param {Object[]} data Data for graph.
      * @param {String} className Class name of point.
      * @param {Object} d3line D3 line object.
+     * @param {String} tooltipDiv (optional)
+     * @param {String} attrName (optional) name of Attr for hover
      * @returns {void}
      */
-    appendDataToSvg: function (svg, data, className, d3line) {
+    appendDataToSvg: function (svg, data, className, d3line, tooltipDiv = null, attrName = null) {
         var dataToAdd = data.filter(function (obj) {
             return obj.yAttrToShow !== "-";
         });
@@ -303,7 +305,27 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             .append("path")
             .data([dataToAdd])
             .attr("class", className)
-            .attr("d", d3line);
+            .attr("d", d3line)
+            .on("mouseover", function () {
+                if (tooltipDiv) {
+                    tooltipDiv.transition()
+                        .duration(200)
+                        .style("opacity", 0.9);
+                    tooltipDiv.html(`<strong>${attrName}</strong>`)
+                        .attr("style", "background-color: buttonface; border-radius: 4px; text-align: center;")
+                        .style("left", (event.clientX - 25) + "px")
+                        .style("top", (event.clientY - 35) + "px");
+                }
+            }, tooltipDiv)
+            .on("mouseout", function () {
+                tooltipDiv.transition()
+                    .duration(200)
+                    .style("opacity", 0)
+                    .on("end", function () {
+                        tooltipDiv.style("left", "0px");
+                        tooltipDiv.style("top", "0px");
+                    }, tooltipDiv);
+            }, tooltipDiv);
     },
 
     /**
@@ -410,20 +432,18 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
      * @param {String} yAttrToShow Attribute name for line point on y-axis.
      * @param {Selection} tooltipDiv Selection of the tooltip-div.
      * @param {Number} dotSize The size of the dots.
+     * @param {String} className optional className for the dots.
      * @returns {void}
      */
-    appendLinePointsToSvg: function (svg, data, scaleX, scaleY, xAttr, yAttrToShow, tooltipDiv, dotSize) {
+    appendLinePointsToSvg: function (svg, data, scaleX, scaleY, xAttr, yAttrToShow, tooltipDiv, dotSize, className = null) {
         var dat = data.filter(function (obj) {
                 return obj[yAttrToShow] !== "-";
             }),
             yAttributeToShow;
 
-        svg.select(".graph-diagram").selectAll("points")
+        svg.append("g").attr("class", " graph-points").selectAll("points")
             .data(dat)
             .enter()
-            // .append(function (d) {
-            //     return d.style ? document.createElementNS("http://www.w3.org/2000/svg", d.style) : "circle";
-            // })
             .append("circle")
             .attr("cx", function (d) {
                 return scaleX(d[xAttr]) + (scaleX.bandwidth() / 2);
@@ -442,7 +462,7 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             .attr("width", 10)
             .attr("height", 10)
             .attr("class", function (d) {
-                return d.class;
+                return d.class || className;
             })
             .attr("attrname", yAttrToShow)
             .attr("attrval", function (d) {
@@ -479,6 +499,29 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
                     // .style("left", (event.layerX - 25) + "px")
                     // .style("top", (event.layerY - 35) + "px");
             }, tooltipDiv);
+    },
+
+    appendLineLabel (svg, data, scaleX, scaleY, xAttr) {
+        const dataToShow = data[data.length - 1],
+            xAttrValue = dataToShow[xAttr],
+            dataArray = Object.entries(dataToShow)
+                .filter(d => d[0] !== xAttr)
+                .map(d => {
+                    return {
+                        label: d[0],
+                        y: parseFloat(d[1]),
+                        x: parseFloat(xAttrValue)
+                    };
+                });
+
+        svg.append("g").classed("line-labels", true)
+            .selectAll("text")
+            .data(dataArray)
+            .enter()
+            .append("text")
+            .text(d => d.label)
+            .attr("y", d => scaleY(d.y))
+            .attr("x", d => scaleX(d.x) + (scaleX.bandwidth() / 2) + 20);
     },
 
     /**
@@ -628,7 +671,8 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             tooltipDiv = select(graphConfig.selectorTooltip),
             offset = 10,
             dotSize = graphConfig.dotSize || 5,
-            valueLine;
+            valueLine,
+            hasLineLabel = graphConfig.hasLineLabel;
 
         if (_.has(graphConfig, "legendData")) {
             this.appendLegend(svg, graphConfig.legendData);
@@ -636,9 +680,9 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
         _.each(attrToShowArray, function (yAttrToShow) {
             if (typeof yAttrToShow === "object") {
                 valueLine = this.createValueLine(scaleX, scaleY, xAttr, yAttrToShow.attrName);
-                this.appendDataToSvg(svg, data, yAttrToShow.attrClass, valueLine);
+                this.appendDataToSvg(svg, data, yAttrToShow.attrClass, valueLine, tooltipDiv, yAttrToShow.attrName, hasLineLabel);
                 // Add the scatterplot for each point in line
-                this.appendLinePointsToSvg(svg, data, scaleX, scaleY, xAttr, yAttrToShow.attrName, tooltipDiv, dotSize);
+                this.appendLinePointsToSvg(svg, data, scaleX, scaleY, xAttr, yAttrToShow.attrName, tooltipDiv, dotSize, yAttrToShow.attrClass);
             }
             else {
                 valueLine = this.createValueLine(scaleX, scaleY, xAttr, yAttrToShow);
@@ -654,6 +698,10 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
         if (isMobile) {
             this.rotateXAxisTexts(svg);
             this.translateXAxislabelText(svg, xAxisLabel.translate);
+        }
+
+        if (hasLineLabel) {
+            this.appendLineLabel(svg, data, scaleX, scaleY, xAxisLabel);
         }
 
         this.setGraphParams({

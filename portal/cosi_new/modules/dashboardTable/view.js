@@ -1,4 +1,6 @@
 import Template from "text-loader!./template.html";
+import TableTemplate from "text-loader!./tableTemplate.html";
+import ContextActions from "text-loader!./ContextActions.html";
 import "./style.less";
 import DropdownView from "../../../../modules/snippets/dropdown/view";
 import ExportButtonView from "../../../../modules/snippets/exportButton/view";
@@ -6,7 +8,7 @@ import ExportButtonView from "../../../../modules/snippets/exportButton/view";
 const DashboardTableView = Backbone.View.extend({
     events: {
         "click .district": "zoomToFeature",
-        "click .row": "createChart",
+        "mouseup .row": "contextMenuTable",
         "click .prop button.open": "toggleTimelineTable",
         "click thead button.open": "toggleGroup",
         "click .figure > .header > button.open": "toggleFigure",
@@ -14,15 +16,10 @@ const DashboardTableView = Backbone.View.extend({
     },
     initialize: function () {
         this.exportButtonView = new ExportButtonView({model: this.model.get("exportButtonModel")});
+        this.filterDropdownView = new DropdownView({model: this.model.get("filterDropdownModel")});
 
         this.listenTo(this.model, {
-            "isReady": this.render,
-            "updateProperties": function () {
-                this.renderFilter();
-            },
-            "tableViewFilter": function (selectedValues) {
-                // this.showFilteredTable(selectedValues.values);
-            }
+            "isReady": this.render
         });
     },
     id: "dashboard-table",
@@ -31,47 +28,31 @@ const DashboardTableView = Backbone.View.extend({
     exportButtonView: {},
     filterDropdownView: {},
     template: _.template(Template),
+    tableTemplate: _.template(TableTemplate),
+    contextActions: _.template(ContextActions),
     render: async function () {
         var attr = this.model.toJSON();
 
         if (!Radio.request("InfoScreen", "getIsWindowOpen")) {
-            this.$el.html(this.template(attr));
-            this.$el.find("#export-button").append(this.exportButtonView.render().el);
+            if (!Radio.request("Dashboard", "getWidgetById", "dashboard") && Radio.request("Dashboard", "dashboardOpen")) {
+                this.$el.html(this.template(attr));
+                this.$el.find(".filter-dropdown").html(this.filterDropdownView.render().el);
 
-            this.renderFilter();
-            Radio.trigger("Dashboard", "append", this.$el, "#dashboard-containers", {
-                id: "",
-                name: "Übersicht",
-                glyphicon: "glyphicon-stats"
-            });
+
+                Radio.trigger("Dashboard", "append", this.$el, "#dashboard-containers", {
+                    id: "dashboard",
+                    name: "Übersicht",
+                    glyphicon: "glyphicon-stats"
+                });
+            }
+            this.$el.find(".table").html(this.tableTemplate(attr));
+            this.$el.find("#export-button").html(this.exportButtonView.render().el);
         }
 
         this.delegateEvents();
 
         return this;
     },
-    renderFilter () {
-        this.$el.find(".dropdown-container").remove();
-        this.filterDropdownView = new DropdownView({model: this.model.get("filterDropdownModel")});
-        this.$el.find(".filter-dropdown").prepend(this.filterDropdownView.render().el);
-    },
-    // showFilteredTable (selectedValues) {
-    //     _.each(this.$el.find(".overview tr"), (row, i) => {
-    //         if (i > 0) {
-    //             if (selectedValues.length > 0) {
-    //                 if (!selectedValues.includes($(row).find("th.prop").attr("id"))) {
-    //                     $(row).addClass("hidden");
-    //                 }
-    //                 else {
-    //                     $(row).removeClass("hidden");
-    //                 }
-    //             }
-    //             else {
-    //                 $(row).removeClass("hidden");
-    //             }
-    //         }
-    //     });
-    // },
     zoomToFeature (event) {
         const districtName = event.target.innerHTML;
 
@@ -89,9 +70,6 @@ const DashboardTableView = Backbone.View.extend({
         else if (row.find("td").hasClass("timeline-table")) {
             this.model.createChart([row.find("th.prop").attr("id")], "Linegraph", row.find("th.prop").text());
         }
-        // Highlight the selected row
-        row.parent("tbody").parent("table").find("tr").removeClass("selected");
-        row.addClass("selected");
     },
     clearChart: function () {
         this.$el.find(".basic-graph-header").html("");
@@ -135,6 +113,26 @@ const DashboardTableView = Backbone.View.extend({
     resetDropDown: function () {
         this.model.get("filterDropdownModel").updateSelectedValues([]);
         this.el$.find(".filter-dropdown ul.dropdown-menu > li").removeClass("selected");
+    },
+    contextMenuTable: function (event) {
+        const row = this.$(event.target).closest("tr"),
+            contextActions = $(this.contextActions());
+
+        $(contextActions).find("li#barChart").get(0).addEventListener("click", function () {
+            this.model.createChart([row.find("th.prop").attr("id")], "Linegraph", row.find("th.prop").text());
+        }.bind(this));
+        $(contextActions).find("li#lineChart").get(0).addEventListener("click", function () {
+            this.model.createChart([row.find("th.prop").attr("id")], "Linegraph", row.find("th.prop").text());
+        }.bind(this));
+        $(contextActions).find("li#correlation").get(0).addEventListener("click", function () {
+            
+        }.bind(this));
+
+        Radio.trigger("ContextMenu", "setActions", contextActions, row.find("th.prop").text(), "glyphicon-stats");
+
+        // Highlight the selected row
+        row.parent("tbody").parent("table").find("tr").removeClass("selected");
+        row.addClass("selected");
     }
 });
 

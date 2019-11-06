@@ -6,6 +6,7 @@ import TimelineModel from "../../../../modules/tools/timeline/model";
 const DashboardTableModel = Tool.extend({
     defaults: _.extend({}, Tool.prototype.defaults, {
         tableView: [],
+        filteredTableView: [],
         name: "",
         glyphicon: "",
         width: "60%",
@@ -71,7 +72,10 @@ const DashboardTableModel = Tool.extend({
         }, this);
 
         this.listenTo(this, {
-            "change:tableView": this.prepareRendering
+            "change:tableView": function () {
+                this.set("filteredTableView", this.get("tableView"));
+            },
+            "change:filteredTableView": this.prepareRendering
         });
     },
 
@@ -118,12 +122,15 @@ const DashboardTableModel = Tool.extend({
     prepareRendering: function () {
         // Update the filter dropdown list
         this.updateFilter();
-
-        // Update Export Link
-        this.get("exportButtonModel").set("rawData", this.get("tableView"));
-        this.get("exportButtonModel").prepareForExport();
+        this.prepareExportLink();
 
         this.trigger("isReady");
+    },
+
+    prepareExportLink () {
+        // Update Export Link
+        this.get("exportButtonModel").set("rawData", this.get("filteredTableView"));
+        this.get("exportButtonModel").prepareForExport();
     },
 
     /**
@@ -257,18 +264,22 @@ const DashboardTableModel = Tool.extend({
         });
     },
     createChart (props, type, title) {
+        const data = this.getChartData(props);
         let graph;
 
         if (type === "Linegraph") {
-            const data = this.getChartData(props);
-
             graph = Radio.request("Graph", "createGraph", {
                 graphType: type,
                 selector: document.createElement("div"),
                 scaleTypeX: "ordinal",
                 scaleTypeY: "linear",
                 data: data.data,
-                attrToShowArray: data.xAttrs,
+                attrToShowArray: data.xAttrs.map(prop => {
+                    return {
+                        attrName: prop,
+                        attrClass: prop === "Durchschnitt" ? "average" : "district"
+                    };
+                }),
                 xAttr: "year",
                 xAxisLabel: "year",
                 yAxisLabel: props[0],
@@ -281,7 +292,8 @@ const DashboardTableModel = Tool.extend({
                 width: $(window).width() * 0.4,
                 height: $(window).height() * 0.4,
                 svgClass: "dashboard-graph-svg",
-                selectorTooltip: ".graphTooltip"
+                selectorTooltip: ".dashboard-tooltip",
+                hasLineLabel: true
             });
         }
         else if (type === "BarGraph") {
@@ -290,7 +302,8 @@ const DashboardTableModel = Tool.extend({
                 selector: ".dashboard-graph",
                 scaleTypeX: "ordinal",
                 scaleTypeY: "linear",
-                data: this.get("tableView").filter(col => col[this.get("sortKey")] !== "Gesamt"),
+                // data: this.get("tableView").filter(col => col[this.get("sortKey")] !== "Gesamt"),
+                data: data.data,
                 attrToShowArray: props,
                 xAttr: this.get("sortKey"),
                 xAxisLabel: this.get("sortKey"),
@@ -304,9 +317,11 @@ const DashboardTableModel = Tool.extend({
                 width: $(window).width() * 0.4,
                 height: $(window).height() * 0.4,
                 svgClass: "dashboard-graph-svg",
-                selectorTooltip: ".graphTooltip"
+                selectorTooltip: ".dashboard-tooltip"
             });
         }
+
+        // console.log(graph.selectAll("circle"));
 
         Radio.trigger("Dashboard", "append", graph, "#dashboard-containers", {
             id: title,
@@ -360,15 +375,29 @@ const DashboardTableModel = Tool.extend({
         }
     },
     filterTableView: function () {
-        // this.trigger("tableViewFilter", this.get("filterDropdownModel").getSelectedValues());
-        const values = this.get("filterDropdownModel").getSelectedValues().values,
-            filteredTable = this.get("tableView").filter(group => {
-                return group;
-            });
+        this.trigger("tableViewFilter", this.get("filterDropdownModel").getSelectedValues());
+
+        const filterValues = this.get("filterDropdownModel").getSelectedValues().values,
+            filteredTable = this.get("tableView").map(group => {
+                const filteredGroup = {
+                    group: group.group,
+                    values: {}
+                };
+
+                for (const value in group.values) {
+                    if (filterValues.includes(value)) {
+                        filteredGroup.values[value] = group.values[value];
+                    }
+                }
+
+                return filteredGroup;
+            }).filter(group => Object.keys(group.values).length > 0);
+
+        this.set("filteredTableView", filteredTable);
+        this.prepareExportLink();
     },
     updateFilter: function () {
         this.get("filterDropdownModel").set("values", Radio.request("FeaturesLoader", "getAllValuesByScope", "statgebiet"));
-        this.trigger("updateProperties");
     },
     getScope: function () {
         return this.get("scope");
