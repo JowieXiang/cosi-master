@@ -258,12 +258,13 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
      * @param {Object} scaleY Scale of y-axis.
      * @param {String} xAttr  Attribute name for x-axis.
      * @param {string} yAttrToShow Attribut name for y-axis.
+     * @param {string} scaleTypeX Type of the x-scale
      * @returns {Object} - valueLine.
      */
-    createValueLine: function (scaleX, scaleY, xAttr, yAttrToShow) {
+    createValueLine: function (scaleX, scaleY, xAttr, yAttrToShow, scaleTypeX) {
         return line()
             .x(function (d) {
-                return scaleX(d[xAttr]) + (scaleX.bandwidth() / 2);
+                return scaleTypeX === "ordinal" ? scaleX(d[xAttr]) + (scaleX.bandwidth() / 2) : scaleX(d[xAttr]);
             })
             .y(function (d) {
                 return scaleY(d[yAttrToShow]);
@@ -428,6 +429,7 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
      * @param {Object[]} data Data for graph.
      * @param {Object} scaleX Scale for x-axis.
      * @param {Object} scaleY Scale for y-axis.
+     * @param {string} scaleTypeX Type of x-Scale
      * @param {String} xAttr Attribute name for x-axis.
      * @param {String} yAttrToShow Attribute name for line point on y-axis.
      * @param {Selection} tooltipDiv Selection of the tooltip-div.
@@ -435,18 +437,20 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
      * @param {String} className optional className for the dots.
      * @returns {void}
      */
-    appendLinePointsToSvg: function (svg, data, scaleX, scaleY, xAttr, yAttrToShow, tooltipDiv, dotSize, className = null) {
+    appendLinePointsToSvg: function (svg, data, scaleX, scaleY, scaleTypeX, xAttr, yAttrToShow, tooltipDiv, dotSize, className = null) {
         var dat = data.filter(function (obj) {
                 return obj[yAttrToShow] !== "-";
             }),
             yAttributeToShow;
+
+        console.log(scaleTypeX);
 
         svg.append("g").attr("class", " graph-points").selectAll("points")
             .data(dat)
             .enter()
             .append("circle")
             .attr("cx", function (d) {
-                return scaleX(d[xAttr]) + (scaleX.bandwidth() / 2);
+                return scaleTypeX === "ordinal" ? scaleX(d[xAttr]) + (scaleX.bandwidth() / 2) : scaleX(d[xAttr]);
             })
             .attr("cy", function (d) {
                 return scaleY(d[yAttrToShow]);
@@ -454,7 +458,7 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             .attr("r", dotSize)
 
             .attr("x", function (d) {
-                return scaleX(d[xAttr]) + (scaleX.bandwidth() / 2);
+                return scaleTypeX === "ordinal" ? scaleX(d[xAttr]) + (scaleX.bandwidth() / 2) : scaleX(d[xAttr]);
             })
             .attr("y", function (d) {
                 return scaleY(d[yAttrToShow]) - 5;
@@ -501,7 +505,7 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             }, tooltipDiv);
     },
 
-    appendLineLabel (svg, data, scaleX, scaleY, xAttr) {
+    appendLineLabel (svg, data, scaleX, scaleY, scaleTypeX, xAttr) {
         const dataToShow = data[data.length - 1],
             xAttrValue = dataToShow[xAttr],
             dataArray = Object.entries(dataToShow)
@@ -521,7 +525,7 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             .append("text")
             .text(d => d.label)
             .attr("y", d => scaleY(d.y))
-            .attr("x", d => scaleX(d.x) + (scaleX.bandwidth() / 2) + 20);
+            .attr("x", d => scaleTypeX === "ordinal" ? scaleX(d.x) + (scaleX.bandwidth() / 2) + 20 : scaleX(d.x) + 20);
     },
 
     /**
@@ -679,16 +683,16 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
         }
         _.each(attrToShowArray, function (yAttrToShow) {
             if (typeof yAttrToShow === "object") {
-                valueLine = this.createValueLine(scaleX, scaleY, xAttr, yAttrToShow.attrName);
+                valueLine = this.createValueLine(scaleX, scaleY, xAttr, yAttrToShow.attrName, scaleTypeX);
                 this.appendDataToSvg(svg, data, yAttrToShow.attrClass, valueLine, tooltipDiv, yAttrToShow.attrName, hasLineLabel);
                 // Add the scatterplot for each point in line
-                this.appendLinePointsToSvg(svg, data, scaleX, scaleY, xAttr, yAttrToShow.attrName, tooltipDiv, dotSize, yAttrToShow.attrClass);
+                this.appendLinePointsToSvg(svg, data, scaleX, scaleY, scaleTypeX, xAttr, yAttrToShow.attrName, tooltipDiv, dotSize, yAttrToShow.attrClass);
             }
             else {
-                valueLine = this.createValueLine(scaleX, scaleY, xAttr, yAttrToShow);
+                valueLine = this.createValueLine(scaleX, scaleY, xAttr, yAttrToShow, scaleTypeX);
                 this.appendDataToSvg(svg, data, "line", valueLine);
                 // Add the scatterplot for each point in line
-                this.appendLinePointsToSvg(svg, data, scaleX, scaleY, xAttr, yAttrToShow, tooltipDiv, dotSize);
+                this.appendLinePointsToSvg(svg, data, scaleX, scaleY, scaleTypeX, xAttr, yAttrToShow, tooltipDiv, dotSize);
             }
         }, this);
         // Add the Axis
@@ -701,7 +705,7 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
         }
 
         if (hasLineLabel) {
-            this.appendLineLabel(svg, data, scaleX, scaleY, xAxisLabel);
+            this.appendLineLabel(svg, data, scaleX, scaleY, scaleTypeX, xAxisLabel);
         }
 
         this.setGraphParams({
@@ -809,7 +813,7 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             .data(dataToAdd)
             .enter()
             .append("rect")
-            .attr("class", "bar" + selector.split(".")[1])
+            .attr("class", typeof selector === "string" ? "bar" + selector.split(".")[1] : "bar")
             .attr("fill", function (d) {
                 return Radio.request("ColorScale", "getColorScaleByValues", y.domain()).scale(d[attrToShowArray[0]]);
             })
