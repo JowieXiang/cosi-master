@@ -443,8 +443,6 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             }),
             yAttributeToShow;
 
-        console.log(scaleTypeX);
-
         svg.append("g").attr("class", " graph-points").selectAll("points")
             .data(dat)
             .enter()

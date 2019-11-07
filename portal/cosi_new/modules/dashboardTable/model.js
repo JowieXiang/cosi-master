@@ -287,7 +287,7 @@ const DashboardTableModel = Tool.extend({
         if (type === "Linegraph") {
             data = this.getLineChartData(props);
 
-            graph = Radio.request("Graph", "createGraph", {
+            graph = Radio.request("GraphV2", "createGraph", {
                 graphType: type,
                 selector: document.createElement("div"),
                 scaleTypeX: "ordinal",
@@ -320,7 +320,7 @@ const DashboardTableModel = Tool.extend({
         else if (type === "BarGraph") {
             data = this.getBarChartData(props);
 
-            graph = Radio.request("Graph", "createGraph", {
+            graph = Radio.request("GraphV2", "createGraph", {
                 graphType: type,
                 selector: document.createElement("div"),
                 scaleTypeX: "ordinal",
@@ -352,7 +352,7 @@ const DashboardTableModel = Tool.extend({
     createCorrelation () {
         const attrsToShow = this.getAttrsForCorrelation(),
             data = this.getCorrelationChartData(this.getAttrsForCorrelation()),
-            graph = Radio.request("Graph", "createGraph", {
+            graph = Radio.request("GraphV2", "createGraph", {
                 graphType: "Linegraph",
                 selector: document.createElement("div"),
                 scaleTypeX: "linear",
