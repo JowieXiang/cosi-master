@@ -5,6 +5,7 @@ import "./style.less";
 import { Fill, Stroke, Style } from "ol/style.js";
 import GeoJSON from "ol/format/GeoJSON";
 import GeometryCollection from "ol/geom/GeometryCollection";
+import InfoTemplate from "text-loader!./info.html";
 
 const ReachabilityView = Backbone.View.extend({
     events: {
@@ -14,7 +15,8 @@ const ReachabilityView = Backbone.View.extend({
         "focus #coordinate": "registerClickListener",
         "blur #coordinate": "unregisterClickListener",
         "change #path-type": "setPathType",
-        "change #range": "setRange"
+        "change #range": "setRange",
+        "click #help": "showHelp"
     },
     initialize: function () {
         this.listenTo(this.model, {
@@ -26,6 +28,7 @@ const ReachabilityView = Backbone.View.extend({
                 else {
                     Radio.trigger("SelectDistrict", "resetBboxGeometry");
                     this.clearMapLayer(this.model.get("mapLayerName"));
+                    this.clearInput();
                 }
             },
             "change:coordinate": function (model, value) {
@@ -61,6 +64,11 @@ const ReachabilityView = Backbone.View.extend({
         mapLayer.getSource().clear();
         mapLayer.setVisible(false);
     },
+    clearInput: function () {
+        this.model.set("coordinate", []);
+        this.model.set("pathType", "");
+        this.model.set("range", 0);
+    },
     createIsochrones: function () {
         // coordinate has to be in the format of [[lat,lon]] for the request
         const coordinate = [this.model.get("coordinate")],
@@ -90,8 +98,11 @@ const ReachabilityView = Backbone.View.extend({
                         polygonGeometry = this.model.get("isochroneFeatures")[this.model.get("steps") - 1].getGeometry(),
                         geometryCollection = new GeometryCollection([polygonGeometry]);
 
-                    Radio.trigger("BboxSettor", "setBboxGeometryToLayer", layerlist, geometryCollection);
+                    Radio.trigger("BboxSettor", "setBboxGeometryToLayer", layerlist, geometryCollection)
                 });
+        }
+        else {
+            this.inputReminder();
         }
     },
     styleFeatures: function (features) {
@@ -137,9 +148,11 @@ const ReachabilityView = Backbone.View.extend({
      * @returns {void}
      */
     setCoordinateFromInput: function (evt) {
+
         const coordinate = [evt.target.value.split(",")[0].trim(), evt.target.value.split(",")[1].trim()];
 
         this.model.set("coordinate", coordinate);
+
     },
     /**
      * rerender coordinate input box
@@ -201,6 +214,20 @@ const ReachabilityView = Backbone.View.extend({
             }
         });
         return features;
+    },
+    showHelp: function () {
+        Radio.trigger("Alert", "alert:remove");
+        Radio.trigger("Alert", "alert", {
+            text: InfoTemplate,
+            kategorie: "alert-info"
+        });
+    },
+    // reminds user to select district before using the ageGroup slider
+    inputReminder: function () {
+        Radio.trigger("Alert", "alert", {
+            text: "<strong>Please make sure all input information are provided</strong>",
+            kategorie: "alert-warning"
+        });
     }
 });
 

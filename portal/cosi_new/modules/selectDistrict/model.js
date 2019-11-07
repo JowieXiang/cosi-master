@@ -65,6 +65,8 @@ const SelectDistrict = Tool.extend({
 
                         this.set("bboxGeometry", bboxGeometry);
                         this.setBboxGeometry(bboxGeometry);
+                        // set map view to bbox
+                        Radio.trigger("Map", "zoomToExtent", this.getSelectedGeometries().getExtent());
                         // triggers "selectionChanged"
                         this.get("channel").trigger("selectionChanged", this.getSelectedGeometries().getExtent().toString(), this.get("activeScope"), this.getSelectedDistrictNames(this.get("selectedDistricts")));
                         Radio.trigger("Map", "zoomToExtent", this.getSelectedGeometries().getExtent());
@@ -340,8 +342,6 @@ const SelectDistrict = Tool.extend({
         const layerlist = _.union(Radio.request("Parser", "getItemsByAttributes", { typ: "WFS", isBaseLayer: false }), Radio.request("Parser", "getItemsByAttributes", { typ: "GeoJSON", isBaseLayer: false }));
 
         Radio.trigger("BboxSettor", "setBboxGeometryToLayer", layerlist, bboxGeometry);
-        // triggers "selectionChanged"
-        Radio.trigger("Map", "zoomToExtent", this.getSelectedGeometries().getExtent());
     },
     resetBboxGeometry: function () {
         if (this.get("bboxGeometry")) {

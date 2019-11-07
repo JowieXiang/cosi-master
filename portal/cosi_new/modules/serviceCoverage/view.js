@@ -4,14 +4,15 @@ import * as Proj from "ol/proj.js";
 import "./style.less";
 import { Fill, Stroke, Style } from "ol/style.js";
 import GeoJSON from "ol/format/GeoJSON";
-import GeometryCollection from "ol/geom/GeometryCollection";
+import InfoTemplate from "text-loader!./info.html";
 
 const ServiceCoverageView = Backbone.View.extend({
     events: {
         "click #create-isochrones": "createIsochrones",
         "click button#Submit": "checkIfSelected",
         "change #path-type": "setPathType",
-        "change #range": "setRange"
+        "change #range": "setRange",
+        "click #service-coverage-help": "showHelp"
     },
     initialize: function () {
 
@@ -23,6 +24,7 @@ const ServiceCoverageView = Backbone.View.extend({
                     this.createMapLayer(this.model.get("mapLayerName"));
                 }
                 else {
+                    this.clearInput();
                     this.clearMapLayer(this.model.get("mapLayerName"));
                 }
             }
@@ -62,40 +64,41 @@ const ServiceCoverageView = Backbone.View.extend({
             coordinatesList = [],
             promiseList = [];
 
-        // group coordinates into groups of 5
-        for (let i = 0; i < this.model.get("coordinates").length; i += 5) {
-            const arrayItem = this.model.get("coordinates").slice(i, i + 5);
+        if (this.model.get("coordinates").length > 0 && pathType !== "" && range !== 0) {
+            // group coordinates into groups of 5
+            for (let i = 0; i < this.model.get("coordinates").length; i += 5) {
+                const arrayItem = this.model.get("coordinates").slice(i, i + 5);
 
-            coordinatesList.push(arrayItem);
+                coordinatesList.push(arrayItem);
+            }
+            _.each(coordinatesList, coordinates => {
+                promiseList.push(Radio.request("OpenRoute", "requestIsochrones", pathType, coordinates, [range])
+                    .then(res => {
+                        // reverse JSON object sequence to render the isochrones in the correct order
+                        const json = JSON.parse(res),
+                            reversedFeatures = [...json.features].reverse();
+
+                        json.features = reversedFeatures;
+                        let newFeatures = this.parseDataToFeatures(JSON.stringify(json));
+
+                        newFeatures = this.transformFeatures(newFeatures, "EPSG:4326", "EPSG:25832");
+                        this.styleFeatures(newFeatures);
+                        return newFeatures;
+                    }));
+            });
+
+            Promise.all(promiseList).then((featuresList) => {
+                const mapLayer = Radio.request("Map", "getLayerByName", this.model.get("mapLayerName"));
+
+                mapLayer.getSource().clear();
+                mapLayer.getSource().addFeatures(featuresList.flat().reverse());
+                mapLayer.setVisible(true);
+                this.model.set("isochroneFeatures", featuresList.flat());
+            });
         }
-
-        console.log("coordinatesArray: ", coordinatesList);
-        _.each(coordinatesList, coordinates => {
-            promiseList.push(Radio.request("OpenRoute", "requestIsochrones", pathType, coordinates, [range])
-                .then(res => {
-                    // reverse JSON object sequence to render the isochrones in the correct order
-                    const json = JSON.parse(res),
-                        reversedFeatures = [...json.features].reverse();
-
-                    json.features = reversedFeatures;
-                    let newFeatures = this.parseDataToFeatures(JSON.stringify(json));
-
-                    newFeatures = this.transformFeatures(newFeatures, "EPSG:4326", "EPSG:25832");
-                    this.styleFeatures(newFeatures);
-                    return newFeatures;
-                }));
-        });
-
-        Promise.all(promiseList).then((featuresList) => {
-            const mapLayer = Radio.request("Map", "getLayerByName", this.model.get("mapLayerName"));
-
-            console.info("promise all featuresList: ", featuresList);
-            mapLayer.getSource().clear();
-            mapLayer.getSource().addFeatures(featuresList.flat().reverse());
-            mapLayer.setVisible(true);
-            this.model.set("isochroneFeatures", featuresList.flat());
-        });
-
+        else {
+            this.inputReminder();
+        }
     },
     styleFeatures: function (features) {
         for (let i = features.length - 1; i >= 0; i--) {
@@ -195,6 +198,25 @@ const ServiceCoverageView = Backbone.View.extend({
             }
         });
         return features;
+    },
+    showHelp: function () {
+        Radio.trigger("Alert", "alert:remove");
+        Radio.trigger("Alert", "alert", {
+            text: InfoTemplate,
+            kategorie: "alert-info"
+        });
+    },
+    clearInput: function () {
+        this.model.set("coordinates", []);
+        this.model.set("pathType", "");
+        this.model.set("range", 0);
+    },
+    // reminds user to select district before using the ageGroup slider
+    inputReminder: function () {
+        Radio.trigger("Alert", "alert", {
+            text: "<strong>Please make sure all input information are provided</strong>",
+            kategorie: "alert-warning"
+        });
     }
 });
 

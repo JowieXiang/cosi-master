@@ -30,7 +30,8 @@ const ServiceCoverage = Tool.extend({
                 snippetType: "dropdown",
                 isMultiple: false,
                 displayName: "Facility type",
-                liveSearch: true
+                liveSearch: true,
+                steps: 3
             });
 
         console.log("layerList: ", layerList);

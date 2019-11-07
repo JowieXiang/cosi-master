@@ -1,52 +1,46 @@
 <!DOCTYPE html>
+
 <div class="container" id="service-coverage ">
-    <div class="row">
-        <div class="form-row">
-            <div class="form-group col">
+    <table>
+        <tr>
+            <th><strong>Type of facility</strong></th>
+            <th></th>
+        </tr>
+        <tr>
+            <td>
                 <div id="select-layer">
                 </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <form>
-            <div class="form-row" id="layerfilter-selector-container">
-                <div class="form-group col-md-4">
-                    <label for="path-type" id="path-type-label"><strong>Transportmittel</strong></label>
-                    <select class="form-control input-sm" title="path-type" id="path-type">
-                        <option selected value="Leeren"> -Leeren- </option>
-                        <option value="driving-car">Auto</option>
-                        <option value="cycling-regular">Rad</option>
-                        <option value="cycling-electric">Rad (elektrisch)</option>
-                        <option value="foot-walking">Gehen</option>
-                        <option value="wheelchair">Rollstuhl</option>
-                    </select>
+            </td>
+            <td>
+                <div id="service-coverage-help">
+                    <span class="glyphicon glyphicon-question-sign"></span>
                 </div>
-            </div>
-            <div class="form-row" id="range-input-container">
-                <div class="form-group col-md-3">
-                    <label for="range" id="range-label"><strong>Zeit (in min)</strong></label>
-                    <input class="form-control input-sm" title="range" id="range" type="number" min="0">
-                    </input>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group col-md-4">
-                    <br />
-                    <div id="create-isochrones">
-                        <span class="glyphicon glyphicon-plus"></span>
-                        berechnen
-                    </div>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group col-md-1">
-                    <br />
-                    <div id="service-coverage-help">
-                        <span class="glyphicon glyphicon-question-sign"></span>
-                    </div>
-                </div>
-            </div>
-        </form>
-    </div>
+            </td>
+        </tr>
+    </table>
+    <table>
+        <tr>
+            <th><strong>Transportmittel</strong></th>
+            <th><strong>Zeit (in min)</strong></th>
+            <th></th>
+        </tr>
+        <tr>
+            <td> <select class="form-control input-sm" title="path-type" id="path-type">
+                    <option selected value="Leeren"> -Leeren- </option>
+                    <option value="driving-car">Auto</option>
+                    <option value="cycling-regular">Rad</option>
+                    <option value="cycling-electric">Rad (elektrisch)</option>
+                    <option value="foot-walking">Gehen</option>
+                    <option value="wheelchair">Rollstuhl</option>
+                </select></td>
+            <td>
+                <input class="form-control input-sm" title="range" id="range" type="number" min="0">
+                </input></td>
+            <td>
+                <button type="button" class="btn btn-lgv-grey" id="create-isochrones">
+                    <span class="glyphicon glyphicon-plus"></span>berechnen
+                </button>
+            </td>
+        </tr>
+    </table>
 </div>
