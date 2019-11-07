@@ -13,7 +13,6 @@ const ServiceCoverage = Tool.extend({
     }),
     initialize: function () {
         this.superInitialize();
-        this.setDropDownModel();
     },
     /**
      * sets the selection list for the time slider
@@ -21,8 +20,8 @@ const ServiceCoverage = Tool.extend({
      * @returns {void}
      */
     setDropDownModel: function () {
-        const layerList = _.union(Radio.request("Parser", "getItemsByAttributes", { typ: "WFS", isBaseLayer: false }), Radio.request("Parser", "getItemsByAttributes", { typ: "GeoJSON", isBaseLayer: false })),
-            layerNames = layerList.map(layer => layer.featureType.trim()),
+        const layerList = Radio.request("ModelList", "getModelsByAttributes", { isFacility: true, isSelected: true }),
+            layerNames = layerList.map(layer => layer.get("featureType").trim()),
             dropdownModel = new DropdownModel({
                 name: "FacilityType",
                 type: "string",
@@ -34,11 +33,9 @@ const ServiceCoverage = Tool.extend({
                 steps: 3
             });
 
-        console.log("layerList: ", layerList);
         this.listenTo(dropdownModel, {
             "valuesChanged": this.displayLayer
         }, this);
-
         this.set("dropDownModel", dropdownModel);
     },
     /**

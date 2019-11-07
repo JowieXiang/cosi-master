@@ -19,6 +19,9 @@ const ServiceCoverageView = Backbone.View.extend({
         this.listenTo(this.model, {
             "change:isActive": function (model, value) {
                 if (value) {
+                    /**
+                     * todo: 将下面一行移到initialize里，setlistener，listen对应的facility layer Model的变化，如果isSelected变了，就改变下拉菜单里的内容
+                     */
                     this.model.setDropDownModel();
                     this.render(model, value);
                     this.createMapLayer(this.model.get("mapLayerName"));
