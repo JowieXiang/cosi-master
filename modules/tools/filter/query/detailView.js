@@ -53,11 +53,9 @@ const QueryDetailView = Backbone.View.extend(/** @lends QueryDetailView.prototyp
      */
     render: function () {
         const attr = this.model.toJSON();
-        let loaderPath;
 
         if (!this.model.get("features")) {
-            loaderPath = Radio.request("Util", "getPathFromLoader");
-            this.$el.html("<div id='filter-loader'><img src='" + loaderPath + "'></div>");
+            this.$el.html("<p>In dem von Ihnen ausgewählten Gebiet befinden sich keine Objekte entsprechend Ihrem Gewählten Thema</p>");
 
             return this;
         }
