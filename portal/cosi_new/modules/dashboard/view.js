@@ -48,6 +48,10 @@ const DashboardView = Backbone.View.extend({
             Radio.trigger("Sidebar", "toggle", true, this.model.get("width"));
         }
 
+        Radio.request("Dashboard", "getChildren").forEach(widget => {
+            widget.render();
+        });
+
         this.delegateEvents();
         Radio.trigger("Dashboard", "dashboardOpen");
 

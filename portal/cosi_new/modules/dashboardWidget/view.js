@@ -4,12 +4,13 @@ import "./style.less";
 
 const DashboardWidgetView = Backbone.View.extend({
     events: {
-        "click .dashboard-widget-close": "remove",
+        "click .dashboard-widget-close": "removeWidget",
         "click .win-control.open": "toggleOpen"
     },
     initialize (content, parent, opts = {}) {
         const attrs = content.model ? content.model.defaults : opts;
 
+        this.parent = parent;
         this.content = content;
         this.attrs = {
             id: attrs.id ? attrs.id : "view",
@@ -17,15 +18,14 @@ const DashboardWidgetView = Backbone.View.extend({
             glyphicon: attrs.glyphicon ? attrs.glyphicon : "glyphicon-info-sign"
         };
 
-        this.initializeDOMElement(parent);
         this.render();
-
-        Radio.trigger("ContextMenu", "addContextMenu", this.el);
     },
+    parent: "",
     content: {},
     attrs: {},
     template: _.template(Template),
     render () {
+        this.initializeDOMElement();
         this.$el.append(this.template(this.attrs));
 
         if (this.content instanceof Backbone.View) {
@@ -41,14 +41,18 @@ const DashboardWidgetView = Backbone.View.extend({
             this.renderD3();
         }
 
+        Radio.trigger("ContextMenu", "addContextMenu", this.el);
+
         return this;
     },
-    initializeDOMElement (parent) {
+    initializeDOMElement () {
         const widget = document.createElement("div");
 
         widget.className = "dashboard-widget";
-        $(parent).append($(widget));
+        $(this.parent).append($(widget));
         this.setElement(widget);
+
+        return this;
     },
     renderView () {
         this.content.setElement(this.$el.find("#content").get(0));
@@ -66,6 +70,9 @@ const DashboardWidgetView = Backbone.View.extend({
     toggleOpen (evt) {
         evt.stopPropagation();
         this.$el.toggleClass("open");
+    },
+    removeWidget () {
+        Radio.trigger("Dashboard", "destroyWidgetById", this.attrs.id);
     }
 });
 

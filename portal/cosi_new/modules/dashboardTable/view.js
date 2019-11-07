@@ -12,14 +12,16 @@ const DashboardTableView = Backbone.View.extend({
         "click .prop button.open": "toggleTimelineTable",
         "click thead button.open": "toggleGroup",
         "click .figure > .header > button.open": "toggleFigure",
-        "click .btn-reset": "resetDropDown"
+        "click .btn-reset": "resetDropDown",
+        "click #correlation-button": "createCorrelation"
     },
     initialize: function () {
         this.exportButtonView = new ExportButtonView({model: this.model.get("exportButtonModel")});
         this.filterDropdownView = new DropdownView({model: this.model.get("filterDropdownModel")});
 
         this.listenTo(this.model, {
-            "isReady": this.render
+            "isReady": this.render,
+            "correlationValuesUpdated": this.renderCorrelationAttrs
         });
     },
     id: "dashboard-table",
@@ -36,7 +38,7 @@ const DashboardTableView = Backbone.View.extend({
         if (!Radio.request("InfoScreen", "getIsWindowOpen")) {
             if (!Radio.request("Dashboard", "getWidgetById", "dashboard") && Radio.request("Dashboard", "dashboardOpen")) {
                 this.$el.html(this.template(attr));
-                this.$el.find(".filter-dropdown").html(this.filterDropdownView.render().el);
+                this.$el.find(".filter-dropdown").prepend(this.filterDropdownView.render().el);
 
 
                 Radio.trigger("Dashboard", "append", this.$el, "#dashboard-containers", {
@@ -52,6 +54,24 @@ const DashboardTableView = Backbone.View.extend({
         this.delegateEvents();
 
         return this;
+    },
+    renderCorrelationAttrs () {
+        if (this.model.getAttrsForCorrelation().length > 0) {
+            const btn = document.createElement("button");
+
+            btn.className = "btn btn-primary";
+            btn.id = "correlation-button";
+            btn.innerHTML = `<strong>Korrelation erstellen:</strong><br /> ${this.model.getAttrsForCorrelation().join(" / ")}`;
+
+            if (this.model.getAttrsForCorrelation().length < 2) {
+                btn.setAttribute("disabled", true);
+            }
+
+            this.$el.find("#correlation").html(btn);
+        }
+        else {
+            this.$el.find("#correlation").empty();
+        }
     },
     zoomToFeature (event) {
         const districtName = event.target.innerHTML;
@@ -74,6 +94,9 @@ const DashboardTableView = Backbone.View.extend({
     clearChart: function () {
         this.$el.find(".basic-graph-header").html("");
         this.$el.find(".dashboard-graph").empty();
+    },
+    createCorrelation () {
+        this.model.createCorrelation();
     },
     toggleTimelineTable: function (event) {
         event.stopPropagation();
@@ -112,20 +135,30 @@ const DashboardTableView = Backbone.View.extend({
      */
     resetDropDown: function () {
         this.model.get("filterDropdownModel").updateSelectedValues([]);
-        this.el$.find(".filter-dropdown ul.dropdown-menu > li").removeClass("selected");
+        this.$el.find(".filter-dropdown ul.dropdown-menu > li").removeClass("selected");
     },
     contextMenuTable: function (event) {
         const row = this.$(event.target).closest("tr"),
             contextActions = $(this.contextActions());
 
+        // Create Bar Chart
         $(contextActions).find("li#barChart").get(0).addEventListener("click", function () {
-            this.model.createChart([row.find("th.prop").attr("id")], "Linegraph", row.find("th.prop").text());
+            this.model.createChart([row.find("th.prop").attr("id")], "BarGraph", row.find("th.prop").text());
         }.bind(this));
+
+        // Create Line Chart
         $(contextActions).find("li#lineChart").get(0).addEventListener("click", function () {
             this.model.createChart([row.find("th.prop").attr("id")], "Linegraph", row.find("th.prop").text());
         }.bind(this));
+
+        // Add to Correlation
         $(contextActions).find("li#correlation").get(0).addEventListener("click", function () {
-            
+            this.model.addAttrForCorrelation(row.find("th.prop").attr("id"));
+        }.bind(this));
+
+        // Delete Correlation Data
+        $(contextActions).find("li#delete-correlation").get(0).addEventListener("click", function () {
+            this.model.deleteAttrsForCorrelation();
         }.bind(this));
 
         Radio.trigger("ContextMenu", "setActions", contextActions, row.find("th.prop").text(), "glyphicon-stats");
