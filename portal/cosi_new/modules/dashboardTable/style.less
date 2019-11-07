@@ -2,9 +2,7 @@
 @font_family_1: "UniversNextW04-620CondB","Arial Narrow",Arial,sans-serif;
 @background_color_1: rgba(0, 0, 0,.5);
 
-.dashboard {
-    display:inline-block;
-    width:calc(100% - 15px);
+.dashboard-table {
     .header {
         width: 100%;
         border-bottom: 1px solid rgb(229,229,229);
@@ -74,13 +72,13 @@
                 }
             }
             th.prop {
-                width: 25%;
                 font-weight: 300;
                 &#statgebiet {
                     font-weight: bold;
                 } 
             }
             th, td {
+                width:auto;
                 &.district {
                     cursor: pointer;
                 }
@@ -106,8 +104,6 @@
                         }
                         &:not(:first-child) {
                             display:none;
-                        }
-                        &:hover {
                         }
                         small {
                             color: #90c6f5;

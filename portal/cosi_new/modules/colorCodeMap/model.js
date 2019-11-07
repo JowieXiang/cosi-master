@@ -76,7 +76,7 @@ const LayerModel = Backbone.Model.extend({
         const districtFeatures = this.getDistrictFeaturesByScope(Radio.request("SelectDistrict", "getScope")),
             foundDistrictFeatures = [],
             values = features.map(feature => feature.getProperties()[attribute]),
-            colorScale = Radio.request("ColorScale", "getColorScaleByValues", values, Chromatic.interpolateBlues);
+            colorScale = Radio.request("ColorScale", "getColorScaleByValues", values, "interpolateBlues");
 
         features.forEach(function (feature) {
             // find the equivalent district feature -> to do for stadtteile

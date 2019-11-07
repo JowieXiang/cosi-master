@@ -300,8 +300,20 @@ const DashboardTableModel = Tool.extend({
                     };
                 }),
                 xAttr: "year",
-                xAxisLabel: "year",
-                yAxisLabel: props[0],
+                xAxisLabel: {
+                    offset: 5,
+                    textAnchor: "middle",
+                    fill: "#000",
+                    fontSize: 10,
+                    label: "Jahr"
+                },
+                yAxisLabel: {
+                    offset: -5,
+                    textAnchor: "middle",
+                    fill: "#000",
+                    fontSize: 10,
+                    label: props[0]
+                },
                 margin: {
                     left: 40,
                     top: 25,
@@ -314,8 +326,6 @@ const DashboardTableModel = Tool.extend({
                 selectorTooltip: ".dashboard-tooltip",
                 hasLineLabel: true
             });
-
-            console.log(data.data, data.xAttrs);
         }
         else if (type === "BarGraph") {
             data = this.getBarChartData(props);
@@ -328,8 +338,20 @@ const DashboardTableModel = Tool.extend({
                 data: data,
                 attrToShowArray: props,
                 xAttr: this.get("sortKey"),
-                xAxisLabel: this.get("sortKey"),
-                yAxisLabel: props[0],
+                xAxisLabel: {
+                    offset: 5,
+                    textAnchor: "middle",
+                    fill: "#000",
+                    fontSize: 10,
+                    label: this.get("sortKey")
+                },
+                yAxisLabel: {
+                    offset: -5,
+                    textAnchor: "middle",
+                    fill: "#000",
+                    fontSize: 10,
+                    label: props[0]
+                },
                 margin: {
                     left: 40,
                     top: 25,
@@ -346,22 +368,35 @@ const DashboardTableModel = Tool.extend({
         Radio.trigger("Dashboard", "append", graph, "#dashboard-containers", {
             id: title,
             name: title,
-            glyphicon: "glyphicon-info-sign"
+            glyphicon: "glyphicon-stats"
         });
     },
     createCorrelation () {
         const attrsToShow = this.getAttrsForCorrelation(),
             data = this.getCorrelationChartData(this.getAttrsForCorrelation()),
             graph = Radio.request("GraphV2", "createGraph", {
-                graphType: "Linegraph",
+                graphType: "ScatterPlot",
                 selector: document.createElement("div"),
                 scaleTypeX: "linear",
                 scaleTypeY: "linear",
                 data: data,
+                refAttr: this.get("sortKey"),
                 attrToShowArray: [attrsToShow[1]],
                 xAttr: attrsToShow[0],
-                xAxisLabel: attrsToShow[0],
-                yAxisLabel: attrsToShow[1],
+                xAxisLabel: {
+                    offset: 5,
+                    textAnchor: "middle",
+                    fill: "#000",
+                    fontSize: 10,
+                    label: attrsToShow[0]
+                },
+                yAxisLabel: {
+                    offset: -5,
+                    textAnchor: "middle",
+                    fill: "#000",
+                    fontSize: 10,
+                    label: attrsToShow[1]
+                },
                 margin: {
                     left: 40,
                     top: 25,
@@ -370,16 +405,14 @@ const DashboardTableModel = Tool.extend({
                 },
                 width: $(window).width() * 0.4,
                 height: $(window).height() * 0.4,
+                dotSize: 3,
                 svgClass: "dashboard-graph-svg",
                 selectorTooltip: ".dashboard-tooltip"
             });
 
-        // console.log(this.getCorrelationChartData(this.getAttrsForCorrelation()));
-            
         Radio.trigger("Dashboard", "append", graph, "#dashboard-containers", {
-            id: "Korrelation",
-            name: "Korrelation",
-            glyphicon: "glyphicon-info-sign"
+            name: `Korrelation: ${attrsToShow[0]} (x) : ${attrsToShow[1]} (y)`,
+            glyphicon: "glyphicon-flash"
         });
     },
     getBarChartData (props, year = "2018") {
@@ -404,16 +437,23 @@ const DashboardTableModel = Tool.extend({
             return [...data, ...this.get("unsortedTable")
                 .filter(district => district[this.get("sortKey")] !== "Gesamt")
                 .map((district) => {
+                    let hasVal = true;
                     const districtProps = {
-                        [this.get("sortKey")]: district[this.get("sortKey")]
+                        [this.get("sortKey")]: district[this.get("sortKey")],
+                        year: year
                     };
 
                     props.forEach(prop => {
-                        districtProps[prop] = district[prop].filter(value => value[0] === year)[0][1];
+                        if (district[prop].find(value => value[0] === year)) {
+                            districtProps[prop] = district[prop].filter(value => value[0] === year)[0][1];
+                        }
+                        else {
+                            hasVal = false;
+                        }
                     });
 
-                    return districtProps;
-                })];
+                    return hasVal ? districtProps : null;
+                }).filter(district => district)];
         }, [])
             .sort((a, b) => {
                 return a[props[0]] - b[props[0]];
