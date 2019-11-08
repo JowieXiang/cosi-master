@@ -37,7 +37,8 @@ const SelectDistrict = Tool.extend({
                 width: 5
             })
         }),
-        channel: Radio.channel("SelectDistrict")
+        channel: Radio.channel("SelectDistrict"),
+        bboxGeometry: null
     }),
     initialize: function () {
         this.superInitialize();
@@ -60,14 +61,18 @@ const SelectDistrict = Tool.extend({
                 }
                 else {
                     if (this.get("selectedDistricts").length > 0) {
-                        // calls "BboxSettor" channel
-                        const layerlist = _.union(Radio.request("Parser", "getItemsByAttributes", { typ: "WFS", isBaseLayer: false }), Radio.request("Parser", "getItemsByAttributes", { typ: "GeoJSON", isBaseLayer: false })),
-                            bboxGeometry = Polygon.fromExtent(Extent.buffer(this.getSelectedGeometries().getExtent(), this.getBuffer()));
+                        const bboxGeometry = Polygon.fromExtent(Extent.buffer(this.getSelectedGeometries().getExtent(), this.getBuffer()));
 
-                        Radio.trigger("BboxSettor", "setBboxGeometryToLayer", layerlist, bboxGeometry);
+                        this.set("bboxGeometry", bboxGeometry);
+                        this.setBboxGeometry(bboxGeometry);
+                        // set map view to bbox
+                        Radio.trigger("Map", "zoomToExtent", this.getSelectedGeometries().getExtent());
                         // triggers "selectionChanged"
                         this.get("channel").trigger("selectionChanged", this.getSelectedGeometries().getExtent().toString(), this.get("activeScope"), this.getSelectedDistrictNames(this.get("selectedDistricts")));
                         Radio.trigger("Map", "zoomToExtent", this.getSelectedGeometries().getExtent());
+                    }
+                    else {
+                        this.set("bboxGeometry", null);
                     }
                     this.unlisten();
                 }
@@ -95,7 +100,8 @@ const SelectDistrict = Tool.extend({
         }, this);
 
         this.get("channel").on({
-            "zoomToDistrict": this.zoomAndHighlightFeature
+            "zoomToDistrict": this.zoomAndHighlightFeature,
+            "resetBboxGeometry": this.resetBboxGeometry
         }, this);
 
         // if (this.get("isActive") === true) {
@@ -330,6 +336,16 @@ const SelectDistrict = Tool.extend({
 
         if (query.length > 0) {
             this.set("urlQuery", [query[0].substring(query[0].indexOf("=") + 1).replace("%20", " "), query[1].substring(query[1].indexOf("=") + 1).split(",")]);
+        }
+    },
+    setBboxGeometry: function (bboxGeometry) {
+        const layerlist = _.union(Radio.request("Parser", "getItemsByAttributes", { typ: "WFS", isBaseLayer: false }), Radio.request("Parser", "getItemsByAttributes", { typ: "GeoJSON", isBaseLayer: false }));
+
+        Radio.trigger("BboxSettor", "setBboxGeometryToLayer", layerlist, bboxGeometry);
+    },
+    resetBboxGeometry: function () {
+        if (this.get("bboxGeometry")) {
+            this.setBboxGeometry(this.get("bboxGeometry"));
         }
     }
 });

@@ -11,6 +11,7 @@ import TimeSliderView from "./timeSlider/view";
 import ReachabilityView from "./reachability/view";
 import ServiceCoverageView from "./serviceCoverage/view";
 import PrintView from "../../../modules/tools/print/view";
+import GraphModel from "./graph_v2/model";
 
 /**
  * @returns {void}
@@ -31,6 +32,7 @@ function initializeCosi () {
         }
     });
     new ContextMenuView();
+    new GraphModel();
 
     Radio.trigger("ModelList", "addModelsAndUpdate", Object.values(general));
 

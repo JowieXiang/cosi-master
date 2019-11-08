@@ -9,7 +9,7 @@ const Reachability = Tool.extend({
         steps: 3, // step of subIsochrones
         isochroneFeatures: [], // isochrone features
         dropDownModel: {},
-        mapLayerName: "IsoChrones_name"
+        mapLayerName: "reachability"
     }),
     initialize: function () {
         this.superInitialize();

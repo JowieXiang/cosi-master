@@ -9,20 +9,27 @@ const openRouteService = Backbone.Model.extend({
             "requestIsochrones": this.requestIsochrones
         }, this);
     },
-
-    requestIsochrones: function (pathType, coordinate, range) {
+    /**
+     * send request to get Isochrone geoJSON
+     * @param {String} pathType - type of transportation
+     * @param {Array} coordinates - coordinates of origins
+     * @param {Array} rangeArray - array of time range values
+     * @returns {void}
+     */
+    requestIsochrones: function (pathType, coordinates, rangeArray) {
         var that = this;
 
         return new Promise(function (resolve, reject) {
             // const body = '{"locations":[[9.9937,53.5511],[9.9937,53.5511]],"range":[300,200]}',
-            const queryBody = `{"locations":[${JSON.stringify(coordinate)}],"range":[${range / 4},${range / 2},${range}]}`,
+            const queryBody = `{"locations":${JSON.stringify(coordinates)},"range":${JSON.stringify(rangeArray)}}`,
                 url = that.get("baseUrl") + pathType.trim();
             var xhr = new XMLHttpRequest();
 
+            console.log("query: ", queryBody);
             xhr.open("POST", url);
-            xhr.setRequestHeader('Accept', 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8');
-            xhr.setRequestHeader('Content-Type', 'application/json');
-            xhr.setRequestHeader('Authorization', that.get("accessKey"));
+            xhr.setRequestHeader("Accept", "application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8");
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.setRequestHeader("Authorization", that.get("accessKey"));
             xhr.onload = function () {
                 if (this.status >= 200 && this.status < 300) {
                     resolve(xhr.response);
