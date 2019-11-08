@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+
+<% if (message !== "") { %>
+    <div class="message"><%=message%></div>
+<% }
+else { %>
+    <% if (Object.getOwnPropertyNames(results).length > 0) { %>
+        <div class="heading">Versorgungschlüssel<br />(gewählter Einrichtungswert pro <%= resolution %> Einwohner der gewählten Zielgruppen):</div>
+        <table class="table">
+            <tr>
+                <th scope="col">Gebiet</th>
+                <th scope="col">Verhältnis</th>
+                <th scope="col">Einrichtungswert</th>
+                <th scope="col">Zielgruppe</th>
+            </tr>
+            <% for (var district in results) { %>
+                <tr>
+                    <th scope="row"><%= district %></th>
+                    <td><%= results[district].ratio.toFixed(2) %></td>
+                    <td><%= results[district].facilities.toFixed(1) %></td>
+                    <td><%= results[district].demographics %></td>
+                </tr>
+            <% } %>
+        </table>
+        <div id="export-button"></div>
+        <small id="toolHelp" class="form-text text-muted">Die errechneten Ergebnisse werden Ihnen auch im Dashboard anzeigt und zum Download zur Verfügung gestellt.</small>
+    <% } %>
+<% } %>
