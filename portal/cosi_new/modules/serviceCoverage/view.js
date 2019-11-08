@@ -133,20 +133,6 @@ const ServiceCoverageView = Backbone.View.extend({
         }
     },
     /**
-     * listen for click events on the map when range input is focused
-     * @returns {void}
-     */
-    registerClickListener: function () {
-        this.clickListener = Radio.request("Map", "registerListener", "singleclick", this.setCoordinateFromClick.bind(this));
-    },
-    /**
-     * unlisten click events when range input is blurred
-     * @returns {void}
-     */
-    unregisterClickListener: function () {
-        Radio.trigger("Map", "unregisterListener", this.clickListener);
-    },
-    /**
      * set coordinate value in model according to click
      * @param {object} evt - click-on-map event
      * @returns {void}
