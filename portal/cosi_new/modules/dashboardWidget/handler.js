@@ -31,9 +31,10 @@ const DashboardWidgetHandler = Backbone.Model.extend({
         const _opts = opts ? this.assignId(opts) : this.assignId({});
 
         this.getChildren().push(new DashboardWidgetView(child, parent, _opts));
+        this.pushId(_opts.id);
     },
     assignId (opts) {
-        if (this.get("ids").includes(opts.id)) {
+        if (this.get("ids").includes(opts.id) || !opts.id) {
             opts.id = Math.max(this.get("ids").filter(id => !isNaN(id))) + 1;
         }
         return opts;
@@ -42,10 +43,11 @@ const DashboardWidgetHandler = Backbone.Model.extend({
         this.set("children", this.getChildren().filter(v => {
             if (v.attrs.id === id) {
                 v.remove();
+                this.removeId(id);
                 return false;
             }
             return true;
-        }));
+        }, this));
     },
     getChildren () {
         return this.get("children");
@@ -68,6 +70,15 @@ const DashboardWidgetHandler = Backbone.Model.extend({
     },
     getChildrenByIds (ids) {
         return this.getChildren().filter(v => ids.includes(v.attrs.id));
+    },
+    getIds () {
+        return this.get("ids");
+    },
+    pushId (id) {
+        this.getIds().push(id);
+    },
+    removeId (id) {
+        this.set("ids", this.getIds().filter(_id => _id !== id));
     }
 });
 

@@ -49,7 +49,6 @@ import AgeGroupSliderModel from "../../tools/ageGroupSlider/model";
 import GFI from "../../tools/gfi/model";
 import Viewpoint from "./viewpoint/model";
 import TimeSeries from "../../tools/timeSeries/model";
-import CalcuateRatio from "../../tools/calculateRatio/model";
 import ColorScale from "../../tools/colorScale/model";
 // import WsClientInput from "../../tools/wsClientInput/model";
 import CompareDistricts from "../../tools/compareDistricts/model";
@@ -323,9 +322,6 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
             }
             else if (attrs.id === "timeSeries") {
                 return new TimeSeries(attrs, options);
-            }
-            else if (attrs.id === "calculateRatio") {
-                return new CalcuateRatio(attrs, options);
             }
             else if (attrs.id === "colorScale") {
                 return new ColorScale(attrs, options);

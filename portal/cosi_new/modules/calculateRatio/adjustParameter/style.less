@@ -1,0 +1,31 @@
+.parameter-control-container {
+    .input-group {
+        display: flex;
+        .input-group-prepend, .input-group-append {
+            background-color: #e9ecef;
+            border: 1px solid #ccc;
+            color: #495057;
+            height:30px;
+            label {
+                margin-top:0;
+                padding: 0 10px;
+                white-space: nowrap;
+                font-size: 12px;
+                line-height: 30px;
+                span.info-button {
+                    margin-left: 5px; 
+                }
+            }
+        }
+        .form-control {
+            height:30px;
+            &#modifier-input {
+                width: 68px;
+            }
+        }
+        #operator {
+            width: 40px;
+            padding: 0 0 0 5px;
+        }
+    }
+}

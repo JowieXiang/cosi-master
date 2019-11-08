@@ -379,6 +379,7 @@ const DashboardTableModel = Tool.extend({
                 selector: document.createElement("div"),
                 scaleTypeX: "linear",
                 scaleTypeY: "linear",
+                dynamicAxisStart: true,
                 data: data,
                 refAttr: this.get("sortKey"),
                 attrToShowArray: [attrsToShow[1]],

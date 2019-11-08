@@ -57,7 +57,6 @@ import Formular from "../modules/formular/view";
 import FeatureLister from "../modules/featurelister/view";
 import PrintView from "../modules/tools/print_/view";
 import TimeSeries from "../modules/tools/timeSeries/view";
-import CalculateRatioView from "../modules/tools/calculateRatio/selectView";
 import CompareDistrictsView from "../modules/tools/compareDistricts/view";
 
 // @deprecated in version 3.0.0
@@ -207,10 +206,6 @@ async function loadApp() {
 
     _.each(Radio.request("ModelList", "getModelsByAttributes", { type: "tool" }), function (tool) {
         switch (tool.id) {
-            case "calculateRatio": {
-                new CalculateRatioView({ model: tool });
-                break;
-            }
             case "compareFeatures": {
                 new CompareFeaturesView({ model: tool });
                 break;
