@@ -28,7 +28,7 @@ const ColorScale = Backbone.Model.extend({
      * @returns {function, object} - returns both the scale function and a legend with value/color-pairs for visualization.
      */
 
-    generateColorScale (values = [0, 1], colorspace = Chromatic.interpolateRdYlGn, type = "sequential", defaultColor = "#3399CC") {
+    generateColorScale (values = [0, 1], colorspace = "interpolateRdYlGn", legendSteps = 5, type = "sequential", defaultColor = "#3399CC") {
         var _values = values.filter(val => !isNaN(val)),
             minValue = Math.min(..._values),
             maxValue = Math.max(..._values),
@@ -43,17 +43,17 @@ const ColorScale = Backbone.Model.extend({
             switch (type) {
                 case "linear":
                     scale = scaleLinear()
-                        .range(colorspace)
+                        .range(typeof colorspace === "string" ? Chromatic[colorspace] : colorspace)
                         .domain([minValue, maxValue]);
                     break;
                 default:
                     scale = scaleSequential()
-                        .interpolator(colorspace)
+                        .interpolator(typeof colorspace === "string" ? Chromatic[colorspace] : colorspace)
                         .domain([minValue, maxValue]);
                     break;
             }
 
-            legend.values = this.interpolateValues(minValue, maxValue);
+            legend.values = this.interpolateValues(minValue, maxValue, legendSteps);
             legend.colors = this.createLegendValues(scale, legend.values);
         }
 

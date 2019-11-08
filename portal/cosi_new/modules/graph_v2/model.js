@@ -3,8 +3,10 @@ import {axisBottom, axisLeft} from "d3-axis";
 import {line} from "d3-shape";
 import {select, event} from "d3-selection";
 import "d3-transition";
+import "./eval";
+import * as d3 from "d3-array";
 
-const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
+const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
     defaults: {
         maxValue: 0,
         minValue: 0
@@ -19,7 +21,7 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
      * @listens Tools.Graph#RadioRequestGraphGetGraphParams
      */
     initialize: function () {
-        var channel = Radio.channel("Graph");
+        var channel = Radio.channel("GraphV2");
 
         channel.on({
             "createGraph": this.createGraph
@@ -36,8 +38,9 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
 
     /**
      * Creates the graph. Distinguishes betweeen
-     * graphConfig.graphType === "Linegraph" and
-     * graphConfig.graphType === "BarGraph".
+     * graphConfig.graphType === "Linegraph",
+     * graphConfig.graphType === "BarGraph" and
+     * graphConfig.graphType === "ScatterPlot".
      * @param {Object} graphConfig Graph configuration.
      * @returns {void}
      */
@@ -49,6 +52,9 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
         }
         else if (graphConfig.graphType === "BarGraph") {
             this.createBarGraph(graphConfig);
+        }
+        else if (graphConfig.graphType === "ScatterPlot") {
+            this.createScatterPlot(graphConfig);
         }
 
         return svg;
@@ -523,7 +529,10 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             .append("text")
             .text(d => d.label)
             .attr("y", d => scaleY(d.y))
-            .attr("x", d => scaleTypeX === "ordinal" ? scaleX(d.x) + (scaleX.bandwidth() / 2) + 20 : scaleX(d.x) + 20);
+            .attr("x", d => {
+                console.log(d.x, xAttr, dataToShow);
+                return scaleTypeX === "ordinal" ? scaleX(d.x) + (scaleX.bandwidth() / 2) + 20 : scaleX(d.x) + 20;
+            });
     },
 
     /**
@@ -703,7 +712,7 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
         }
 
         if (hasLineLabel) {
-            this.appendLineLabel(svg, data, scaleX, scaleY, scaleTypeX, xAxisLabel);
+            this.appendLineLabel(svg, data, scaleX, scaleY, scaleTypeX, xAttr);
         }
 
         this.setGraphParams({
@@ -765,15 +774,14 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             yAxis = this.createAxisLeft(scaleY, yAxisTicks),
             svgClass = graphConfig.svgClass,
             svg = this.createSvg(selector, margin.left, margin.top, graphConfig.width, graphConfig.height, svgClass),
-            barWidth = width / data.length,
-            offset = 0;
+            barWidth = width / data.length;
 
         if (_.has(graphConfig, "legendData")) {
             this.appendLegend(svg, graphConfig.legendData);
         }
         this.drawBars(svg, data, scaleX, scaleY, height, selector, barWidth, xAttr, attrToShowArray);
-        this.appendYAxisToSvg(svg, yAxis, yAxisLabel, offset);
-        this.appendXAxisToSvg(svg, xAxis, xAxisLabel, offset);
+        this.appendYAxisToSvg(svg, yAxis, yAxisLabel, height);
+        this.appendXAxisToSvg(svg, xAxis, xAxisLabel, width);
 
         return svg;
     },
@@ -835,6 +843,278 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
     },
 
     /**
+     * Creates the linegraph.
+     * @param {Object} graphConfig Graph config.
+     * @param {String} graphConfig.selector Class for SVG to be appended to.
+     * @param {String} graphConfig.scaleTypeX Type of x-axis.
+     * @param {String} graphConfig.scaleTypeY Type of y-axis.
+     * @param {Object[]} graphConfig.data Data for graph.
+     * @param {String} graphConfig.xAttr Attribute name for x-axis.
+     * @param {Object} graphConfig.xAxisLabel Object to define the label for x-axis.
+     * @param {String} graphConfig.xAxisLabel.label Label for x-axis.
+     * @param {Number} graphConfig.xAxisLabel.translate Translation offset for label for x-axis.
+     * @param {Object} graphConfig.yAxisLabel Object to define the label for y-axis.
+     * @param {String} graphConfig.yAxisLabel.label Label for y-axis.
+     * @param {Number} graphConfig.yAxisLabel.offset Offset for label for y-axis.
+     * @param {Object/String[]} graphConfig.attrToShowArray Array of attribute names or objects to be shown on y-axis.
+     * @param {Object/String[]} graphConfig.attrToShowArray.attrName Name of attribute to be shown.
+     * @param {Object/String[]} graphConfig.attrToShowArray.attrClass Class for line in graph.
+     * @param {Object} graphConfig.margin Margin object for graph.
+     * @param {Number} graphConfig.margin.top Top margin.
+     * @param {Number} graphConfig.margin.right Right margin.
+     * @param {Number} graphConfig.margin.bottom Bottom margin.
+     * @param {Number} graphConfig.margin.left left margin.
+     * @param {Number} graphConfig.width Width of SVG.
+     * @param {Number} graphConfig.height Height of SVG.
+     * @param {Object} graphConfig.xAxisTicks Ticks for x-axis.
+     * @param {String} graphConfig.xAxisTicks.unit Unit of x-axis-ticks.
+     * @param {Number/String[]} graphConfig.xAxisTicks.values Values for x-axis-ticks.
+     * @param {Number} graphConfig.xAxisTicks.factor Factor for x-axis-ticks.
+     * @param {Object} graphConfig.yAxisTicks Ticks for y-axis.
+     * @param {Object} graphConfig.yAxisTicks.ticks Values for y-axis-ticks.
+     * @param {Object} graphConfig.yAxisTicks.factor Factor for y-axis-ticks.
+     * @param {String} graphConfig.svgClass Class of SVG.
+     * @param {String} graphConfig.selectorTooltip Selector for tooltip div.
+     * @param {Object[]} graphConfig.legendData Data for legend.
+     * @param {String} graphConfig.legendData.class CSS class for legend object.
+     * @param {String} graphConfig.legendData.text Text for legen object.
+     * @returns {void}
+     */
+    createScatterPlot: function (graphConfig) {
+        var isMobile = Radio.request("Util", "isViewMobile"),
+            selector = graphConfig.selector,
+            scaleTypeX = graphConfig.scaleTypeX,
+            scaleTypeY = graphConfig.scaleTypeY,
+            data = graphConfig.data,
+            refAttr = graphConfig.refAttr,
+            xAttr = graphConfig.xAttr,
+            xAxisLabel = graphConfig.xAxisLabel,
+            yAxisLabel = graphConfig.yAxisLabel,
+            attrToShowArray = graphConfig.attrToShowArray,
+            flatAttrToShowArray = this.flattenAttrToShowArray(attrToShowArray),
+            margin = graphConfig.margin,
+            marginBottom = isMobile ? margin.bottom + 20 : margin.bottom,
+            width = graphConfig.width - margin.left - margin.right,
+            height = graphConfig.height - margin.top - marginBottom,
+            scaleX = this.createScaleX(data, width, scaleTypeX, xAttr),
+            scaleY = this.createScaleY(data, height, scaleTypeY, flatAttrToShowArray),
+            xAxisTicks = graphConfig.xAxisTicks,
+            yAxisTicks = graphConfig.yAxisTicks,
+            xAxis = this.createAxisBottom(scaleX, xAxisTicks),
+            yAxis = this.createAxisLeft(scaleY, yAxisTicks),
+            svgClass = graphConfig.svgClass,
+            svg = this.createSvg(selector, margin.left, margin.top, graphConfig.width, graphConfig.height, svgClass),
+            tooltipDiv = select(graphConfig.selectorTooltip),
+            offset = 10,
+            dotSize = graphConfig.dotSize || 5;
+
+        if (_.has(graphConfig, "legendData")) {
+            this.appendLegend(svg, graphConfig.legendData);
+        }
+        _.each(attrToShowArray, function (yAttrToShow) {
+            const attrData = this.evaluateData(data, xAttr, yAttrToShow),
+                regressionLine = this.createRegressionLine(xAttr, scaleX, scaleY);
+
+            console.log(attrData, regressionLine);
+
+            this.appendPlotLayout(svg);
+            // Add the scatterplot for each point in line
+            this.appendDataToScatterPlot(svg, attrData, scaleX, scaleY, xAttr, refAttr, yAttrToShow, tooltipDiv, dotSize);
+            // Add Regression-line and deviation val
+            this.appendRegressionLine(svg, attrData, regressionLine);
+        }, this);
+        // Add the Axis
+        this.appendYAxisToSvg(svg, yAxis, yAxisLabel, height);
+        this.appendXAxisToSvg(svg, xAxis, xAxisLabel, width);
+
+        if (isMobile) {
+            this.rotateXAxisTexts(svg);
+            this.translateXAxislabelText(svg, xAxisLabel.translate);
+        }
+
+        this.setGraphParams({
+            scaleX: scaleX,
+            scaleY: scaleY,
+            tooltipDiv: tooltipDiv,
+            margin: margin,
+            offset: offset
+        });
+
+        return svg;
+    },
+
+    evaluateData: function (data, xAttr, yAttr) {
+        var dat = data.filter(function (obj) {
+                return obj[yAttr] !== "-";
+            }),
+            xArr = dat.map(d => d[xAttr]),
+            yArr = dat.map(d => d[yAttr]),
+            xMean = d3.mean(xArr),
+            yMean = d3.mean(yArr),
+            xr = 0,
+            yr = 0,
+            term1 = 0,
+            term2 = 0,
+            a, b;
+
+        // calculate coefficients
+        for (let i = 0; i < dat.length; i++) {
+            xr = xArr[i] - xMean;
+            yr = yArr[i] - yMean;
+            term1 += xr * yr;
+            term2 += xr * xr;
+        }
+        a = term1 / term2;
+        b = yMean - (a * xMean);
+ 
+        // calculate average y
+        for (let i = 0; i < dat.length; i++) {
+            dat[i].yMean = b + (xArr[i] * a);
+        }
+
+        return dat;
+    },
+
+    createRegressionLine (xAttr, scaleX, scaleY) {
+        return line()
+            .x(function (d) {
+                return scaleX(d[xAttr]);
+            })
+            .y(function (d) {
+                return scaleY(d.yMean);
+            });
+    },
+
+    appendRegressionLine (svg, data, d3line) {
+        svg.append("g")
+            .attr("class", "regression")
+            .attr("transform", function () {
+                var y;
+
+                if (svg.select(".graph-legend").size() > 0) {
+                    y = svg.select(".graph-legend").node().getBBox().height;
+
+                    return "translate(0, " + y + ")";
+                }
+                return "translate(0, 0)";
+            })
+            .append("path")
+            .data([data])
+            .attr("class", "regression-line")
+            .attr("d", d3line);
+    },
+
+    /**
+     * Creates the basic structure of a graph.
+     * @param {SVG} svg The svg.
+     * @param {Object[]} data Data for graph.
+     * @param {String} className Class name of point.
+     * @param {Object} d3line D3 line object.
+     * @param {String} tooltipDiv (optional)
+     * @param {String} attrName (optional) name of Attr for hover
+     * @returns {void}
+     */
+    appendPlotLayout: function (svg) {
+        svg.append("g")
+            .attr("class", "graph-data")
+            .attr("transform", function () {
+                var y;
+
+                if (svg.select(".graph-legend").size() > 0) {
+                    y = svg.select(".graph-legend").node().getBBox().height;
+
+                    return "translate(0, " + y + ")";
+                }
+                return "translate(0, 0)";
+            })
+            .append("g")
+            .attr("class", "graph-diagram");
+    },
+
+    /**
+     * Appends line points to created line.
+     * @param {SVG} svg Svg.
+     * @param {Object[]} data Data for graph.
+     * @param {Object} scaleX Scale for x-axis.
+     * @param {Object} scaleY Scale for y-axis.
+     * @param {String} xAttr Attribute name for x-axis.
+     * @param {String} refAttr the reference/context of each val pair
+     * @param {String} yAttr Attribute name for line point on y-axis.
+     * @param {Selection} tooltipDiv Selection of the tooltip-div.
+     * @param {Number} dotSize The size of the dots.
+     * @returns {void}
+     */
+    appendDataToScatterPlot: function (svg, data, scaleX, scaleY, xAttr, refAttr, yAttr, tooltipDiv, dotSize) {
+        var dat = data.filter(function (obj) {
+                return obj[yAttr] !== "-";
+            }),
+            refValues = dat.reduce((res, val) => {
+                return res.includes(val[refAttr]) ? res : [...res, val[refAttr]];
+            }, []),
+            refColorScale = Radio.request("ColorScale", "getColorScaleByValues", [0, 1], "interpolateRainbow", refValues.length),
+            refColors = Object.fromEntries(refValues.map((val, i) => [val, refColorScale.legend.colors[i]])),
+            yAttributeToShow,
+            xAttributeToShow,
+            tooltipElement;
+
+        svg.append("g").attr("class", " graph-points").selectAll("points")
+            .data(dat)
+            .enter()
+            .append("circle")
+            .attr("cx", function (d) {
+                return scaleX(d[xAttr]);
+            })
+            .attr("cy", function (d) {
+                return scaleY(d[yAttr]);
+            })
+            .attr("r", dotSize)
+            .attr("className", "graph-point")
+            .attr("x", function (d) {
+                return scaleX(d[xAttr]);
+            })
+            .attr("y", function (d) {
+                return scaleY(d[yAttr]) - 5;
+            })
+            .attr("width", 10)
+            .attr("height", 10)
+            .attr("fill", function (d) {
+                return refColors[d[refAttr]];
+            })
+            .on("mouseover", function (d) {
+                yAttributeToShow = Number.isInteger(d[yAttr]) ? parseInt(d[yAttr], 10).toLocaleString("de-DE") : parseFloat(d[yAttr]).toFixed(2).toLocaleString("de-DE");
+                xAttributeToShow = Number.isInteger(d[xAttr]) ? parseInt(d[xAttr], 10).toLocaleString("de-DE") : parseFloat(d[xAttr]).toFixed(2).toLocaleString("de-DE");
+                tooltipElement = $(`<table>
+                    <tr class="prop"><th>${refAttr}</th><th>${xAttr}</th><th>${yAttr}</th></tr>
+                    <tr class="val"><td>${d[refAttr]}</td><td>${xAttributeToShow}</td><td>${yAttributeToShow}</td></td>
+                </table>`);
+
+                for (const prop in d) {
+                    if (![refAttr, xAttr, yAttr, "yMean"].includes(prop)) {
+                        tooltipElement.find(".prop").append($(`<th>${prop === "year" ? "Jahr" : prop}</th>`));
+                        tooltipElement.find(".val").append($(`<td>${d[prop]}</td>`));
+                    }
+                }
+
+                tooltipDiv.transition()
+                    .duration(200)
+                    .style("opacity", 0.9);
+                tooltipDiv.html(tooltipElement.get(0).outerHTML)
+                    .attr("style", "background-color: buttonface; border-radius: 4px; text-align: center;")
+                    .style("right", (window.innerWidth - event.clientX - 25) + "px")
+                    .style("top", (event.clientY + 20) + "px");
+            }, tooltipDiv)
+            .on("mouseout", function () {
+                tooltipDiv.transition()
+                    .duration(200)
+                    .style("opacity", 0)
+                    .on("end", function () {
+                        tooltipDiv.style("left", "0px");
+                        tooltipDiv.style("top", "0px");
+                    }, tooltipDiv);
+            }, tooltipDiv);
+    },
+
+    /**
      * Setter for attribute "graphParams".
      * @param {Object} value Graph params.
      * @returns {void}
@@ -844,4 +1124,4 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
     }
 });
 
-export default GraphModel;
+export default GraphModelV2;

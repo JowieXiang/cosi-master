@@ -61,7 +61,7 @@ const DashboardTableView = Backbone.View.extend({
 
             btn.className = "btn btn-primary";
             btn.id = "correlation-button";
-            btn.innerHTML = `<strong>Korrelation erstellen:</strong><br /> ${this.model.getAttrsForCorrelation().join(" / ")}`;
+            btn.innerHTML = `<strong>Korrelation erstellen:</strong><br /> ${this.model.getAttrsForCorrelation().join(" : ")}`;
 
             if (this.model.getAttrsForCorrelation().length < 2) {
                 btn.setAttribute("disabled", true);

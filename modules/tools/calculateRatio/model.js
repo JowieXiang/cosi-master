@@ -1,27 +1,20 @@
 import Tool from "../../core/modelList/tool/model";
 import SnippetDropdownModel from "../../snippets/dropdown/model";
-import AdjustParameterView from "../../snippets/adjustParameter/view";
+import AdjustParameterView from "./adjustParameter/view";
 import ExportButtonModel from "../../snippets/exportButton/model";
 import * as Extent from "ol/extent";
 
 const CalculateRatioModel = Tool.extend({
     defaults: _.extend({}, Tool.prototype.defaults, {
         deactivateGFI: true,
-        renderToWindow: true,
-        isCollapsed: undefined,
-        isCurrentWin: undefined,
-        tooltipMessage: "Gebiete zum Starten auswählen",
         data: {},
-        results: {},
+        results: [],
         area: {},
-        initialDemographicLayers: [],
         numerators: {},
         denominators: {},
         resolution: 1000,
         numDropdownModel: {},
-        numValues: {},
         denDropdownModel: {},
-        denValues: {},
         message: "",
         adjustParameterViews: [],
         exportButtonModel: {}
@@ -29,48 +22,83 @@ const CalculateRatioModel = Tool.extend({
     initialize: function () {
         this.superInitialize();
 
-        this.setDropdownSnippets({
-            numerators: new SnippetDropdownModel({
-                name: "Einrichtungen",
-                type: "string",
-                displayName: "Einrichtungstypen auswählen",
-                values: _.allKeys(this.get("numValues")),
-                snippetType: "dropdown",
-                isMultiple: true,
-                preselectedValues: _.allKeys(this.get("numValues"))[0]
-            }),
-            denominators: new SnippetDropdownModel({
-                name: "Zielgruppe",
-                type: "string",
-                displayName: "Zielgruppen auswählen",
-                values: _.allKeys(this.get("denValues")),
-                snippetType: "dropdown",
-                isMultiple: true,
-                preselectedValues: _.allKeys(this.get("denValues"))[0]
-            })
+        this.listenTo(this, {
+            "change:isActive": function (model, isActive) {
+                if (isActive) {
+                    // const scope = Radio.request("SelectDistrict", "getScope");
+                    let demographicValueList = Radio.request("FeaturesLoader", "getAllValuesByScope", "statgebiet");
+
+                    demographicValueList = demographicValueList.filter(function (layer) {
+                        return layer.valueType === "absolute";
+                    });
+
+                    this.updateFacilityLayerList(Radio.request("ModelList", "getModelsByAttributes", {type: "layer", isVisibleInMap: true}));
+                    this.setDemographicDropdownModel(demographicValueList);
+                }
+            }
         });
 
-        this.listenTo(this.get("numDropdownModel"), {
-            "valuesChanged": this.setNumerators
+
+        this.listenTo(Radio.channel("ModelList"), {
+            "updatedSelectedLayerList": this.updateFacilityLayerList
         });
-        this.listenTo(this.get("denDropdownModel"), {
-            "valuesChanged": this.setDenominators
-        });
+
         this.listenTo(this, {
             "change:numerators": this.updateModifiers
         });
-        this.listenTo(Radio.channel("Layer"), {
-            "layerVisibleChanged": this.getActiveFacilityLayers
-        });
-        this.listenTo(Radio.channel("FeaturesLoader"), {
-            "districtsLoaded": this.getAbsoluteDemographicsLayers
-        });
-        this.on({
-            "change:denValues": this.updateDropdownMenus,
-            "change:numValues": this.updateDropdownMenus
-        }, this);
+
+        this.setExportButton();
     },
-    generateExport: function () {
+
+    updateFacilityLayerList: function (layerList) {
+        if (this.get("isActive")) {
+            const facilityLayerList = layerList.filter((layer) => {
+                return layer.get("isFacility") === true;
+            });
+
+            this.setFacilityLayerList(facilityLayerList);
+            this.setFacilityDropdownModel(facilityLayerList);
+        }
+    },
+    setFacilityLayerList: function (layerList) {
+        this.set("facilityLayerList", layerList);
+    },
+
+    setFacilityDropdownModel: function (layerList) {
+        const layerNameList = layerList.map(layer => {
+            return layer.get("name");
+        });
+
+        this.set("numDropdownModel", new SnippetDropdownModel({
+            name: "Einrichtungen",
+            type: "string",
+            displayName: "Einrichtungstypen auswählen",
+            values: layerNameList,
+            snippetType: "dropdown",
+            isMultiple: true
+        }));
+        this.listenTo(this.get("numDropdownModel"), {
+            "valuesChanged": this.setNumerators
+        });
+        this.trigger("renderFacilityDropDown");
+    },
+
+    setDemographicDropdownModel: function (layerList) {
+        this.set("denDropdownModel", new SnippetDropdownModel({
+            name: "Zielgruppe",
+            type: "string",
+            displayName: "Zielgruppen auswählen",
+            values: layerList,
+            snippetType: "dropdown",
+            isMultiple: true,
+            isGrouped: true
+        }));
+        this.listenTo(this.get("denDropdownModel"), {
+            "valuesChanged": this.setDenominators
+        });
+    },
+
+    setExportButton: function () {
         this.set("exportButtonModel", new ExportButtonModel({
             tag: "Als CSV herunterladen",
             rawData: this.get("results"),
@@ -81,7 +109,8 @@ const CalculateRatioModel = Tool.extend({
     getRatiosForSelectedFeatures: function () {
         this.resetResults();
 
-        const selectedDistricts = Radio.request("SelectDistrict", "getSelectedDistricts"),
+        const renameResults = {},
+            selectedDistricts = Radio.request("SelectDistrict", "getSelectedDistricts"),
             selector = Radio.request("SelectDistrict", "getSelector");
         let facilities,
             demographics,
@@ -120,7 +149,10 @@ const CalculateRatioModel = Tool.extend({
             this.setMessage("Bitte wählen Sie mindestens einen Stadtteil aus.");
         }
 
-        this.generateExport();
+        Object.keys(this.getResults()).forEach(function (objectKey) {
+            renameResults[objectKey] = Radio.request("Util", "renameKeys", {ratio: "Verhaeltnis", facilities: "Einrichtungswert", demographics: "Zielgruppe"}, this.getResults()[objectKey]);
+        }, this);
+        this.get("exportButtonModel").set("rawData", renameResults);
         this.trigger("renderResults");
     },
     calculateRatio (facilities, demographics, area = "allen Unterschungsgebieten") {
@@ -133,21 +165,26 @@ const CalculateRatioModel = Tool.extend({
     getTargetDemographicsInDistrict: function (district, selector) {
         let targetPopulation = 0;
 
-        if (this.getDenominators().length > 0) {
-            this.getDenominators().forEach((den) => {
-                const districtFeature = Radio.request("FeaturesLoader", "getAllFeaturesByAttribute", {name: den})
-                    .filter(feature => feature.getProperties()[selector] === district.getProperties()[selector]);
+        if (typeof this.getDenominators() !== "undefined") {
+            if (this.getDenominators().length > 0) {
+                this.getDenominators().forEach((den) => {
+                    const districtFeature = Radio.request("FeaturesLoader", "getAllFeaturesByAttribute", {name: den})
+                        .filter(feature => feature.getProperties()[selector] === district.getProperties()[selector]);
 
-                if (districtFeature) {
-                    const districtProperties = districtFeature[0].getProperties(),
-                        field = Radio.request("Timeline", "getLatestFieldFromProperties", districtProperties);
+                    if (districtFeature) {
+                        const districtProperties = districtFeature[0].getProperties(),
+                            field = Radio.request("Timeline", "getLatestFieldFromProperties", districtProperties);
 
-                    targetPopulation += parseInt(districtProperties[field], 10);
-                }
-                else {
-                    this.setMessage("Entschuldigung! Der zu prüfende Layer besitzt keine gültige Spalte für Verhältnisanalysen. Bitte wählen Sie einen anderen Layer aus.");
-                }
-            });
+                        targetPopulation += parseInt(districtProperties[field], 10);
+                    }
+                    else {
+                        this.setMessage("Entschuldigung! Der zu prüfende Layer besitzt keine gültige Spalte für Verhältnisanalysen. Bitte wählen Sie einen anderen Layer aus.");
+                    }
+                });
+            }
+            else {
+                this.setMessage("Bitte wählen Sie eine demografische Zielgruppe aus.");
+            }
         }
         else {
             this.setMessage("Bitte wählen Sie eine demografische Zielgruppe aus.");
@@ -166,11 +203,12 @@ const CalculateRatioModel = Tool.extend({
             featuresInDistrict = [];
         let featureCount = 0;
 
-        if (typeof this.getNumerators() !== undefined) {
+        if (typeof this.getNumerators() !== "undefined") {
             if (this.getNumerators().length > 0) {
                 _.each(this.getNumerators(), (num) => {
-                    const layerId = this.get("numValues")[num],
-                        layer = Radio.request("ModelList", "getModelByAttributes", {id: layerId}),
+                    const layer = this.get("facilityLayerList").find((facilityLayer) => {
+                            return facilityLayer.get("name") === num;
+                        }),
                         features = layer.get("layerSource").getFeatures().filter(f => typeof f.style_ === "object" || f.style_ === null);
 
                     _.each(features, (feature) => {
@@ -194,43 +232,7 @@ const CalculateRatioModel = Tool.extend({
 
         return featureCount;
     },
-    getActiveFacilityLayers: function () {
-        const possibleNumerators = Radio.request("ModelList", "getModelsByAttributes", {type: "layer", isVisibleInMap: true, isFacility: true});
 
-        this.setDropdownValues(possibleNumerators, "numValues");
-    },
-    getAbsoluteDemographicsLayers: function (layerList) {
-        this.setDropdownValues(layerList.filter(layer => !(layer.get("name").includes("proz") || layer.get("name").includes("ant") || layer.get("name").includes("avg"))), "denValues");
-    },
-    setDropdownValues: function (models, field) {
-        const values = this.remapModelsToValues(models);
-
-        this.set(field, values);
-    },
-    remapModelsToValues: function (models) {
-        const values = {};
-
-        models.forEach((model) => {
-            values[model.get("name")] = model.get("id");
-        });
-
-        return values;
-    },
-    updateDropdownMenus: function () {
-        const numDropdownModel = this.get("numDropdownModel"),
-            denDropdownModel = this.get("denDropdownModel");
-
-        numDropdownModel.set("values", _.allKeys(this.get("numValues")));
-        denDropdownModel.set("values", _.allKeys(this.get("denValues")));
-    },
-    setDropdownSnippets: function (values) {
-        if (values.numerators) {
-            this.set("numDropdownModel", values.numerators);
-        }
-        if (values.denominators) {
-            this.set("denDropdownModel", values.denominators);
-        }
-    },
     updateModifiers: function () {
         // check if modifier already exists
         _.each(this.getNumerators(), (numerator) => {
@@ -244,7 +246,11 @@ const CalculateRatioModel = Tool.extend({
         }));
     },
     createModifier: function (layerName) {
-        this.get("adjustParameterViews").push(new AdjustParameterView(this.get("numValues")[layerName], this.get("modifierInfoText")));
+        const layer = this.get("facilityLayerList").find((facilityLayer) => {
+            return facilityLayer.get("name") === layerName;
+        });
+
+        this.get("adjustParameterViews").push(new AdjustParameterView(layer.get("id"), this.get("modifierInfoText")));
         this.trigger("change:adjustParameterViews");
     },
     setNumerators: function () {
