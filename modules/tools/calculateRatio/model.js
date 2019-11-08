@@ -109,7 +109,8 @@ const CalculateRatioModel = Tool.extend({
     getRatiosForSelectedFeatures: function () {
         this.resetResults();
 
-        const selectedDistricts = Radio.request("SelectDistrict", "getSelectedDistricts"),
+        const renameResults = {},
+            selectedDistricts = Radio.request("SelectDistrict", "getSelectedDistricts"),
             selector = Radio.request("SelectDistrict", "getSelector");
         let facilities,
             demographics,
@@ -148,7 +149,10 @@ const CalculateRatioModel = Tool.extend({
             this.setMessage("Bitte wählen Sie mindestens einen Stadtteil aus.");
         }
 
-        this.get("exportButtonModel").set("rawData", this.getResults());
+        Object.keys(this.getResults()).forEach(function (objectKey) {
+            renameResults[objectKey] = Radio.request("Util", "renameKeys", {ratio: "Verhaeltnis", facilities: "Einrichtungswert", demographics: "Zielgruppe"}, this.getResults()[objectKey]);
+        }, this);
+        this.get("exportButtonModel").set("rawData", renameResults);
         this.trigger("renderResults");
     },
     calculateRatio (facilities, demographics, area = "allen Unterschungsgebieten") {
