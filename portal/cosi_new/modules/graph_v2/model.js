@@ -3,8 +3,8 @@ import {axisBottom, axisLeft} from "d3-axis";
 import {line} from "d3-shape";
 import {select, event} from "d3-selection";
 import "d3-transition";
-import "./eval";
 import * as d3 from "d3-array";
+import evaluate from "./eval";
 
 const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
     defaults: {
@@ -82,15 +82,37 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
         return maxValue;
     },
 
+    createMinValue: function (data, attrToShowArray) {
+        var minValue = null;
+
+        if (data !== undefined && attrToShowArray !== undefined) {
+            data.forEach(function (obj) {
+                attrToShowArray.forEach(function (attrToShow) {
+                    if (minValue) {
+                        if (obj[attrToShow] - minValue < 0) {
+                            minValue = obj[attrToShow];
+                        }
+                    }
+                    else {
+                        minValue = obj[attrToShow];
+                    }
+                });
+            });
+        }
+
+        return minValue;
+    },
+
     /**
      * Creates an object with min- and max-value.
      * @param {Object[]} data Data for graph.
      * @param {String[]} attrToShowArray Attribute array.
+     * @param {boolean} dynamicAxisStart shall the x Axis start be calculated or be 0?
      * @param {Object} axisTicks Ticks object.
      * @param {number} yAxisMaxValue - max value for the y-axis
      * @return {object} - Object with attribute "minValue" and "maxValue".
      */
-    createValues: function (data, attrToShowArray, axisTicks, yAxisMaxValue) {
+    createValues: function (data, attrToShowArray, dynamicAxisStart = false, axisTicks, yAxisMaxValue) {
         var valueObj = {};
 
         if (!_.isUndefined(axisTicks) && _.has(axisTicks, "start") && _.has(axisTicks, "end")) {
@@ -98,7 +120,12 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             valueObj.maxValue = axisTicks.end;
         }
         else {
-            valueObj.minValue = 0;
+            if (dynamicAxisStart) {
+                valueObj.minValue = this.createMinValue(data, attrToShowArray);
+            }
+            else {
+                valueObj.minValue = 0;
+            }
             if (yAxisMaxValue) {
                 valueObj.maxValue = yAxisMaxValue;
             }
@@ -116,10 +143,11 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
      * @param {Number} width Width for scale.
      * @param {String} scaletype Enum of scaletype. Possible values are "ordinal" or "linear".
      * @param {String} attr Attribute name for x axis.
+     * @param {boolean} dynamicAxisStart start the x-Axis at dynamic pos.
      * @param {Object} xAxisTicks Ticks object.
      * @returns {Object} - scaleX
      */
-    createScaleX: function (data, width, scaletype, attr, xAxisTicks) {
+    createScaleX: function (data, width, scaletype, attr, dynamicAxisStart = false, xAxisTicks) {
         var rangeArray = [0, width],
             scale,
             valueObj;
@@ -128,7 +156,7 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             scale = this.createOrdinalScale(data, rangeArray, [attr]);
         }
         else if (scaletype === "linear") {
-            valueObj = this.createValues(data, [attr], xAxisTicks);
+            valueObj = this.createValues(data, [attr], dynamicAxisStart, xAxisTicks);
             scale = this.createLinearScale(valueObj.minValue, valueObj.maxValue, rangeArray);
         }
         else {
@@ -142,11 +170,12 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
      * @param {Number} height Height for scale.
      * @param {String} scaletype Enum of scaletype. Possible values are "ordinal" or "linear".
      * @param {String[]} attrToShowArray Array of attributes to be shown in graph.
+     * @param {boolean} dynamicAxisStart start the x-Axis at dynamic pos.
      * @param {Object} yAxisTicks Ticks object.
      * @param {number} yAxisMaxValue - max value for the y-axis
      * @returns {Object} - scaleY
      */
-    createScaleY: function (data, height, scaletype, attrToShowArray, yAxisTicks, yAxisMaxValue) {
+    createScaleY: function (data, height, scaletype, attrToShowArray, dynamicAxisStart = false, yAxisTicks, yAxisMaxValue) {
         var rangeArray = [height, 0],
             scale,
             valueObj;
@@ -155,7 +184,7 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             scale = this.createOrdinalScale(data, rangeArray, attrToShowArray);
         }
         else if (scaletype === "linear") {
-            valueObj = this.createValues(data, attrToShowArray, yAxisTicks, yAxisMaxValue);
+            valueObj = this.createValues(data, attrToShowArray, dynamicAxisStart, yAxisTicks, yAxisMaxValue);
             scale = this.createLinearScale(valueObj.minValue, valueObj.maxValue, rangeArray);
         }
         else {
@@ -821,7 +850,7 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             .append("rect")
             .attr("class", typeof selector === "string" ? "bar" + selector.split(".")[1] : "bar")
             .attr("fill", function (d) {
-                return Radio.request("ColorScale", "getColorScaleByValues", y.domain()).scale(d[attrToShowArray[0]]);
+                return Radio.request("ColorScale", "getColorScaleByValues", y.domain(), "interpolateBlues").scale(d[attrToShowArray[0]]); // change to argument based
             })
             .attr("x", function (d) {
                 return x(d[xAttr]);
@@ -896,8 +925,9 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             marginBottom = isMobile ? margin.bottom + 20 : margin.bottom,
             width = graphConfig.width - margin.left - margin.right,
             height = graphConfig.height - margin.top - marginBottom,
-            scaleX = this.createScaleX(data, width, scaleTypeX, xAttr),
-            scaleY = this.createScaleY(data, height, scaleTypeY, flatAttrToShowArray),
+            dynamicAxisStart = graphConfig.dynamicAxisStart,
+            scaleX = this.createScaleX(data, width, scaleTypeX, xAttr, dynamicAxisStart),
+            scaleY = this.createScaleY(data, height, scaleTypeY, flatAttrToShowArray, dynamicAxisStart),
             xAxisTicks = graphConfig.xAxisTicks,
             yAxisTicks = graphConfig.yAxisTicks,
             xAxis = this.createAxisBottom(scaleX, xAxisTicks),
@@ -915,13 +945,12 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             const attrData = this.evaluateData(data, xAttr, yAttrToShow),
                 regressionLine = this.createRegressionLine(xAttr, scaleX, scaleY);
 
-            console.log(attrData, regressionLine);
-
             this.appendPlotLayout(svg);
             // Add the scatterplot for each point in line
-            this.appendDataToScatterPlot(svg, attrData, scaleX, scaleY, xAttr, refAttr, yAttrToShow, tooltipDiv, dotSize);
-            // Add Regression-line and deviation val
-            this.appendRegressionLine(svg, attrData, regressionLine);
+            this.appendDataToScatterPlot(svg, attrData.data, scaleX, scaleY, xAttr, refAttr, yAttrToShow, tooltipDiv, dotSize);
+            // Add Regression-line and pearson correlation value
+            this.appendRegressionLine(svg, attrData.data, regressionLine);
+            this.appendStats(svg, attrData.stats, width, height);
         }, this);
         // Add the Axis
         this.appendYAxisToSvg(svg, yAxis, yAxisLabel, height);
@@ -945,7 +974,7 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
 
     evaluateData: function (data, xAttr, yAttr) {
         var dat = data.filter(function (obj) {
-                return obj[yAttr] !== "-";
+                return obj[yAttr] !== "-" && obj[xAttr] !== "-";
             }),
             xArr = dat.map(d => d[xAttr]),
             yArr = dat.map(d => d[yAttr]),
@@ -955,7 +984,8 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             yr = 0,
             term1 = 0,
             term2 = 0,
-            a, b;
+            a, b,
+            covariance, pearson, err;
 
         // calculate coefficients
         for (let i = 0; i < dat.length; i++) {
@@ -966,13 +996,24 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
         }
         a = term1 / term2;
         b = yMean - (a * xMean);
- 
+
         // calculate average y
         for (let i = 0; i < dat.length; i++) {
-            dat[i].yMean = b + (xArr[i] * a);
+            dat[i].yEst = b + (xArr[i] * a);
         }
 
-        return dat;
+        // calculate covariance
+        covariance = evaluate.covar(xArr, yArr);
+        pearson = evaluate.computePearsons(xArr, yArr);
+        err = evaluate.standardError(dat, xAttr, yAttr);
+
+        return {
+            data: dat,
+            stats: [
+                {name: "Pearson Korrelation", val: pearson},
+                {name: "Kovarianz", val: covariance}
+            ]
+        };
     },
 
     createRegressionLine (xAttr, scaleX, scaleY) {
@@ -981,13 +1022,13 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
                 return scaleX(d[xAttr]);
             })
             .y(function (d) {
-                return scaleY(d.yMean);
+                return scaleY(d.yEst);
             });
     },
 
     appendRegressionLine (svg, data, d3line) {
         svg.append("g")
-            .attr("class", "regression")
+            .attr("class", "graph-regression")
             .attr("transform", function () {
                 var y;
 
@@ -1002,6 +1043,22 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             .data([data])
             .attr("class", "regression-line")
             .attr("d", d3line);
+    },
+
+    appendStats (svg, data, width, height) {
+        svg.append("g")
+            .attr("class", "graph-legend")
+            .selectAll("text")
+            .data(data)
+            .enter()
+            .append("text")
+            .attr("x", width)
+            .attr("y", (d, i) => {
+                return i * 20;
+            })
+            .text(d => {
+                return `${d.name}: ${d.val.toFixed(3).toLocaleString("de-DE")}`;
+            });
     },
 
     /**
@@ -1045,10 +1102,7 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
      * @returns {void}
      */
     appendDataToScatterPlot: function (svg, data, scaleX, scaleY, xAttr, refAttr, yAttr, tooltipDiv, dotSize) {
-        var dat = data.filter(function (obj) {
-                return obj[yAttr] !== "-";
-            }),
-            refValues = dat.reduce((res, val) => {
+        var refValues = data.reduce((res, val) => {
                 return res.includes(val[refAttr]) ? res : [...res, val[refAttr]];
             }, []),
             refColorScale = Radio.request("ColorScale", "getColorScaleByValues", [0, 1], "interpolateRainbow", refValues.length),
@@ -1058,7 +1112,7 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             tooltipElement;
 
         svg.append("g").attr("class", " graph-points").selectAll("points")
-            .data(dat)
+            .data(data)
             .enter()
             .append("circle")
             .attr("cx", function (d) {
@@ -1089,7 +1143,7 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
                 </table>`);
 
                 for (const prop in d) {
-                    if (![refAttr, xAttr, yAttr, "yMean"].includes(prop)) {
+                    if (![refAttr, xAttr, yAttr, "yEst"].includes(prop)) {
                         tooltipElement.find(".prop").append($(`<th>${prop === "year" ? "Jahr" : prop}</th>`));
                         tooltipElement.find(".val").append($(`<td>${d[prop]}</td>`));
                     }

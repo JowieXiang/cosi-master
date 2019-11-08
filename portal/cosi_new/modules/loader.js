@@ -8,6 +8,7 @@ import SelectDistrictView from "./selectDistrict/view";
 import SaveSelectionCosiView from "./saveSelection/view";
 import InfoScreenView from "./infoScreen/view";
 import TimeSliderView from "./timeSlider/view";
+import CalculateRatioView from "./calculateRatio/selectView";
 import ReachabilityView from "./reachability/view";
 import ServiceCoverageView from "./serviceCoverage/view";
 import PrintView from "../../../modules/tools/print/view";
@@ -39,6 +40,7 @@ function initializeCosi () {
     // Handle TouchScreen / InfoScreen Loading
     if (!window.location.pathname.includes("infoscreen.html")) {
         Radio.trigger("ModelList", "addModelsAndUpdate", Object.values(tools));
+        new CalculateRatioView({model: tools.calculateRatio});
         new ReachabilityView({model: tools.reachability});
         new ServiceCoverageView({model: tools.serviceCoverage});
         new ColorCodeMapView({model: tools.colorCodeMap});
