@@ -1,4 +1,4 @@
-import SnippetModel from "../model";
+import SnippetModel from "../../../snippets/model";
 
 const AdjustParameterModel = SnippetModel.extend({
     defaults: {

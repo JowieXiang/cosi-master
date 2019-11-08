@@ -21,13 +21,10 @@ import ZoomToFeature from "../modules/zoomtofeature/model";
 import SliderView from "../modules/snippets/slider/view";
 import SliderRangeView from "../modules/snippets/slider/range/view";
 import DropdownView from "../modules/snippets/dropdown/view";
-// import ExportButtonView from "../modules/snippets/exportButton/view";
-import AdjustParamterView from "../modules/snippets/adjustParameter/view";
 import LayerinformationModel from "../modules/layerinformation/model";
 import FooterView from "../modules/footer/view";
 import ClickCounterModel from "../modules/ClickCounter/model";
 import MouseHoverPopupView from "../modules/mouseHover/view";
-// import MouseHoverBevPopupView from "../modules/mouseHover_bev/view";
 import QuickHelpView from "../modules/quickhelp/view";
 import ScaleLineView from "../modules/scaleline/view";
 import WindowView from "../modules/window/view";
@@ -61,7 +58,6 @@ import FeatureLister from "../modules/featurelister/view";
 import PrintView from "../modules/tools/print_/view";
 import TimeSeries from "../modules/tools/timeSeries/view";
 import CalculateRatioView from "../modules/tools/calculateRatio/selectView";
-import LocalStorageView from "../modules/localStorage/view";
 import CompareDistrictsView from "../modules/tools/compareDistricts/view";
 
 // @deprecated in version 3.0.0
@@ -181,7 +177,6 @@ async function loadApp() {
     new SliderView();
     new SliderRangeView();
     new DropdownView();
-    new AdjustParamterView();
 
     if (_.has(Config, "metaDataCatalogueId")) {
         layerInformationModelSettings.metaDataCatalogueId = Config.metaDataCatalogueId;

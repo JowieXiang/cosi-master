@@ -11,12 +11,10 @@ const SelectView = Backbone.View.extend({
         this.listenTo(this.model, {
             "change:isActive": this.render,
             "renderResult": this.renderResult,
-            "updateDropdownMenus": this.render,
+            "renderFacilityDropDown": this.renderFacilityDropDown,
             "renderResults": this.renderResult,
             "change:adjustParameterViews": this.renderModifiers
         });
-        this.numDropdownView = new SnippetDropdownView({model: this.model.get("numDropdownModel")});
-        this.denDropdownView = new SnippetDropdownView({model: this.model.get("denDropdownModel")});
 
         if (this.model.get("isActive") === true) {
             this.render(this.model, true);
@@ -32,11 +30,17 @@ const SelectView = Backbone.View.extend({
         if (value) {
             this.setElement(document.getElementsByClassName("win-body")[0]);
             this.$el.html(this.template(attr));
-            this.$el.find(".numDropdown").append(this.numDropdownView.render().el);
+            this.denDropdownView = new SnippetDropdownView({model: this.model.get("denDropdownModel")});
             this.$el.find(".denDropdown").append(this.denDropdownView.render().el);
+            this.renderFacilityDropDown();
         }
 
         return this;
+    },
+    renderFacilityDropDown: function () {
+        this.$el.find(".numDropdown .dropdown-container").remove();
+        this.numDropdownView = new SnippetDropdownView({model: this.model.get("numDropdownModel")});
+        this.$el.find(".numDropdown").append(this.numDropdownView.render().el);
     },
     renderResult: function () {
         this.$el.find(".result").html("");
