@@ -13,6 +13,7 @@ const ServiceCoverage = Tool.extend({
     }),
     initialize: function () {
         this.superInitialize();
+        this.setDropDownModel();
     },
     /**
      * sets the selection list for the time slider
@@ -20,18 +21,16 @@ const ServiceCoverage = Tool.extend({
      * @returns {void}
      */
     setDropDownModel: function () {
-        const layerList = Radio.request("ModelList", "getModelsByAttributes", { isFacility: true, isSelected: true }),
-            layerNames = layerList.map(layer => layer.get("featureType").trim()),
-            dropdownModel = new DropdownModel({
-                name: "FacilityType",
-                type: "string",
-                values: layerNames,
-                snippetType: "dropdown",
-                isMultiple: false,
-                displayName: "Facility type",
-                liveSearch: true,
-                steps: 3
-            });
+        const dropdownModel = new DropdownModel({
+            name: "FacilityType",
+            type: "string",
+            values: [],
+            snippetType: "dropdown",
+            isMultiple: false,
+            displayName: "Facility type",
+            liveSearch: true,
+            steps: 3
+        });
 
         this.listenTo(dropdownModel, {
             "valuesChanged": this.displayLayer
@@ -46,7 +45,6 @@ const ServiceCoverage = Tool.extend({
      */
     displayLayer: function (valueModel, isSelected) {
         if (isSelected) {
-            console.log("new selection", valueModel.get("value"));
             const selectedItem = Radio.request("RawLayerList", "getLayerAttributesWhere", { featureType: valueModel.get("value") }),
                 selectedLayerModel = Radio.request("ModelList", "getModelByAttributes", { id: selectedItem.id });
 
@@ -55,9 +53,6 @@ const ServiceCoverage = Tool.extend({
                     coordinatesBefore = features.map(feature => feature.getGeometry().getCoordinates().splice(0, 2)),
                     coordinates = coordinatesBefore.map(coord => Radio.request("CRS", "transform", { fromCRS: "EPSG:25832", toCRS: "EPSG:4326", point: coord }));
 
-                console.log("features: ", features);
-
-                console.log("coordinates: ", coordinates);
                 this.set("coordinates", coordinates);
             }
         }

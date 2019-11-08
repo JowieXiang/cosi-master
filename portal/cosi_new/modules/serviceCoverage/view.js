@@ -16,13 +16,15 @@ const ServiceCoverageView = Backbone.View.extend({
     },
     initialize: function () {
 
+        this.listenTo(Radio.channel("ModelList"), {
+            "updatedSelectedLayerList": function (models) {
+                this.setFacilityLayers(models);
+            }
+        });
+
         this.listenTo(this.model, {
             "change:isActive": function (model, value) {
                 if (value) {
-                    /**
-                     * todo: 将下面一行移到initialize里，setlistener，listen对应的facility layer Model的变化，如果isSelected变了，就改变下拉菜单里的内容
-                     */
-                    this.model.setDropDownModel();
                     this.render(model, value);
                     this.createMapLayer(this.model.get("mapLayerName"));
                 }
@@ -49,6 +51,20 @@ const ServiceCoverageView = Backbone.View.extend({
         const dropdownView = new SnippetDropdownView({ model: dropdownModel });
 
         this.$el.find("#select-layer").html(dropdownView.render().el);
+    },
+    setFacilityLayers: function (models) {
+        const facilityLayerModels = models.filter(model => model.get("isFacility") === true)
+
+        if (facilityLayerModels.length > 0) {
+            const facilityNames = facilityLayerModels.map(model => model.get("featureType").trim());
+
+            this.model.get("dropDownModel").set("values", facilityNames);
+            this.renderDropDownView(this.model.get("dropDownModel"));
+        }
+        else {
+            this.model.get("dropDownModel").set("values", []);
+            this.renderDropDownView(this.model.get("dropDownModel"));
+        }
     },
     createMapLayer: function (name) {
         const newLayer = Radio.request("Map", "createLayerIfNotExists", name);
