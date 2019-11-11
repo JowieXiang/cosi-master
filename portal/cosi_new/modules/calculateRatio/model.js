@@ -4,7 +4,7 @@ import AdjustParameterView from "./adjustParameter/view";
 import ExportButtonModel from "../../../../modules/snippets/exportButton/model";
 import * as Extent from "ol/extent";
 
-const CalculateRatio = Tool.extend({
+const CalculateRatioModel = Tool.extend({
     defaults: _.extend({}, Tool.prototype.defaults, {
         deactivateGFI: true,
         data: {},
@@ -109,7 +109,8 @@ const CalculateRatio = Tool.extend({
     getRatiosForSelectedFeatures: function () {
         this.resetResults();
 
-        const selectedDistricts = Radio.request("SelectDistrict", "getSelectedDistricts"),
+        const renameResults = {},
+            selectedDistricts = Radio.request("SelectDistrict", "getSelectedDistricts"),
             selector = Radio.request("SelectDistrict", "getSelector");
         let facilities,
             demographics,
@@ -148,7 +149,10 @@ const CalculateRatio = Tool.extend({
             this.setMessage("Bitte wählen Sie mindestens einen Stadtteil aus.");
         }
 
-        this.get("exportButtonModel").set("rawData", this.getResults());
+        Object.keys(this.getResults()).forEach(function (objectKey) {
+            renameResults[objectKey] = Radio.request("Util", "renameKeys", {ratio: "Verhaeltnis", facilities: "Einrichtungswert", demographics: "Zielgruppe"}, this.getResults()[objectKey]);
+        }, this);
+        this.get("exportButtonModel").set("rawData", renameResults);
         this.trigger("renderResults");
     },
     calculateRatio (facilities, demographics, area = "allen Unterschungsgebieten") {
@@ -164,7 +168,7 @@ const CalculateRatio = Tool.extend({
         if (typeof this.getDenominators() !== "undefined") {
             if (this.getDenominators().length > 0) {
                 this.getDenominators().forEach((den) => {
-                    const districtFeature = Radio.request("FeaturesLoader", "getAllFeaturesByAttribute", {name: den})
+                    const districtFeature = Radio.request("FeaturesLoader", "getAllFeaturesByAttribute", {category: den})
                         .filter(feature => feature.getProperties()[selector] === district.getProperties()[selector]);
 
                     if (districtFeature) {
@@ -276,4 +280,4 @@ const CalculateRatio = Tool.extend({
     }
 });
 
-export default CalculateRatio;
+export default CalculateRatioModel;

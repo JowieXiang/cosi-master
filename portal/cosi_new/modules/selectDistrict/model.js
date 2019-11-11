@@ -13,7 +13,7 @@ const SelectDistrict = Tool.extend({
         districtLayerNames: ["Statistische Gebiete", "Stadtteile"],
         districtLayerIds: ["6071", "1694"],
         districtLayersLoaded: [],
-        buffer: 1000,
+        buffer: 500,
         isReady: false,
         scopeDropdownModel: {},
         activeScope: "", // e.g. "Stadtteile" or "Statistische Gebiete"
@@ -61,7 +61,18 @@ const SelectDistrict = Tool.extend({
                 }
                 else {
                     if (this.get("selectedDistricts").length > 0) {
-                        const bboxGeometry = Polygon.fromExtent(Extent.buffer(this.getSelectedGeometries().getExtent(), this.getBuffer()));
+                        let bboxGeometry;
+
+                        if (this.getBuffer() > 0) {
+                            bboxGeometry = new GeometryCollection(this.getSelectedGeometries()
+                                .getGeometries()
+                                .map(geom => {
+                                    return Polygon.fromExtent(Extent.buffer(geom.getExtent(), this.getBuffer()));
+                                }));
+                        }
+                        else {
+                            bboxGeometry = this.getSelectedGeometries();
+                        }
 
                         this.set("bboxGeometry", bboxGeometry);
                         this.setBboxGeometry(bboxGeometry);
@@ -98,6 +109,7 @@ const SelectDistrict = Tool.extend({
             "getSelector": this.getSelector,
             "getScopeAndSelector": this.getScopeAndSelector,
             "getDistrictLayer": this.getDistrictLayer,
+            "getBuffer": this.getBuffer,
             "setSelectedDistrictsToFeatures": this.setSelectedDistrictsToFeatures
         }, this);
 
@@ -105,12 +117,6 @@ const SelectDistrict = Tool.extend({
             "zoomToDistrict": this.zoomAndHighlightFeature,
             "revertBboxGeometry": this.revertBboxGeometry
         }, this);
-
-        // if (this.get("isActive") === true) {
-        //     Radio.trigger("Window", "showTool", this);
-        //     Radio.trigger("Window", "setIsVisible", true);
-        //     // this.listen();
-        // }
     },
 
     // listen  to click event and trigger setGfiParams
@@ -155,7 +161,8 @@ const SelectDistrict = Tool.extend({
             "selectedDistricts": this.get("selectedDistricts").concat(feature)
         });
     },
-    setFeaturesByScopeAndIds(scope, ids) {
+    setFeaturesByScopeAndIds (scope, ids, buffer) {
+        this.setBuffer(buffer);
         this.setScope(scope);
         const layer = Radio.request("ModelList", "getModelByAttributes", { name: scope }),
             features = layer.get("layerSource").getFeatures().filter(feature => ids.includes(feature.getProperties()[this.getSelector()]));
@@ -320,10 +327,12 @@ const SelectDistrict = Tool.extend({
         return names;
     },
 
+    setBuffer: function (val) {
+        this.set("buffer", val);
+    },
     getBuffer: function () {
         return this.get("buffer");
     },
-
     getSelectedStyle: function () {
         return this.get("selectedStyle");
     },
@@ -333,11 +342,15 @@ const SelectDistrict = Tool.extend({
     getDistrictLayer: function () {
         return this.get("districtLayer");
     },
-    getUrlQuery() {
-        const query = window.location.search.split("&").filter(q => q.includes("scope") || q.includes("selectedDistricts"));
+    getUrlQuery () {
+        const query = window.location.search.split("&").filter(q => q.includes("scope") || q.includes("selectedDistricts") || q.includes("buffer"));
 
         if (query.length > 0) {
-            this.set("urlQuery", [query[0].substring(query[0].indexOf("=") + 1).replace("%20", " "), query[1].substring(query[1].indexOf("=") + 1).split(",")]);
+            this.set("urlQuery", [
+                query[0].substring(query[0].indexOf("=") + 1).replace("%20", " "),
+                query[1].substring(query[1].indexOf("=") + 1).split(","),
+                query[2].substring(query[1].indexOf("=") + 1)
+            ]);
         }
     },
     setBboxGeometry: function (bboxGeometry) {

@@ -24,7 +24,7 @@ const LayerFilterView = Backbone.View.extend({
     },
 
     tagName: "div",
-    className: "row",
+    className: "",
     // model: new FilterSelectorModel(),
     template: _.template(template),
 

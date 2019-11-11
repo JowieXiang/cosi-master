@@ -1,10 +1,12 @@
 import Template from "text-loader!./template.html";
+import InfoTemplate from "text-loader!./template.html";
 import "./style.less";
 
 const DashboardView = Backbone.View.extend({
     events: {
         "click .close": "close",
-        "mousedown .drag-bar": "dragStart"
+        "click #help": "showHelp",
+        "mousedown .drag-bar": "dragStart",
     },
     initialize: function () {
         this.listenTo(this.model, {
@@ -75,7 +77,13 @@ const DashboardView = Backbone.View.extend({
     dragEnd: function () {
         this.isDragging = false;
         this.$el.find(".drag-bar").removeClass("dragging");
-    }
+    },
+    showHelp: function () {
+        Radio.trigger("Alert", "alert", {
+            text: InfoTemplate,
+            kategorie: "alert-info"
+        });
+    },
 });
 
 export default DashboardView;

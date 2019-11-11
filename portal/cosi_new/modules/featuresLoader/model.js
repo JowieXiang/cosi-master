@@ -82,6 +82,9 @@ const featuresLoader = Backbone.Model.extend({
                         features.forEach(function (feature) {
                             feature.set("kategorie", this.findMappingObjectByCategory(feature.get("kategorie")).value);
                         }, this);
+                        if (features.length > 0) {
+                            layer.set("category", features[0].get("kategorie"));
+                        }
                         return features;
                     })
                     .then(features => {
@@ -195,8 +198,6 @@ const featuresLoader = Backbone.Model.extend({
             featureList = this.get("featureList"),
             layer = Radio.request("RawLayerList", "getLayerWhere", obj),
             xhr = new XMLHttpRequest();
-
-        console.log(obj, layer);
 
         if (featureList.hasOwnProperty(valueOfLayer)) {
             return featureList[valueOfLayer];
