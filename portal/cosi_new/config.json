@@ -76,7 +76,6 @@
                 "isActive": false,
                 "isSelected": false,
                 "name": "Sportstätten",
-                "info": "Die Filter 'Baujahr' und 'Letzte Generalsanierung' können zu unvollständigen Ergebnissen führen, da diese Daten nicht für alle Einrichtungen vorliegen.",
                 "attributeWhiteList": [
                   "bezirk",
                   "stadtteil",
