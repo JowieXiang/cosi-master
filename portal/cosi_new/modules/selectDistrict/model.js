@@ -13,7 +13,7 @@ const SelectDistrict = Tool.extend({
         districtLayerNames: ["Statistische Gebiete", "Stadtteile"],
         districtLayerIds: ["6071", "1694"],
         districtLayersLoaded: [],
-        buffer: 1000,
+        buffer: 500,
         isReady: false,
         scopeDropdownModel: {},
         activeScope: "", // e.g. "Stadtteile" or "Statistische Gebiete"
@@ -107,7 +107,8 @@ const SelectDistrict = Tool.extend({
             "getScope": this.getScope,
             "getSelector": this.getSelector,
             "getScopeAndSelector": this.getScopeAndSelector,
-            "getDistrictLayer": this.getDistrictLayer
+            "getDistrictLayer": this.getDistrictLayer,
+            "getBuffer": this.getBuffer
         }, this);
 
         this.get("channel").on({
@@ -158,7 +159,8 @@ const SelectDistrict = Tool.extend({
             "selectedDistricts": this.get("selectedDistricts").concat(feature)
         });
     },
-    setFeaturesByScopeAndIds(scope, ids) {
+    setFeaturesByScopeAndIds (scope, ids, buffer) {
+        this.setBuffer(buffer);
         this.setScope(scope);
         const layer = Radio.request("ModelList", "getModelByAttributes", { name: scope }),
             features = layer.get("layerSource").getFeatures().filter(feature => ids.includes(feature.getProperties()[this.getSelector()]));
@@ -323,10 +325,12 @@ const SelectDistrict = Tool.extend({
         return names;
     },
 
+    setBuffer: function (val) {
+        this.set("buffer", val);
+    },
     getBuffer: function () {
         return this.get("buffer");
     },
-
     getSelectedStyle: function () {
         return this.get("selectedStyle");
     },
@@ -337,10 +341,14 @@ const SelectDistrict = Tool.extend({
         return this.get("districtLayer");
     },
     getUrlQuery () {
-        const query = window.location.search.split("&").filter(q => q.includes("scope") || q.includes("selectedDistricts"));
+        const query = window.location.search.split("&").filter(q => q.includes("scope") || q.includes("selectedDistricts") || q.includes("buffer"));
 
         if (query.length > 0) {
-            this.set("urlQuery", [query[0].substring(query[0].indexOf("=") + 1).replace("%20", " "), query[1].substring(query[1].indexOf("=") + 1).split(",")]);
+            this.set("urlQuery", [
+                query[0].substring(query[0].indexOf("=") + 1).replace("%20", " "),
+                query[1].substring(query[1].indexOf("=") + 1).split(","),
+                query[2].substring(query[1].indexOf("=") + 1)
+            ]);
         }
     },
     setBboxGeometry: function (bboxGeometry) {
