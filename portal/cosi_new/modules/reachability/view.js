@@ -26,7 +26,7 @@ const ReachabilityView = Backbone.View.extend({
                     this.createMapLayer(this.model.get("mapLayerName"));
                 }
                 else {
-                    Radio.trigger("SelectDistrict", "resetBboxGeometry");
+                    Radio.trigger("SelectDistrict", "revertBboxGeometry");
                     this.clearMapLayer(this.model.get("mapLayerName"));
                     this.clearInput();
                     Radio.trigger("MapMarker", "hideMarker");

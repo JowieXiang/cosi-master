@@ -65,6 +65,7 @@ const SelectDistrict = Tool.extend({
 
                         this.set("bboxGeometry", bboxGeometry);
                         this.setBboxGeometry(bboxGeometry);
+
                         // set map view to bbox
                         Radio.trigger("Map", "zoomToExtent", this.getSelectedGeometries().getExtent());
                         // triggers "selectionChanged"
@@ -96,12 +97,13 @@ const SelectDistrict = Tool.extend({
             "getScope": this.getScope,
             "getSelector": this.getSelector,
             "getScopeAndSelector": this.getScopeAndSelector,
-            "getDistrictLayer": this.getDistrictLayer
+            "getDistrictLayer": this.getDistrictLayer,
+            "setSelectedDistrictsToFeatures": this.setSelectedDistrictsToFeatures
         }, this);
 
         this.get("channel").on({
             "zoomToDistrict": this.zoomAndHighlightFeature,
-            "resetBboxGeometry": this.resetBboxGeometry
+            "revertBboxGeometry": this.revertBboxGeometry
         }, this);
 
         // if (this.get("isActive") === true) {
@@ -343,10 +345,31 @@ const SelectDistrict = Tool.extend({
 
         Radio.trigger("BboxSettor", "setBboxGeometryToLayer", layerlist, bboxGeometry);
     },
-    resetBboxGeometry: function () {
+    /**
+     * revert bboxGeometry back to previous state (this function is used by Reachability)
+     * 
+     */
+    revertBboxGeometry: function () {
         if (this.get("bboxGeometry")) {
             this.setBboxGeometry(this.get("bboxGeometry"));
         }
+    },
+    setSelectedDistrictsToFeatures: function (features) {
+        const that = this;
+
+        this.resetSelectedDistricts();
+        this.set("selectedDistricts", features);
+        _.each(features, feature => {
+            feature.setStyle(that.get("selectedStyle"));
+        });
+
+        // reset bboxGeometry
+        const bboxGeometry = Polygon.fromExtent(Extent.buffer(this.getSelectedGeometries().getExtent(), this.getBuffer()));
+
+        this.set("bboxGeometry", bboxGeometry);
+        this.setBboxGeometry(bboxGeometry);
+        this.get("channel").trigger("selectionChanged", features);
+
     }
 });
 

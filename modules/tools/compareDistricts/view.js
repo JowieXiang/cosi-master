@@ -16,7 +16,8 @@ const CompareDistrictsView = Backbone.View.extend({
             this.filterLayerOptions();
         },
         "click .district-name": "zoomToDistrict",
-        "click #compare-district-help": "showHelp"
+        "click #compare-district-help": "showHelp",
+        "click #set-selected-district": "changeDistrictSelection"
     },
 
     initialize: function () {
@@ -64,7 +65,8 @@ const CompareDistrictsView = Backbone.View.extend({
         this.setElement(document.getElementsByClassName("win-body")[0]);
         this.$el.html(this.template(attr));
         this.delegateEvents();
-
+        // disable the set selected district buttonw
+        this.$el.find("#set-selected-district").prop("disabled", true);
         this.createSelectors();
 
         return this;
@@ -150,6 +152,7 @@ const CompareDistrictsView = Backbone.View.extend({
         domString += "</p>";
         this.$el.find("#compare-results").append("<p><strong>| Vergleichbare Gebiete</strong></p>");
         this.$el.find("#compare-results").append(domString);
+        this.$el.find("#set-selected-district").prop("disabled", false);
     },
     addOneToLayerFilterList: function (model) {
         const newItem = { layerId: model.get("layerInfo").layerId, filter: model.get("filter"), districtInfo: model.get("districtInfo") },
@@ -191,15 +194,18 @@ const CompareDistrictsView = Backbone.View.extend({
             if (results.length > 1) {
                 intersection = _.intersection(...resultNames);
                 comparableFeatures = results[0].filter(feature => _.contains(intersection, feature.getProperties()[selector]));
+                this.model.set("comparableFeaturesNames", intersection);
                 this.setCompareResults(intersection);
             }
             else {
                 this.setCompareResults(resultNames.flat());
+                this.model.set("comparableFeaturesNames", resultNames.flat());
             }
             this.showComparableDistricts(comparableFeatures);
         }
         else {
             this.$el.find("#compare-results").empty();
+            this.$el.find("#set-selected-district").prop("disabled", true);
             this.clearMapLayer();
         }
     },
@@ -283,6 +289,15 @@ const CompareDistrictsView = Backbone.View.extend({
                 "text-decoration": "none"
             });
         });
+    },
+    changeDistrictSelection: function () {
+        const scope = Radio.request("SelectDistrict", "getScope"),
+            districtLayer = Radio.request("ModelList", "getModelByAttributes", { "name": scope }),
+            selector = Radio.request("SelectDistrict", "getDistrictLayer").filter(item => item.name === scope)[0].selector,
+            featureCollection = districtLayer.get("layer").getSource().getFeatures(),
+            selectedFeatures = featureCollection.filter(feature => _.contains(this.model.get("comparableFeaturesNames"), feature.getProperties()[selector]));
+
+        Radio.request("SelectDistrict", "setSelectedDistrictsToFeatures", selectedFeatures);
     }
 });
 
