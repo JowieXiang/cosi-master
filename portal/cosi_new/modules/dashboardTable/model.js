@@ -128,10 +128,42 @@ const DashboardTableModel = Tool.extend({
         this.trigger("isReady");
     },
 
+    /**
+     * @description prepare exportLink and convert filtered table to readable obj
+     * @returns {void}
+     */
     prepareExportLink () {
         // Update Export Link
-        this.get("exportButtonModel").set("rawData", this.get("filteredTableView"));
+        this.get("exportButtonModel").set("rawData", this.flattenTable(this.get("filteredTableView")));
         this.get("exportButtonModel").prepareForExport();
+    },
+
+    flattenTable (data) {
+        const flatData = data.map(group => {
+            const flatGroup = Object.values(Object.assign({}, group.values)),
+                propertyNames = Object.keys(group.values);
+
+            return flatGroup.map((prop, i) => {
+                const flatProp = Object.assign({}, prop),
+                    years = flatProp.Durchschnitt.map(val => val[0]);
+
+                return years.map((year, j) => {
+                    const flatYear = Object.assign({}, flatProp);
+
+                    for (const district in flatYear) {
+                        flatYear[district] = flatYear[district][j][1];
+                    }
+
+                    return {...{
+                        Jahr: year,
+                        Datensatz: propertyNames[i],
+                        Kategorie: group.group
+                    }, ...flatYear};
+                });
+            });
+        }).flat(2);
+
+        return flatData;
     },
 
     /**
