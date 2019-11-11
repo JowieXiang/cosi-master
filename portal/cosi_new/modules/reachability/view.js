@@ -29,6 +29,7 @@ const ReachabilityView = Backbone.View.extend({
                     Radio.trigger("SelectDistrict", "resetBboxGeometry");
                     this.clearMapLayer(this.model.get("mapLayerName"));
                     this.clearInput();
+                    Radio.trigger("MapMarker", "hideMarker");
                 }
             },
             "change:coordinate": function (model, value) {
@@ -140,6 +141,7 @@ const ReachabilityView = Backbone.View.extend({
     setCoordinateFromClick: function (evt) {
         const coordinate = Proj.transform(evt.coordinate, "EPSG:25832", "EPSG:4326");
 
+        Radio.trigger("MapMarker", "showMarker", evt.coordinate);
         this.model.set("coordinate", coordinate);
     },
     /**

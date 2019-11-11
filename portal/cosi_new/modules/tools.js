@@ -10,6 +10,7 @@ import InfoScreenHandler from "./infoScreen/infoScreenHandler/model";
 import Reachability from "./reachability/model";
 import ServiceCoverage from "./serviceCoverage/model";
 import OpenRouteService from "./openRouteService/model";
+import CalculateRatio from "./calculateRatio/model";
 
 new FeaturesLoader();
 new BboxSettor();
@@ -57,6 +58,14 @@ const general = {
             name: "Zweites Fenster öffnen",
             glyphicon: "glyphicon-new-window",
             renderToWindow: false
+        }),
+        calculateRatio: new CalculateRatio({
+            parentId: "tools",
+            type: "tool",
+            id: "calculateRatio",
+            name: "Angebotsdeckung ermitteln",
+            glyphicon: "glyphicon-tasks",
+            modifierInfoText: "<h3>Gewichtung:</h3><p>Hiermit können Sie eine beliebige Gewichtung für die Berechnung der Angebots/Zielgruppen-Verhältnisse festlegen um die Deckung der Nachfrage zu überprüfen.<br />z.B.: 'Wieviele Qudaratmeter pädagogische Fläche benötigt ein Kitakind?'<br />Sie können zwischen 'geteilt' ('/') und 'multipliziert' ('x') wählen.</p><p><strong>Der eingegebene Wert entspricht keinem offiziellen, rechtlich bindenden Schlüssel, sonder dient rein der explorativen Analyse.</strong></p>"
         }),
         reachability: new Reachability({
             id: "reachability",

@@ -5,6 +5,7 @@ import "./style.less";
 import { Fill, Stroke, Style } from "ol/style.js";
 import GeoJSON from "ol/format/GeoJSON";
 import InfoTemplate from "text-loader!./info.html";
+import union from "turf-union";
 
 const ServiceCoverageView = Backbone.View.extend({
     events: {
@@ -16,10 +17,15 @@ const ServiceCoverageView = Backbone.View.extend({
     },
     initialize: function () {
 
+        this.listenTo(Radio.channel("ModelList"), {
+            "updatedSelectedLayerList": function (models) {
+                this.setFacilityLayers(models);
+            }
+        });
+
         this.listenTo(this.model, {
             "change:isActive": function (model, value) {
                 if (value) {
-                    this.model.setDropDownModel();
                     this.render(model, value);
                     this.createMapLayer(this.model.get("mapLayerName"));
                 }
@@ -47,6 +53,20 @@ const ServiceCoverageView = Backbone.View.extend({
 
         this.$el.find("#select-layer").html(dropdownView.render().el);
     },
+    setFacilityLayers: function (models) {
+        const facilityLayerModels = models.filter(model => model.get("isFacility") === true)
+
+        if (facilityLayerModels.length > 0) {
+            const facilityNames = facilityLayerModels.map(model => model.get("featureType").trim());
+
+            this.model.get("dropDownModel").set("values", facilityNames);
+            this.renderDropDownView(this.model.get("dropDownModel"));
+        }
+        else {
+            this.model.get("dropDownModel").set("values", []);
+            this.renderDropDownView(this.model.get("dropDownModel"));
+        }
+    },
     createMapLayer: function (name) {
         const newLayer = Radio.request("Map", "createLayerIfNotExists", name);
 
@@ -71,29 +91,39 @@ const ServiceCoverageView = Backbone.View.extend({
 
                 coordinatesList.push(arrayItem);
             }
+            // each group of 5 coordinates
             _.each(coordinatesList, coordinates => {
                 promiseList.push(Radio.request("OpenRoute", "requestIsochrones", pathType, coordinates, [range])
                     .then(res => {
                         // reverse JSON object sequence to render the isochrones in the correct order
+                        // this reversion is intended for centrifugal isochrones (when range.length is larger than 1)
                         const json = JSON.parse(res),
                             reversedFeatures = [...json.features].reverse();
 
                         json.features = reversedFeatures;
-                        let newFeatures = this.parseDataToFeatures(JSON.stringify(json));
-
-                        newFeatures = this.transformFeatures(newFeatures, "EPSG:4326", "EPSG:25832");
-                        this.styleFeatures(newFeatures);
-                        return newFeatures;
+                        return json;
                     }));
             });
+            Promise.all(promiseList).then((jsonList) => {
+                const mapLayer = Radio.request("Map", "getLayerByName", this.model.get("mapLayerName")),
+                    jsonFeatures = jsonList.map(json => json.features),
+                    flatFeatures = jsonFeatures.flat();
 
-            Promise.all(promiseList).then((featuresList) => {
-                const mapLayer = Radio.request("Map", "getLayerByName", this.model.get("mapLayerName"));
+                let jsonUnion = flatFeatures[0];
+
+                for (let i = 1; i < flatFeatures.length; i++) {
+                    jsonUnion = union(jsonUnion, flatFeatures[i]);
+                }
+
+                let unionFeature = this.parseDataToFeatures(JSON.stringify(jsonUnion));
+
+                unionFeature = this.transformFeatures(unionFeature, "EPSG:4326", "EPSG:25832");
+                this.styleFeatures(unionFeature);
 
                 mapLayer.getSource().clear();
-                mapLayer.getSource().addFeatures(featuresList.flat().reverse());
+                mapLayer.getSource().addFeatures(unionFeature);
                 mapLayer.setVisible(true);
-                this.model.set("isochroneFeatures", featuresList.flat());
+                this.model.set("isochroneFeatures", unionFeature);
             });
         }
         else {
@@ -112,20 +142,6 @@ const ServiceCoverageView = Backbone.View.extend({
                 })
             }));
         }
-    },
-    /**
-     * listen for click events on the map when range input is focused
-     * @returns {void}
-     */
-    registerClickListener: function () {
-        this.clickListener = Radio.request("Map", "registerListener", "singleclick", this.setCoordinateFromClick.bind(this));
-    },
-    /**
-     * unlisten click events when range input is blurred
-     * @returns {void}
-     */
-    unregisterClickListener: function () {
-        Radio.trigger("Map", "unregisterListener", this.clickListener);
     },
     /**
      * set coordinate value in model according to click
