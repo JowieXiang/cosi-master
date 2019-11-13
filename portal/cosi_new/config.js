@@ -29,7 +29,8 @@ const Config = {
     isLocalStorage: true,
 
     portalConf: "./",
-    layerConf: "https://geodienste.hamburg.de/services-fhhnet-ALL.json",
+    layerConf: "https://geodienste.hamburg.de/services-internet-ALL.json",
+    // layerConf: "https://test.geoportal-hamburg.de/lgv-config/services-internet-ALL.json",
     restConf: "https://geoportal-hamburg.de/lgv-config/rest-services-internet.json",
     styleConf: "../../portal/cosi_new/style.json",
     proxyURL: "/cgi-bin/proxy.cgi",

@@ -1,12 +1,12 @@
 import Template from "text-loader!./template.html";
-import InfoTemplate from "text-loader!./template.html";
+import InfoTemplate from "text-loader!./info.html";
 import "./style.less";
 
 const DashboardView = Backbone.View.extend({
     events: {
         "click .close": "close",
         "click #help": "showHelp",
-        "mousedown .drag-bar": "dragStart",
+        "mousedown .drag-bar": "dragStart"
     },
     initialize: function () {
         this.listenTo(this.model, {

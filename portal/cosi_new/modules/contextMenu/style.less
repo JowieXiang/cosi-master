@@ -40,9 +40,15 @@
             border-top: 1px solid whitesmoke;
             padding: 5px 10px;
 
-            &:hover {
+            &:not(.group):hover {
                 background: whitesmoke;
                 cursor: pointer;
+            }
+
+            &.group {
+                background: #fdfdfd;
+                border-bottom: 2px solid whitesmoke;
+                font-weight: bold;
             }
         }
     }

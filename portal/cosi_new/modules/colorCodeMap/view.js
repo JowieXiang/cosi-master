@@ -78,7 +78,7 @@ const ColorCodeMapView = Backbone.View.extend({
     resetDropDown: function () {
         this.model.unStyleDistrictFeaturs(this.model.get("districtFeatures"));
         this.$el.find(".dropdown-toggle").addClass("bs-placeholder");
-        this.setDropdownValues(0, "Demografische Daten anzeigen");
+        this.setDropdownValues(0, "Statistische Daten anzeigen");
         this.clearLegend();
     },
     checkDistrictSelection (extent) {
