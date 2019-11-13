@@ -49,7 +49,7 @@ const InfoScreenHandler = Tool.extend({
         });
     },
     castWindow () {
-        this.window = window.open("/portal/cosi_new/infoscreen.html", "InfoScreen");
+        this.window = window.open("./infoscreen.html", "InfoScreen");
         window.addEventListener("message", this.receiveData.bind(this), false);
         this.setIsWindowOpen(true);
     },

@@ -1,16 +1,21 @@
 import DropdownModel from "../../../../modules/snippets/dropdown/model";
-import * as Chromatic from "d3-scale-chromatic";
 import {Fill, Stroke, Style, Text} from "ol/style.js";
 
 const LayerModel = Backbone.Model.extend({
     defaults: {
         dropDownModel: undefined,
-        // the used features without geometry (Bevölkerung, Haushalte,...)
-        features: [],
+        // the statistics features that have no geometry (Bevölkerung, Haushalte, Arbeitslose, ...)
+        statisticsFeatures: [],
         // the district features with geometry (Stadtteil | Statistisches Gebiet)
         districtFeatures: []
     },
     initialize: function () {
+        this.listenTo(Radio.channel("SelectDistrict"), {
+            "reset": function () {
+                this.reset();
+                this.trigger("resetView");
+            }
+        });
         // to do for stadtteil
         this.setDropDownModel(Radio.request("FeaturesLoader", "getAllValuesByScope", "statgebiet"));
     },
@@ -49,31 +54,47 @@ const LayerModel = Backbone.Model.extend({
      */
     dropDownCallback: function (valueModel, isSelected) {
         if (isSelected) {
-            this.trigger("clearLegend");
-            // the used features
-            this.setFeaturesByValueAndScope(valueModel.get("value"), Radio.request("SelectDistrict", "getScope"));
-            // to do dynamic for 'jahr_2018'
-            this.styleDistrictFeaturs(this.get("features"), "jahr_2018");
-        }
-    },
-    selectDistrictReminder: function () {
-        const selectedDistricts = Radio.request("SelectDistrict", "getSelectedDistricts");
+            const scope = Radio.request("SelectDistrict", "getScope"),
+                // the selected value in the dropdown
+                value = valueModel.get("value"),
+                statisticsFeatures = Radio.request("FeaturesLoader", "getDistrictsByValue", scope, value);
 
-        if (selectedDistricts.length === 0) {
-            Radio.trigger("Alert", "alert", {
-                text: "<strong> Bitte wählen Sie zuerst die Bezirke mit 'Gebiet wählen' im Werkzeugmenü aus</strong>",
-                kategorie: "alert-warning"
-            });
+            this.setStatisticsFeatures(statisticsFeatures);
+            this.styleDistrictFeatures(this.get("statisticsFeatures"), this.getLastYearAttribute(statisticsFeatures[0].getProperties()));
         }
     },
+
     /**
-     * styles the equivalent district features (have a geometry) of the used features (have no geometry)
-     * @param {ol.Features[]} features - the used features
+     * finds the attribute key for the last avaiable year
+     * @param {object} featureProperties - properties of a statistics feature
+     * @returns {string} attribute key
+     */
+    getLastYearAttribute: function (featureProperties) {
+        let lastYear = 0,
+            attribute;
+
+        Object.keys(featureProperties).forEach(key => {
+            if (key.search("jahr_") !== -1) {
+                const year = parseInt(key.split("_")[1], 10);
+
+                if (year > lastYear) {
+                    lastYear = year;
+                    attribute = key;
+                }
+            }
+        });
+
+        return attribute;
+    },
+
+    /**
+     * styles the equivalent district features (have a geometry) of the statistics features (have no geometry)
+     * @param {ol.Features[]} features - the statistics features
      * @param {string} attribute - style is depending on this attribute
      * @returns {void}
      */
-    styleDistrictFeaturs: function (features, attribute) {
-        const districtFeatures = this.getDistrictFeaturesByScope(Radio.request("SelectDistrict", "getScope")),
+    styleDistrictFeatures: function (features, attribute) {
+        const districtFeatures = Radio.request("SelectDistrict", "getSelectedDistricts"),
             foundDistrictFeatures = [],
             values = features.map(feature => feature.getProperties()[attribute]),
             colorScale = Radio.request("ColorScale", "getColorScaleByValues", values, "interpolateBlues");
@@ -111,11 +132,11 @@ const LayerModel = Backbone.Model.extend({
     },
 
     /**
-     * gives the district features a "null-style"
+     * gives the district features the default style
      * @param {Object[]} features - all styled district features
      * @returns {void}
      */
-    unStyleDistrictFeaturs: function (features) {
+    unStyleDistrictFeatures: function (features) {
         features.forEach((feature) => {
             feature.setStyle(new Style({
                 fill: new Fill({
@@ -129,32 +150,18 @@ const LayerModel = Backbone.Model.extend({
         });
     },
 
-    /**
-     * gets the district features (which have a geometry) by scope
-     * @param {string} scope - Statischtische Gebiete | Stadtteile
-     * @returns {ol.Feature[]} district features
-     */
-    getDistrictFeaturesByScope: function (scope) {
-        let districtLayer;
-
-        if (scope === "Statistische Gebiete") {
-            districtLayer = Radio.request("ModelList", "getModelByAttributes", {id: "6071"});
-        }
-        // Stadtteile
-        else {
-            districtLayer = Radio.request("ModelList", "getModelByAttributes", {id: "1694"});
-        }
-        return districtLayer.get("layer").getSource().getFeatures();
+    reset: function () {
+        this.setStatisticsFeatures([]);
+        this.set("districtFeatures", []);
     },
 
     /**
-     * sets the used features
-     * @param {string} value - the selected value in the dropdown
-     * @param {string} scope - statgebiet | stadttteil
+     * sets the statistics features
+     * @param {ol.Feature[]} value - features
      * @returns {void}
      */
-    setFeaturesByValueAndScope: function (value, scope) {
-        this.set("features", Radio.request("FeaturesLoader", "getDistrictsByValue", scope, value));
+    setStatisticsFeatures: function (value) {
+        this.set("statisticsFeatures", value);
     }
 
 });

@@ -4,12 +4,15 @@ import SnippetDropdownView from "../../../../modules/snippets/dropdown/view";
 
 const ColorCodeMapView = Backbone.View.extend({
     events: {
-        "click .btn-reset": "resetDropDown",
+        "click .btn-reset": function () {
+            this.reset();
+            this.model.unStyleDistrictFeatures(this.model.get("districtFeatures"));
+        },
         "click .btn-prev-next": "prevNext"
     },
     initialize: function () {
         this.listenTo(this.model, {
-            "clearLegend": this.clearLegend,
+            "resetView": this.reset,
             "setLegend": this.setLegend
         });
 
@@ -36,15 +39,18 @@ const ColorCodeMapView = Backbone.View.extend({
         this.$el.find("#color-code-legend").empty();
     },
     setLegend: function (data) {
-        for (let i = 0; i < data.values.length; i++) {
-            this.$el.find("#color-code-legend").append(`
-            <li style="display:inline;">
-                <svg width="20" height="20">
-                    <rect width="20"  height="20" style="fill:${data.colors[i]};stroke-width:.5;stroke:rgb(0,0,0)" />
-                </svg>
-                    <span style="font-size: 20px;">${Number.isInteger(data.values[i]) ? data.values[i] : data.values[i].toFixed(2)}</span>
-            </li>
-            `);
+        this.clearLegend();
+        if (data !== null) {
+            for (let i = 0; i < data.values.length; i++) {
+                this.$el.find("#color-code-legend").append(`
+                <li style="display:inline;">
+                    <svg width="20" height="20">
+                        <rect width="20"  height="20" style="fill:${data.colors[i]};stroke-width:.5;stroke:rgb(0,0,0)" />
+                    </svg>
+                        <span style="font-size: 20px;">${Number.isInteger(data.values[i]) ? data.values[i] : data.values[i].toFixed(2)}</span>
+                </li>
+                `);
+            }
         }
     },
     prevNext: function (evt) {
@@ -72,15 +78,18 @@ const ColorCodeMapView = Backbone.View.extend({
 
     /**
      * adds the 'bs-placeholder' class to the dropdown,
-     * sets the placeholder text and unstyle the district features
+     * sets the placeholder text
      * @returns {void}
      */
-    resetDropDown: function () {
-        this.model.unStyleDistrictFeaturs(this.model.get("districtFeatures"));
+    reset: function () {
         this.$el.find(".dropdown-toggle").addClass("bs-placeholder");
         this.setDropdownValues(0, "Statistische Daten anzeigen");
         this.clearLegend();
+        if (this.model.get("districtFeatures").length === 0) {
+            this.$el.find("button").prop("disabled", true);
+        }
     },
+
     checkDistrictSelection (extent) {
         if (extent.length > 0) {
             this.$el.find("button").prop("disabled", false);

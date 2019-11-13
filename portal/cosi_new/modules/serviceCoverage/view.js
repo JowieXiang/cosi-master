@@ -32,6 +32,7 @@ const ServiceCoverageView = Backbone.View.extend({
                 else {
                     this.clearInput();
                     this.clearMapLayer(this.model.get("mapLayerName"));
+                    Radio.trigger("Alert", "alert:remove");
                 }
             }
         });
@@ -107,7 +108,9 @@ const ServiceCoverageView = Backbone.View.extend({
             Promise.all(promiseList).then((jsonList) => {
                 const mapLayer = Radio.request("Map", "getLayerByName", this.model.get("mapLayerName")),
                     jsonFeatures = jsonList.map(json => json.features),
-                    flatFeatures = jsonFeatures.flat();
+                    flatFeatures = [].concat.apply([], jsonFeatures);
+                console.log("jsonFeatuers:", jsonFeatures);
+                console.log("flatFeatures:", flatFeatures);
 
                 let jsonUnion = flatFeatures[0];
 
