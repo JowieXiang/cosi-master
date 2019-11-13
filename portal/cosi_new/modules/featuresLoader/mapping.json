@@ -169,7 +169,7 @@
   },
   {
     "category": "hau_haushaltgroesse_avg",
-    "value": "Druchschnittliche Haushaltsgröße",
+    "value": "Durchschnittliche Haushaltsgröße",
     "group": "Haushalte",
     "statgebiet": true,
     "valueType": "relative"
