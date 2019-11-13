@@ -39,18 +39,17 @@ const ServiceCoverageView = Backbone.View.extend({
     },
     model: {},
     template: _.template(Template),
-    render: function (model, value) {
+    render: function () {
         var attr = this.model.toJSON();
 
-        if (value) {
-            this.setElement(document.getElementsByClassName("win-body")[0]);
-            this.$el.html(this.template(attr));
-            this.renderDropDownView(this.model.get("dropDownModel"));
-        }
+        this.setElement(document.getElementsByClassName("win-body")[0]);
+        this.$el.html(this.template(attr));
+        this.renderDropDownView();
         return this;
     },
-    renderDropDownView: function (dropdownModel) {
-        const dropdownView = new SnippetDropdownView({ model: dropdownModel });
+    renderDropDownView: function () {
+        this.model.setDropDownModel();
+        const dropdownView = new SnippetDropdownView({ model: this.model.get("dropDownModel") });
 
         this.$el.find("#select-layer").html(dropdownView.render().el);
     },
@@ -60,13 +59,12 @@ const ServiceCoverageView = Backbone.View.extend({
         if (facilityLayerModels.length > 0) {
             const facilityNames = facilityLayerModels.map(model => model.get("featureType").trim());
 
-            this.model.get("dropDownModel").set("values", facilityNames);
-            this.renderDropDownView(this.model.get("dropDownModel"));
+            this.model.set("facilityNames", facilityNames);
         }
         else {
-            this.model.get("dropDownModel").set("values", []);
-            this.renderDropDownView(this.model.get("dropDownModel"));
+            this.model.set("facilityNames", []);
         }
+        this.renderDropDownView();
     },
     createMapLayer: function (name) {
         const newLayer = Radio.request("Map", "createLayerIfNotExists", name);
