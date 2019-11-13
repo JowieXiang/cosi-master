@@ -3,7 +3,7 @@ import DistrictSelectorView from "./districtSelector/view";
 import LayerFilterSelectorModel from "./layerFilterSelector/model";
 import LayerFilterSelectorView from "./layerFilterSelector/view";
 import VectorSource from "ol/source/Vector";
-import { Fill, Stroke, Style } from "ol/style.js";
+import {Fill, Stroke, Style} from "ol/style.js";
 import LayerFilterModel from "./layerFilter/model";
 import LayerFilterView from "./layerFilter/view";
 import LayerFilterCollection from "./layerFilter/list";
@@ -46,6 +46,7 @@ const CompareDistrictsView = Backbone.View.extend({
                     this.$el.empty();
                     this.undelegateEvents();
                     this.model.set("layerFilterList", "");
+                    Radio.trigger("Alert", "alert:remove");
                 }
             },
             "change:layerFilterList": function (model, value) {
@@ -93,13 +94,13 @@ const CompareDistrictsView = Backbone.View.extend({
         this.districtSelector = new DistrictSelectorView();
         this.$el.find("#district-selector-container").append(this.districtSelector.render().el);
 
-        this.layerFilterSelector = new LayerFilterSelectorView({ model: new LayerFilterSelectorModel() });
+        this.layerFilterSelector = new LayerFilterSelectorView({model: new LayerFilterSelectorModel()});
         this.$el.find("#layerfilter-selector-container").append(this.layerFilterSelector.render().el);
     },
 
     addFilterModel: function () {
         const layerInfo = this.layerFilterSelector.getSelectedLayer(),
-            layerFilterModel = new LayerFilterModel({ layerInfo: layerInfo });
+            layerFilterModel = new LayerFilterModel({layerInfo: layerInfo});
 
 
         this.addOneToLayerFilterList(layerFilterModel);
@@ -124,7 +125,7 @@ const CompareDistrictsView = Backbone.View.extend({
         this.layerFilterSelector.render();
     },
     renderLayerFilter: function (model) {
-        const layerFilterView = new LayerFilterView({ model: model });
+        const layerFilterView = new LayerFilterView({model: model});
 
         this.$el.find("#layerfilter-container").append(layerFilterView.render().el);
     },
@@ -155,7 +156,7 @@ const CompareDistrictsView = Backbone.View.extend({
         this.$el.find("#set-selected-district").prop("disabled", false);
     },
     addOneToLayerFilterList: function (model) {
-        const newItem = { layerId: model.get("layerInfo").layerId, filter: model.get("filter"), districtInfo: model.get("districtInfo") },
+        const newItem = {layerId: model.get("layerInfo").layerId, filter: model.get("filter"), districtInfo: model.get("districtInfo")},
             newList = this.model.get("layerFilterList") === "" ? [] : JSON.parse(this.model.get("layerFilterList"));
 
         newList.push(newItem);
@@ -292,7 +293,7 @@ const CompareDistrictsView = Backbone.View.extend({
     },
     changeDistrictSelection: function () {
         const scope = Radio.request("SelectDistrict", "getScope"),
-            districtLayer = Radio.request("ModelList", "getModelByAttributes", { "name": scope }),
+            districtLayer = Radio.request("ModelList", "getModelByAttributes", {"name": scope}),
             selector = Radio.request("SelectDistrict", "getDistrictLayer").filter(item => item.name === scope)[0].selector,
             featureCollection = districtLayer.get("layer").getSource().getFeatures(),
             selectedFeatures = featureCollection.filter(feature => _.contains(this.model.get("comparableFeaturesNames"), feature.getProperties()[selector]));

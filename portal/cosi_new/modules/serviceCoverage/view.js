@@ -32,6 +32,7 @@ const ServiceCoverageView = Backbone.View.extend({
                 else {
                     this.clearInput();
                     this.clearMapLayer(this.model.get("mapLayerName"));
+                    Radio.trigger("Alert", "alert:remove");
                 }
             }
         });
