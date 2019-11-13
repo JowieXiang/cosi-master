@@ -52,8 +52,6 @@ const Reachability = Tool.extend({
         if (isSelected) {
             const selectedItem = Radio.request("RawLayerList", "getLayerAttributesWhere", { featureType: valueModel.get("value") }),
                 selectedLayerModel = Radio.request("ModelList", "getModelByAttributes", { id: selectedItem.id });
-            console.log("selectedItem: ", selectedItem);
-            console.log("selectedLayerModel: ", selectedLayerModel);
 
             if (selectedLayerModel) {
                 selectedLayerModel.setIsSelected(true);

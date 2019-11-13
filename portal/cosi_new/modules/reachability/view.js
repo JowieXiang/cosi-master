@@ -238,23 +238,16 @@ const ReachabilityView = Backbone.View.extend({
     showInDashboard: function () {
         const visibleLayerModels = Radio.request("ModelList", "getModelsByAttributes", { typ: "WFS", isBaseLayer: false, isSelected: true }),
             dataObj = { layerNames: [], features: {} };
-        // console.log("visibleLayers: ", visibleLayers);
 
         _.each(visibleLayerModels, layerModel => {
             dataObj.layerNames.push(layerModel.get("name"));
             dataObj.features[layerModel.get("name")] = layerModel.get("layer").getSource().getFeatures();
-            console.log("features: ", layerModel.get("layer").getSource().getFeatures()[0].getProperties());
         });
-
-        console.log("dataObj: ", dataObj);
-        console.log("DOM: ", this.dashboardTemplate(dataObj));
-
         Radio.trigger("Dashboard", "destroyWidgetById", "reachability");
-
         Radio.trigger("Dashboard", "append", this.dashboardTemplate(dataObj), "#dashboard-containers", {
             id: "reachability",
-            name: "reachability",
-            glyphicon: "glyphicon-stats"
+            name: "Erreichbarkeit",
+            glyphicon: "glyphicon-road"
         });
     }
 });
