@@ -6,26 +6,28 @@ import { Fill, Stroke, Style } from "ol/style.js";
 import GeoJSON from "ol/format/GeoJSON";
 import GeometryCollection from "ol/geom/GeometryCollection";
 import InfoTemplate from "text-loader!./info.html";
+import dashboardTemplate from "text-loader!./dashboardTemplate.html";
 
 const ReachabilityView = Backbone.View.extend({
     events: {
         "click #create-isochrones": "createIsochrones",
         "click button#Submit": "checkIfSelected",
         "change #coordinate": "setCoordinateFromInput",
-        "focus #coordinate": "registerClickListener",
-        "blur #coordinate": "unregisterClickListener",
         "change #path-type": "setPathType",
         "change #range": "setRange",
-        "click #help": "showHelp"
+        "click #help": "showHelp",
+        "click #show-in-dashboard": "showInDashboard"
     },
     initialize: function () {
         this.listenTo(this.model, {
             "change:isActive": function (model, value) {
                 if (value) {
+                    this.registerClickListener();
                     this.render(model, value);
                     this.createMapLayer(this.model.get("mapLayerName"));
                 }
                 else {
+                    this.unregisterClickListener();
                     Radio.trigger("SelectDistrict", "revertBboxGeometry");
                     this.clearMapLayer(this.model.get("mapLayerName"));
                     this.clearInput();
@@ -39,6 +41,7 @@ const ReachabilityView = Backbone.View.extend({
     },
     model: {},
     template: _.template(Template),
+    dashboardTemplate: _.template(dashboardTemplate),
     render: function (model, value) {
         var attr = this.model.toJSON();
 
@@ -229,6 +232,22 @@ const ReachabilityView = Backbone.View.extend({
         Radio.trigger("Alert", "alert", {
             text: "<strong>Please make sure all input information are provided</strong>",
             kategorie: "alert-warning"
+        });
+    },
+    // show results in dashboard
+    showInDashboard: function () {
+        const visibleLayerModels = Radio.request("ModelList", "getModelsByAttributes", { typ: "WFS", isBaseLayer: false, isSelected: true }),
+            dataObj = { layerNames: [], features: {} };
+
+        _.each(visibleLayerModels, layerModel => {
+            dataObj.layerNames.push(layerModel.get("name"));
+            dataObj.features[layerModel.get("name")] = layerModel.get("layer").getSource().getFeatures();
+        });
+        Radio.trigger("Dashboard", "destroyWidgetById", "reachability");
+        Radio.trigger("Dashboard", "append", this.dashboardTemplate(dataObj), "#dashboard-containers", {
+            id: "reachability",
+            name: "Erreichbarkeit",
+            glyphicon: "glyphicon-road"
         });
     }
 });
