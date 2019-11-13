@@ -60,9 +60,31 @@ const LayerModel = Backbone.Model.extend({
                 statisticsFeatures = Radio.request("FeaturesLoader", "getDistrictsByValue", scope, value);
 
             this.setStatisticsFeatures(statisticsFeatures);
-            // to do dynamic for 'jahr_2018' -> find the last year
-            this.styleDistrictFeatures(this.get("statisticsFeatures"), "jahr_2018");
+            this.styleDistrictFeatures(this.get("statisticsFeatures"), this.getLastYearAttribute(statisticsFeatures[0].getProperties()));
         }
+    },
+
+    /**
+     * finds the attribute key for the last avaiable year
+     * @param {object} featureProperties - properties of a statistics feature
+     * @returns {string} attribute key
+     */
+    getLastYearAttribute: function (featureProperties) {
+        let lastYear = 0,
+            attribute;
+
+        Object.keys(featureProperties).forEach(key => {
+            if (key.search("jahr_") !== -1) {
+                const year = parseInt(key.split("_")[1], 10);
+
+                if (year > lastYear) {
+                    lastYear = year;
+                    attribute = key;
+                }
+            }
+        });
+
+        return attribute;
     },
 
     /**
