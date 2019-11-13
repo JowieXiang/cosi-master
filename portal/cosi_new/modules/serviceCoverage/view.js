@@ -108,10 +108,8 @@ const ServiceCoverageView = Backbone.View.extend({
             Promise.all(promiseList).then((jsonList) => {
                 const mapLayer = Radio.request("Map", "getLayerByName", this.model.get("mapLayerName")),
                     jsonFeatures = jsonList.map(json => json.features),
-                    flatFeatures = [].concat.apply([], jsonFeatures);
-                console.log("jsonFeatuers:", jsonFeatures);
-                console.log("flatFeatures:", flatFeatures);
-
+                    // flatten array one level deep;
+                    flatFeatures = [].concat(...jsonFeatures);
                 let jsonUnion = flatFeatures[0];
 
                 for (let i = 1; i < flatFeatures.length; i++) {
