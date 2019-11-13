@@ -47,20 +47,6 @@ const InfoScreenHandler = Tool.extend({
                 }
             }
         });
-
-        this.addListeners();
-    },
-    addListeners () {
-        const listens = this.get("listens");
-
-        // for (const channel in listens) {
-        //     for (let i = 0; i < listens[channel].length; i++) {
-        //         console.log(channel, listens[channel][i]);
-        //         Radio.channel(channel).reply({
-        //             [listens[channel][i]]: this.broadcastRadio(channel, listens[channel][i])
-        //         });
-        //     }
-        // }
     },
     castWindow () {
         this.window = window.open("./infoscreen.html", "InfoScreen");
@@ -77,11 +63,15 @@ const InfoScreenHandler = Tool.extend({
             }
         });
     },
-    receiveData (event) {
-        if (!event.data.target) {
-            for (const attr in event.data) {
-                if (this.get(attr)) {
-                    this.set(attr, event.data[attr]);
+    receiveData (evt) {
+        if (!evt.data.type) {
+            for (const target in evt.data) {
+                const foundTarget = Radio.request("ModelList", "getModelByAttributes", {id: target});
+
+                if (foundTarget) {
+                    for (const attr in evt.data[target]) {
+                        foundTarget.set(attr, evt.data[target][attr]);
+                    }
                 }
             }
         }

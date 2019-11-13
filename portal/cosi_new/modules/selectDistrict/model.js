@@ -4,6 +4,7 @@ import Tool from "../../../../modules/core/modelList/tool/model";
 import SnippetDropdownModel from "../../../../modules/snippets/dropdown/model";
 import * as Extent from "ol/extent";
 import * as Polygon from "ol/geom/Polygon";
+import SaveSelectionCosi from "../saveSelection/model";
 
 const SelectDistrict = Tool.extend({
     defaults: _.extend({}, Tool.prototype.defaults, {
@@ -228,6 +229,9 @@ const SelectDistrict = Tool.extend({
         this.set("activeScope", scope);
         if (scope && scope !== "" && this.get("districtLayer").length !== 0) {
             this.set("activeSelector", this.get("districtLayer").find(el => el.name === scope).selector);
+
+            CoSI.scope = scope;
+            CoSI.selector = this.get("districtLayer").find(el => el.name === scope).selector;
         }
         this.toggleScopeLayers();
     },

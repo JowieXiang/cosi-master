@@ -19,19 +19,18 @@ import GraphModel from "./graph_v2/model";
  * @summary that is incredibly unelegant!
  */
 function initializeCosi () {
+    // Define CoSI Namespace on window object
+    if (window.name === "InfoScreen") {
+        window.CoSI = window.opener.CoSI;
+    }
+    else {
+        window.CoSI = {};
+    }
+
     const dashboard = new DashboardView({model: general.dashboard});
 
     new DashboardTableView({model: general.dashboardTable});
-    new DashboardWidgetHandler({
-        replies: {
-            FeaturesLoader: [
-                "getDistrictsByScope",
-                "getDistrictsByValue",
-                "getAllFeaturesByAttribute",
-                "getAllValuesByScope"
-            ]
-        }
-    });
+    new DashboardWidgetHandler();
     new ContextMenuView();
     new GraphModel();
 
@@ -53,7 +52,13 @@ function initializeCosi () {
         // load dashboard content into infoscreen window
         new InfoScreenView({
             title: "CoSI InfoScreen",
-            children: [dashboard]
+            children: [dashboard],
+            broadcasts: {
+                SelectDistrict: [
+                    "getScope",
+                    "getSelector"
+                ]
+            }
         });
     }
 }

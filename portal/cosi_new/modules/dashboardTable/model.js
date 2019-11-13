@@ -12,7 +12,6 @@ const DashboardTableModel = Tool.extend({
         width: "60%",
         exportButtonModel: {},
         exportFilteredButtonModel: {},
-        scope: "",
         sortKey: "",
         timelineModel: new TimelineModel(),
         filterDropdownModel: {},
@@ -34,7 +33,6 @@ const DashboardTableModel = Tool.extend({
         var channel = Radio.channel("Dashboard");
 
         this.superInitialize();
-        this.set("scope", Radio.request("SelectDistrict", "getScope"));
 
         this.set("exportButtonModel", new ExportButtonModel({
             tag: "Als CSV herunterladen",
@@ -66,7 +64,6 @@ const DashboardTableModel = Tool.extend({
 
         this.listenTo(Radio.channel("SelectDistrict"), {
             "selectionChanged": function () {
-                this.set("scope", Radio.request("SelectDistrict", "getScope"));
                 this.set("sortKey", Radio.request("SelectDistrict", "getSelector"));
             }
         }, this);
@@ -85,6 +82,8 @@ const DashboardTableModel = Tool.extend({
             },
             "change:filteredTableView": this.prepareRendering
         });
+
+        console.log(window.CoSI);
     },
 
     /**
@@ -96,11 +95,11 @@ const DashboardTableModel = Tool.extend({
     updateTable: function (features) {
         const table = features.reduce((newTable, feature) => {
             const properties = feature.getProperties(),
-                distCol = newTable.find(col => col[this.get("sortKey")] === properties[this.get("sortKey")]);
+                distCol = newTable.find(col => col[CoSI.selector] === properties[CoSI.selector]);
 
             if (distCol) {
                 return newTable.map((col) => {
-                    if (col[this.get("sortKey")] === properties[this.get("sortKey")]) {
+                    if (col[CoSI.selector] === properties[CoSI.selector]) {
                         return {...col, ...Radio.request("Timeline", "createTimelineTable", [properties])[0]};
                     }
                     return col;
@@ -118,7 +117,6 @@ const DashboardTableModel = Tool.extend({
         this.set("tableView", this.groupTable(this.get("unsortedTable")));
 
         if (Radio.request("InfoScreen", "getIsWindowOpen")) {
-            console.log(Radio.request("InfoScreen", "getIsWindowOpen"));
             Radio.trigger("InfoScreen", "sendData", this.get("tableView"), "dashboardTable", "tableView");
             Radio.trigger("InfoScreen", "sendData", this.get("unsortedTable"), "dashboardTable", "unsortedTable");
         }
@@ -150,7 +148,7 @@ const DashboardTableModel = Tool.extend({
     },
 
     flattenTable (data) {
-        const flatData = data.map(group => {
+        const flatData = this.flat(data.map(group => {
             const flatGroup = Object.values(Object.assign({}, group.values)),
                 propertyNames = Object.keys(group.values);
 
@@ -172,9 +170,15 @@ const DashboardTableModel = Tool.extend({
                     }, ...flatYear};
                 });
             });
-        }).flat(2);
+        }));
 
         return flatData;
+    },
+
+    flat (arr) {
+        return arr.reduce((res, item) => {
+            return item.length ? [...res, ...this.flat(item)] : [...res, item];
+        }, []);
     },
 
     /**
@@ -186,9 +190,9 @@ const DashboardTableModel = Tool.extend({
         if (table) {
             const properties = _.allKeys(table[0]);
 
-            table.push({[this.get("sortKey")]: "Gesamt"}, {[this.get("sortKey")]: "Durchschnitt"});
+            table.push({[CoSI.selector]: "Gesamt"}, {[CoSI.selector]: "Durchschnitt"});
             _.each(properties, (prop) => {
-                if (prop !== this.get("sortKey")) {
+                if (prop !== CoSI.selector) {
 
                     // Check whether values in row are numbers or Arrays of numbers
                     if (!isNaN(parseFloat(table[0][prop])) && !Array.isArray(table[0][prop])) {
@@ -196,18 +200,18 @@ const DashboardTableModel = Tool.extend({
 
                         // Add values for all columns
                         _.each(table, (col) => {
-                            if (col[this.get("sortKey")] !== "Gesamt" && col[this.get("sortKey")] !== "Durchschnitt") {
+                            if (col[CoSI.selector] !== "Gesamt" && col[CoSI.selector] !== "Durchschnitt") {
                                 total += parseFloat(col[prop]);
                             }
                             if (total !== 0) {
 
                                 // write sum
-                                if (col[this.get("sortKey")] === "Gesamt") {
+                                if (col[CoSI.selector] === "Gesamt") {
                                     col[prop] = total;
                                 }
 
                                 // calculate and write average
-                                if (col[this.get("sortKey")] === "Durchschnitt") {
+                                if (col[CoSI.selector] === "Durchschnitt") {
                                     col[prop] = total / (table.length - 2);
                                 }
                             }
@@ -219,12 +223,12 @@ const DashboardTableModel = Tool.extend({
 
                         // Create Matrix from timeline values
                         _.each(table, (col) => {
-                            if (col[this.get("sortKey")] !== "Gesamt" && col[this.get("sortKey")] !== "Durchschnitt") {
+                            if (col[CoSI.selector] !== "Gesamt" && col[CoSI.selector] !== "Durchschnitt") {
                                 matrixTotal.push(col[prop]);
                             }
                             if (matrixTotal.length > 0) {
                                 // sum up all columns of timeline and calculate average on the fly
-                                if (col[this.get("sortKey")] === "Gesamt") {
+                                if (col[CoSI.selector] === "Gesamt") {
                                     col[prop] = [];
                                     for (let i = 0; i < matrixTotal[0].length; i++) {
                                         let n = 0;
@@ -241,7 +245,7 @@ const DashboardTableModel = Tool.extend({
                                 }
 
                                 // write average
-                                if (col[this.get("sortKey")] === "Durchschnitt") {
+                                if (col[CoSI.selector] === "Durchschnitt") {
                                     col[prop] = avgArr;
                                 }
                             }
@@ -267,7 +271,7 @@ const DashboardTableModel = Tool.extend({
                 if (match) {
                     match.values[val.value] = {};
                     table.forEach(col => {
-                        match.values[val.value][col[this.get("sortKey")]] = col[val.value];
+                        match.values[val.value][col[CoSI.selector]] = col[val.value];
                     });
                     return res;
                 }
@@ -279,7 +283,7 @@ const DashboardTableModel = Tool.extend({
                 };
 
                 table.forEach(col => {
-                    newGroup.values[val.value][col[this.get("sortKey")]] = col[val.value];
+                    newGroup.values[val.value][col[CoSI.selector]] = col[val.value];
                 });
 
                 return [...res, newGroup];
@@ -301,23 +305,6 @@ const DashboardTableModel = Tool.extend({
     },
 
     /**
-     * loades the relevant layers for the dashboard, according to scope
-     * @param {string} layerId the layer to add to ModelList
-     * @returns {void}
-     */
-    addLayerModel: function (layerId) {
-        Radio.trigger("ModelList", "addModelsByAttributes", {id: layerId});
-        this.sendModification(layerId, true);
-        this.sendModification(layerId, false);
-    },
-    sendModification: function (layerId, status) {
-        Radio.trigger("ModelList", "setModelAttributesById", layerId, {
-            isSelected: status,
-            isVisibleInMap: status
-        });
-    },
-
-    /**
      * @description appends a chart to the dashboard widgets
      * @param {string[]} props the array of attributes to visualize
      * @param {string} type the diagram type (BarGraph, Linegraph)
@@ -329,6 +316,8 @@ const DashboardTableModel = Tool.extend({
 
         if (type === "Linegraph") {
             data = this.getLineChartData(props);
+
+            console.log(props, data, this.get("unsortedTable"));
 
             graph = Radio.request("GraphV2", "createGraph", {
                 graphType: type,
@@ -380,13 +369,13 @@ const DashboardTableModel = Tool.extend({
                 scaleTypeY: "linear",
                 data: data,
                 attrToShowArray: props,
-                xAttr: this.get("sortKey"),
+                xAttr: CoSI.selector,
                 xAxisLabel: {
                     offset: 5,
                     textAnchor: "middle",
                     fill: "#000",
                     fontSize: 10,
-                    label: this.get("sortKey")
+                    label: CoSI.selector
                 },
                 yAxisLabel: {
                     offset: -5,
@@ -424,7 +413,7 @@ const DashboardTableModel = Tool.extend({
                 scaleTypeY: "linear",
                 dynamicAxisStart: true,
                 data: data,
-                refAttr: this.get("sortKey"),
+                refAttr: CoSI.selector,
                 attrToShowArray: [attrsToShow[1]],
                 xAttr: attrsToShow[0],
                 xAxisLabel: {
@@ -461,10 +450,10 @@ const DashboardTableModel = Tool.extend({
     },
     getBarChartData (props, year = "2018") {
         return this.get("unsortedTable")
-            .filter(district => district[this.get("sortKey")] !== "Gesamt")
+            .filter(district => district[CoSI.selector] !== "Gesamt")
             .map((district) => {
                 const districtProps = {
-                    [this.get("sortKey")]: district[this.get("sortKey")]
+                    [CoSI.selector]: district[CoSI.selector]
                 };
 
                 props.forEach(prop => {
@@ -479,11 +468,11 @@ const DashboardTableModel = Tool.extend({
             const year = yearValue[0];
 
             return [...data, ...this.get("unsortedTable")
-                .filter(district => district[this.get("sortKey")] !== "Gesamt")
+                .filter(district => district[CoSI.selector] !== "Gesamt")
                 .map((district) => {
                     let hasVal = true;
                     const districtProps = {
-                        [this.get("sortKey")]: district[this.get("sortKey")],
+                        [CoSI.selector]: district[CoSI.selector],
                         year: year
                     };
 
@@ -513,7 +502,7 @@ const DashboardTableModel = Tool.extend({
                     if (props.includes(prop)) {
                         districtDataToGraph = {...districtDataToGraph, ...Object.fromEntries(district[prop])};
                     }
-                    else if (prop === this.get("sortKey")) {
+                    else if (prop === CoSI.selector) {
                         districtDataToGraph[prop] = district[prop];
                     }
                     else {
@@ -523,13 +512,13 @@ const DashboardTableModel = Tool.extend({
 
                 return districtDataToGraph;
             }),
-            districts = data.map(col => col[this.get("sortKey")]).filter(name => name !== "Gesamt"),
-            years = Object.keys(data[0]).filter(key => key !== this.get("sortKey")),
+            districts = data.map(col => col[CoSI.selector]).filter(name => name !== "Gesamt"),
+            years = Object.keys(data[0]).filter(key => key !== CoSI.selector),
             map = years.map(year => {
                 const yearObj = {year: year};
 
-                data.filter(col => col[this.get("sortKey")] !== "Gesamt").forEach(col => {
-                    yearObj[col[this.get("sortKey")]] = col[year];
+                data.filter(col => col[CoSI.selector] !== "Gesamt").forEach(col => {
+                    yearObj[col[CoSI.selector]] = col[year];
                 });
 
                 return yearObj;
@@ -538,7 +527,7 @@ const DashboardTableModel = Tool.extend({
         return {data: map, xAttrs: districts};
     },
     zoomAndHighlightFeature: function (district) {
-        const selector = this.get("sortKey");
+        const selector = CoSI.selector;
         let extent;
 
         _.each(Radio.request("SelectDistrict", "getSelectedDistricts"), (feature) => {
@@ -572,9 +561,6 @@ const DashboardTableModel = Tool.extend({
     },
     updateFilter: function () {
         this.get("filterDropdownModel").set("values", Radio.request("FeaturesLoader", "getAllValuesByScope", "statgebiet"));
-    },
-    getScope: function () {
-        return this.get("scope");
     },
     setIsActive: function (state) {
         this.set("isActive", state);

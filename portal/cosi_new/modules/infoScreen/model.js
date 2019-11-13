@@ -7,7 +7,8 @@ const InfoScreenModel = Backbone.Model.extend({
         children: [],
         data: {},
         isInfoScreen: true,
-        channel: Radio.channel("InfoScreen")
+        channel: Radio.channel("InfoScreen"),
+        broadcasts: {}
     },
     initialize (opts) {
         for (const attr in opts) {
@@ -23,6 +24,8 @@ const InfoScreenModel = Backbone.Model.extend({
                 return true;
             }
         });
+
+        this.setBroadcasts();
     },
     initChildren (children) {
         children.forEach(child => {
@@ -66,6 +69,22 @@ const InfoScreenModel = Backbone.Model.extend({
     },
     getChildren () {
         return this.get("children");
+    },
+    setBroadcasts () {
+        const broadcasts = this.get("broadcasts");
+
+        for (const channel in broadcasts) {
+            for (let i = 0; i < broadcasts[channel].length; i++) {
+                Radio.channel(channel).reply({
+                    [broadcasts[channel][i]]: function (args = null) {
+                        return this.broadcastRadio(channel, broadcasts[channel][i]);
+                    }
+                }, this);
+            }
+        }
+    },
+    broadcastRadio (channel, request, args = null) {
+        return "statgebiet";
     }
 });
 
