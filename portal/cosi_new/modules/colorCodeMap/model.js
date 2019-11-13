@@ -61,7 +61,7 @@ const LayerModel = Backbone.Model.extend({
 
             this.setStatisticsFeatures(statisticsFeatures);
             // to do dynamic for 'jahr_2018' -> find the last year
-            this.styleDistrictFeaturs(this.get("statisticsFeatures"), "jahr_2018");
+            this.styleDistrictFeatures(this.get("statisticsFeatures"), "jahr_2018");
         }
     },
 
@@ -71,7 +71,7 @@ const LayerModel = Backbone.Model.extend({
      * @param {string} attribute - style is depending on this attribute
      * @returns {void}
      */
-    styleDistrictFeaturs: function (features, attribute) {
+    styleDistrictFeatures: function (features, attribute) {
         const districtFeatures = Radio.request("SelectDistrict", "getSelectedDistricts"),
             foundDistrictFeatures = [],
             values = features.map(feature => feature.getProperties()[attribute]),
