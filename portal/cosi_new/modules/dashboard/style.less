@@ -2,6 +2,11 @@
 @font_family_1: "UniversNextW04-620CondB","Arial Narrow",Arial,sans-serif;
 @background_color_1: rgba(0, 0, 0,.5);
 
+.sidebar .header, .dashboard-inner .header{
+    width: 100%;
+    border-bottom: 1px solid rgb(229,229,229);
+    padding: 10px;
+}
 .dashboard {
     height: 100%;
     overflow: hidden;
@@ -30,15 +35,12 @@
         height: 100%;
         margin-left:25px;
         .header {
-            width: 100%;
-            border-bottom: 1px solid rgb(229,229,229);
-            padding: 10px;
-
             button#help {
                 float: right;
                 border: none;
                 width: auto;
                 padding: 0;
+                opacity: 0.6;
             }
         }
     }
@@ -66,6 +68,15 @@
                 text-align: right;
             }
         }
+    }
+}
+
+#info-screen {
+    .drag-bar {
+        display: none;
+    }
+    .dashboard-inner > .header > .close {
+        display: none;
     }
 }
    

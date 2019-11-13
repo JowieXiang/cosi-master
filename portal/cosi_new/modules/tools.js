@@ -84,7 +84,8 @@ const general = {
         colorCodeMap: new ColorCodeMap(),
         saveSelectionCosi: new SaveSelectionCosi({
             parentId: "utilities",
-            type: "tool"
+            type: "tool",
+            glyphicon: "glyphicon-copy"
         }),
         timeSlider: new TimeSlider({
             parentId: "tools",
