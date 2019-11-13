@@ -169,8 +169,7 @@
       "legend":
       {
         "name": "Legende",
-        "glyphicon": "glyphicon-book",
-        "isVisibleInMenu": false
+        "glyphicon": "glyphicon-book"
       }
     },
     "scaleLine": false,

@@ -23,12 +23,12 @@ const ColorScale = Backbone.Model.extend({
     /**
      * generates a function to use for color generation from values
      * @param {number[]} values - Array of all values to build the scale from. Default: [0, 1]
-     * @param {d3.interpolator or color[]} colorspace - colorspace of the scale, either 2 values for linearScale or d3.interpolator from d3-scale-chromatic. Default: "interpolateSpectral"
+     * @param {d3.interpolator or color[]} colorspace - colorspace of the scale, either 2 values for linearScale or string selector for d3.interpolator from d3-scale-chromatic. Default: "interpolateBlues"
      * @param {string} type - type of the scale. Possbile values: "sequential", "linear".
      * @returns {function, object} - returns both the scale function and a legend with value/color-pairs for visualization.
      */
 
-    generateColorScale (values = [0, 1], colorspace = "interpolateRdYlGn", legendSteps = 5, type = "sequential", defaultColor = "#3399CC") {
+    generateColorScale (values = [0, 1], colorspace = "interpolateBlues", legendSteps = 5, type = "sequential", defaultColor = "#3399CC") {
         var _values = values.filter(val => !isNaN(val)),
             minValue = Math.min(..._values),
             maxValue = Math.max(..._values),

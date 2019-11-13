@@ -46,6 +46,8 @@ const InfoScreenModel = Backbone.Model.extend({
             for (const target in evt.data) {
                 const foundTarget = Radio.request("ModelList", "getModelByAttributes", {id: target});
 
+                console.log(evt.data, "receive");
+
                 if (foundTarget) {
                     for (const attr in evt.data[target]) {
                         foundTarget.set(attr, evt.data[target][attr]);

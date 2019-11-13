@@ -11,6 +11,7 @@ const DashboardTableModel = Tool.extend({
         glyphicon: "",
         width: "60%",
         exportButtonModel: {},
+        exportFilteredButtonModel: {},
         scope: "",
         sortKey: "",
         timelineModel: new TimelineModel(),
@@ -37,8 +38,14 @@ const DashboardTableModel = Tool.extend({
 
         this.set("exportButtonModel", new ExportButtonModel({
             tag: "Als CSV herunterladen",
-            rawData: this.get("tableView"),
+            rawData: [],
             filename: "CoSI-Dashboard-Export",
+            fileExtension: "csv"
+        }));
+        this.set("exportFilteredButtonModel", new ExportButtonModel({
+            tag: "Als CSV herunterladen (gefiltert)",
+            rawData: [],
+            filename: "CoSI-Dashboard-Export-(gefiltert)",
             fileExtension: "csv"
         }));
 
@@ -111,6 +118,7 @@ const DashboardTableModel = Tool.extend({
         this.set("tableView", this.groupTable(this.get("unsortedTable")));
 
         if (Radio.request("InfoScreen", "getIsWindowOpen")) {
+            console.log(Radio.request("InfoScreen", "getIsWindowOpen"));
             Radio.trigger("InfoScreen", "sendData", this.get("tableView"), "dashboardTable", "tableView");
             Radio.trigger("InfoScreen", "sendData", this.get("unsortedTable"), "dashboardTable", "unsortedTable");
         }
@@ -134,8 +142,11 @@ const DashboardTableModel = Tool.extend({
      */
     prepareExportLink () {
         // Update Export Link
-        this.get("exportButtonModel").set("rawData", this.flattenTable(this.get("filteredTableView")));
+        this.get("exportButtonModel").set("rawData", this.flattenTable(this.get("tableView")));
         this.get("exportButtonModel").prepareForExport();
+
+        this.get("exportFilteredButtonModel").set("rawData", this.flattenTable(this.get("filteredTableView")));
+        this.get("exportFilteredButtonModel").prepareForExport();
     },
 
     flattenTable (data) {

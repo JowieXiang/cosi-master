@@ -33,7 +33,7 @@ const LayerModel = Backbone.Model.extend({
             snippetType: "dropdown",
             isMultiple: false,
             isGrouped: true,
-            displayName: "Demografische Daten anzeigen",
+            displayName: "Statistische Daten anzeigen",
             liveSearch: true,
             isDropup: true
         });

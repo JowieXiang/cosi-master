@@ -37,7 +37,6 @@ const InfoScreenView = Backbone.View.extend({
     },
     renderChild (child) {
         this.contentContainer.append(child.$el);
-        console.log("child.$el: ", child.$el);
     }
 });
 

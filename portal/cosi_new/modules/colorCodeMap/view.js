@@ -83,7 +83,7 @@ const ColorCodeMapView = Backbone.View.extend({
      */
     reset: function () {
         this.$el.find(".dropdown-toggle").addClass("bs-placeholder");
-        this.setDropdownValues(0, "Demografische Daten anzeigen");
+        this.setDropdownValues(0, "Statistische Daten anzeigen");
         this.clearLegend();
         if (this.model.get("districtFeatures").length === 0) {
             this.$el.find("button").prop("disabled", true);

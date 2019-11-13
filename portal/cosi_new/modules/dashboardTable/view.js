@@ -17,6 +17,7 @@ const DashboardTableView = Backbone.View.extend({
     },
     initialize: function () {
         this.exportButtonView = new ExportButtonView({model: this.model.get("exportButtonModel")});
+        this.exportFilteredButtonView = new ExportButtonView({model: this.model.get("exportFilteredButtonModel")});
         this.filterDropdownView = new DropdownView({model: this.model.get("filterDropdownModel")});
 
         this.listenTo(this.model, {
@@ -28,6 +29,7 @@ const DashboardTableView = Backbone.View.extend({
     className: "dashboard-table",
     model: {},
     exportButtonView: {},
+    exportFilteredButtonView: {},
     filterDropdownView: {},
     template: _.template(Template),
     tableTemplate: _.template(TableTemplate),
@@ -47,8 +49,13 @@ const DashboardTableView = Backbone.View.extend({
                     glyphicon: "glyphicon-stats"
                 });
             }
+            if (attr.tableView.length === 0) {
+                Radio.trigger("Dashboard", "destroyWidgetById", "dashboard");
+            }
+
             this.$el.find(".table").html(this.tableTemplate(attr));
             this.$el.find("#export-button").html(this.exportButtonView.render().el);
+            this.$el.find("#export-button-filtered").html(this.exportFilteredButtonView.render().el);
         }
 
         this.delegateEvents();
