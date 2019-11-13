@@ -42,12 +42,12 @@ const DashboardTableModel = Tool.extend({
             filename: "CoSI-Dashboard-Export",
             fileExtension: "csv"
         }));
-        // this.set("exportFilteredButtonModel", new ExportButtonModel({
-        //     tag: "Als CSV herunterladen (gefiltert)",
-        //     rawData: [],
-        //     filename: "CoSI-Dashboard-Export-(gefiltert)",
-        //     fileExtension: "csv"
-        // }));
+        this.set("exportFilteredButtonModel", new ExportButtonModel({
+            tag: "Als CSV herunterladen (gefiltert)",
+            rawData: [],
+            filename: "CoSI-Dashboard-Export-(gefiltert)",
+            fileExtension: "csv"
+        }));
 
         this.set("filterDropdownModel", new DropdownModel({
             name: "Filter",
@@ -145,8 +145,8 @@ const DashboardTableModel = Tool.extend({
         this.get("exportButtonModel").set("rawData", this.flattenTable(this.get("tableView")));
         this.get("exportButtonModel").prepareForExport();
 
-        // this.get("exportFilteredButtonModel").set("rawData", this.flattenTable(this.get("filteredTableView")));
-        // this.get("exportFilteredButtonModel").prepareForExport();
+        this.get("exportFilteredButtonModel").set("rawData", this.flattenTable(this.get("filteredTableView")));
+        this.get("exportFilteredButtonModel").prepareForExport();
     },
 
     flattenTable (data) {
