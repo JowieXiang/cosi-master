@@ -1,0 +1,12 @@
+<table id="table">
+    <tr>
+        <th>type</th>
+        <th>number</th>
+    </tr>   
+    <% _.each(layerNames, function(layerName){ %>
+        <tr>
+            <td><%= layerName %></td>
+            <td><%= features[layerName].length %></td>
+        </tr>
+    <% }) %>
+</table>
