@@ -7,6 +7,7 @@ const FilterModel = Tool.extend({
         isGeneric: false,
         isInitOpen: false,
         isVisible: false,
+        saveToUrl: true,
         isVisibleInMenu: true,
         id: "filter",
         queryCollection: {},
@@ -187,7 +188,9 @@ const FilterModel = Tool.extend({
             });
             filterObjects.push({name: query.get("name"), isSelected: query.get("isSelected"), rules: ruleList});
         });
-        Radio.trigger("ParametricURL", "updateQueryStringParam", "filter", JSON.stringify(filterObjects));
+        if (this.get("saveToUrl")) {
+            Radio.trigger("ParametricURL", "updateQueryStringParam", "filter", JSON.stringify(filterObjects));
+        }
     },
 
     /**
@@ -253,6 +256,7 @@ const FilterModel = Tool.extend({
 
                 oneQuery = _.extend(oneQuery, queryObject);
             }
+
             this.createQuery(oneQuery);
         }, this);
     },

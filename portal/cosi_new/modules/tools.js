@@ -88,8 +88,8 @@ const general = {
             id: "serviceCoverage",
             parentId: "tools",
             type: "tool",
+            name: "Erreichbarket im Gebiet",
             isVisibleInMenu: false,
-            name: "serviceCoverage",
             glyphicon: "glyphicon-time"
         }),
         colorCodeMap: new ColorCodeMap(),

@@ -24,7 +24,7 @@ const bboxSettor = Backbone.Model.extend({
             if (model) {
                 model.set("bboxGeometry", bboxGeometry);
                 // updates layers that have already been loaded
-                if (model.has("layer") && model.get("layer").getSource().getFeatures().length > 0) {
+                if (model.has("layer")) {
                     model.updateSource();
                 }
             }

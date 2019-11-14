@@ -823,6 +823,7 @@ Der Filter bietet eine vielzahl von M√∂glichkeiten um Vektor-Daten filtern zu k√
 |minScale|nein|Integer||Minimale Zoomstufe auf die der Filter bei der Darstellung der Ergebnisse heranzoomt.|false|
 |liveZoomToFeatures|nein|Boolean|false|Gibt an ob der Filter sofort nach der Filterung auf die Filterergebnisse zoomt.|false|
 |predefinedQueries|nein|[predefinedQuery](#markdown-header-portalconfigmenutoolfilterpredefinedquery)[]||Definition der Filterabfragen.|false|
+|saveToUrl|nein|Boolean|true|Speichert das aktuelle Filterergebnis in der Url ab. Dadurch kann das Filterergebnis als Lesezeichen abgelegt werden.|false|
 
 **Beispiel**
 ```

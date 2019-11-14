@@ -26,7 +26,7 @@ const ServiceCoverage = Tool.extend({
             values: this.get("facilityNames"),
             snippetType: "dropdown",
             isMultiple: false,
-            displayName: "Facility type",
+            displayName: "Einrichtungstyp",
             liveSearch: true,
             steps: 3,
             facilityNames: []
