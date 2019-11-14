@@ -173,6 +173,9 @@
         "glyphicon": "glyphicon-book"
       }
     },
+    "controls": {
+			"zoom": true
+		},
     "scaleLine": false,
     "treeType": "custom"
   },
