@@ -92,37 +92,46 @@ const ServiceCoverageView = Backbone.View.extend({
             }
             // each group of 5 coordinates
             _.each(coordinatesList, coordinates => {
-                promiseList.push(Radio.request("OpenRoute", "requestIsochrones", pathType, coordinates, [range])
+                promiseList.push(Radio.request("OpenRoute", "requestIsochrones", pathType, coordinates, [range, range * 0.67, range * 0.33])
                     .then(res => {
                         // reverse JSON object sequence to render the isochrones in the correct order
                         // this reversion is intended for centrifugal isochrones (when range.length is larger than 1)
                         const json = JSON.parse(res),
-                            reversedFeatures = [...json.features].reverse();
+                            reversedFeatures = [...json.features].reverse(),
+                            groupedFeatures = [[], [], []];
 
+                        for (let i = 0; i < reversedFeatures.length; i = i + 3) {
+                            groupedFeatures[i % 3].push(reversedFeatures[i]);
+                            groupedFeatures[(i + 1) % 3].push(reversedFeatures[i + 1]);
+                            groupedFeatures[(i + 2) % 3].push(reversedFeatures[i + 2]);
+                        }
                         json.features = reversedFeatures;
-                        return json;
+                        return groupedFeatures;
                     }));
             });
-            Promise.all(promiseList).then((jsonList) => {
-                const mapLayer = Radio.request("Map", "getLayerByName", this.model.get("mapLayerName")),
-                    jsonFeatures = jsonList.map(json => json.features),
-                    // flatten array one level deep;
-                    flatFeatures = [].concat(...jsonFeatures);
-                let jsonUnion = flatFeatures[0];
-
-                for (let i = 1; i < flatFeatures.length; i++) {
-                    jsonUnion = union(jsonUnion, flatFeatures[i]);
-                }
-
-                let unionFeature = this.parseDataToFeatures(JSON.stringify(jsonUnion));
-
-                unionFeature = this.transformFeatures(unionFeature, "EPSG:4326", "EPSG:25832");
-                this.styleFeatures(unionFeature);
+            Promise.all(promiseList).then((groupedFeaturesList) => {
+                const mapLayer = Radio.request("Map", "getLayerByName", this.model.get("mapLayerName"));
 
                 mapLayer.getSource().clear();
-                mapLayer.getSource().addFeatures(unionFeature);
+                for (let i = 0; i < 3; i++) {
+                    let layeredList = groupedFeaturesList.map(groupedFeatures => groupedFeatures[i]);
+
+                    layeredList = [].concat(...layeredList);
+                    let layerUnion = layeredList[0];
+
+                    for (let j = 0; j < layeredList.length; j++) {
+                        layerUnion = union(layerUnion, layeredList[j]);
+                    }
+                    let layerUnionFeatures = this.parseDataToFeatures(JSON.stringify(layerUnion));
+
+                    layerUnionFeatures = this.transformFeatures(layerUnionFeatures, "EPSG:4326", "EPSG:25832");
+                    this.styleFeatures(layerUnionFeatures);
+                    mapLayer.getSource().addFeatures(layerUnionFeatures);
+
+                }
+
                 mapLayer.setVisible(true);
-                this.model.set("isochroneFeatures", unionFeature);
+                // this.model.set("isochroneFeatures", unionList);
             });
         }
         else {
