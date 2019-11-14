@@ -40,7 +40,6 @@ const DashboardWidgetHandler = Backbone.Model.extend({
         return opts;
     },
     destroyWidgetById (id) {
-        console.log(id + " to delete");
         this.set("children", this.getChildren().filter(v => {
             if (v.attrs.id === id) {
                 v.remove();
@@ -49,7 +48,6 @@ const DashboardWidgetHandler = Backbone.Model.extend({
             }
             return true;
         }, this));
-        console.log(this.getChildren(), "widgets");
     },
     getChildren () {
         return this.get("children");

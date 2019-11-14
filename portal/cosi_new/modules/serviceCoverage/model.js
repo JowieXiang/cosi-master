@@ -13,7 +13,6 @@ const ServiceCoverage = Tool.extend({
     }),
     initialize: function () {
         this.superInitialize();
-        this.setDropDownModel();
     },
     /**
      * sets the selection list for the time slider
@@ -24,16 +23,17 @@ const ServiceCoverage = Tool.extend({
         const dropdownModel = new DropdownModel({
             name: "FacilityType",
             type: "string",
-            values: [],
+            values: this.get("facilityNames"),
             snippetType: "dropdown",
             isMultiple: false,
             displayName: "Facility type",
             liveSearch: true,
-            steps: 3
+            steps: 3,
+            facilityNames: []
         });
 
         this.listenTo(dropdownModel, {
-            "valuesChanged": this.displayLayer
+            "valuesChanged": this.setCoordinates
         }, this);
         this.set("dropDownModel", dropdownModel);
     },
@@ -43,7 +43,9 @@ const ServiceCoverage = Tool.extend({
      * @param {boolean} isSelected - flag if value model is selected or not
      * @returns {void}
      */
-    displayLayer: function (valueModel, isSelected) {
+    setCoordinates: function (valueModel, isSelected) {
+        console.log("dropdownModel attributes: ", this.get("dropDownModel").attributes);
+
         if (isSelected) {
             const selectedItem = Radio.request("RawLayerList", "getLayerAttributesWhere", { featureType: valueModel.get("value") }),
                 selectedLayerModel = Radio.request("ModelList", "getModelByAttributes", { id: selectedItem.id });

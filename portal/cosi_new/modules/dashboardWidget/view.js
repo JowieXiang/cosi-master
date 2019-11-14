@@ -15,7 +15,8 @@ const DashboardWidgetView = Backbone.View.extend({
         this.attrs = {
             id: attrs.id ? attrs.id : "view",
             name: attrs.name ? attrs.name : "Daten",
-            glyphicon: attrs.glyphicon ? attrs.glyphicon : "glyphicon-info-sign"
+            glyphicon: attrs.glyphicon ? attrs.glyphicon : "glyphicon-info-sign",
+            append: attrs.append !== undefined ? attrs.append : true
         };
 
         this.render();
@@ -49,7 +50,13 @@ const DashboardWidgetView = Backbone.View.extend({
         const widget = document.createElement("div");
 
         widget.className = "dashboard-widget";
-        $(this.parent).append($(widget));
+        // check to prepend or append the widget
+        if (this.attrs.append) {
+            $(this.parent).append($(widget));
+        }
+        else {
+            $(this.parent).prepend($(widget));
+        }
         this.setElement(widget);
 
         return this;

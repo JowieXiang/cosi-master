@@ -46,7 +46,8 @@ const DashboardTableView = Backbone.View.extend({
                 Radio.trigger("Dashboard", "append", this.$el, "#dashboard-containers", {
                     id: "dashboard",
                     name: "Übersicht",
-                    glyphicon: "glyphicon-stats"
+                    glyphicon: "glyphicon-stats",
+                    append: false
                 });
             }
             if (attr.tableView.length === 0) {
