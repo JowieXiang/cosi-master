@@ -211,6 +211,7 @@
         },
         {
           "id": "1694",
+          "name": "Stadtteile",
           "visibility": true,
           "styleId": "green-polygon",
           "mouseHoverField": [
