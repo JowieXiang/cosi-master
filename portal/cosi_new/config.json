@@ -70,6 +70,7 @@
             "isGeneric": false,
             "isInitOpen": false,
             "allowMultipleQueriesPerLayer": false,
+            "saveToUrl": false,
             "predefinedQueries": [
               {
                 "layerId": "12868",
