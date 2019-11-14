@@ -11,6 +11,8 @@ import Reachability from "./reachability/model";
 import ServiceCoverage from "./serviceCoverage/model";
 import OpenRouteService from "./openRouteService/model";
 import CalculateRatio from "./calculateRatio/model";
+import reachabilityAnalysis from "./reachabiliyAnalysis/model";
+import ReachabilityAnalysis from "./reachabiliyAnalysis/model";
 
 new FeaturesLoader();
 new BboxSettor();
@@ -67,10 +69,18 @@ const general = {
             glyphicon: "glyphicon-tasks",
             modifierInfoText: "<h3>Gewichtung:</h3><p>Hiermit können Sie eine beliebige Gewichtung für die Berechnung der Angebots/Zielgruppen-Verhältnisse festlegen um die Deckung der Nachfrage zu überprüfen.<br />z.B.: 'Wieviele Qudaratmeter pädagogische Fläche benötigt ein Kitakind?'<br />Sie können zwischen 'geteilt' ('/') und 'multipliziert' ('x') wählen.</p><p><strong>Der eingegebene Wert entspricht keinem offiziellen, rechtlich bindenden Schlüssel, sonder dient rein der explorativen Analyse.</strong></p>"
         }),
+        reachabilityAnalysis: new ReachabilityAnalysis({
+            id: "reachabilityAnalysis",
+            parentId: "tools",
+            type: "tool",
+            name: "Erreichbarkeitsanalyse",
+            glyphicon: "glyphicon-road"
+        }),
         reachability: new Reachability({
             id: "reachability",
             parentId: "tools",
             type: "tool",
+            isVisibleInMenu: false,
             name: "Erreichbarkeit",
             glyphicon: "glyphicon-road"
         }),
@@ -78,6 +88,7 @@ const general = {
             id: "serviceCoverage",
             parentId: "tools",
             type: "tool",
+            isVisibleInMenu: false,
             name: "serviceCoverage",
             glyphicon: "glyphicon-time"
         }),

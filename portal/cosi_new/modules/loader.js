@@ -13,6 +13,7 @@ import ReachabilityView from "./reachability/view";
 import ServiceCoverageView from "./serviceCoverage/view";
 import PrintView from "../../../modules/tools/print/view";
 import GraphModel from "./graph_v2/model";
+import ReachabilityAnalysisView from "./reachabiliyAnalysis/view";
 
 /**
  * @returns {void}
@@ -40,6 +41,7 @@ function initializeCosi () {
     if (!window.location.pathname.includes("infoscreen.html")) {
         Radio.trigger("ModelList", "addModelsAndUpdate", Object.values(tools));
         new CalculateRatioView({model: tools.calculateRatio});
+        new ReachabilityAnalysisView({model: tools.reachabilityAnalysis});
         new ReachabilityView({model: tools.reachability});
         new ServiceCoverageView({model: tools.serviceCoverage});
         new ColorCodeMapView({model: tools.colorCodeMap});
