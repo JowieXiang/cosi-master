@@ -62,11 +62,11 @@ const DashboardTableModel = Tool.extend({
             "valuesChanged": this.filterTableView
         });
 
-        this.listenTo(Radio.channel("SelectDistrict"), {
-            "selectionChanged": function () {
-                this.set("sortKey", Radio.request("SelectDistrict", "getSelector"));
-            }
-        }, this);
+        // this.listenTo(Radio.channel("SelectDistrict"), {
+        //     "selectionChanged": function () {
+        //         this.set("sortKey", Radio.request("SelectDistrict", "getSelector"));
+        //     }
+        // }, this);
 
         this.listenTo(Radio.channel("FeaturesLoader"), {
             "districtsLoaded": this.getData
@@ -82,8 +82,6 @@ const DashboardTableModel = Tool.extend({
             },
             "change:filteredTableView": this.prepareRendering
         });
-
-        console.log(window.CoSI);
     },
 
     /**
@@ -317,8 +315,6 @@ const DashboardTableModel = Tool.extend({
         if (type === "Linegraph") {
             data = this.getLineChartData(props);
 
-            console.log(props, data, this.get("unsortedTable"));
-
             graph = Radio.request("GraphV2", "createGraph", {
                 graphType: type,
                 selector: document.createElement("div"),
@@ -500,7 +496,7 @@ const DashboardTableModel = Tool.extend({
 
                 for (const prop in district) {
                     if (props.includes(prop)) {
-                        districtDataToGraph = {...districtDataToGraph, ...Object.fromEntries(district[prop])};
+                        districtDataToGraph = {...districtDataToGraph, ..._.object(district[prop])};
                     }
                     else if (prop === CoSI.selector) {
                         districtDataToGraph[prop] = district[prop];

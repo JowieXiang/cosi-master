@@ -541,7 +541,7 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
     appendLineLabel (svg, data, scaleX, scaleY, scaleTypeX, xAttr) {
         const dataToShow = data[data.length - 1],
             xAttrValue = dataToShow[xAttr],
-            dataArray = Object.entries(dataToShow)
+            dataArray = _.pairs(dataToShow)
                 .filter(d => d[0] !== xAttr)
                 .map(d => {
                     return {
@@ -559,7 +559,6 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             .text(d => d.label)
             .attr("y", d => scaleY(d.y))
             .attr("x", d => {
-                console.log(d.x, xAttr, dataToShow);
                 return scaleTypeX === "ordinal" ? scaleX(d.x) + (scaleX.bandwidth() / 2) + 20 : scaleX(d.x) + 20;
             });
     },
@@ -1106,7 +1105,8 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
                 return res.includes(val[refAttr]) ? res : [...res, val[refAttr]];
             }, []),
             refColorScale = Radio.request("ColorScale", "getColorScaleByValues", [0, 1], "interpolateRainbow", refValues.length),
-            refColors = Object.fromEntries(refValues.map((val, i) => [val, refColorScale.legend.colors[i]])),
+            // refColors = _.fromPairs(refValues.map((val, i) => [val, refColorScale.legend.colors[i]])),
+            refColors = _.object(refValues.map((val, i) => [val, refColorScale.legend.colors[i]])),
             yAttributeToShow,
             xAttributeToShow,
             tooltipElement;

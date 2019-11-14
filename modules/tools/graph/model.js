@@ -506,7 +506,7 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
     appendLineLabel (svg, data, scaleX, scaleY, scaleTypeX, xAttr) {
         const dataToShow = data[data.length - 1],
             xAttrValue = dataToShow[xAttr],
-            dataArray = Object.entries(dataToShow)
+            dataArray = _.pairs(dataToShow)
                 .filter(d => d[0] !== xAttr)
                 .map(d => {
                     return {
