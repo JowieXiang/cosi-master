@@ -33,7 +33,7 @@ const LayerFilterModel = Backbone.Model.extend({
             refValue = 0;
         }
         const districtInfo = [],
-            values = featureCollection.map(feature => parseFloat(feature.getProperties().jahr_2018)),
+            values = featureCollection.map(feature => parseFloat(feature.getProperties().jahr_2018)).filter(value => !_.isNaN(value)),
             max = parseInt(Math.max(...values), 10),
             min = parseInt(Math.min(...values), 10),
             newInfo = {
