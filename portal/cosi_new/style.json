@@ -1,11 +1,19 @@
 [
   {
+    "layerId": "green-polygon",
+    "class": "POLYGON",
+    "subClass": "SIMPLE",
+    "polygonFillColor": [255, 255, 255, 0],
+    "polygonStrokeColor": [49, 163, 84, 1],
+    "polygonStrokeWidth": 2.5
+  },
+  {
     "layerId": "red-polygon",
     "class": "POLYGON",
     "subClass": "SIMPLE",
     "polygonFillColor": [255, 255, 255, 0],
     "polygonStrokeColor": [255, 0, 0, 1],
-    "polygonStrokeWidth": 1.5
+    "polygonStrokeWidth": 3
   },
   {
     "layerId": "unstyled",

@@ -194,22 +194,6 @@
           "topic": "basic"
         },
         {
-          "id": "1694",
-          "name": "Stadtteile",
-          "visibility": true,
-          "districtCompareField": [
-            "Sportstätten"
-          ],
-          "mouseHoverField": [
-            "stadtteil"
-          ],
-          "selector": "stadtteil",
-          "topic": "basic",
-          "gfiAttributes": "ignore",
-          "isNeverVisibleInTree": true,
-          "alwaysOnTop": true
-        },
-        {
           "id": "6071",
           "name": "Statistische Gebiete",
           "visibility": true,
@@ -224,6 +208,17 @@
           "searchField": [
             "statgebiet"
           ]
+        },
+        {
+          "id": "1694",
+          "visibility": true,
+          "styleId": "green-polygon",
+          "mouseHoverField": [
+            "stadtteil"
+          ],
+          "gfiAttributes": "ignore",
+          "isNeverVisibleInTree": true,
+          "alwaysOnTop": true
         },
         {
           "id": "1692",
