@@ -496,7 +496,7 @@ const DashboardTableModel = Tool.extend({
 
                 for (const prop in district) {
                     if (props.includes(prop)) {
-                        districtDataToGraph = {...districtDataToGraph, ...Object.fromEntries(district[prop])};
+                        districtDataToGraph = {...districtDataToGraph, ..._.object(district[prop])};
                     }
                     else if (prop === CoSI.selector) {
                         districtDataToGraph[prop] = district[prop];
