@@ -91,7 +91,10 @@ const TimeSliderModel = Tool.extend({
                 snippetType: "slider",
                 values: sliderValues,
                 type: "integer",
-                preselectedValues: sliderValues[1]
+                preselectedValues: sliderValues[1],
+                displayName: "",
+                editableValueBox: false,
+                withLabel: false
             });
 
         this.listenTo(sliderModel, {
