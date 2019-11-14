@@ -109,8 +109,6 @@ const ServiceCoverageView = Backbone.View.extend({
                 const mapLayer = Radio.request("Map", "getLayerByName", this.model.get("mapLayerName")),
                     jsonFeatures = jsonList.map(json => json.features),
                     flatFeatures = [].concat.apply([], jsonFeatures);
-                console.log("jsonFeatuers:", jsonFeatures);
-                console.log("flatFeatures:", flatFeatures);
 
                 let jsonUnion = flatFeatures[0];
 
