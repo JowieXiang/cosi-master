@@ -88,6 +88,7 @@ const SelectDistrict = Tool.extend({
                         this.set("bboxGeometry", null);
                     }
                     this.unlisten();
+                    CosiStorage.setItem("sortKey", this.get("activeSelector"));
                 }
             }
         });
@@ -99,8 +100,6 @@ const SelectDistrict = Tool.extend({
         this.listenTo(Radio.channel("Layer"), "featuresLoaded", function (id) {
             if (!this.get("isReady")) {
                 this.checkDistrictLayersLoaded(id);
-                // console.info("featuresLoaded");
-                // this.getScopeFromDropdown();
             }
         });
 
@@ -229,9 +228,6 @@ const SelectDistrict = Tool.extend({
         this.set("activeScope", scope);
         if (scope && scope !== "" && this.get("districtLayer").length !== 0) {
             this.set("activeSelector", this.get("districtLayer").find(el => el.name === scope).selector);
-
-            CoSI.scope = scope;
-            CoSI.selector = this.get("districtLayer").find(el => el.name === scope).selector;
         }
         this.toggleScopeLayers();
     },
@@ -240,13 +236,15 @@ const SelectDistrict = Tool.extend({
     },
     toggleScopeLayers: function () {
         _.each(this.get("districtLayerNames"), (layerName) => {
-            const layer = Radio.request("ModelList", "getModelByAttributes", { "name": layerName });
+            if (layerName !== "Stadtteile") {
+                const layer = Radio.request("ModelList", "getModelByAttributes", {"name": layerName});
 
-            if (layerName !== this.getScope()) {
-                layer.setIsVisibleInMap(false);
-            }
-            else {
-                layer.setIsVisibleInMap(true);
+                if (layerName !== this.getScope()) {
+                    layer.setIsVisibleInMap(false);
+                }
+                else {
+                    layer.setIsVisibleInMap(true);
+                }
             }
         });
     },

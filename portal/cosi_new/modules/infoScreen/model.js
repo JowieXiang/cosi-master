@@ -15,8 +15,9 @@ const InfoScreenModel = Backbone.Model.extend({
             this.set(attr, opts[attr]);
         }
 
-        window.addEventListener("message", this.receiveData.bind(this), false);
+        this.setupStorage();
         window.addEventListener("beforeunload", this.callClosed.bind(this), false);
+
         this.initChildren(this.getChildren());
 
         this.get("channel").reply({
@@ -24,8 +25,6 @@ const InfoScreenModel = Backbone.Model.extend({
                 return true;
             }
         });
-
-        this.setBroadcasts();
     },
     initChildren (children) {
         children.forEach(child => {
@@ -44,47 +43,17 @@ const InfoScreenModel = Backbone.Model.extend({
     updateWindow (children) {
         this.initChildren(children);
     },
-    receiveData (evt) {
-        if (!evt.data.type) {
-            for (const target in evt.data) {
-                const foundTarget = Radio.request("ModelList", "getModelByAttributes", {id: target});
-
-                console.log(evt.data, "receive");
-
-                if (foundTarget) {
-                    for (const attr in evt.data[target]) {
-                        foundTarget.set(attr, evt.data[target][attr]);
-                    }
-                }
-            }
-        }
-    },
     callClosed () {
-        this.sendData({
-            infoScreenOpen: false
-        });
-    },
-    sendData (data) {
-        window.opener.postMessage(data);
+        CosiStorage.setItem("infoScreenOpen", JSON.stringify(false));
     },
     getChildren () {
         return this.get("children");
     },
-    setBroadcasts () {
-        const broadcasts = this.get("broadcasts");
-
-        for (const channel in broadcasts) {
-            for (let i = 0; i < broadcasts[channel].length; i++) {
-                Radio.channel(channel).reply({
-                    [broadcasts[channel][i]]: function (args = null) {
-                        return this.broadcastRadio(channel, broadcasts[channel][i]);
-                    }
-                }, this);
-            }
-        }
+    setupStorage () {
+        window.addEventListener("storage", this.broadcastStorage.bind(this), false);
     },
-    broadcastRadio (channel, request, args = null) {
-        return "statgebiet";
+    broadcastStorage (evt) {
+        Radio.trigger("Storage", "updated", evt.key);
     }
 });
 

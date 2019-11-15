@@ -3,6 +3,7 @@ import BboxSettor from "./bboxSettor/model";
 import ColorCodeMap from "./colorCodeMap/model";
 import Dashboard from "./dashboard/model";
 import DashboardTable from "./dashboardTable/model";
+import DashboardWidgetHandler from "./dashboardWidget/handler";
 import SelectDistrict from "./selectDistrict/model";
 import SaveSelectionCosi from "./saveSelection/model";
 import TimeSlider from "./timeSlider/model";
@@ -19,19 +20,20 @@ new BboxSettor();
 new OpenRouteService();
 
 const general = {
-    dashboardTable: new DashboardTable({
-        name: "Übersicht",
-        id: "dashboardTable"
-    }),
-    dashboard: new Dashboard({
-        parentId: "root",
-        type: "tool",
-        name: "Dashboard",
-        id: "dashboard",
-        glyphicon: "glyphicon-dashboard",
-        renderToWindow: false
-    })
-},
+        dashboardTable: new DashboardTable({
+            name: "Übersicht",
+            id: "dashboardTable"
+        }),
+        dashboard: new Dashboard({
+            parentId: "root",
+            type: "tool",
+            name: "Dashboard",
+            id: "dashboard",
+            glyphicon: "glyphicon-dashboard",
+            renderToWindow: false
+        }),
+        dashboardWidgetHandler: new DashboardWidgetHandler()
+    },
     tools = !window.location.pathname.includes("infoscreen.html") ? {
         selectDistrict: new SelectDistrict({
             id: "selectDistrict",
