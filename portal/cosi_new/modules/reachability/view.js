@@ -14,7 +14,10 @@ const ReachabilityView = Backbone.View.extend({
         "click button#Submit": "checkIfSelected",
         "change #coordinate": "setCoordinateFromInput",
         "change #path-type": "setPathType",
-        "change #range": "setRange",
+        "change #range": function (e) {
+            this.setRange(e);
+            this.renderLegend(e);
+        },
         "click #help": "showHelp",
         "click #show-in-dashboard": "showInDashboard"
     },
@@ -49,6 +52,7 @@ const ReachabilityView = Backbone.View.extend({
             this.setElement(document.getElementsByClassName("win-body")[0]);
             this.$el.html(this.template(attr));
             this.renderDropDownView(this.model.get("dropDownModel"));
+            this.renderLegend();
         }
         return this;
     },
@@ -249,6 +253,33 @@ const ReachabilityView = Backbone.View.extend({
             name: "Erreichbarkeit",
             glyphicon: "glyphicon-road"
         });
+    },
+    renderLegend: function () {
+        const steps = this.model.get("steps"),
+            range = this.model.get("range");
+
+        if (range > 0) {
+            this.$el.find("#legend").empty();
+            for (let i = steps - 1; i >= 0; i--) {
+                this.$el.find("#legend").append(`
+                <svg width="20" height="20">
+                    <rect width="20"  height="20" style="fill:rgba(${200 - 100 * i}, ${100 * i}, 3, ${0.1 * (i + 1) + 0.3});stroke-width:.5;stroke:rgb(0,0,0)" />
+                </svg>
+                <span style="font-size: 20px;">${Number.isInteger(range * ((steps - i) / 3)) ? range * ((steps - i) / 3) : (range * ((steps - i) / 3)).toFixed(2)}  </span>
+                `);
+            }
+        }
+        else {
+            this.$el.find("#legend").empty();
+            for (let i = steps - 1; i >= 0; i--) {
+                this.$el.find("#legend").append(`
+                <svg width="20" height="20">
+                    <rect width="20"  height="20" style="fill:rgba(${200 - 100 * i}, ${100 * i}, 3, ${0.1 * i + 0.3});stroke-width:.5;stroke:rgb(0,0,0)" />
+                </svg>
+                <span style="font-size: 20px;">000</span>
+                `);
+            }
+        }
     }
 });
 

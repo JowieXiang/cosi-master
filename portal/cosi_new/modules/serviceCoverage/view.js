@@ -12,7 +12,10 @@ const ServiceCoverageView = Backbone.View.extend({
         "click #create-isochrones": "createIsochrones",
         "click button#Submit": "checkIfSelected",
         "change #path-type": "setPathType",
-        "change #range": "setRange",
+        "change #range": function (e) {
+            this.setRange(e);
+            this.renderLegend(e);
+        },
         "click #service-coverage-help": "showHelp"
     },
     initialize: function () {
@@ -45,6 +48,7 @@ const ServiceCoverageView = Backbone.View.extend({
         this.setElement(document.getElementsByClassName("win-body")[0]);
         this.$el.html(this.template(attr));
         this.renderDropDownView();
+        this.renderLegend();
         return this;
     },
     renderDropDownView: function () {
@@ -143,7 +147,7 @@ const ServiceCoverageView = Backbone.View.extend({
         for (let i = features.length - 1; i >= 0; i--) {
             features[i].setStyle(new Style({
                 fill: new Fill({
-                    color: "rgba(200 , 3, 3, 0.3)"
+                    color: `rgba(200 , 3, 3, ${0.1 * i + 0.3})`
                 }),
                 stroke: new Stroke({
                     color: "white",
@@ -242,6 +246,33 @@ const ServiceCoverageView = Backbone.View.extend({
             text: "<strong>Please make sure all input information are provided</strong>",
             kategorie: "alert-warning"
         });
+    },
+    renderLegend: function () {
+        const steps = this.model.get("steps"),
+            range = this.model.get("range");
+
+        if (this.model.get("range") > 0) {
+            this.$el.find("#legend").empty();
+            for (let i = steps - 1; i >= 0; i--) {
+                this.$el.find("#legend").append(`
+                <svg width="20" height="20">
+                    <rect width="20"  height="20" style="fill:rgba(200 , 3, 3, ${0.3 * (i + 1)});stroke-width:.5;stroke:rgb(0,0,0)" />
+                </svg>
+                <span style="font-size: 20px;">${Number.isInteger(range * ((steps - i) / 3)) ? range * ((steps - i) / 3) : (range * ((steps - i) / 3)).toFixed(2)}  </span>
+                `);
+            }
+        }
+        else {
+            this.$el.find("#legend").empty();
+            for (let i = steps - 1; i >= 0; i--) {
+                this.$el.find("#legend").append(`
+                <svg width="20" height="20">
+                    <rect width="20"  height="20" style="fill:rgba(0, 0, 0, 0);stroke-width:.5;stroke:rgb(0,0,0)" />
+                </svg>
+                <span style="font-size: 20px;">000</span>
+                `);
+            }
+        }
     }
 });
 
