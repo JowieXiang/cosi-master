@@ -61,7 +61,7 @@ const InfoScreenHandler = Tool.extend({
             [target]: {
                 [attr]: data
             }
-        });
+        }, Config.remoteInterface.postMessageUrl);
     },
     receiveData (evt) {
         if (!evt.data.type) {
