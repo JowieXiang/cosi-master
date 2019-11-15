@@ -14,6 +14,7 @@ import ServiceCoverageView from "./serviceCoverage/view";
 import PrintView from "../../../modules/tools/print/view";
 import GraphModel from "./graph_v2/model";
 import ReachabilityAnalysisView from "./reachabiliyAnalysis/view";
+import storageListener from "./storage";
 
 /**
  * @returns {void}
@@ -21,12 +22,8 @@ import ReachabilityAnalysisView from "./reachabiliyAnalysis/view";
  */
 function initializeCosi () {
     // Define CoSI Namespace on window object
-    if (window.name === "InfoScreen") {
-        window.CoSI = window.opener.CoSI;
-    }
-    else {
-        window.CoSI = {};
-    }
+    window.CosiStorage = window.localStorage;
+    window.CosiStorage.clear();
 
     const dashboard = new DashboardView({model: general.dashboard});
 
@@ -63,6 +60,12 @@ function initializeCosi () {
             }
         });
     }
+
+    storageListener([
+        general.dashboard,
+        general.dashboardTable,
+        tools.infoScreenHandler
+    ]);
 }
 
 export default initializeCosi;

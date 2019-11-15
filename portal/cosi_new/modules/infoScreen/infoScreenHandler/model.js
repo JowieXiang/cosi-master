@@ -1,4 +1,5 @@
 import Tool from "../../../../../modules/core/modelList/tool/model";
+import storageListener from "../../storage";
 
 const InfoScreenHandler = Tool.extend({
     defaults: _.extend({}, Tool.prototype.defaults, {
@@ -38,7 +39,6 @@ const InfoScreenHandler = Tool.extend({
             "change:content": function () {
                 if (this.get("infoScreenOpen")) {
                     this.renderContent();
-                    // this.updateWindow();
                 }
             },
             "change:infoScreenOpen": function (model, isOpen) {
@@ -50,32 +50,32 @@ const InfoScreenHandler = Tool.extend({
     },
     castWindow () {
         this.window = window.open("./infoscreen.html", "InfoScreen");
-        window.addEventListener("message", this.receiveData.bind(this), false);
-        this.setIsWindowOpen(true);
-    },
-    broadcastRadio (channel, event) {
-        console.log(channel, event);
-    },
-    sendData (data, target, attr) {
-        this.window.postMessage({
-            [target]: {
-                [attr]: data
-            }
-        });
-    },
-    receiveData (evt) {
-        if (!evt.data.type) {
-            for (const target in evt.data) {
-                const foundTarget = Radio.request("ModelList", "getModelByAttributes", {id: target});
 
-                if (foundTarget) {
-                    for (const attr in evt.data[target]) {
-                        foundTarget.set(attr, evt.data[target][attr]);
-                    }
-                }
-            }
-        }
+        this.setupStorage();
+        this.setIsWindowOpen(true);
+
+        // window.addEventListener("message", this.receiveData.bind(this), false);
     },
+    // sendData (data, target, attr) {
+    //     this.window.postMessage({
+    //         [target]: {
+    //             [attr]: data
+    //         }
+    //     });
+    // },
+    // receiveData (evt) {
+    //     if (!evt.data.type) {
+    //         for (const target in evt.data) {
+    //             const foundTarget = Radio.request("ModelList", "getModelByAttributes", {id: target});
+
+    //             if (foundTarget) {
+    //                 for (const attr in evt.data[target]) {
+    //                     foundTarget.set(attr, evt.data[target][attr]);
+    //                 }
+    //             }
+    //         }
+    //     }
+    // },
     clear () {
         this.set("content", {});
     },
@@ -90,6 +90,12 @@ const InfoScreenHandler = Tool.extend({
     },
     getWidgets () {
         return this.get("widgets");
+    },
+    setupStorage () {
+        window.addEventListener("storage", this.broadcastStorage.bind(this), false);
+    },
+    broadcastStorage (evt) {
+        Radio.trigger("Storage", "updated", evt.key);
     }
 });
 
