@@ -3,9 +3,6 @@ import Model from "./model";
 import SnippetDropdownView from "../../../../../modules/snippets/dropdown/view";
 
 const DistrictSelectorView = Backbone.View.extend({
-    events: {
-        // "change select": "setSelectedDistrict"
-    },
     initialize: function () {
         const channel = Radio.channel("DistrictSelector");
 

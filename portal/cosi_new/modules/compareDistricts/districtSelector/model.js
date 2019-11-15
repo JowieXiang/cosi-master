@@ -11,7 +11,9 @@ const DistrictSelectorModel = Backbone.Model.extend({
     },
     initializeDistrictNames: function () {
         const selector = Radio.request("SelectDistrict", "getSelector"),
-            districtNames = Radio.request("SelectDistrict", "getSelectedDistricts").map(feature => feature.getProperties()[selector]);
+            scope = Radio.request("SelectDistrict", "getScope"),
+            districts = Radio.request("ModelList", "getModelByAttributes", { name: scope }).get("layer").getSource().getFeatures(),
+            districtNames = districts.map(district => district.getProperties()[selector]);
 
         this.set("districtNames", districtNames);
         this.setDropDownModel(districtNames);
