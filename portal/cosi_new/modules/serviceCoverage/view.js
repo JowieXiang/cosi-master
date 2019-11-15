@@ -2,7 +2,7 @@ import Template from "text-loader!./template.html";
 import SnippetDropdownView from "../../../../modules/snippets/dropdown/view";
 import * as Proj from "ol/proj.js";
 import "./style.less";
-import { Fill, Stroke, Style } from "ol/style.js";
+import {Fill, Stroke, Style} from "ol/style.js";
 import GeoJSON from "ol/format/GeoJSON";
 import InfoTemplate from "text-loader!./info.html";
 import union from "turf-union";
@@ -49,12 +49,12 @@ const ServiceCoverageView = Backbone.View.extend({
     },
     renderDropDownView: function () {
         this.model.setDropDownModel();
-        const dropdownView = new SnippetDropdownView({ model: this.model.get("dropDownModel") });
+        const dropdownView = new SnippetDropdownView({model: this.model.get("dropDownModel")});
 
         this.$el.find("#select-layer").html(dropdownView.render().el);
     },
     setFacilityLayers: function (models) {
-        const facilityLayerModels = models.filter(model => model.get("isFacility") === true)
+        const facilityLayerModels = models.filter(model => model.get("isFacility") === true);
 
         if (facilityLayerModels.length > 0) {
             const facilityNames = facilityLayerModels.map(model => model.get("featureType").trim());
@@ -111,18 +111,19 @@ const ServiceCoverageView = Backbone.View.extend({
             });
             Promise.all(promiseList).then((groupedFeaturesList) => {
                 const mapLayer = Radio.request("Map", "getLayerByName", this.model.get("mapLayerName"));
+                let layerUnion, layerUnionFeatures;
 
                 mapLayer.getSource().clear();
                 for (let i = 0; i < 3; i++) {
                     let layeredList = groupedFeaturesList.map(groupedFeatures => groupedFeatures[i]);
 
                     layeredList = [].concat(...layeredList);
-                    let layerUnion = layeredList[0];
+                    layerUnion = layeredList[0];
 
                     for (let j = 0; j < layeredList.length; j++) {
                         layerUnion = union(layerUnion, layeredList[j]);
                     }
-                    let layerUnionFeatures = this.parseDataToFeatures(JSON.stringify(layerUnion));
+                    layerUnionFeatures = this.parseDataToFeatures(JSON.stringify(layerUnion));
 
                     layerUnionFeatures = this.transformFeatures(layerUnionFeatures, "EPSG:4326", "EPSG:25832");
                     this.styleFeatures(layerUnionFeatures);
