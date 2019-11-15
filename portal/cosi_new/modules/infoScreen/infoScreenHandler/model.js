@@ -53,29 +53,7 @@ const InfoScreenHandler = Tool.extend({
 
         this.setupStorage();
         this.setIsWindowOpen(true);
-
-        // window.addEventListener("message", this.receiveData.bind(this), false);
     },
-    // sendData (data, target, attr) {
-    //     this.window.postMessage({
-    //         [target]: {
-    //             [attr]: data
-    //         }
-    //     });
-    // },
-    // receiveData (evt) {
-    //     if (!evt.data.type) {
-    //         for (const target in evt.data) {
-    //             const foundTarget = Radio.request("ModelList", "getModelByAttributes", {id: target});
-
-    //             if (foundTarget) {
-    //                 for (const attr in evt.data[target]) {
-    //                     foundTarget.set(attr, evt.data[target][attr]);
-    //                 }
-    //             }
-    //         }
-    //     }
-    // },
     clear () {
         this.set("content", {});
     },
@@ -84,6 +62,7 @@ const InfoScreenHandler = Tool.extend({
     },
     setIsWindowOpen (state) {
         this.set("infoScreenOpen", state);
+        CosiStorage.setItem("infoScreenOpen", JSON.stringify(state));
         if (this.get("infoScreenOpen")) {
             this.get("channel").trigger("infoScreenOpen");
         }

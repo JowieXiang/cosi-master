@@ -91,11 +91,6 @@ const SelectDistrict = Tool.extend({
                     CosiStorage.setItem("sortKey", this.get("activeSelector"));
                 }
             }
-            // "change:activeSelector": function () {
-            //     if (Radio.request("InfoScreen", "getIsWindowOpen")) {
-            //         Radio.trigger("InfoScreen", "sendData", this.get("activeSelector"), "dashboardTable", "sortKey");
-            //     }
-            // }
         });
 
         this.listenTo(this.get("scopeDropdownModel"), {

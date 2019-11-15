@@ -5,7 +5,8 @@ const DashboardModel = Tool.extend({
         tableView: [],
         name: "",
         glyphicon: "",
-        width: "60%"
+        width: "60%",
+        infoScreenOpen: false
     }),
 
     /**

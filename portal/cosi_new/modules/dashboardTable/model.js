@@ -115,11 +115,6 @@ const DashboardTableModel = Tool.extend({
         // Set table
         this.set("tableView", this.groupTable(this.get("unsortedTable")));
 
-        // if (Radio.request("InfoScreen", "getIsWindowOpen")) {
-        //     Radio.trigger("InfoScreen", "sendData", this.get("tableView"), "dashboardTable", "tableView");
-        //     Radio.trigger("InfoScreen", "sendData", this.get("unsortedTable"), "dashboardTable", "unsortedTable");
-        // }
-
         CosiStorage.setItem("tableView", JSON.stringify(this.get("tableView")));
         CosiStorage.setItem("unsortedTable", JSON.stringify(this.get("unsortedTable")));
     },

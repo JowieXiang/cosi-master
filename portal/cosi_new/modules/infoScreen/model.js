@@ -18,8 +18,6 @@ const InfoScreenModel = Backbone.Model.extend({
         this.setupStorage();
         window.addEventListener("beforeunload", this.callClosed.bind(this), false);
 
-        // window.addEventListener("message", this.receiveData.bind(this), false);
-
         this.initChildren(this.getChildren());
 
         this.get("channel").reply({
@@ -45,25 +43,9 @@ const InfoScreenModel = Backbone.Model.extend({
     updateWindow (children) {
         this.initChildren(children);
     },
-    // receiveData (evt) {
-    //     if (!evt.data.type) {
-    //         for (const target in evt.data) {
-    //             const foundTarget = Radio.request("ModelList", "getModelByAttributes", {id: target});
-
-    //             if (foundTarget) {
-    //                 for (const attr in evt.data[target]) {
-    //                     foundTarget.set(attr, evt.data[target][attr]);
-    //                 }
-    //             }
-    //         }
-    //     }
-    // },
     callClosed () {
-        window.CosiStorage.setItem("infoScreenOpen", JSON.stringify(false));
+        CosiStorage.setItem("infoScreenOpen", JSON.stringify(false));
     },
-    // sendData (data) {
-    //     window.opener.postMessage(data);
-    // },
     getChildren () {
         return this.get("children");
     },
