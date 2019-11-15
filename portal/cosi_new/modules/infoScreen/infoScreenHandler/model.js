@@ -1,5 +1,4 @@
 import Tool from "../../../../../modules/core/modelList/tool/model";
-import storageListener from "../../storage";
 
 const InfoScreenHandler = Tool.extend({
     defaults: _.extend({}, Tool.prototype.defaults, {

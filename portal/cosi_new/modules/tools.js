@@ -12,8 +12,8 @@ import Reachability from "./reachability/model";
 import ServiceCoverage from "./serviceCoverage/model";
 import OpenRouteService from "./openRouteService/model";
 import CalculateRatio from "./calculateRatio/model";
-import reachabilityAnalysis from "./reachabiliyAnalysis/model";
 import ReachabilityAnalysis from "./reachabiliyAnalysis/model";
+import CompareDistricts from "./compareDistricts/model";
 
 new FeaturesLoader();
 new BboxSettor();
@@ -63,6 +63,13 @@ const general = {
             glyphicon: "glyphicon-new-window",
             renderToWindow: false
         }),
+        compareDistricts: new CompareDistricts({
+            id: "compareDistricts",
+            parentId: "tools",
+            type: "tool",
+            name: "Vergleichbare Gebiete ermitteln",
+            glyphicon: "glyphicon-screenshot"
+        }),
         calculateRatio: new CalculateRatio({
             parentId: "tools",
             type: "tool",
@@ -106,4 +113,4 @@ const general = {
         })
     } : {};
 
-export {tools, general};
+export { tools, general };

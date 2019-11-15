@@ -2,7 +2,7 @@ import Template from "text-loader!./template.html";
 import SnippetDropdownView from "../../../../modules/snippets/dropdown/view";
 import * as Proj from "ol/proj.js";
 import "./style.less";
-import { Fill, Stroke, Style } from "ol/style.js";
+import {Fill, Stroke, Style} from "ol/style.js";
 import GeoJSON from "ol/format/GeoJSON";
 import InfoTemplate from "text-loader!./info.html";
 import union from "turf-union";
@@ -12,7 +12,10 @@ const ServiceCoverageView = Backbone.View.extend({
         "click #create-isochrones": "createIsochrones",
         "click button#Submit": "checkIfSelected",
         "change #path-type": "setPathType",
-        "change #range": "setRange",
+        "change #range": function (e) {
+            this.setRange(e);
+            this.renderLegend(e);
+        },
         "click #service-coverage-help": "showHelp"
     },
     initialize: function () {
@@ -45,16 +48,17 @@ const ServiceCoverageView = Backbone.View.extend({
         this.setElement(document.getElementsByClassName("win-body")[0]);
         this.$el.html(this.template(attr));
         this.renderDropDownView();
+        this.renderLegend();
         return this;
     },
     renderDropDownView: function () {
         this.model.setDropDownModel();
-        const dropdownView = new SnippetDropdownView({ model: this.model.get("dropDownModel") });
+        const dropdownView = new SnippetDropdownView({model: this.model.get("dropDownModel")});
 
         this.$el.find("#select-layer").html(dropdownView.render().el);
     },
     setFacilityLayers: function (models) {
-        const facilityLayerModels = models.filter(model => model.get("isFacility") === true)
+        const facilityLayerModels = models.filter(model => model.get("isFacility") === true);
 
         if (facilityLayerModels.length > 0) {
             const facilityNames = facilityLayerModels.map(model => model.get("featureType").trim());
@@ -92,37 +96,47 @@ const ServiceCoverageView = Backbone.View.extend({
             }
             // each group of 5 coordinates
             _.each(coordinatesList, coordinates => {
-                promiseList.push(Radio.request("OpenRoute", "requestIsochrones", pathType, coordinates, [range])
+                promiseList.push(Radio.request("OpenRoute", "requestIsochrones", pathType, coordinates, [range, range * 0.67, range * 0.33])
                     .then(res => {
                         // reverse JSON object sequence to render the isochrones in the correct order
                         // this reversion is intended for centrifugal isochrones (when range.length is larger than 1)
                         const json = JSON.parse(res),
-                            reversedFeatures = [...json.features].reverse();
+                            reversedFeatures = [...json.features].reverse(),
+                            groupedFeatures = [[], [], []];
 
+                        for (let i = 0; i < reversedFeatures.length; i = i + 3) {
+                            groupedFeatures[i % 3].push(reversedFeatures[i]);
+                            groupedFeatures[(i + 1) % 3].push(reversedFeatures[i + 1]);
+                            groupedFeatures[(i + 2) % 3].push(reversedFeatures[i + 2]);
+                        }
                         json.features = reversedFeatures;
-                        return json;
+                        return groupedFeatures;
                     }));
             });
-            Promise.all(promiseList).then((jsonList) => {
-                const mapLayer = Radio.request("Map", "getLayerByName", this.model.get("mapLayerName")),
-                    jsonFeatures = jsonList.map(json => json.features),
-                    // flatten array one level deep;
-                    flatFeatures = [].concat(...jsonFeatures);
-                let jsonUnion = flatFeatures[0];
-
-                for (let i = 1; i < flatFeatures.length; i++) {
-                    jsonUnion = union(jsonUnion, flatFeatures[i]);
-                }
-
-                let unionFeature = this.parseDataToFeatures(JSON.stringify(jsonUnion));
-
-                unionFeature = this.transformFeatures(unionFeature, "EPSG:4326", "EPSG:25832");
-                this.styleFeatures(unionFeature);
+            Promise.all(promiseList).then((groupedFeaturesList) => {
+                const mapLayer = Radio.request("Map", "getLayerByName", this.model.get("mapLayerName"));
+                let layerUnion, layerUnionFeatures;
 
                 mapLayer.getSource().clear();
-                mapLayer.getSource().addFeatures(unionFeature);
+                for (let i = 0; i < 3; i++) {
+                    let layeredList = groupedFeaturesList.map(groupedFeatures => groupedFeatures[i]);
+
+                    layeredList = [].concat(...layeredList);
+                    layerUnion = layeredList[0];
+
+                    for (let j = 0; j < layeredList.length; j++) {
+                        layerUnion = union(layerUnion, layeredList[j]);
+                    }
+                    layerUnionFeatures = this.parseDataToFeatures(JSON.stringify(layerUnion));
+
+                    layerUnionFeatures = this.transformFeatures(layerUnionFeatures, "EPSG:4326", "EPSG:25832");
+                    this.styleFeatures(layerUnionFeatures);
+                    mapLayer.getSource().addFeatures(layerUnionFeatures);
+
+                }
+
                 mapLayer.setVisible(true);
-                this.model.set("isochroneFeatures", unionFeature);
+                // this.model.set("isochroneFeatures", unionList);
             });
         }
         else {
@@ -133,7 +147,7 @@ const ServiceCoverageView = Backbone.View.extend({
         for (let i = features.length - 1; i >= 0; i--) {
             features[i].setStyle(new Style({
                 fill: new Fill({
-                    color: "rgba(200 , 3, 3, 0.3)"
+                    color: `rgba(200 , 3, 3, ${0.1 * i + 0.3})`
                 }),
                 stroke: new Stroke({
                     color: "white",
@@ -232,6 +246,33 @@ const ServiceCoverageView = Backbone.View.extend({
             text: "<strong>Please make sure all input information are provided</strong>",
             kategorie: "alert-warning"
         });
+    },
+    renderLegend: function () {
+        const steps = this.model.get("steps"),
+            range = this.model.get("range");
+
+        if (this.model.get("range") > 0) {
+            this.$el.find("#legend").empty();
+            for (let i = steps - 1; i >= 0; i--) {
+                this.$el.find("#legend").append(`
+                <svg width="20" height="20">
+                    <rect width="20"  height="20" style="fill:rgba(200 , 3, 3, ${0.3 * (i + 1)});stroke-width:.5;stroke:rgb(0,0,0)" />
+                </svg>
+                <span style="font-size: 20px;">${Number.isInteger(range * ((steps - i) / 3)) ? range * ((steps - i) / 3) : (range * ((steps - i) / 3)).toFixed(2)}  </span>
+                `);
+            }
+        }
+        else {
+            this.$el.find("#legend").empty();
+            for (let i = steps - 1; i >= 0; i--) {
+                this.$el.find("#legend").append(`
+                <svg width="20" height="20">
+                    <rect width="20"  height="20" style="fill:rgba(0, 0, 0, 0);stroke-width:.5;stroke:rgb(0,0,0)" />
+                </svg>
+                <span style="font-size: 20px;">000</span>
+                `);
+            }
+        }
     }
 });
 

@@ -56,7 +56,6 @@ import TreeFilterView from "../modules/treefilter/view";
 import Formular from "../modules/formular/view";
 import FeatureLister from "../modules/featurelister/view";
 import PrintView from "../modules/tools/print_/view";
-import CompareDistrictsView from "../modules/tools/compareDistricts/view";
 
 // @deprecated in version 3.0.0
 // remove "version" in doc and config.
@@ -328,10 +327,6 @@ async function loadApp () {
             }
             case "ageGroupSlider": {
                 new AgeGroupSliderView({model: tool});
-                break;
-            }
-            case "compareDistricts": {
-                new CompareDistrictsView({model: tool});
                 break;
             }
             case "virtualCity": {

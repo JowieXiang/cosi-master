@@ -14,6 +14,7 @@ import PrintView from "../../../modules/tools/print/view";
 import GraphModel from "./graph_v2/model";
 import ReachabilityAnalysisView from "./reachabiliyAnalysis/view";
 import {storageListener, updateFromStorage} from "./storage";
+import CompareDistrictsView from "./compareDistricts/view";
 
 /**
  * @returns {void}
@@ -47,6 +48,7 @@ function initializeCosi () {
         new TimeSliderView({model: tools.timeSlider});
         new SelectDistrictView({model: tools.selectDistrict});
         new PrintView({model: tools.print});
+        new CompareDistrictsView({model: tools.compareDistricts});
     }
     else {
         // load dashboard content into infoscreen window
