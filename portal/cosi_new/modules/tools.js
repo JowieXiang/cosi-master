@@ -11,27 +11,27 @@ import Reachability from "./reachability/model";
 import ServiceCoverage from "./serviceCoverage/model";
 import OpenRouteService from "./openRouteService/model";
 import CalculateRatio from "./calculateRatio/model";
-import reachabilityAnalysis from "./reachabiliyAnalysis/model";
 import ReachabilityAnalysis from "./reachabiliyAnalysis/model";
+import CompareDistricts from "./compareDistricts/model";
 
 new FeaturesLoader();
 new BboxSettor();
 new OpenRouteService();
 
 const general = {
-        dashboardTable: new DashboardTable({
-            name: "Übersicht",
-            id: "dashboardTable"
-        }),
-        dashboard: new Dashboard({
-            parentId: "root",
-            type: "tool",
-            name: "Dashboard",
-            id: "dashboard",
-            glyphicon: "glyphicon-dashboard",
-            renderToWindow: false
-        })
-    },
+    dashboardTable: new DashboardTable({
+        name: "Übersicht",
+        id: "dashboardTable"
+    }),
+    dashboard: new Dashboard({
+        parentId: "root",
+        type: "tool",
+        name: "Dashboard",
+        id: "dashboard",
+        glyphicon: "glyphicon-dashboard",
+        renderToWindow: false
+    })
+},
     tools = !window.location.pathname.includes("infoscreen.html") ? {
         selectDistrict: new SelectDistrict({
             id: "selectDistrict",
@@ -60,6 +60,13 @@ const general = {
             name: "Zweites Fenster öffnen",
             glyphicon: "glyphicon-new-window",
             renderToWindow: false
+        }),
+        compareDistricts: new CompareDistricts({
+            id: "compareDistricts",
+            parentId: "tools",
+            type: "tool",
+            name: "Vergleichbare Gebiete ermitteln",
+            glyphicon: "glyphicon-screenshot"
         }),
         calculateRatio: new CalculateRatio({
             parentId: "tools",
@@ -104,4 +111,4 @@ const general = {
         })
     } : {};
 
-export {tools, general};
+export { tools, general };
