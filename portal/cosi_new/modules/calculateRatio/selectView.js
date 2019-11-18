@@ -45,7 +45,7 @@ const SelectView = Backbone.View.extend({
     },
     renderResult: function () {
         this.$el.find(".result").html("");
-        this.$el.find(".result").append(new ResultView({model: this.model}).render().el);
+        this.$el.find(".result").append(new ResultView({model: this.model}).render(false).el);
     },
     renderModifiers: function () {
         this.$el.find(".modifiers").html("");

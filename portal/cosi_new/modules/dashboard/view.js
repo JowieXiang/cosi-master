@@ -12,7 +12,6 @@ const DashboardView = Backbone.View.extend({
     initialize: function () {
         this.listenTo(this.model, {
             "change:isActive": function (model, isActive) {
-                console.log(this.model.get("infoScreenOpen"));
                 if (isActive & !this.model.get("infoScreenOpen")) {
                     this.render();
                 }
@@ -65,6 +64,8 @@ const DashboardView = Backbone.View.extend({
         Radio.request("Dashboard", "getChildren").forEach(widget => {
             widget.render();
         });
+
+        console.log(Radio.request("Dashboard", "getChildren"));
 
         this.delegateEvents();
         Radio.trigger("Dashboard", "dashboardOpen");

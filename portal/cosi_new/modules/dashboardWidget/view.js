@@ -9,7 +9,7 @@ const DashboardWidgetView = Backbone.View.extend({
         "click .tool-name": "widgetInfo"
     },
     initialize (content, parent, opts = {}) {
-        const attrs = content.model ? content.model.defaults : opts;
+        const attrs = opts;
 
         this.parent = parent;
         this.content = content;

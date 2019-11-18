@@ -101,6 +101,7 @@ const DashboardTableView = Backbone.View.extend({
     },
     createCorrelation () {
         this.model.createCorrelation();
+        this.model.deleteAttrsForCorrelation();
     },
     toggleTimelineTable: function (event) {
         event.stopPropagation();
