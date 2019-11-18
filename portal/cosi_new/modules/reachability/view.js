@@ -65,6 +65,7 @@ const ReachabilityView = Backbone.View.extend({
     createMapLayer: function (name) {
         const newLayer = Radio.request("Map", "createLayerIfNotExists", name);
 
+        newLayer.setMap(Radio.request("Map", "getMap"));
         newLayer.setVisible(false);
     },
     clearMapLayer: function (name) {
@@ -118,7 +119,7 @@ const ReachabilityView = Backbone.View.extend({
         for (let i = features.length - 1; i >= 0; i--) {
             features[i].setStyle(new Style({
                 fill: new Fill({
-                    color: `rgba(${200 - 100 * i}, ${100 * i}, 3, ${0.1 * i + 0.3})`
+                    color: `rgba(${200 - 100 * i}, ${100 * i}, 3, ${0.05 * i + 0.1})`
                 }),
                 stroke: new Stroke({
                     color: "white",
@@ -284,7 +285,7 @@ const ReachabilityView = Backbone.View.extend({
     },
     toModeSelection: function () {
         this.model.set("isActive", false);
-        Radio.request("ModelList", "getModelByAttributes", {name: "Erreichbarkeitsanalyse"}).set("isActive", true);
+        Radio.request("ModelList", "getModelByAttributes", { name: "Erreichbarkeitsanalyse" }).set("isActive", true);
     }
 });
 

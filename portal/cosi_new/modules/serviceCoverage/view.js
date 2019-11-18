@@ -75,6 +75,7 @@ const ServiceCoverageView = Backbone.View.extend({
         const newLayer = Radio.request("Map", "createLayerIfNotExists", name);
 
         newLayer.setVisible(false);
+        newLayer.setMap(Radio.request("Map", "getMap"));
     },
     clearMapLayer: function (name) {
         const mapLayer = Radio.request("Map", "getLayerByName", name);
@@ -148,7 +149,7 @@ const ServiceCoverageView = Backbone.View.extend({
         for (let i = features.length - 1; i >= 0; i--) {
             features[i].setStyle(new Style({
                 fill: new Fill({
-                    color: `rgba(200 , 3, 3, ${0.1 * i + 0.3})`
+                    color: `rgba(200 , 3, 3, ${0.05 * i + 0.1})`
                 }),
                 stroke: new Stroke({
                     color: "white",
