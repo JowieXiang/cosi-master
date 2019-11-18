@@ -19,7 +19,8 @@ const ReachabilityView = Backbone.View.extend({
             this.renderLegend(e);
         },
         "click #help": "showHelp",
-        "click #show-in-dashboard": "showInDashboard"
+        "click #show-in-dashboard": "showInDashboard",
+        "click #backward": "toModeSelection"
     },
     initialize: function () {
         this.listenTo(this.model, {
@@ -274,12 +275,16 @@ const ReachabilityView = Backbone.View.extend({
             for (let i = steps - 1; i >= 0; i--) {
                 this.$el.find("#legend").append(`
                 <svg width="20" height="20">
-                    <rect width="20"  height="20" style="fill:rgba(${200 - 100 * i}, ${100 * i}, 3, ${0.1 * i + 0.3});stroke-width:.5;stroke:rgb(0,0,0)" />
+                    <circle cx="10" cy="10" r="10" style="fill:rgba(${200 - 100 * i}, ${100 * i}, 3, ${0.1 * i + 0.3});stroke-width:.5;stroke:rgb(0,0,0)" />
                 </svg>
-                <span style="font-size: 20px;">000</span>
+                <span style="font-size: 20px;">0</span>
                 `);
             }
         }
+    },
+    toModeSelection: function () {
+        this.model.set("isActive", false);
+        Radio.request("ModelList", "getModelByAttributes", {name: "Erreichbarkeitsanalyse"}).set("isActive", true);
     }
 });
 

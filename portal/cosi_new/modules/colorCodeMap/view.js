@@ -45,7 +45,7 @@ const ColorCodeMapView = Backbone.View.extend({
                 this.$el.find("#color-code-legend").append(`
                 <li style="display:inline;">
                     <svg width="20" height="20">
-                        <rect width="20"  height="20" style="fill:${data.colors[i]};stroke-width:.5;stroke:rgb(0,0,0)" />
+                        <circle cx="10" cy="10" r="10" style="fill:${data.colors[i]};stroke-width:.5;stroke:rgb(0,0,0)" />
                     </svg>
                         <span style="font-size: 20px;">${Number.isInteger(data.values[i]) ? data.values[i] : data.values[i].toFixed(2)}</span>
                 </li>
