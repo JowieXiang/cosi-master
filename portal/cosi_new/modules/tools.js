@@ -90,7 +90,7 @@ const general = {
             parentId: "tools",
             type: "tool",
             isVisibleInMenu: false,
-            name: "Erreichbarkeit",
+            name: "Erreichbarkeit ab einem Referenzpunkt",
             glyphicon: "glyphicon-road"
         }),
         serviceCoverage: new ServiceCoverage({
