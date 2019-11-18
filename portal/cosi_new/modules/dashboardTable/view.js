@@ -42,16 +42,12 @@ const DashboardTableView = Backbone.View.extend({
                 this.$el.html(this.template(attr));
                 this.$el.find(".filter-dropdown").prepend(this.filterDropdownView.render().el);
 
-
                 Radio.trigger("Dashboard", "append", this.$el, "#dashboard-containers", {
                     id: "dashboard",
                     name: "Übersicht",
                     glyphicon: "glyphicon-stats",
                     append: false
                 });
-            }
-            if (attr.tableView.length === 0) {
-                Radio.trigger("Dashboard", "destroyWidgetById", "dashboard");
             }
 
             this.$el.find(".table").html(this.tableTemplate(attr));

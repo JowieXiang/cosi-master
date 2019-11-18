@@ -15,7 +15,8 @@ const InfoScreenModel = Backbone.Model.extend({
             this.set(attr, opts[attr]);
         }
 
-        this.setupStorage();
+        // this.setupStorage();
+        CosiStorage.setItem("infoScreenOpen", JSON.stringify(true));
         window.addEventListener("beforeunload", this.callClosed.bind(this), false);
 
         this.initChildren(this.getChildren());
@@ -48,12 +49,6 @@ const InfoScreenModel = Backbone.Model.extend({
     },
     getChildren () {
         return this.get("children");
-    },
-    setupStorage () {
-        window.addEventListener("storage", this.broadcastStorage.bind(this), false);
-    },
-    broadcastStorage (evt) {
-        Radio.trigger("Storage", "updated", evt.key);
     }
 });
 

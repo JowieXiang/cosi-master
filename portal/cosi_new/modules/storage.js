@@ -1,4 +1,14 @@
 /**
+ * @description setting up the storage listener for CoSI
+ * @returns {void}
+ */
+export function setupStorage () {
+    window.addEventListener("storage", function (evt) {
+        Radio.trigger("Storage", "updated", evt.key);
+    }, false);
+}
+
+/**
  * @description add a storage listener that updates properties on the model onStorage
  * @param {Backbone.Model[]} models listening models
  * @returns {void}
@@ -11,9 +21,8 @@ export function storageListener (models) {
             model.listenTo(Radio.channel("Storage"), {
                 "updated": function (key) {
 
-                    if (this.defaults.hasOwnProperty(key)) {
+                    if (model.defaults.hasOwnProperty(key)) {
                         model.set(key, parseItem(key));
-                        console.log(model.get(key), model);
                     }
                 }
             }, model);
@@ -33,7 +42,7 @@ export function updateFromStorage (models) {
         for (const key in model.defaults) {
             if (window.localStorage.getItem(key)) {
                 model.set(key, parseItem(key));
-                console.log(model.get(key), model);
+                // console.log(model.get(key), model);
             }
         }
     });

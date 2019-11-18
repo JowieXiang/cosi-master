@@ -6,12 +6,14 @@ const DashboardView = Backbone.View.extend({
     events: {
         "click .close": "close",
         "click #help": "showHelp",
-        "mousedown .drag-bar": "dragStart"
+        "mousedown .drag-bar": "dragStart",
+        "click .tool-name": "dashboardInfo"
     },
     initialize: function () {
         this.listenTo(this.model, {
             "change:isActive": function (model, isActive) {
-                if (isActive) {
+                console.log(this.model.get("infoScreenOpen"));
+                if (isActive & !this.model.get("infoScreenOpen")) {
                     this.render();
                 }
                 else {
@@ -31,6 +33,18 @@ const DashboardView = Backbone.View.extend({
         window.addEventListener("mousemove", (event) => {
             this.dragMove(event);
         });
+
+        this.listenTo(Radio.channel("General"), {
+            "loaded": function () {
+                if (Radio.request("InfoScreen", "getIsInfoScreen")) {
+                    setTimeout(() => {
+                        Radio.request("Dashboard", "getChildren").forEach(widget => {
+                            widget.render();
+                        });
+                    }, 2000);
+                }
+            }
+        }, this);
     },
     id: "dashboard-view",
     className: "dashboard",
@@ -45,10 +59,8 @@ const DashboardView = Backbone.View.extend({
 
         this.$el.html(this.template(attr));
 
-        if (!this.model.get("infoScreenOpen")) {
-            Radio.trigger("Sidebar", "append", this.$el);
-            Radio.trigger("Sidebar", "toggle", true, this.model.get("width"));
-        }
+        Radio.trigger("Sidebar", "append", this.$el);
+        Radio.trigger("Sidebar", "toggle", true, this.model.get("width"));
 
         Radio.request("Dashboard", "getChildren").forEach(widget => {
             widget.render();
@@ -58,6 +70,9 @@ const DashboardView = Backbone.View.extend({
         Radio.trigger("Dashboard", "dashboardOpen");
 
         return this;
+    },
+    dashboardInfo () {
+        console.log(Radio.request("Dashboard", "getChildren"));
     },
     close: function () {
         this.model.setIsActive(false);

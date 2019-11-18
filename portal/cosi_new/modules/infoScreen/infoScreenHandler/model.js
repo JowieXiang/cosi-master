@@ -50,7 +50,6 @@ const InfoScreenHandler = Tool.extend({
     castWindow () {
         this.window = window.open("./infoscreen.html", "InfoScreen");
 
-        this.setupStorage();
         this.setIsWindowOpen(true);
     },
     clear () {
@@ -61,19 +60,12 @@ const InfoScreenHandler = Tool.extend({
     },
     setIsWindowOpen (state) {
         this.set("infoScreenOpen", state);
-        CosiStorage.setItem("infoScreenOpen", JSON.stringify(state));
         if (this.get("infoScreenOpen")) {
             this.get("channel").trigger("infoScreenOpen");
         }
     },
     getWidgets () {
         return this.get("widgets");
-    },
-    setupStorage () {
-        window.addEventListener("storage", this.broadcastStorage.bind(this), false);
-    },
-    broadcastStorage (evt) {
-        Radio.trigger("Storage", "updated", evt.key);
     }
 });
 

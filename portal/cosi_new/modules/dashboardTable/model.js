@@ -74,7 +74,9 @@ const DashboardTableModel = Tool.extend({
         }, this);
 
         this.listenTo(channel, {
-            "dashboardOpen": this.prepareRendering
+            "dashboardOpen": function () {
+                this.prepareRendering();
+            }
         }, this);
 
         this.listenTo(this, {

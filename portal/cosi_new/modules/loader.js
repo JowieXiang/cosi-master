@@ -13,7 +13,7 @@ import ServiceCoverageView from "./serviceCoverage/view";
 import PrintView from "../../../modules/tools/print/view";
 import GraphModel from "./graph_v2/model";
 import ReachabilityAnalysisView from "./reachabiliyAnalysis/view";
-import {storageListener, updateFromStorage} from "./storage";
+import {storageListener, updateFromStorage, setupStorage} from "./storage";
 import CompareDistrictsView from "./compareDistricts/view";
 
 /**
@@ -64,6 +64,8 @@ function initializeCosi () {
         });
     }
 
+    setupStorage();
+
     storageListener([
         general.dashboard,
         general.dashboardTable,
@@ -78,6 +80,8 @@ function initializeCosi () {
     if (infoScreenOpen) {
         CosiStorage.setItem("infoScreenOpen", JSON.stringify(true));
     }
+
+    Radio.trigger("General", "loaded");
 }
 
 export default initializeCosi;
