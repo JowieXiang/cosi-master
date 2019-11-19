@@ -159,6 +159,11 @@ const DashboardTableView = Backbone.View.extend({
             this.model.createChart([row.find("th.prop").attr("id")], "Linegraph", row.find("th.prop").text());
         }.bind(this));
 
+        $(contextActions).find("li#timeline").get(0).addEventListener("click", function () {
+            Radio.trigger("Dashboard", "destroyWidgetById", "time-slider");
+            Radio.trigger("TimeSlider", "create", row.find("th.prop").text());
+        });
+
         // Add to Correlation
         $(contextActions).find("li#correlation").get(0).addEventListener("click", function () {
             this.model.addAttrForCorrelation(row.find("th.prop").attr("id"));

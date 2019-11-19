@@ -5,7 +5,6 @@ import Dashboard from "./dashboard/model";
 import DashboardTable from "./dashboardTable/model";
 import SelectDistrict from "./selectDistrict/model";
 import SaveSelectionCosi from "./saveSelection/model";
-import TimeSlider from "./timeSlider/model";
 import InfoScreenHandler from "./infoScreen/infoScreenHandler/model";
 import Reachability from "./reachability/model";
 import ServiceCoverage from "./serviceCoverage/model";
@@ -97,10 +96,6 @@ const general = {
             parentId: "utilities",
             type: "tool",
             glyphicon: "glyphicon-copy"
-        }),
-        timeSlider: new TimeSlider({
-            parentId: "tools",
-            type: "tool"
         })
     } : {};
 

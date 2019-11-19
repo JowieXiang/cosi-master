@@ -1,6 +1,7 @@
 import Template from "text-loader!./template.html";
-import SnippetDropdownView from "../../../../modules/snippets/dropdown/view";
 import SnippetSliderView from "../../../../modules/snippets/slider/view";
+import TimeSliderModel from "./model";
+import "./style.less";
 
 const TimeSliderView = Backbone.View.extend({
     events: {
@@ -10,13 +11,12 @@ const TimeSliderView = Backbone.View.extend({
         }
     },
     initialize: function () {
+        this.model = new TimeSliderModel();
         this.listenTo(this.model, {
             "render": this.render,
-            "renderDropDownView": this.renderDropDownView,
             "renderSliderView": this.renderSliderView,
             "renderGraph": this.renderGraph,
-            "stopRunning": this.setButtonToPlay,
-            "remove": this.remove
+            "stopRunning": this.setButtonToPlay
         });
     },
     id: "time-series",
@@ -25,29 +25,21 @@ const TimeSliderView = Backbone.View.extend({
         var attr = this.model.toJSON();
 
         this.$el.html(this.template(attr));
-        Radio.trigger("Sidebar", "append", this.el);
-        Radio.trigger("Sidebar", "toggle", true, "40%");
         this.delegateEvents();
 
         return this;
     },
 
-    renderDropDownView: function (dropdownModel) {
-        const dropdownView = new SnippetDropdownView({model: dropdownModel});
-
-        this.$el.find(".dropdown").append(dropdownView.render().el);
-    },
-
-    renderSliderView: function (sliderModel) {
+    renderSliderView: function (sliderModel, title) {
         const sliderView = new SnippetSliderView({model: sliderModel});
 
         this.$el.find(".slider-container").remove();
         this.$el.find(".time-series-slider").prepend(sliderView.render().$el);
-    },
-
-    remove: function () {
-        this.$el.remove();
-        Radio.trigger("Sidebar", "toggle", false);
+        Radio.trigger("Dashboard", "append", this.$el, "#dashboard-containers", {
+            id: "time-slider",
+            name: "Zeitreihen Analyse " + title,
+            glyphicon: "glyphicon-time"
+        });
     },
 
     buttonClickCallback: function () {
@@ -95,8 +87,8 @@ const TimeSliderView = Backbone.View.extend({
                 right: 20,
                 bottom: 40
             },
-            width: document.getElementsByClassName("sidebar")[0].offsetWidth - 20,
-            height: document.getElementsByClassName("sidebar")[0].offsetHeight - (document.getElementsByClassName("sidebar")[0].offsetHeight * 0.75),
+            width: $(window).width() * 0.4,
+            height: $(window).height() * 0.4,
             svgClass: "time-series-graph-svg"
         });
     }

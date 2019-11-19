@@ -34,6 +34,7 @@ function initializeCosi () {
     new DashboardWidgetHandler();
     new ContextMenuView();
     new GraphModel();
+    new TimeSliderView();
 
     Radio.trigger("ModelList", "addModelsAndUpdate", Object.values(general));
 
@@ -46,7 +47,6 @@ function initializeCosi () {
         new ServiceCoverageView({model: tools.serviceCoverage});
         new ColorCodeMapView({model: tools.colorCodeMap});
         new SaveSelectionCosiView({model: tools.saveSelectionCosi});
-        new TimeSliderView({model: tools.timeSlider});
         new SelectDistrictView({model: tools.selectDistrict});
         new PrintView({model: tools.print});
     }

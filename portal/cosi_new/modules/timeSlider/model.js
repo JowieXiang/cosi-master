@@ -1,91 +1,40 @@
-import Tool from "../../../../modules/core/modelList/tool/model";
-import DropdownModel from "../../../../modules/snippets/dropdown/model";
 import SliderModel from "../../../../modules/snippets/slider/model";
 import {Fill, Style} from "ol/style.js";
 
-const TimeSliderModel = Tool.extend({
-    defaults: _.extend({}, Tool.prototype.defaults, {
-        renderToWindow: false,
+const TimeSliderModel = Backbone.Model.extend({
+    defaults: {
         attribute_prefix: "jahr_",
         isRunning: false,
-        name: "Zeitstrahl Analyse",
-        glyphicon: "glyphicon-time"
-    }),
+        channel: Radio.channel("TimeSlider")
+    },
 
     initialize: function () {
-        this.listenTo(this, {
-            "change:isActive": function (model, isActive) {
-                if (!isActive) {
-                    this.unStyleDistrictFeaturs(this.get("districtFeatures"));
-                    this.trigger("remove");
-                }
-                else {
-                    this.run();
-                }
-            }
+        this.listenTo(this.get("channel"), {
+            "create": this.run
         });
     },
 
     /**
      * starts the tool
+     * @param {string} title - title of the displayed features
      * @returns {void}
      */
-    run: function () {
+    run: function (title) {
         // the used features
-        this.setFeaturesByValueAndScope("Bevölkerung insgesamt", Radio.request("SelectDistrict", "getScope"));
+        this.setFeaturesByValueAndScope(title, Radio.request("SelectDistrict", "getScope"));
         // data for the graph
         this.setFeaturesProperties(this.get("features"));
         this.trigger("render");
-        // to do for stadtteile
-        this.setDropDownModel(Radio.request("FeaturesLoader", "getAllValuesByScope", "statgebiet"));
-        this.setSliderModel(this.get("features"));
-    },
-
-    /**
-     * sets the selection list for the time slider
-     * @param {object[]} valueList - available values
-     * @returns {void}
-     */
-    setDropDownModel: function (valueList) {
-        const dropdownModel = new DropdownModel({
-            name: "Thema",
-            type: "string",
-            values: valueList,
-            snippetType: "dropdown",
-            isMultiple: false,
-            isGrouped: true,
-            preselectedValues: valueList[0].value
-        });
-
-        this.listenTo(dropdownModel, {
-            "valuesChanged": this.dropDownCallback
-        }, this);
-        this.trigger("renderDropDownView", dropdownModel);
-    },
-
-    /**
-     * callback function for the "valuesChanged" event in the dropdown model
-     * sets the features based on the dropdown selection
-     * @param {Backbone.Model} valueModel - the value model which was selected or deselected
-     * @param {boolean} isSelected - flag if value model is selected or not
-     * @returns {void}
-     */
-    dropDownCallback: function (valueModel, isSelected) {
-        if (isSelected) {
-            // the used features
-            this.setFeaturesByValueAndScope(valueModel.get("value"), Radio.request("SelectDistrict", "getScope"));
-            // data for the graph
-            this.setFeaturesProperties(this.get("features"));
-            this.setSliderModel(this.get("features"));
-        }
+        this.setSliderModel(this.get("features"), title);
     },
 
     /**
      * sets the slider for the time slider
      * @param {ol.Feature[]} features - the used features
+     * @param {string} title - title of the displayed features
      * @returns {void}
      */
-    setSliderModel: function (features) {
+    setSliderModel: function (features, title) {
         const sliderValues = this.getSliderValues(features, this.get("attribute_prefix")),
             sliderModel = new SliderModel({
                 snippetType: "slider",
@@ -105,7 +54,8 @@ const TimeSliderModel = Tool.extend({
         this.setMaxYAxisValue(this.get("featuresProperties"), this.get("attribute_prefix"), sliderValues);
         // for the init call
         this.sliderCallback(undefined, sliderValues[1]);
-        this.trigger("renderSliderView", sliderModel);
+        this.trigger("renderSliderView", sliderModel, title);
+        this.trigger("renderGraph", this.get("featuresProperties"), sliderValues[1], this.get("maxYAxisValue"));
     },
 
     /**
@@ -164,7 +114,7 @@ const TimeSliderModel = Tool.extend({
 
             foundFeature.setStyle(new Style({
                 fill: new Fill({
-                    color: colorScale.scale(feature.getProperties()[attribute])
+                    color: colorScale.scale(feature.getProperties()[attribute]).replace("rgb", "rgba").replace(")", ", 0.8)")
                 })
             }));
             foundDistrictFeatures.push(foundFeature);
