@@ -56,10 +56,32 @@ const ContextMenuView = Backbone.View.extend({
     },
     openContextMenu (evt) {
         this.$el.removeClass("hidden");
-        this.$el.css({
-            "left": evt.clientX,
-            "top": evt.clientY
-        });
+
+        if (evt.clientY + this.el.clientHeight < window.innerHeight) {
+            this.$el.css({
+                "top": evt.clientY,
+                "bottom": "auto"
+            });
+        }
+        else {
+            this.$el.css({
+                "top": "auto",
+                "bottom": window.innerHeight - evt.clientY
+            });
+        }
+
+        if (evt.clientX + this.el.clientWidth < window.innerWidth) {
+            this.$el.css({
+                "left": evt.clientX,
+                "right": "auto"
+            });
+        }
+        else {
+            this.$el.css({
+                "left": "auto",
+                "right": window.innerWidth - evt.clientX
+            });
+        }
     },
     closeContextMenu () {
         this.$el.addClass("hidden");

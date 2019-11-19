@@ -8,7 +8,7 @@
                             <% } %>
                     </tr>
             </thead>
-            <tbody id="<%= group.group.replace(/\s/g, '') %>">
+            <tbody id="<%= group.group.replace(/\s/g, '') %>" class="<%= group.group === 'Berechnungen' ? 'open' : '' %>">
             <% for (var val in group.values) { %>
                     <tr class="row">
                             <th class="prop" scope="row" title="<%= val %>" id="<%= val %>"><span class="prop-name"><%= val %></span><button type="button" class="btn btn-outline-secondary open"><span></span></button></th>

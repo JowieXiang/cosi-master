@@ -65,8 +65,6 @@ const DashboardView = Backbone.View.extend({
             widget.render();
         });
 
-        console.log(Radio.request("Dashboard", "getChildren"));
-
         this.delegateEvents();
         Radio.trigger("Dashboard", "dashboardOpen");
 
