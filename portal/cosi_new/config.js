@@ -2,7 +2,7 @@ const Config = {
     ignoredKeys: ["BOUNDEDBY", "SHAPE", "SHAPE_LENGTH", "SHAPE_AREA", "OBJECTID", "GLOBALID", "GEOMETRY", "SHP", "SHP_AREA", "SHP_LENGTH", "GEOM"],
     gfiWindow: "detached",
     simpleMap: false,
-    wfsImgPath: "../cosi_new/assets/",
+    wfsImgPath: "https://geoportal-hamburg.de/lgv-config/img/",
     allowParametricURL: true,
     namedProjections: [
         // GK DHDN
