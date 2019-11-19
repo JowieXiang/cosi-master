@@ -4,14 +4,19 @@ import ExportButtonView from "../../../../modules/snippets/exportButton/view";
 
 
 const ResultView = Backbone.View.extend({
+    events: {
+        "click #push-dashboard": "pushToDashboard"
+    },
     model: {},
     template: _.template(ResultTemplate),
     textStyle: new Style({}),
-    render: function () {
+    render: function (isDashboard = true) {
         this.exportButtonView = new ExportButtonView({model: this.model.get("exportButtonModel")});
 
         const attr = this.model.toJSON(),
             results = this.model.getResults();
+
+        attr.isDashboard = isDashboard;
 
         this.$el.html(this.template(attr));
         this.$el.find("#export-button").append(this.exportButtonView.render().el);
@@ -60,6 +65,12 @@ const ResultView = Backbone.View.extend({
                     text: results[feature.getProperties()[selector]].ratio.toFixed(2)
                 })
             }));
+        });
+    },
+    pushToDashboard: function () {
+        Radio.trigger("Dashboard", "append", this, "#dashboard-containers", {
+            name: `Angebotsdeckung: ${this.model.getNumerators().join(", ")} : ${this.model.getDenominators().join(", ")}`,
+            glyphicon: "glyphicon-tasks"
         });
     }
 });

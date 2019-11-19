@@ -24,7 +24,13 @@ else { %>
         </table>
         <div class="btn-group">
             <div id="export-button"></div>
+            <% if (!isDashboard) { %>
+            <div id="push-dashboard-button">
+                <button type="button" class="btn btn-lgv-grey measure-delete" id="push-dashboard">
+                    Im Dashboard anzeigen
+                </button>
+            </div>
+            <% } %>
         </div>
-        <small id="toolHelp" class="form-text text-muted">Die errechneten Ergebnisse werden Ihnen auch im Dashboard anzeigt und zum Download zur Verfügung gestellt.</small>
     <% } %>
 <% } %>

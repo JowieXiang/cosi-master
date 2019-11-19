@@ -37,11 +37,10 @@ const DashboardTableView = Backbone.View.extend({
     render: async function () {
         var attr = this.model.toJSON();
 
-        if (!Radio.request("InfoScreen", "getIsWindowOpen")) {
+        if (!Radio.request("InfoScreen", "getIsWindowOpen") || Radio.request("InfoScreen", "getIsInfoScreen")) {
             if (!Radio.request("Dashboard", "getWidgetById", "dashboard") && Radio.request("Dashboard", "dashboardOpen")) {
                 this.$el.html(this.template(attr));
                 this.$el.find(".filter-dropdown").prepend(this.filterDropdownView.render().el);
-
 
                 Radio.trigger("Dashboard", "append", this.$el, "#dashboard-containers", {
                     id: "dashboard",
@@ -49,9 +48,6 @@ const DashboardTableView = Backbone.View.extend({
                     glyphicon: "glyphicon-stats",
                     append: false
                 });
-            }
-            if (attr.tableView.length === 0) {
-                Radio.trigger("Dashboard", "destroyWidgetById", "dashboard");
             }
 
             this.$el.find(".table").html(this.tableTemplate(attr));
@@ -105,6 +101,7 @@ const DashboardTableView = Backbone.View.extend({
     },
     createCorrelation () {
         this.model.createCorrelation();
+        this.model.deleteAttrsForCorrelation();
     },
     toggleTimelineTable: function (event) {
         event.stopPropagation();
@@ -114,7 +111,6 @@ const DashboardTableView = Backbone.View.extend({
         event.stopPropagation();
         const group = this.$(event.target).closest("thead").attr("id");
 
-        // this.$(event.target).toggleClass("open");
         this.$el.find(`tbody#${group}`).toggleClass("open");
     },
     toggleFigure: function (event) {

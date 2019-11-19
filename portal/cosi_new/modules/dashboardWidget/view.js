@@ -5,10 +5,11 @@ import "./style.less";
 const DashboardWidgetView = Backbone.View.extend({
     events: {
         "click .dashboard-widget-close": "removeWidget",
-        "click .win-control.open": "toggleOpen"
+        "click .win-control.open": "toggleOpen",
+        "click .tool-name": "widgetInfo"
     },
     initialize (content, parent, opts = {}) {
-        const attrs = content.model ? content.model.defaults : opts;
+        const attrs = opts;
 
         this.parent = parent;
         this.content = content;
@@ -80,6 +81,9 @@ const DashboardWidgetView = Backbone.View.extend({
     },
     removeWidget () {
         Radio.trigger("Dashboard", "destroyWidgetById", this.attrs.id);
+    },
+    widgetInfo () {
+        console.log(this);
     }
 });
 

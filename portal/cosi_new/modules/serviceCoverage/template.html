@@ -4,6 +4,9 @@
     <table>
         <tr>
             <th><strong>Einrichtungstyp</strong></th>
+            <th><strong>Transportmittel</strong></th>
+            <th><strong>Zeit (in min)</strong></th>
+            <th></th>
             <th></th>
         </tr>
         <tr>
@@ -11,20 +14,6 @@
                 <div id="select-layer">
                 </div>
             </td>
-            <td>
-                <div id="service-coverage-help">
-                    <span class="glyphicon glyphicon-question-sign"></span>
-                </div>
-            </td>
-        </tr>
-    </table>
-    <table>
-        <tr>
-            <th><strong>Transportmittel</strong></th>
-            <th><strong>Zeit (in min)</strong></th>
-            <th></th>
-        </tr>
-        <tr>
             <td> <select class="form-control input-sm" title="path-type" id="path-type">
                     <option selected value="Leeren"> -Leeren- </option>
                     <option value="driving-car">Auto</option>
@@ -32,17 +21,29 @@
                     <option value="cycling-electric">Rad (elektrisch)</option>
                     <option value="foot-walking">Gehen</option>
                     <option value="wheelchair">Rollstuhl</option>
-                </select></td>
+                </select>
+            </td>
             <td>
                 <input class="form-control input-sm" title="range" id="range" type="number" min="0">
-                </input></td>
+                </input>
+            </td>
             <td>
-                <button type="button" class="btn btn-lgv-grey" id="create-isochrones">
-                    <span class="glyphicon glyphicon-plus"></span>berechnen
-                </button>
+                <div id="help">
+                    <span class="glyphicon glyphicon-question-sign"></span>
+                </div>
+            </td>
+            <td> 
+                <div id="backward" title="go back to mode selection">
+                    <span class="glyphicon glyphicon-arrow-left"></span>
+                </div>
             </td>
         </tr>
     </table>
+    <br />
+    <button type="button" class="btn btn-lgv-grey measure-delete" id="create-isochrones">
+        <span class="glyphicon glyphicon-plus"></span>berechnen
+    </button>
+
     <h5><br /><strong>legend - Zeit (in min): </strong></h5>
     <div id="legend">
     </div>

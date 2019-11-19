@@ -4,7 +4,7 @@ import DropdownModel from "../../../../modules/snippets/dropdown/model";
 const ReachabilityAnalysis = Tool.extend({
     defaults: _.extend({}, Tool.prototype.defaults, {
         dropDownModel: {},
-        toolList: ["Erreichbarkeit", "Erreichbarket im Gebiet"]
+        toolList: ["Erreichbarkeit ab einem Referenzpunkt", "Erreichbarket im Gebiet"]
     }),
     initialize: function () {
         this.superInitialize();

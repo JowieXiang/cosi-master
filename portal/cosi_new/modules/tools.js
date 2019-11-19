@@ -3,6 +3,7 @@ import BboxSettor from "./bboxSettor/model";
 import ColorCodeMap from "./colorCodeMap/model";
 import Dashboard from "./dashboard/model";
 import DashboardTable from "./dashboardTable/model";
+import DashboardWidgetHandler from "./dashboardWidget/handler";
 import SelectDistrict from "./selectDistrict/model";
 import SaveSelectionCosi from "./saveSelection/model";
 import InfoScreenHandler from "./infoScreen/infoScreenHandler/model";
@@ -10,8 +11,8 @@ import Reachability from "./reachability/model";
 import ServiceCoverage from "./serviceCoverage/model";
 import OpenRouteService from "./openRouteService/model";
 import CalculateRatio from "./calculateRatio/model";
-import reachabilityAnalysis from "./reachabiliyAnalysis/model";
 import ReachabilityAnalysis from "./reachabiliyAnalysis/model";
+import CompareDistricts from "./compareDistricts/model";
 
 new FeaturesLoader();
 new BboxSettor();
@@ -29,7 +30,8 @@ const general = {
             id: "dashboard",
             glyphicon: "glyphicon-dashboard",
             renderToWindow: false
-        })
+        }),
+        dashboardWidgetHandler: new DashboardWidgetHandler()
     },
     tools = !window.location.pathname.includes("infoscreen.html") ? {
         selectDistrict: new SelectDistrict({
@@ -60,6 +62,13 @@ const general = {
             glyphicon: "glyphicon-new-window",
             renderToWindow: false
         }),
+        compareDistricts: new CompareDistricts({
+            id: "compareDistricts",
+            parentId: "tools",
+            type: "tool",
+            name: "Vergleichbare Gebiete ermitteln",
+            glyphicon: "glyphicon-screenshot"
+        }),
         calculateRatio: new CalculateRatio({
             parentId: "tools",
             type: "tool",
@@ -80,7 +89,7 @@ const general = {
             parentId: "tools",
             type: "tool",
             isVisibleInMenu: false,
-            name: "Erreichbarkeit",
+            name: "Erreichbarkeit ab einem Referenzpunkt",
             glyphicon: "glyphicon-road"
         }),
         serviceCoverage: new ServiceCoverage({
@@ -99,4 +108,4 @@ const general = {
         })
     } : {};
 
-export {tools, general};
+export { tools, general };

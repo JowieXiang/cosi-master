@@ -1,4 +1,4 @@
-import {Fill, Stroke, Style} from "ol/style.js";
+import { Fill, Stroke, Style } from "ol/style.js";
 import GeometryCollection from "ol/geom/GeometryCollection";
 import Tool from "../../../../modules/core/modelList/tool/model";
 import SnippetDropdownModel from "../../../../modules/snippets/dropdown/model";
@@ -88,6 +88,7 @@ const SelectDistrict = Tool.extend({
                         this.set("bboxGeometry", null);
                     }
                     this.unlisten();
+                    CosiStorage.setItem("sortKey", this.get("activeSelector"));
                 }
             }
         });
@@ -99,8 +100,6 @@ const SelectDistrict = Tool.extend({
         this.listenTo(Radio.channel("Layer"), "featuresLoaded", function (id) {
             if (!this.get("isReady")) {
                 this.checkDistrictLayersLoaded(id);
-                // console.info("featuresLoaded");
-                // this.getScopeFromDropdown();
             }
         });
 
@@ -132,7 +131,7 @@ const SelectDistrict = Tool.extend({
 
     // select districts on click
     select: function (evt) {
-        const districtLayer = Radio.request("ModelList", "getModelByAttributes", {"name": this.getScope()}),
+        const districtLayer = Radio.request("ModelList", "getModelByAttributes", { "name": this.getScope() }),
             features = Radio.request("Map", "getFeaturesAtPixel", evt.map.getEventPixel(evt.originalEvent), {
                 layerFilter: function (layer) {
                     return layer.get("name") === districtLayer.get("name");
@@ -162,10 +161,10 @@ const SelectDistrict = Tool.extend({
             "selectedDistricts": this.get("selectedDistricts").concat(feature)
         });
     },
-    setFeaturesByScopeAndIds (scope, ids, buffer) {
+    setFeaturesByScopeAndIds(scope, ids, buffer) {
         this.setBuffer(buffer);
         this.setScope(scope);
-        const layer = Radio.request("ModelList", "getModelByAttributes", {name: scope}),
+        const layer = Radio.request("ModelList", "getModelByAttributes", { name: scope }),
             features = layer.get("layerSource").getFeatures().filter(feature => ids.includes(feature.getProperties()[this.getSelector()]));
 
         if (features && features.length !== 0) {
@@ -229,9 +228,6 @@ const SelectDistrict = Tool.extend({
         this.set("activeScope", scope);
         if (scope && scope !== "" && this.get("districtLayer").length !== 0) {
             this.set("activeSelector", this.get("districtLayer").find(el => el.name === scope).selector);
-
-            CoSI.scope = scope;
-            CoSI.selector = this.get("districtLayer").find(el => el.name === scope).selector;
         }
         this.toggleScopeLayers();
     },
@@ -240,18 +236,20 @@ const SelectDistrict = Tool.extend({
     },
     toggleScopeLayers: function () {
         _.each(this.get("districtLayerNames"), (layerName) => {
-            const layer = Radio.request("ModelList", "getModelByAttributes", {"name": layerName});
+            if (layerName !== "Stadtteile") {
+                const layer = Radio.request("ModelList", "getModelByAttributes", {"name": layerName});
 
-            if (layerName !== this.getScope()) {
-                layer.setIsVisibleInMap(false);
-            }
-            else {
-                layer.setIsVisibleInMap(true);
+                if (layerName !== this.getScope()) {
+                    layer.setIsVisibleInMap(false);
+                }
+                else {
+                    layer.setIsVisibleInMap(true);
+                }
             }
         });
     },
     checkDistrictLayersLoaded: function (id) {
-        const name = Radio.request("ModelList", "getModelByAttributes", {"id": id}).get("name");
+        const name = Radio.request("ModelList", "getModelByAttributes", { "id": id }).get("name");
 
         if (this.get("districtLayerNames").includes(name)) {
             if (!this.get("districtLayersLoaded").includes(name)) {
@@ -274,7 +272,7 @@ const SelectDistrict = Tool.extend({
             extent;
 
         if (!onlySelected) {
-            const getLayerSource = Promise.resolve(Radio.request("ModelList", "getModelByAttributes", {"name": this.getScope()}).get("layerSource")),
+            const getLayerSource = Promise.resolve(Radio.request("ModelList", "getModelByAttributes", { "name": this.getScope() }).get("layerSource")),
                 layerSource = await getLayerSource;
 
             districts = layerSource.getFeatures();
@@ -286,7 +284,7 @@ const SelectDistrict = Tool.extend({
             }
         });
         if (extent) {
-            Radio.trigger("Map", "zoomToExtent", extent, {padding: [20, 20, 20, 20]});
+            Radio.trigger("Map", "zoomToExtent", extent, { padding: [20, 20, 20, 20] });
         }
     },
     getSelector: function () {
@@ -347,7 +345,7 @@ const SelectDistrict = Tool.extend({
     getDistrictLayer: function () {
         return this.get("districtLayer");
     },
-    getUrlQuery () {
+    getUrlQuery() {
         const query = window.location.search.split("&").filter(q => q.includes("scope") || q.includes("selectedDistricts") || q.includes("buffer"));
 
         if (query.length > 0) {
@@ -359,35 +357,34 @@ const SelectDistrict = Tool.extend({
         }
     },
     setBboxGeometry: function (bboxGeometry) {
-        const layerlist = _.union(Radio.request("Parser", "getItemsByAttributes", {typ: "WFS", isBaseLayer: false}), Radio.request("Parser", "getItemsByAttributes", {typ: "GeoJSON", isBaseLayer: false}));
+        const layerlist = _.union(Radio.request("Parser", "getItemsByAttributes", { typ: "WFS", isBaseLayer: false }), Radio.request("Parser", "getItemsByAttributes", { typ: "GeoJSON", isBaseLayer: false }));
 
         Radio.trigger("BboxSettor", "setBboxGeometryToLayer", layerlist, bboxGeometry);
     },
     /**
      * revert bboxGeometry back to previous state (this function is used by Reachability)
-     *
+     * @returns {void}
      */
     revertBboxGeometry: function () {
         if (this.get("bboxGeometry")) {
             this.setBboxGeometry(this.get("bboxGeometry"));
         }
     },
+
     setSelectedDistrictsToFeatures: function (features) {
-        const that = this;
+        const that = this,
+            geometries = features.map(feature => feature.getGeometry()),
+            bboxGeometry = new GeometryCollection(geometries);
 
         this.resetSelectedDistricts();
         this.set("selectedDistricts", features);
         _.each(features, feature => {
             feature.setStyle(that.get("selectedStyle"));
         });
-
         // reset bboxGeometry
-        const bboxGeometry = Polygon.fromExtent(Extent.buffer(this.getSelectedGeometries().getExtent(), this.getBuffer()));
-
         this.set("bboxGeometry", bboxGeometry);
         this.setBboxGeometry(bboxGeometry);
-        this.get("channel").trigger("selectionChanged", features);
-
+        this.get("channel").trigger("selectionChanged", bboxGeometry.getExtent().toString(), this.get("activeScope"), this.getSelectedDistrictNames(features));
     }
 });
 

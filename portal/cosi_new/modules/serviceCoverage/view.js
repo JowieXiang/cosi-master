@@ -2,7 +2,7 @@ import Template from "text-loader!./template.html";
 import SnippetDropdownView from "../../../../modules/snippets/dropdown/view";
 import * as Proj from "ol/proj.js";
 import "./style.less";
-import {Fill, Stroke, Style} from "ol/style.js";
+import { Fill, Stroke, Style } from "ol/style.js";
 import GeoJSON from "ol/format/GeoJSON";
 import InfoTemplate from "text-loader!./info.html";
 import union from "turf-union";
@@ -16,7 +16,8 @@ const ServiceCoverageView = Backbone.View.extend({
             this.setRange(e);
             this.renderLegend(e);
         },
-        "click #service-coverage-help": "showHelp"
+        "click #help": "showHelp",
+        "click #backward": "toModeSelection"
     },
     initialize: function () {
 
@@ -53,7 +54,7 @@ const ServiceCoverageView = Backbone.View.extend({
     },
     renderDropDownView: function () {
         this.model.setDropDownModel();
-        const dropdownView = new SnippetDropdownView({model: this.model.get("dropDownModel")});
+        const dropdownView = new SnippetDropdownView({ model: this.model.get("dropDownModel") });
 
         this.$el.find("#select-layer").html(dropdownView.render().el);
     },
@@ -74,6 +75,7 @@ const ServiceCoverageView = Backbone.View.extend({
         const newLayer = Radio.request("Map", "createLayerIfNotExists", name);
 
         newLayer.setVisible(false);
+        newLayer.setMap(Radio.request("Map", "getMap"));
     },
     clearMapLayer: function (name) {
         const mapLayer = Radio.request("Map", "getLayerByName", name);
@@ -147,7 +149,7 @@ const ServiceCoverageView = Backbone.View.extend({
         for (let i = features.length - 1; i >= 0; i--) {
             features[i].setStyle(new Style({
                 fill: new Fill({
-                    color: `rgba(200 , 3, 3, ${0.1 * i + 0.3})`
+                    color: `rgba(200 , 3, 3, ${0.05 * i + 0.1})`
                 }),
                 stroke: new Stroke({
                     color: "white",
@@ -267,12 +269,16 @@ const ServiceCoverageView = Backbone.View.extend({
             for (let i = steps - 1; i >= 0; i--) {
                 this.$el.find("#legend").append(`
                 <svg width="20" height="20">
-                    <rect width="20"  height="20" style="fill:rgba(0, 0, 0, 0);stroke-width:.5;stroke:rgb(0,0,0)" />
+                    <circle cx="10" cy="10" r="10" style="fill:rgba(0, 0, 0, 0);stroke-width:.5;stroke:rgb(0,0,0)" />
                 </svg>
-                <span style="font-size: 20px;">000</span>
+                <span style="font-size: 20px;">0</span>
                 `);
             }
         }
+    },
+    toModeSelection: function () {
+        this.model.set("isActive", false);
+        Radio.request("ModelList", "getModelByAttributes", {name: "Erreichbarkeitsanalyse"}).set("isActive", true);
     }
 });
 

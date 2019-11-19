@@ -135,10 +135,6 @@
             "glyphicon": "glyphicon-picture",
             "isVisibleInMenu": false
           },
-          "compareDistricts": {
-            "name": "Vergleichbare Gebiete ermitteln",
-            "glyphicon": "glyphicon-screenshot"
-          },
           "gfi": {
             "name": "Informationen abfragen",
             "glyphicon": "glyphicon-info-sign",

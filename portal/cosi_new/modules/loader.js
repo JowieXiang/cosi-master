@@ -2,7 +2,6 @@ import {tools, general} from "./tools";
 import ColorCodeMapView from "./colorCodeMap/view";
 import DashboardView from "./dashboard/view";
 import DashboardTableView from "./dashboardTable/view";
-import DashboardWidgetHandler from "./dashboardWidget/handler";
 import ContextMenuView from "./contextMenu/view";
 import SelectDistrictView from "./selectDistrict/view";
 import SaveSelectionCosiView from "./saveSelection/view";
@@ -14,6 +13,8 @@ import ServiceCoverageView from "./serviceCoverage/view";
 import PrintView from "../../../modules/tools/print/view";
 import GraphModel from "./graph_v2/model";
 import ReachabilityAnalysisView from "./reachabiliyAnalysis/view";
+import {storageListener, updateFromStorage, setupStorage} from "./storage";
+import CompareDistrictsView from "./compareDistricts/view";
 
 /**
  * @returns {void}
@@ -21,17 +22,13 @@ import ReachabilityAnalysisView from "./reachabiliyAnalysis/view";
  */
 function initializeCosi () {
     // Define CoSI Namespace on window object
-    if (window.name === "InfoScreen") {
-        window.CoSI = window.opener.CoSI;
-    }
-    else {
-        window.CoSI = {};
-    }
+    var infoScreenOpen = JSON.parse(window.localStorage.getItem("infoScreenOpen"));
+
+    window.CosiStorage = window.localStorage;
 
     const dashboard = new DashboardView({model: general.dashboard});
 
     new DashboardTableView({model: general.dashboardTable});
-    new DashboardWidgetHandler();
     new ContextMenuView();
     new GraphModel();
     new TimeSliderView();
@@ -40,6 +37,8 @@ function initializeCosi () {
 
     // Handle TouchScreen / InfoScreen Loading
     if (!window.location.pathname.includes("infoscreen.html")) {
+        CosiStorage.clear();
+
         Radio.trigger("ModelList", "addModelsAndUpdate", Object.values(tools));
         new CalculateRatioView({model: tools.calculateRatio});
         new ReachabilityAnalysisView({model: tools.reachabilityAnalysis});
@@ -49,6 +48,7 @@ function initializeCosi () {
         new SaveSelectionCosiView({model: tools.saveSelectionCosi});
         new SelectDistrictView({model: tools.selectDistrict});
         new PrintView({model: tools.print});
+        new CompareDistrictsView({model: tools.compareDistricts});
     }
     else {
         // load dashboard content into infoscreen window
@@ -63,6 +63,25 @@ function initializeCosi () {
             }
         });
     }
+
+    setupStorage();
+
+    storageListener([
+        general.dashboard,
+        general.dashboardTable,
+        general.dashboardWidgetHandler,
+        tools.infoScreenHandler
+    ]);
+
+    updateFromStorage([
+        general.dashboardTable
+    ]);
+
+    if (infoScreenOpen) {
+        CosiStorage.setItem("infoScreenOpen", JSON.stringify(true));
+    }
+
+    Radio.trigger("General", "loaded");
 }
 
 export default initializeCosi;

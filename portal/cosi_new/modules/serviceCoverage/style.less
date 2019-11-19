@@ -3,26 +3,47 @@
 	min-width : 400px;
 }
 
-#service-coverage-help {
+#help,#backward {
 	padding-top     : 4px;
 	background-color: white;
 	height          : 30px;
+	width           : 30px;
 	border          : 1px solid #ccc;
 	cursor          : pointer;
 	text-align      : center;
 	min-width       : 30px;
 }
 
-#service-coverage-help:hover {
+#backward:hover,#help:hover {
 	background-color: #d3d3d3;
 }
 
 table {
 	width: 100%;
 
-	td {
-		width: 60%;
+	td:nth-child(1) {
+		width: 28%;
 	}
+
+	td:nth-child(2) {
+		width: 28%;
+	}
+
+	td:nth-child(3) {
+		width: 28%;
+	}
+
+	td:nth-child(4) {
+		width: 8%;
+	}
+
+	td:nth-child(5) {
+		width: 8%;
+	}
+}
+
+#create-isochrones {
+	width: 100%;
 }
 
 // #legend {
