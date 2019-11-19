@@ -1,33 +1,143 @@
-[
+[  {
+    "layerId": "1626",
+    "class": "POLYGON",
+    "subClass": "SIMPLE",
+    "polygonFillColor": [
+      255,
+      255,
+      255,
+      0
+    ],
+    "polygonStrokeColor": [
+      203,
+      1,
+      1,
+      1
+    ],
+    "polygonStrokeWidth": 1
+  },
+  {
+    "layerId": "1625",
+    "class": "POLYGON",
+    "subClass": "SIMPLE",
+    "polygonFillColor": [
+      255,
+      255,
+      255,
+      0
+    ],
+    "polygonStrokeColor": [
+      0,
+      0,
+      255,
+      1
+    ],
+    "polygonStrokeWidth": 1
+  },
+  {
+    "layerId": "8712",
+    "class": "POINT",
+    "subClass": "CUSTOM",
+    "imageScale": "0.6",
+    "imageWidth": 40,
+    "imageHeight": 40,
+    "styleField": "kapitelbezeichnung",
+    "styleFieldValues": [
+      {
+        "styleFieldValue": "Grundschulen",
+        "imageName": "grundschulen.png"
+      },
+      {
+        "styleFieldValue": "Gymnasien",
+        "imageName": "gymnasien.png"
+      },
+      {
+        "styleFieldValue": "Stadtteilschulen",
+        "imageName": "stadtteilschulen.png"
+      },
+      {
+        "styleFieldValue": "Sonderschulen",
+        "imageName": "sonderschulen.png"
+      },
+      {
+        "styleFieldValue": "Berufliche Schulen",
+        "imageName": "berufliche_schulen.png"
+      },
+      {
+        "styleFieldValue": "Langformschulen",
+        "imageName": "langformschulen.png"
+      }
+    ]
+  },
   {
     "layerId": "green-polygon",
     "class": "POLYGON",
     "subClass": "SIMPLE",
-    "polygonFillColor": [255, 255, 255, 0],
-    "polygonStrokeColor": [49, 163, 84, 1],
+    "polygonFillColor": [
+      255,
+      255,
+      255,
+      0
+    ],
+    "polygonStrokeColor": [
+      49,
+      163,
+      84,
+      1
+    ],
     "polygonStrokeWidth": 2.5
   },
   {
     "layerId": "red-polygon",
     "class": "POLYGON",
     "subClass": "SIMPLE",
-    "polygonFillColor": [255, 255, 255, 0],
-    "polygonStrokeColor": [255, 0, 0, 1],
+    "polygonFillColor": [
+      255,
+      255,
+      255,
+      0
+    ],
+    "polygonStrokeColor": [
+      255,
+      0,
+      0,
+      1
+    ],
     "polygonStrokeWidth": 3
   },
   {
     "layerId": "unstyled",
     "class": "POLYGON",
     "subClass": "DYNAMIC",
-    "polygonFillColor": [255, 255, 255, 0],
-    "polygonStrokeColor": [51, 153, 204, 0]
+    "polygonFillColor": [
+      255,
+      255,
+      255,
+      0
+    ],
+    "polygonStrokeColor": [
+      51,
+      153,
+      204,
+      0
+    ]
   },
   {
     "layerId": "default",
     "class": "POLYGON",
     "subClass": "SIMPLE",
-    "polygonFillColor": [255, 255, 255, 0],
-    "polygonStrokeColor": [51, 153, 204, 1],
+    "polygonFillColor": [
+      255,
+      255,
+      255,
+      0
+    ],
+    "polygonStrokeColor": [
+      51,
+      153,
+      204,
+      1
+    ],
     "polygonStrokeWidth": 1.25
   },
   {
@@ -38,63 +148,183 @@
     "styleFieldValues": [
       {
         "styleFieldValue": "1",
-        "polygonFillColor": [76, 115, 0, 0.6],
-        "polygonStrokeColor": [76, 115, 0, 1]
+        "polygonFillColor": [
+          76,
+          115,
+          0,
+          0.6
+        ],
+        "polygonStrokeColor": [
+          76,
+          115,
+          0,
+          1
+        ]
       },
       {
         "styleFieldValue": "2",
-        "polygonFillColor": [112, 168, 0, 0.6],
-        "polygonStrokeColor": [112, 168, 0, 1]
+        "polygonFillColor": [
+          112,
+          168,
+          0,
+          0.6
+        ],
+        "polygonStrokeColor": [
+          112,
+          168,
+          0,
+          1
+        ]
       },
       {
         "styleFieldValue": "3",
-        "polygonFillColor": [200, 215, 158, 0.6],
-        "polygonStrokeColor": [200, 215, 158, 1]
+        "polygonFillColor": [
+          200,
+          215,
+          158,
+          0.6
+        ],
+        "polygonStrokeColor": [
+          200,
+          215,
+          158,
+          1
+        ]
       },
       {
         "styleFieldValue": "4",
-        "polygonFillColor": [0, 133, 168, 0.6],
-        "polygonStrokeColor": [0, 133, 168, 1]
+        "polygonFillColor": [
+          0,
+          133,
+          168,
+          0.6
+        ],
+        "polygonStrokeColor": [
+          0,
+          133,
+          168,
+          1
+        ]
       },
       {
         "styleFieldValue": "5",
-        "polygonFillColor": [115, 178, 255, 0.6],
-        "polygonStrokeColor": [115, 178, 255, 1]
+        "polygonFillColor": [
+          115,
+          178,
+          255,
+          0.6
+        ],
+        "polygonStrokeColor": [
+          115,
+          178,
+          255,
+          1
+        ]
       },
       {
         "styleFieldValue": "6",
-        "polygonFillColor": [189, 210, 255, 0.6],
-        "polygonStrokeColor": [189, 210, 255, 1]
+        "polygonFillColor": [
+          189,
+          210,
+          255,
+          0.6
+        ],
+        "polygonStrokeColor": [
+          189,
+          210,
+          255,
+          1
+        ]
       },
       {
         "styleFieldValue": "7",
-        "polygonFillColor": [255, 234, 189, 0.6],
-        "polygonStrokeColor": [255, 234, 189, 1]
+        "polygonFillColor": [
+          255,
+          234,
+          189,
+          0.6
+        ],
+        "polygonStrokeColor": [
+          255,
+          234,
+          189,
+          1
+        ]
       },
       {
         "styleFieldValue": "8",
-        "polygonFillColor": [255, 170, 1, 0.6],
-        "polygonStrokeColor": [255, 170, 1, 1]
+        "polygonFillColor": [
+          255,
+          170,
+          1,
+          0.6
+        ],
+        "polygonStrokeColor": [
+          255,
+          170,
+          1,
+          1
+        ]
       },
       {
         "styleFieldValue": "9",
-        "polygonFillColor": [168, 112, 1, 0.6],
-        "polygonStrokeColor": [168, 112, 1, 1]
+        "polygonFillColor": [
+          168,
+          112,
+          1,
+          0.6
+        ],
+        "polygonStrokeColor": [
+          168,
+          112,
+          1,
+          1
+        ]
       },
       {
         "styleFieldValue": "10",
-        "polygonFillColor": [230, 173, 188, 0.6],
-        "polygonStrokeColor": [230, 173, 188, 1]
+        "polygonFillColor": [
+          230,
+          173,
+          188,
+          0.6
+        ],
+        "polygonStrokeColor": [
+          230,
+          173,
+          188,
+          1
+        ]
       },
       {
         "styleFieldValue": "11",
-        "polygonFillColor": [229, 83, 122, 0.6],
-        "polygonStrokeColor": [229, 83, 122, 1]
+        "polygonFillColor": [
+          229,
+          83,
+          122,
+          0.6
+        ],
+        "polygonStrokeColor": [
+          229,
+          83,
+          122,
+          1
+        ]
       },
       {
         "styleFieldValue": "12",
-        "polygonFillColor": [179, 29, 30, 0.6],
-        "polygonStrokeColor": [179, 29, 30, 1]
+        "polygonFillColor": [
+          179,
+          29,
+          30,
+          0.6
+        ],
+        "polygonStrokeColor": [
+          179,
+          29,
+          30,
+          1
+        ]
       }
     ]
   },
@@ -102,8 +332,18 @@
     "layerId": "grossborstel",
     "class": "POLYGON",
     "subClass": "SIMPLE",
-    "polygonFillColor": [0, 0, 0, 0],
-    "polygonStrokeColor": [30, 144, 255, 1],
+    "polygonFillColor": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "polygonStrokeColor": [
+      30,
+      144,
+      255,
+      1
+    ],
     "polygonStrokeWidth": 5
   },
   {
@@ -111,13 +351,28 @@
     "class": "POINT",
     "subClass": "CIRCLE",
     "circleRadius": 7,
-    "circleFillColor": [255, 255, 255, 1],
-    "circleStrokeColor": [30, 144, 255, 1],
+    "circleFillColor": [
+      255,
+      255,
+      255,
+      1
+    ],
+    "circleStrokeColor": [
+      30,
+      144,
+      255,
+      1
+    ],
     "circleStrokeWidth": 1.5,
     "labelField": "KapKindneu",
     "textAlign": "center",
     "textFont": "18px sans-serif",
-    "textStrokeColor": [30, 144, 255, 1],
+    "textStrokeColor": [
+      30,
+      144,
+      255,
+      1
+    ],
     "textStrokeWidth": 2,
     "textOffsetY": -16
   },
@@ -125,49 +380,99 @@
     "layerId": "stadtteileKitaplaetze",
     "class": "POLYGON",
     "subClass": "SIMPLE",
-    "polygonFillColor": [0, 0, 0, 0],
-    "polygonStrokeColor": [128, 0, 128, 1],
+    "polygonFillColor": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "polygonStrokeColor": [
+      128,
+      0,
+      128,
+      1
+    ],
     "polygonStrokeWidth": 1.5,
     "labelField": "Kpl p K",
     "textAlign": "center",
     "textFont": "22px sans-serif",
-    "textStrokeColor": [128, 0, 128, 1],
+    "textStrokeColor": [
+      128,
+      0,
+      128,
+      1
+    ],
     "textStrokeWidth": 2
   },
   {
     "layerId": "einwohner",
     "class": "POLYGON",
     "subClass": "CUSTOM",
-    "polygonStrokeColor": [128, 0, 0, 1],
+    "polygonStrokeColor": [
+      128,
+      0,
+      0,
+      1
+    ],
     "polygonStrokeWidth": 0.5,
     "styleField": "1bis6range",
     "styleFieldValues": [
       {
         "styleFieldValue": "0-9",
-        "polygonFillColor": [255, 0, 0, 0]
+        "polygonFillColor": [
+          255,
+          0,
+          0,
+          0
+        ]
       },
       {
         "styleFieldValue": "10-24",
-        "polygonFillColor": [255, 0, 0, 0.2]
+        "polygonFillColor": [
+          255,
+          0,
+          0,
+          0.2
+        ]
       },
       {
         "styleFieldValue": "25-49",
-        "polygonFillColor": [255, 0, 0, 0.4]
+        "polygonFillColor": [
+          255,
+          0,
+          0,
+          0.4
+        ]
       },
       {
         "styleFieldValue": "50-89",
-        "polygonFillColor": [255, 0, 0, 0.6]
+        "polygonFillColor": [
+          255,
+          0,
+          0,
+          0.6
+        ]
       },
       {
         "styleFieldValue": "90-",
-        "polygonFillColor": [255, 0, 0, 0.8]
+        "polygonFillColor": [
+          255,
+          0,
+          0,
+          0.8
+        ]
       }
     ],
     "labelField": "1bis6",
     "textAlign": "center",
     "textFont": "18px sans-serif",
     "textScale": 0,
-    "textStrokeColor": [128, 0, 0, 1],
+    "textStrokeColor": [
+      128,
+      0,
+      0,
+      1
+    ],
     "textStrokeWidth": 2
   },
   {
@@ -175,8 +480,18 @@
     "class": "POINT",
     "subClass": "CIRCLE",
     "circleRadius": 7,
-    "circleFillColor": [255, 255, 255, 1],
-    "circleStrokeColor": [220, 20, 60, 1],
+    "circleFillColor": [
+      255,
+      255,
+      255,
+      1
+    ],
+    "circleStrokeColor": [
+      220,
+      20,
+      60,
+      1
+    ],
     "circleStrokeWidth": 1.5
   },
   {
@@ -184,8 +499,18 @@
     "class": "POINT",
     "subClass": "CIRCLE",
     "circleRadius": 7,
-    "circleFillColor": [255, 255, 255, 1],
-    "circleStrokeColor": [30, 144, 255, 1],
+    "circleFillColor": [
+      255,
+      255,
+      255,
+      1
+    ],
+    "circleStrokeColor": [
+      30,
+      144,
+      255,
+      1
+    ],
     "circleStrokeWidth": 1.5
   },
   {
@@ -197,43 +522,123 @@
     "styleFieldValues": [
       {
         "styleFieldValue": "Kleingarten",
-        "polygonFillColor": [160, 82, 45, 0.6],
-        "polygonStrokeColor": [160, 82, 45, 1]
+        "polygonFillColor": [
+          160,
+          82,
+          45,
+          0.6
+        ],
+        "polygonStrokeColor": [
+          160,
+          82,
+          45,
+          1
+        ]
       },
       {
         "styleFieldValue": "Dauerkleingarten",
-        "polygonFillColor": [160, 82, 45, 0.6],
-        "polygonStrokeColor": [160, 82, 45, 1]
+        "polygonFillColor": [
+          160,
+          82,
+          45,
+          0.6
+        ],
+        "polygonStrokeColor": [
+          160,
+          82,
+          45,
+          1
+        ]
       },
       {
         "styleFieldValue": "Grün an Kleingärten",
-        "polygonFillColor": [160, 82, 45, 0.6],
-        "polygonStrokeColor": [160, 82, 45, 1]
+        "polygonFillColor": [
+          160,
+          82,
+          45,
+          0.6
+        ],
+        "polygonStrokeColor": [
+          160,
+          82,
+          45,
+          1
+        ]
       },
       {
         "styleFieldValue": "Parkanlage",
-        "polygonFillColor": [60, 179, 113, 0.6],
-        "polygonStrokeColor": [60, 179, 113, 1]
+        "polygonFillColor": [
+          60,
+          179,
+          113,
+          0.6
+        ],
+        "polygonStrokeColor": [
+          60,
+          179,
+          113,
+          1
+        ]
       },
       {
         "styleFieldValue": "Spielplatz",
-        "polygonFillColor": [124, 252, 0, 0.6],
-        "polygonStrokeColor": [124, 252, 0, 1]
+        "polygonFillColor": [
+          124,
+          252,
+          0,
+          0.6
+        ],
+        "polygonStrokeColor": [
+          124,
+          252,
+          0,
+          1
+        ]
       },
       {
         "styleFieldValue": "Friedhof",
-        "polygonFillColor": [72, 209, 204, 0.6],
-        "polygonStrokeColor": [72, 209, 204, 1]
+        "polygonFillColor": [
+          72,
+          209,
+          204,
+          0.6
+        ],
+        "polygonStrokeColor": [
+          72,
+          209,
+          204,
+          1
+        ]
       },
       {
         "styleFieldValue": "Schutzgrün",
-        "polygonFillColor": [199, 21, 133, 0.6],
-        "polygonStrokeColor": [199, 21, 133, 1]
+        "polygonFillColor": [
+          199,
+          21,
+          133,
+          0.6
+        ],
+        "polygonStrokeColor": [
+          199,
+          21,
+          133,
+          1
+        ]
       },
       {
         "styleFieldValue": "anderweitige Nutzung",
-        "polygonFillColor": [106, 90, 205, 0.6],
-        "polygonStrokeColor": [106, 90, 205, 1]
+        "polygonFillColor": [
+          106,
+          90,
+          205,
+          0.6
+        ],
+        "polygonStrokeColor": [
+          106,
+          90,
+          205,
+          1
+        ]
       }
     ]
   },
@@ -243,54 +648,134 @@
     "subClass": "CUSTOM",
     "styleField": "gruenart",
     "styleFieldValues": [
-        {
-          "styleFieldValue": "Parkanlage",
-          "polygonFillColor": [112, 168, 0, 1],
-          "polygonStrokeColor": [112, 168, 0, 1],
-          "polygonStrokeWidth": 0.2
-        },
-        {
-          "styleFieldValue": "Spielplatz",
-          "polygonFillColor": [230, 152, 0, 1],
-          "polygonStrokeColor": [230, 152, 0, 1],
-          "polygonStrokeWidth": 0.2
-        },
-        {
-          "styleFieldValue": "Grün an Kleingärten",
-          "polygonFillColor": [209, 255, 115, 1],
-          "polygonStrokeColor": [209, 255, 115, 1],
-          "polygonStrokeWidth": 0.2
-        },
-        {
-          "styleFieldValue": "Schutzgruen",
-          "polygonFillColor": [115, 76, 0, 1],
-          "polygonStrokeColor": [115, 76, 0, 1],
-          "polygonStrokeWidth": 0.2
-        },
-        {
-          "styleFieldValue": "Dauerkleingarten",
-          "polygonFillColor": [0, 230, 169, 1],
-          "polygonStrokeColor": [0, 230, 169, 1],
-          "polygonStrokeWidth": 0.2
-        },
-        {
-          "styleFieldValue": "Kleingarten",
-          "polygonFillColor": [0, 168, 132, 1],
-          "polygonStrokeColor": [0, 168, 132, 1],
-          "polygonStrokeWidth": 0.2
-        },
-        {
-          "styleFieldValue": "Friedhof",
-          "polygonFillColor": [0, 115, 76, 1],
-          "polygonStrokeColor": [0, 115, 76, 1],
-          "polygonStrokeWidth": 0.2
-        },
-        {
-          "styleFieldValue": "anderweitige Nutzung",
-          "polygonFillColor": [130, 130, 130, 1],
-          "polygonStrokeColor": [130, 130, 130, 1],
-          "polygonStrokeWidth": 0.2
-        }
+      {
+        "styleFieldValue": "Parkanlage",
+        "polygonFillColor": [
+          112,
+          168,
+          0,
+          1
+        ],
+        "polygonStrokeColor": [
+          112,
+          168,
+          0,
+          1
+        ],
+        "polygonStrokeWidth": 0.2
+      },
+      {
+        "styleFieldValue": "Spielplatz",
+        "polygonFillColor": [
+          230,
+          152,
+          0,
+          1
+        ],
+        "polygonStrokeColor": [
+          230,
+          152,
+          0,
+          1
+        ],
+        "polygonStrokeWidth": 0.2
+      },
+      {
+        "styleFieldValue": "Grün an Kleingärten",
+        "polygonFillColor": [
+          209,
+          255,
+          115,
+          1
+        ],
+        "polygonStrokeColor": [
+          209,
+          255,
+          115,
+          1
+        ],
+        "polygonStrokeWidth": 0.2
+      },
+      {
+        "styleFieldValue": "Schutzgruen",
+        "polygonFillColor": [
+          115,
+          76,
+          0,
+          1
+        ],
+        "polygonStrokeColor": [
+          115,
+          76,
+          0,
+          1
+        ],
+        "polygonStrokeWidth": 0.2
+      },
+      {
+        "styleFieldValue": "Dauerkleingarten",
+        "polygonFillColor": [
+          0,
+          230,
+          169,
+          1
+        ],
+        "polygonStrokeColor": [
+          0,
+          230,
+          169,
+          1
+        ],
+        "polygonStrokeWidth": 0.2
+      },
+      {
+        "styleFieldValue": "Kleingarten",
+        "polygonFillColor": [
+          0,
+          168,
+          132,
+          1
+        ],
+        "polygonStrokeColor": [
+          0,
+          168,
+          132,
+          1
+        ],
+        "polygonStrokeWidth": 0.2
+      },
+      {
+        "styleFieldValue": "Friedhof",
+        "polygonFillColor": [
+          0,
+          115,
+          76,
+          1
+        ],
+        "polygonStrokeColor": [
+          0,
+          115,
+          76,
+          1
+        ],
+        "polygonStrokeWidth": 0.2
+      },
+      {
+        "styleFieldValue": "anderweitige Nutzung",
+        "polygonFillColor": [
+          130,
+          130,
+          130,
+          1
+        ],
+        "polygonStrokeColor": [
+          130,
+          130,
+          130,
+          1
+        ],
+        "polygonStrokeWidth": 0.2
+      }
     ]
   },
   {
@@ -302,142 +787,142 @@
     "imageHeight": 40,
     "imageScale": "0.7",
     "styleFieldValues": [
-        {
-            "styleFieldValue": "Golfplatz",
-            "imageName": "golfplatz.svg"
-        },
-        {
-          "styleFieldValue": "Wassersportanlage",
-          "imageName": "wassersportanlage.svg"
-        },
-        {
-          "styleFieldValue": "Sportplatz",
-          "imageName": "sportplatz.svg"
-        },
-        {
-          "styleFieldValue": "Baseball",
-          "imageName": "baseball.svg"
-        },
-        {
-          "styleFieldValue": "Cricket",
-          "imageName": "cricket.svg"
-        },
-        {
-          "styleFieldValue": "Tennisanlage",
-          "imageName": "tennisanlage.svg"
-        },
-        {
-          "styleFieldValue": "Skateanlage",
-          "imageName": "skateanlage.svg"
-        },
-        {
-          "styleFieldValue": "Beachanlage",
-          "imageName": "beachanlage.svg"
-        },
-        {
-          "styleFieldValue": "Base-/Softballanlage",
-          "imageName": "baseball.svg"
-        },
-        {
-          "styleFieldValue": "Schwimmbad",
-          "imageName": "hallenbad.svg"
-        },
-        {
-          "styleFieldValue": "Zweifeldhalle",
-          "imageName": "zweifeldhalle.svg"
-        },
-        {
-          "styleFieldValue": "Vereinssportzentrum",
-          "imageName": "vereinssport.svg"
-        },
-        {
-          "styleFieldValue": "Schießsportanlage",
-          "imageName": "schiesssportanlage.svg"
-        },
-        {
-          "styleFieldValue": "Rugbyanlage",
-          "imageName": "rugby.svg"
-        },
-        {
-          "styleFieldValue": "Reitsportanlage",
-          "imageName": "reitsportanlage.svg"
-        },
-        {
-          "styleFieldValue": "Radsport",
-          "imageName": "radsport.svg"
-        },
-        {
-          "styleFieldValue": "Polofeld",
-          "imageName": "polofeld.svg"
-        },
-        {
-          "styleFieldValue": "Olympiastandort",
-          "imageName": "olympiastandort.svg"
-        },
-        {
-          "styleFieldValue": "Leichtathletikanlage",
-          "imageName": "leichtathletikanlage.svg"
-        },
-        {
-          "styleFieldValue": "Kletteranlage",
-          "imageName": "kletteranlage.svg"
-        },
-        {
-          "styleFieldValue": "Kleinspielfeld",
-          "imageName": "kleinfeld.svg"
-        },
-        {
-          "styleFieldValue": "Hockeyanlage",
-          "imageName": "hockeyanlage.svg"
-        },
-        {
-          "styleFieldValue": "Gymnastikhalle",
-          "imageName": "gymnastikhalle.svg"
-        },
-        {
-          "styleFieldValue": "Grosssporthalle",
-          "imageName": "grosssporthalle.svg"
-        },
-        {
-          "styleFieldValue": "Eis- und Rollsportanlage",
-          "imageName": "eissport.svg"
-        },
-        {
-          "styleFieldValue": "Einfeldhalle",
-          "imageName": "einfeldhalle.svg"
-        },
-        {
-          "styleFieldValue": "Dreifeldhalle",
-          "imageName": "dreifeldhalle.svg"
-        },
-        {
-          "styleFieldValue": "Cricket",
-          "imageName": "cricket.svg"
-        },
-        {
-          "styleFieldValue": "Beachanlage",
-          "imageName": "beachanlage.svg"
-        },
-        {
-          "styleFieldValue": "American Football-Anlage",
-          "imageName": "football.svg"
-        },
-        {
-          "styleFieldValue": "BewegteKita",
-          "imageName": "bewegungskita.svg"
-        },
-        {
-          "styleFieldValue": "Bewegungskita+",
-          "imageName": "bewegungskita_plus.svg"
-        },
-        {
-          "styleFieldValue": "Bewegungsinsel",
-          "imageName": "bewegungsinsel.svg"
-        },
-        {
-          "styleFieldValue": "Curling-Anlage",
-          "imageName": "curling.svg"
-        }
+      {
+        "styleFieldValue": "Golfplatz",
+        "imageName": "golfplatz.svg"
+      },
+      {
+        "styleFieldValue": "Wassersportanlage",
+        "imageName": "wassersportanlage.svg"
+      },
+      {
+        "styleFieldValue": "Sportplatz",
+        "imageName": "sportplatz.svg"
+      },
+      {
+        "styleFieldValue": "Baseball",
+        "imageName": "baseball.svg"
+      },
+      {
+        "styleFieldValue": "Cricket",
+        "imageName": "cricket.svg"
+      },
+      {
+        "styleFieldValue": "Tennisanlage",
+        "imageName": "tennisanlage.svg"
+      },
+      {
+        "styleFieldValue": "Skateanlage",
+        "imageName": "skateanlage.svg"
+      },
+      {
+        "styleFieldValue": "Beachanlage",
+        "imageName": "beachanlage.svg"
+      },
+      {
+        "styleFieldValue": "Base-/Softballanlage",
+        "imageName": "baseball.svg"
+      },
+      {
+        "styleFieldValue": "Schwimmbad",
+        "imageName": "hallenbad.svg"
+      },
+      {
+        "styleFieldValue": "Zweifeldhalle",
+        "imageName": "zweifeldhalle.svg"
+      },
+      {
+        "styleFieldValue": "Vereinssportzentrum",
+        "imageName": "vereinssport.svg"
+      },
+      {
+        "styleFieldValue": "Schießsportanlage",
+        "imageName": "schiesssportanlage.svg"
+      },
+      {
+        "styleFieldValue": "Rugbyanlage",
+        "imageName": "rugby.svg"
+      },
+      {
+        "styleFieldValue": "Reitsportanlage",
+        "imageName": "reitsportanlage.svg"
+      },
+      {
+        "styleFieldValue": "Radsport",
+        "imageName": "radsport.svg"
+      },
+      {
+        "styleFieldValue": "Polofeld",
+        "imageName": "polofeld.svg"
+      },
+      {
+        "styleFieldValue": "Olympiastandort",
+        "imageName": "olympiastandort.svg"
+      },
+      {
+        "styleFieldValue": "Leichtathletikanlage",
+        "imageName": "leichtathletikanlage.svg"
+      },
+      {
+        "styleFieldValue": "Kletteranlage",
+        "imageName": "kletteranlage.svg"
+      },
+      {
+        "styleFieldValue": "Kleinspielfeld",
+        "imageName": "kleinfeld.svg"
+      },
+      {
+        "styleFieldValue": "Hockeyanlage",
+        "imageName": "hockeyanlage.svg"
+      },
+      {
+        "styleFieldValue": "Gymnastikhalle",
+        "imageName": "gymnastikhalle.svg"
+      },
+      {
+        "styleFieldValue": "Grosssporthalle",
+        "imageName": "grosssporthalle.svg"
+      },
+      {
+        "styleFieldValue": "Eis- und Rollsportanlage",
+        "imageName": "eissport.svg"
+      },
+      {
+        "styleFieldValue": "Einfeldhalle",
+        "imageName": "einfeldhalle.svg"
+      },
+      {
+        "styleFieldValue": "Dreifeldhalle",
+        "imageName": "dreifeldhalle.svg"
+      },
+      {
+        "styleFieldValue": "Cricket",
+        "imageName": "cricket.svg"
+      },
+      {
+        "styleFieldValue": "Beachanlage",
+        "imageName": "beachanlage.svg"
+      },
+      {
+        "styleFieldValue": "American Football-Anlage",
+        "imageName": "football.svg"
+      },
+      {
+        "styleFieldValue": "BewegteKita",
+        "imageName": "bewegungskita.svg"
+      },
+      {
+        "styleFieldValue": "Bewegungskita+",
+        "imageName": "bewegungskita_plus.svg"
+      },
+      {
+        "styleFieldValue": "Bewegungsinsel",
+        "imageName": "bewegungsinsel.svg"
+      },
+      {
+        "styleFieldValue": "Curling-Anlage",
+        "imageName": "curling.svg"
+      }
     ]
   },
   {
@@ -445,25 +930,45 @@
     "class": "POINT",
     "subClass": "CIRCLE",
     "circleRadius": 7,
-    "circleFillColor": [227, 26, 28, 1],
-    "circleStrokeColor": [30, 144, 255, 1],
+    "circleFillColor": [
+      227,
+      26,
+      28,
+      1
+    ],
+    "circleStrokeColor": [
+      30,
+      144,
+      255,
+      1
+    ],
     "circleStrokeWidth": 1.5
   },
   {
-    "layerId":"1711",
-    "class":"POINT",
-    "subClass":"SIMPLE",
-    "imageName":"krankenhaus.svg",
+    "layerId": "1711",
+    "class": "POINT",
+    "subClass": "SIMPLE",
+    "imageName": "krankenhaus.svg",
     "imageWidth": 40,
     "imageHeight": 40,
     "imageScale": "0.7"
   },
   {
-    "layerId":"2797",
+    "layerId": "2797",
     "class": "POLYGON",
     "subClass": "SIMPLE",
-    "polygonFillColor": [255, 0, 0, 0.5],
-    "polygonStrokeColor": [255, 144, 255, 0.5],
+    "polygonFillColor": [
+      255,
+      0,
+      0,
+      0.5
+    ],
+    "polygonStrokeColor": [
+      255,
+      144,
+      255,
+      0.5
+    ],
     "polygonStrokeWidth": 30
   }
 ]
