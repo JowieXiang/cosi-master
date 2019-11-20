@@ -1,4 +1,5 @@
 import template from "text-loader!./template.html";
+import "./style.less";
 import DistrictSelectorView from "./districtSelector/view";
 import LayerFilterSelectorModel from "./layerFilterSelector/model";
 import LayerFilterSelectorView from "./layerFilterSelector/view";
@@ -16,7 +17,7 @@ const CompareDistrictsView = Backbone.View.extend({
             this.filterLayerOptions();
         },
         "click .district-name": "zoomToDistrict",
-        "click #compare-district-help": "showHelp",
+        "click #help": "showHelp",
         "click #set-selected-district": "changeDistrictSelection"
     },
 
@@ -65,8 +66,9 @@ const CompareDistrictsView = Backbone.View.extend({
         this.setElement(document.getElementsByClassName("win-body")[0]);
         this.$el.html(this.template(attr));
         this.delegateEvents();
-        // disable the set selected district buttonw
-        this.$el.find("#set-selected-district").prop("disabled", true);
+        // disable buttons
+        this.$el.find("#show-in-dashboard").hide();
+        this.$el.find("#set-selected-district").hide();
         this.createSelectors();
 
         return this;
@@ -152,7 +154,11 @@ const CompareDistrictsView = Backbone.View.extend({
         domString += "</p>";
         this.$el.find("#compare-results").append("<p><strong>| Vergleichbare Gebiete</strong></p>");
         this.$el.find("#compare-results").append(domString);
-        this.$el.find("#set-selected-district").prop("disabled", false);
+        if (comparableDistricts.length > 0) {
+            this.$el.find("#set-selected-district").show();
+            this.$el.find("#show-in-dashboard").show();
+
+        }
     },
     addOneToLayerFilterList: function (model) {
         const newItem = { layerId: model.get("layerInfo").layerId, filter: model.get("filter"), districtInfo: model.get("districtInfo") },
@@ -205,7 +211,8 @@ const CompareDistrictsView = Backbone.View.extend({
         }
         else {
             this.$el.find("#compare-results").empty();
-            this.$el.find("#set-selected-district").prop("disabled", true);
+            this.$el.find("#show-in-dashboard").hide();
+            this.$el.find("#set-selected-district").hide();
             this.clearMapLayer();
         }
     },

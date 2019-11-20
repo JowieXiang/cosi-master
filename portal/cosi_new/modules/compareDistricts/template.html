@@ -1,40 +1,51 @@
 <!DOCTYPE html>
 <div class="compare-districts container">
-	<table>
-		<tr>
-			<th>layerfilter</th>
-			<th>district</th>
-		</tr>
-		<tr>
-			<td>
-				<div id="layerfilter-selector-container">
-				</div>
-			</td>
-			<td>
-				<div id="district-selector-container">
-				</div>
-			</td>
-		</tr>
-		<tr>
-			<td>
-				<div id="add-filter">
-					<span class="glyphicon glyphicon-plus"></span>
-					Hinzufügen
-				</div>
-			</td>
-			<td>
-				<div id="compare-district-help">
-					<span class="glyphicon glyphicon-question-sign"></span>
-				</div>
-			</td>
-		</tr>
-	</table>
+	<div>
+		<table>
+			<tr>
+				<th>layerfilter</th>
+				<th>Referenzgebiet</th>
+				<th></th>
+			</tr>
+			<tr>
+				<td>
+					<div id="layerfilter-selector-container">
+					</div>
+				</td>
+				<td>
+					<div id="district-selector-container">
+					</div>
+				</td>
+				<td>
+					<div id="help">
+						<span class="glyphicon glyphicon-question-sign"></span>
+					</div>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<br />
+	<div>
+		<button type="button" class="btn btn-lgv-grey measure-delete" id="add-filter">
+			<span class="glyphicon glyphicon-plus"></span>
+			Hinzufügen
+		</button>
+	</div>
 	<br />
 	<div id="layerfilter-container"></div>
-
 	<div class="col" id="compare-results">
 	</div>
-	<button id="set-selected-district">
-		setze Ergebnis wie ausgewählt gebiet
-	</button>
+	<br />
+	<div>
+		<button class="btn btn-lgv-grey measure-delete" id="set-selected-district">
+			setze Ergebnis wie ausgewählt gebiet
+		</button>
+	</div>
+	<br />
+	<div>
+		<button class="btn btn-lgv-grey measure-delete" id="show-in-dashboard">
+			Im Dashboard anzeigen
+		</button>
+
+	</div>
 </div>
