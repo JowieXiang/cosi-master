@@ -3,10 +3,8 @@ import RestReaderList from "../modules/restReader/collection";
 import Autostarter from "../modules/core/autostarter";
 import Util from "../modules/core/util";
 import StyleList from "../modules/vectorStyle/list";
-import RawLayerList from "../modules/core/rawLayerList";
 import Preparser from "../modules/core/configLoader/preparser";
 import ParametricURL from "../modules/core/parametricURL";
-import CRS from "../modules/core/crs";
 import Map from "../modules/core/map";
 import AddGeoJSON from "../modules/tools/addGeoJSON/model";
 import WPS from "../modules/core/wps";
@@ -42,7 +40,6 @@ import FilterView from "../modules/tools/filter/view";
 import SaveSelectionView from "../modules/tools/saveSelection/view";
 import StyleWMSView from "../modules/tools/styleWMS/view";
 import LayerSliderView from "../modules/tools/layerSlider/view";
-import AgeGroupSliderView from "../modules/tools/ageGroupSlider/view";
 import CompareFeaturesView from "../modules/tools/compareFeatures/view";
 import EinwohnerabfrageView from "../modules/tools/einwohnerabfrage_hh/selectView";
 import ImportView from "../modules/tools/kmlimport/view";
@@ -75,7 +72,7 @@ import FreezeModel from "../modules/controls/freeze/model";
 import MapMarkerView from "../modules/mapMarker/view";
 import SearchbarView from "../modules/searchbar/view";
 import TitleView from "../modules/title/view";
-import HighlightFeature from "../modules/highlightfeature/model";
+import HighlightFeature from "../modules/highlightFeature/model";
 import Button3DView from "../modules/controls/button3d/view";
 import ButtonObliqueView from "../modules/controls/buttonoblique/view";
 import Orientation3DView from "../modules/controls/orientation3d/view";
@@ -123,12 +120,10 @@ async function loadApp () {
     new Util(utilConfig);
     // Pass null to create an empty Collection with options
     new RestReaderList(null, {url: Config.restConf});
-    new RawLayerList(null, {url: Config.layerConf});
     new Preparser(null, {url: Config.portalConf});
     new StyleList();
     new ParametricURL();
-    new CRS();
-    new Map();
+    new Map(Radio.request("Parser", "getPortalConfig").mapView);
     new WPS();
     new AddGeoJSON();
     new WindowView();
@@ -487,6 +482,23 @@ async function loadApp () {
 
     new HighlightFeature();
 
+    // Variable CUSTOMMODULE wird im webpack.DefinePlugin gesetzt
+    /* eslint-disable no-undef */
+    // if (CUSTOMMODULE !== "") {
+    //     // DO NOT REMOVE [webpackMode: "eager"] comment, its needed.
+    //     import(/* webpackMode: "eager" */CUSTOMMODULE)
+    //         .then(module => {
+    //             /* eslint-disable new-cap */
+    //             const customModule = new module.default();
+    //             // custommodules are initialized with 'new Tool(attrs, options);', that produces a rudimental model. Later on the model must be replaced in modellist:
+
+    //             Radio.trigger("ModelList", "replaceModelById", customModule.model.id, customModule.model);
+    //         })
+    //         .catch(error => {
+    //             console.error(error);
+    //             Radio.trigger("Alert", "alert", "Entschuldigung, diese Anwendung konnte nicht vollständig geladen werden. Bitte wenden sie sich an den Administrator.");
+    //         });
+    // }
     /* eslint-enable no-undef */
 
     Radio.trigger("Util", "hideLoader");

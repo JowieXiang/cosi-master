@@ -1,6 +1,6 @@
 import WFSStyle from "./model";
 
-const StyleList = Backbone.Collection.extend({
+const StyleList = Backbone.Collection.extend(/** @lends StyleList.prototype */{
     model: WFSStyle,
     url: function () {
         if (!_.has(Config, "styleConf") || Config.styleConf === "") {
@@ -8,6 +8,16 @@ const StyleList = Backbone.Collection.extend({
         }
         return Config.styleConf;
     },
+    /**
+     * @class StyleList
+     * @extends Backbone.Collection
+     * @memberof VectorStyle
+     * @constructs
+     * @description Collection that stores all the vector styles contained in style.json.
+     * @fires Core.ConfigLoader#RadioRequestParserGetItemsByAttributes
+     * @fires Alerting#RadioTriggerAlertAlert
+     * @listens VectorStyle#RadioRequestStyleListReturnModelById
+     */
     initialize: function () {
         var channel = Radio.channel("StyleList");
 
@@ -58,6 +68,7 @@ const StyleList = Backbone.Collection.extend({
      * After that these models are automatically added to the collection
      * @param  {object[]} data parsed style.json
      * @return {object[]} filtered style.json objects
+     * @fires Core.ConfigLoader#RadioRequestParserGetItemsByAttributes
      */
     parse: function (data) {
         var layers = Radio.request("Parser", "getItemsByAttributes", {type: "layer"}),
@@ -94,6 +105,10 @@ const StyleList = Backbone.Collection.extend({
         return filteredData;
     },
 
+    /**
+     * Gets styleId from config for zoomToFeature
+     * @returns {String} - Style id
+     */
     getStyleIdForZoomToFeature: function () {
         var styleId;
 

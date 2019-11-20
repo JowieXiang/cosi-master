@@ -1,4 +1,5 @@
 import DropdownModel from "../../../../../modules/snippets/dropdown/model";
+import {getLayerList, getLayerWhere} from "masterportalAPI/src/rawLayerList";
 
 const LayerFilterSelectorModel = Backbone.Model.extend({
     defaults: {
@@ -12,12 +13,12 @@ const LayerFilterSelectorModel = Backbone.Model.extend({
     },
     initialize: function () {
         const currentSelector = Radio.request("SelectDistrict", "getSelector"),
-            layers = Radio.request("RawLayerList", "getLayerListWhere", {
-                url: this.get("urls")[currentSelector]
-            }),
+            layers = getLayerList().filter(function (layer) {
+                return layer.url === this.get("urls")[currentSelector];
+            }, this),
             layerOptions = layers.map(layer => {
                 return {
-                    "layerName": layer.get("name"), "layerId": layer.get("id")
+                    "layerName": layer.name, "layerId": layer.id
                 };
             });
 
@@ -69,9 +70,9 @@ const LayerFilterSelectorModel = Backbone.Model.extend({
     },
     setSelectedLayer: function (value) {
         const selectedObj = this.get("dropDownModel").attributes.values.filter(item => item.value === value)[0],
-            layerModel = Radio.request("RawLayerList", "getLayerWhere", { featureType: "v_hh_statistik_" + selectedObj.category.toLowerCase() });
+            layerModel = getLayerWhere({featureType: "v_hh_statistik_" + selectedObj.category.toLowerCase()});
 
-        this.set("selectedLayer", { layerName: layerModel.attributes.name, layerId: layerModel.attributes.id });
+        this.set("selectedLayer", {layerName: layerModel.name, layerId: layerModel.id});
     },
     setLayerOptions: function (value) {
         this.set("layerOptions", value);
