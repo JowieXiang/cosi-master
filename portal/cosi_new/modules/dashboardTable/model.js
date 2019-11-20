@@ -17,7 +17,8 @@ const DashboardTableModel = Tool.extend({
         timelineModel: new TimelineModel(),
         filterDropdownModel: {},
         scopeLayersLoaded: 0,
-        correlationAttrs: []
+        correlationAttrs: [],
+        ratioAttrs: []
     }),
 
     /**
@@ -206,12 +207,12 @@ const DashboardTableModel = Tool.extend({
 
                                 // write sum
                                 if (col[this.get("sortKey")] === "Gesamt") {
-                                    col[prop] = total;
+                                    col[prop] = prop.includes("Anteil") ? "-" : total;
                                 }
 
                                 // calculate and write average
                                 if (col[this.get("sortKey")] === "Durchschnitt") {
-                                    col[prop] = total / (table.length - 2);
+                                    col[prop] = prop.includes("Anteil") ? "-" : total / (table.length - 2);
                                 }
                             }
                         });
@@ -232,14 +233,20 @@ const DashboardTableModel = Tool.extend({
                                     for (let i = 0; i < matrixTotal[0].length; i++) {
                                         let n = 0;
 
-                                        col[prop].push([matrixTotal[0][i][0], 0]);
-                                        for (let j = 0; j < matrixTotal.length; j++) {
-                                            if (matrixTotal[j]) {
-                                                col[prop][i][1] += isNaN(parseFloat(matrixTotal[j][i][1])) ? 0 : parseFloat(matrixTotal[j][i][1]);
-                                                n += isNaN(parseFloat(matrixTotal[j][i][1])) ? 0 : 1;
-                                            }
+                                        if (prop.includes("Anteil")) {
+                                            col[prop].push([matrixTotal[0][i][0], "-"]);
+                                            avgArr.push([col[prop][i][0], "-"]);
                                         }
-                                        avgArr.push([col[prop][i][0], col[prop][i][1] / n]);
+                                        else {
+                                            col[prop].push([matrixTotal[0][i][0], 0]);
+                                            for (let j = 0; j < matrixTotal.length; j++) {
+                                                if (matrixTotal[j]) {
+                                                    col[prop][i][1] += isNaN(parseFloat(matrixTotal[j][i][1])) ? 0 : parseFloat(matrixTotal[j][i][1]);
+                                                    n += isNaN(parseFloat(matrixTotal[j][i][1])) ? 0 : 1;
+                                                }
+                                            }
+                                            avgArr.push([col[prop][i][0], col[prop][i][1] / n]);
+                                        }
                                     }
                                 }
 
@@ -301,6 +308,50 @@ const DashboardTableModel = Tool.extend({
         if (features) {
             this.updateTable(features);
         }
+    },
+    /**
+     * @returns {void}
+     */
+    createRatio () {
+        const tableView = this.get("tableView"),
+            num = this.getValueByAttribute(this.getAttrsForRatio()[0]),
+            den = this.getValueByAttribute(this.getAttrsForRatio()[1]),
+            ratio = JSON.parse(JSON.stringify(num)),
+            calcGroup = tableView.find(group => group.group === "Berechnungen");
+
+        for (const col in ratio) {
+            for (let i = 0; i < ratio[col].length; i++) {
+                ratio[col][i][1] /= den[col][i][1];
+            }
+        }
+
+        if (calcGroup) {
+            calcGroup.values[`${this.getAttrsForRatio()[0]} / ${this.getAttrsForRatio()[1]}`] = ratio;
+        }
+        else {
+            tableView.push({
+                group: "Berechnungen",
+                values: {
+                    [`${this.getAttrsForRatio()[0]} / ${this.getAttrsForRatio()[1]}`]: ratio
+                }
+            });
+        }
+
+        this.filterTableView();
+        this.prepareRendering();
+    },
+
+    getValueByAttribute (attr) {
+        const group = this.get("tableView").find(g => {
+            for (const val in g.values) {
+                if (val === attr) {
+                    return true;
+                }
+            }
+            return false;
+        });
+
+        return group ? group.values[attr] : null;
     },
 
     /**
@@ -401,8 +452,8 @@ const DashboardTableModel = Tool.extend({
         });
     },
     createCorrelation () {
-        const attrsToShow = this.getAttrsForCorrelation(),
-            data = this.getCorrelationChartData(this.getAttrsForCorrelation()),
+        const attrsToShow = this.getAttrsForRatio(),
+            data = this.getCorrelationChartData(this.getAttrsForRatio()),
             graph = Radio.request("GraphV2", "createGraph", {
                 graphType: "ScatterPlot",
                 selector: document.createElement("div"),
@@ -411,21 +462,21 @@ const DashboardTableModel = Tool.extend({
                 dynamicAxisStart: true,
                 data: data,
                 refAttr: this.get("sortKey"),
-                attrToShowArray: [attrsToShow[1]],
-                xAttr: attrsToShow[0],
+                attrToShowArray: [attrsToShow[0]],
+                xAttr: attrsToShow[1],
                 xAxisLabel: {
                     offset: 5,
                     textAnchor: "middle",
                     fill: "#000",
                     fontSize: 10,
-                    label: attrsToShow[0]
+                    label: attrsToShow[1]
                 },
                 yAxisLabel: {
                     offset: -5,
                     textAnchor: "middle",
                     fill: "#000",
                     fontSize: 10,
-                    label: attrsToShow[1]
+                    label: attrsToShow[0]
                 },
                 margin: {
                     left: 40,
@@ -441,7 +492,7 @@ const DashboardTableModel = Tool.extend({
             });
 
         Radio.trigger("Dashboard", "append", graph, "#dashboard-containers", {
-            name: `Korrelation: ${attrsToShow[0]} (x) : ${attrsToShow[1]} (y)`,
+            name: `Korrelation: ${attrsToShow[0]} (y) : ${attrsToShow[1]} (x)`,
             glyphicon: "glyphicon-flash"
         });
     },
@@ -562,21 +613,32 @@ const DashboardTableModel = Tool.extend({
     setIsActive: function (state) {
         this.set("isActive", state);
     },
-    addAttrForCorrelation (attr) {
-        if (this.getAttrsForCorrelation().length < 2) {
-            this.getAttrsForCorrelation().push(attr);
-        }
-        else {
-            this.set("correlationAttrs", [attr]);
-        }
-        this.trigger("correlationValuesUpdated");
+    // addAttrForCorrelation (attr) {
+    //     if (this.getAttrsForCorrelation().length < 2) {
+    //         this.getAttrsForCorrelation().push(attr);
+    //     }
+    //     else {
+    //         this.set("correlationAttrs", [attr]);
+    //     }
+    //     this.trigger("correlationValuesUpdated");
+    // },
+    // getAttrsForCorrelation () {
+    //     return this.get("correlationAttrs");
+    // },
+    // deleteAttrsForCorrelation () {
+    //     this.set("correlationAttrs", []);
+    //     this.trigger("correlationValuesUpdated");
+    // },
+    addAttrForRatio (attr, i) {
+        this.getAttrsForRatio()[i] = attr;
+        this.trigger("ratioValuesUpdated");
     },
-    getAttrsForCorrelation () {
-        return this.get("correlationAttrs");
+    getAttrsForRatio () {
+        return this.get("ratioAttrs");
     },
-    deleteAttrsForCorrelation () {
-        this.set("correlationAttrs", []);
-        this.trigger("correlationValuesUpdated");
+    deleteAttrsForRatio () {
+        this.set("ratioAttrs", []);
+        this.trigger("ratioValuesUpdated");
     }
 });
 
