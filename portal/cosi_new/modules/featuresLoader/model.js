@@ -1,6 +1,7 @@
 import MappingJson from "./mapping.json";
 import {WFS} from "ol/format.js";
 import "whatwg-fetch";
+import {getLayerList, getLayerWhere} from "masterportalAPI/src/rawLayerList";
 
 const featuresLoader = Backbone.Model.extend({
     defaults: {
@@ -59,9 +60,11 @@ const featuresLoader = Backbone.Model.extend({
             kategorie: "alert-info"
         });
 
-        const layerList = Radio.request("RawLayerList", "getLayerListWhere", {url: serviceUrl}),
+        const layerList = getLayerList().filter(function (layer) {
+                return layer.url === serviceUrl;
+            }),
             wfsReader = new WFS({
-                featureNS: layerList[0].get("featureNS")
+                featureNS: layerList[0].featureNS
             }),
             propertyListPromise = this.getPropertyListWithoutGeometry(serviceUrl),
             featurePromiseList = [];
@@ -83,7 +86,7 @@ const featuresLoader = Backbone.Model.extend({
                             feature.set("kategorie", this.findMappingObjectByCategory(feature.get("kategorie")).value);
                         }, this);
                         if (features.length > 0) {
-                            layer.set("category", features[0].get("kategorie"));
+                            layer.category = features[0].get("kategorie");
                         }
                         return features;
                     })
@@ -150,11 +153,11 @@ const featuresLoader = Backbone.Model.extend({
      * @returns {string} the GetFeature Request url
      */
     getUrl: function (layer, bbox, propertyNameList) {
-        let url = `${layer.get("url")}?` +
+        let url = `${layer.url}?` +
             "service=WFS&" +
             "request=Getfeature&" +
-            `version=${layer.get("version")}&` +
-            `typename=${layer.get("featureType")}&`;
+            `version=${layer.version}&` +
+            `typename=${layer.featureType}&`;
 
         if (propertyNameList) {
             url += `propertyName=${propertyNameList}&`;
@@ -199,7 +202,7 @@ const featuresLoader = Backbone.Model.extend({
         // layer name, layer id or any other value of the layer
         const valueOfLayer = obj[Object.keys(obj)[0]],
             featureList = this.get("featureList"),
-            layer = Radio.request("RawLayerList", "getLayerWhere", obj),
+            layer = getLayerWhere(obj),
             xhr = new XMLHttpRequest();
 
         if (featureList.hasOwnProperty(valueOfLayer)) {
@@ -209,7 +212,7 @@ const featuresLoader = Backbone.Model.extend({
         xhr.open("GET", Radio.request("Util", "getProxyURL", this.getUrl(layer, undefined, undefined)), false);
         xhr.onload = function (event) {
             const wfsReader = new WFS({
-                featureNS: layer.get("featureNS")
+                featureNS: layer.featureNS
             });
 
             featureList[valueOfLayer] = wfsReader.readFeatures(event.currentTarget.responseXML);

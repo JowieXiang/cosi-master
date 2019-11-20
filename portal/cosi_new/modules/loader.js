@@ -82,6 +82,7 @@ function initializeCosi () {
     }
 
     Radio.trigger("General", "loaded");
+    tools.selectDistrict.set("isActive", true);
 }
 
 export default initializeCosi;

@@ -1,5 +1,6 @@
 import Tool from "../../../../modules/core/modelList/tool/model";
 import DropdownModel from "../../../../modules/snippets/dropdown/model";
+import {getLayerWhere} from "masterportalAPI/src/rawLayerList";
 
 const Reachability = Tool.extend({
     defaults: _.extend({}, Tool.prototype.defaults, {
@@ -13,7 +14,7 @@ const Reachability = Tool.extend({
     }),
     initialize: function () {
         this.superInitialize();
-        const layerList = _.union(Radio.request("Parser", "getItemsByAttributes", { typ: "WFS", isBaseLayer: false }), Radio.request("Parser", "getItemsByAttributes", { typ: "GeoJSON", isBaseLayer: false })),
+        const layerList = _.union(Radio.request("Parser", "getItemsByAttributes", {typ: "WFS", isBaseLayer: false}), Radio.request("Parser", "getItemsByAttributes", {typ: "GeoJSON", isBaseLayer: false})),
             layerNames = layerList.map(layer => layer.featureType.trim());
 
         this.setDropDownModel(layerNames);
@@ -50,12 +51,13 @@ const Reachability = Tool.extend({
      */
     displayLayer: function (valueModel, isSelected) {
         if (isSelected) {
-            const selectedItem = Radio.request("RawLayerList", "getLayerAttributesWhere", { featureType: valueModel.get("value") }),
-                selectedLayerModel = Radio.request("ModelList", "getModelByAttributes", { id: selectedItem.id });
+            const selectedItem = getLayerWhere({featureType: valueModel.get("value")}),
+                selectedLayerModel = Radio.request("ModelList", "getModelByAttributes", {id: selectedItem.id});
 
             if (selectedLayerModel) {
                 selectedLayerModel.setIsSelected(true);
-            } else {
+            }
+            else {
                 selectedItem.setIsSelected(true);
             }
         }

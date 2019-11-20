@@ -47,7 +47,7 @@
       }
     },
     "mapView": {
-      "backgroundImage": "/../../node_modules/lgv-config/img/backgroundCanvas.jpeg",
+      "backgroundImage":"https://geoportal-hamburg.de/lgv-config/img/backgroundCanvas.jpeg",
       "startCenter": [
         565790,
         5934262

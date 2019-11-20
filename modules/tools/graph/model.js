@@ -6,10 +6,7 @@ import {formatDefaultLocale} from "d3-format";
 import "d3-transition";
 
 const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
-    defaults: {
-        maxValue: 0,
-        minValue: 0
-    },
+    defaults: {},
 
     /**
      * @class GraphModel
@@ -26,9 +23,6 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             "createGraph": this.createGraph
         }, this);
         channel.reply({
-            "createGraph": this.createGraph
-        }, this);
-        channel.reply({
             "getGraphParams": function () {
                 return this.get("graphParams");
             }
@@ -39,15 +33,15 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             "decimal": ",",
             "thousands": ".",
             "grouping": [3],
-            "currency": ["€", ""],
+            "currency": ["â‚¬", ""],
             "dateTime": "%a %b %e %X %Y",
             "date": "%d.%m.%Y",
             "time": "%H:%M:%S",
             "periods": ["AM", "PM"],
             "days": ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"],
             "shortDays": ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
-            "months": ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"],
-            "shortMonths": ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"]
+            "months": ["Januar", "Februar", "MÃ¤rz", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"],
+            "shortMonths": ["Jan", "Feb", "MÃ¤r", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"]
         });
     },
 
@@ -59,16 +53,12 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
      * @returns {Void}  -
      */
     createGraph: function (graphConfig) {
-        var svg = select(graphConfig.selector);
-
         if (graphConfig.graphType === "Linegraph") {
             this.createLineGraph(graphConfig);
         }
         else if (graphConfig.graphType === "BarGraph") {
             this.createBarGraph(graphConfig);
         }
-
-        return svg;
     },
 
     /**
@@ -322,10 +312,10 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
      * @param {string} yAttrToShow Attribut name for y-axis.
      * @returns {Object}  - valueLine.
      */
-    createValueLine: function (scaleX, scaleY, xAttr, yAttrToShow, scaleTypeX) {
+    createValueLine: function (scaleX, scaleY, xAttr, yAttrToShow) {
         return line()
             .x(function (d) {
-                return scaleTypeX === "ordinal" ? scaleX(d[xAttr]) + (scaleX.bandwidth() / 2) : scaleX(d[xAttr]);
+                return scaleX(d[xAttr]) + (scaleX.bandwidth() / 2);
             })
             .y(function (d) {
                 return scaleY(d[yAttrToShow]);
@@ -365,27 +355,7 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             .append("path")
             .data([dataToAdd])
             .attr("class", className)
-            .attr("d", d3line)
-            .on("mouseover", function () {
-                if (tooltipDiv) {
-                    tooltipDiv.transition()
-                        .duration(200)
-                        .style("opacity", 0.9);
-                    tooltipDiv.html(`<strong>${attrName}</strong>`)
-                        .attr("style", "background-color: buttonface; border-radius: 4px; text-align: center;")
-                        .style("left", (event.clientX - 25) + "px")
-                        .style("top", (event.clientY - 35) + "px");
-                }
-            }, tooltipDiv)
-            .on("mouseout", function () {
-                tooltipDiv.transition()
-                    .duration(200)
-                    .style("opacity", 0)
-                    .on("end", function () {
-                        tooltipDiv.style("left", "0px");
-                        tooltipDiv.style("top", "0px");
-                    }, tooltipDiv);
-            }, tooltipDiv);
+            .attr("d", d3line);
     },
 
     /**
@@ -398,7 +368,6 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
      * @param {String} [xAxisLabel.textAnchor=middle] Text anchor of x-axis label.
      * @param {String} [xAxisLabel.fill=#000] Text fill color.
      * @param {String} [xAxisLabel.fontSize=10] Text font size.
-     * @param {Number} [xAxisLabel.rotate] Value of Rotation.
      * @param {Number} width Width of SVG.
      * @param {Function} y y(value) transitions data value into pixel from top
      * @returns {Void}  -
@@ -412,7 +381,7 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
         let xAxisDraw = xAxis;
 
         xAxisDraw = svg.select(".graph-data").selectAll("yAxisDraw")
-            .data([1]) // setze ein Dummy-Array mit Länge 1 damit genau einmal die Achse appended wird
+            .data([1]) // setze ein Dummy-Array mit LÃ¤nge 1 damit genau einmal die Achse appended wird
             .enter()
             .append("g")
             .attr("transform", function () {
@@ -432,9 +401,6 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
                 .style("font-size", fontSize)
                 .text(label)
                 .attr("class", "xAxisLabelText");
-        }
-        if (rotate) {
-            this.rotateXAxisTexts(svg, rotate);
         }
     },
 
@@ -460,7 +426,7 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
         let yAxisDraw = yAxis;
 
         yAxisDraw = svg.select(".graph-data").selectAll("yAxisDraw")
-            .data([1]) // setze ein Dummy-Array mit Länge 1 damit genau einmal die Achse appended wird
+            .data([1]) // setze ein Dummy-Array mit LÃ¤nge 1 damit genau einmal die Achse appended wird
             .enter()
             .append("g")
             .attr("class", "yAxisDraw")
@@ -485,7 +451,6 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
      * @param {Object[]} data Data for graph.
      * @param {Object} scaleX Scale for x-axis.
      * @param {Object} scaleY Scale for y-axis.
-     * @param {string} scaleTypeX Type of x-Scale
      * @param {String} xAttr Attribute name for x-axis.
      * @param {String} yAttrToShow Attribute name for line point on y-axis.
      * @param {Selection} tooltipDiv Selection of the tooltip-div.
@@ -499,12 +464,14 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
         });
         let yAttributeToShow;
 
-        svg.append("g").attr("class", " graph-points").selectAll("points")
+        svg.select(".graph-diagram").selectAll("points")
             .data(dat)
             .enter()
-            .append("circle")
+            .append(function (d) {
+                return document.createElementNS("http://www.w3.org/2000/svg", d.style);
+            })
             .attr("cx", function (d) {
-                return scaleTypeX === "ordinal" ? scaleX(d[xAttr]) + (scaleX.bandwidth() / 2) : scaleX(d[xAttr]);
+                return scaleX(d[xAttr]) + (scaleX.bandwidth() / 2);
             })
             .attr("cy", function (d) {
                 return scaleY(d[yAttrToShow]);
@@ -512,7 +479,7 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             .attr("r", dotSize)
 
             .attr("x", function (d) {
-                return scaleTypeX === "ordinal" ? scaleX(d[xAttr]) + (scaleX.bandwidth() / 2) : scaleX(d[xAttr]);
+                return scaleX(d[xAttr]) + (scaleX.bandwidth() / 2);
             })
             .attr("y", function (d) {
                 return scaleY(d[yAttrToShow]) - 5;
@@ -520,7 +487,7 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             .attr("width", 10)
             .attr("height", 10)
             .attr("class", function (d) {
-                return d.class || className;
+                return d.class;
             })
             .attr("attrname", yAttrToShow)
             .attr("attrval", function (d) {
@@ -536,10 +503,10 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
                 tooltipDiv.transition()
                     .duration(200)
                     .style("opacity", 0.9);
-                tooltipDiv.html(`<strong>${yAttrToShow}:</strong> ${yAttributeToShow}`)
+                tooltipDiv.html(yAttributeToShow)
                     .attr("style", "background-color: buttonface; border-radius: 4px; text-align: center;")
-                    .style("left", (event.clientX - 25) + "px")
-                    .style("top", (event.clientY - 35) + "px");
+                    .style("left", (event.layerX - 25) + "px")
+                    .style("top", (event.layerY - 35) + "px");
             }, tooltipDiv)
             .on("mouseout", function () {
                 tooltipDiv.transition()
@@ -560,36 +527,11 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
                 tooltipDiv.transition()
                     .duration(200)
                     .style("opacity", 0.9);
-                tooltipDiv.html(`<strong>${yAttrToShow}:</strong> ${yAttributeToShow}`)
+                tooltipDiv.html(yAttributeToShow)
                     .attr("style", "background-color: buttonface; border-radius: 4px;")
-                    .style("left", (event.clientX - 25) + "px")
-                    .style("top", (event.clientY - 35) + "px");
-                    // .style("left", (event.layerX - 25) + "px")
-                    // .style("top", (event.layerY - 35) + "px");
+                    .style("left", (event.layerX - 25) + "px")
+                    .style("top", (event.layerY - 35) + "px");
             }, tooltipDiv);
-    },
-
-    appendLineLabel (svg, data, scaleX, scaleY, scaleTypeX, xAttr) {
-        const dataToShow = data[data.length - 1],
-            xAttrValue = dataToShow[xAttr],
-            dataArray = _.pairs(dataToShow)
-                .filter(d => d[0] !== xAttr)
-                .map(d => {
-                    return {
-                        label: d[0],
-                        y: parseFloat(d[1]),
-                        x: parseFloat(xAttrValue)
-                    };
-                });
-
-        svg.append("g").classed("line-labels", true)
-            .selectAll("text")
-            .data(dataArray)
-            .enter()
-            .append("text")
-            .text(d => d.label)
-            .attr("y", d => scaleY(d.y))
-            .attr("x", d => scaleTypeX === "ordinal" ? scaleX(d.x) + (scaleX.bandwidth() / 2) + 20 : scaleX(d.x) + 20);
     },
 
     /**
@@ -637,12 +579,12 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
         legend.append(function (d) {
             return document.createElementNS("http://www.w3.org/2000/svg", d.style);
         })
-            // Attribute für <rect>
+            // Attribute fÃ¼r <rect>
             .attr("width", 10)
             .attr("height", 10)
             .attr("x", 0)
             .attr("y", 5)
-            // Attribute für <circle>
+            // Attribute fÃ¼r <circle>
             .attr("cx", 5)
             .attr("cy", 10)
             .attr("r", 5)
@@ -752,13 +694,13 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
 
         attrToShowArray.forEach(function (yAttrToShow) {
             if (typeof yAttrToShow === "object") {
-                valueLine = this.createValueLine(scaleX, scaleY, xAttr, yAttrToShow.attrName, scaleTypeX);
-                this.appendDataToSvg(svg, data, yAttrToShow.attrClass, valueLine, tooltipDiv, yAttrToShow.attrName, hasLineLabel);
+                valueLine = this.createValueLine(scaleX, scaleY, xAttr, yAttrToShow.attrName);
+                this.appendDataToSvg(svg, data, yAttrToShow.attrClass, valueLine);
                 // Add the scatterplot for each point in line
                 this.appendLinePointsToSvg(svg, data, scaleX, scaleY, xAttr, yAttrToShow.attrName, tooltipDiv, dotSize, setTooltipValue);
             }
             else {
-                valueLine = this.createValueLine(scaleX, scaleY, xAttr, yAttrToShow, scaleTypeX);
+                valueLine = this.createValueLine(scaleX, scaleY, xAttr, yAttrToShow);
                 this.appendDataToSvg(svg, data, "line", valueLine);
                 // Add the scatterplot for each point in line
                 this.appendLinePointsToSvg(svg, data, scaleX, scaleY, xAttr, yAttrToShow, tooltipDiv, dotSize, setTooltipValue);
@@ -774,10 +716,6 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             this.translateXAxislabelText(svg, xAxisLabel.translate);
         }
 
-        if (hasLineLabel) {
-            this.appendLineLabel(svg, data, scaleX, scaleY, scaleTypeX, xAxisLabel);
-        }
-
         this.setGraphParams({
             scaleX: scaleX,
             scaleY: scaleY,
@@ -785,19 +723,16 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             margin: margin,
             offset: offset
         });
-
-        return svg;
     },
 
     /**
      * Rotates the label on the x-axis by 45 degrees
      * @param {SVG} svg SVG.
-     * @param {number} rotate - rotate value
-     * @return {void}
+     * @returns {Void}  -
      */
-    rotateXAxisTexts: function (svg, rotate) {
+    rotateXAxisTexts: function (svg) {
         svg.select(".xAxisDraw").selectAll(".tick").selectAll("text")
-            .attr("transform", "rotate(" + rotate + ") translate(17, -4)");
+            .attr("transform", "rotate(45) translate(17, -4)");
     },
 
     /**
@@ -855,7 +790,6 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             xAttr = graphConfig.xAttr,
             xAxisLabel = graphConfig.xAxisLabel ? graphConfig.xAxisLabel : undefined,
             yAxisLabel = graphConfig.yAxisLabel ? graphConfig.yAxisLabel : undefined,
-            yAxisMaxValue = graphConfig.yAxisLabel.maxValue ? graphConfig.yAxisLabel.maxValue : undefined,
             attrToShowArray = graphConfig.attrToShowArray,
             margin = graphConfig.margin,
             width = graphConfig.width - margin.left - margin.right,
@@ -863,7 +797,7 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             xAxisTicks = graphConfig.xAxisTicks,
             yAxisTicks = graphConfig.yAxisTicks,
             scaleX = this.createScaleX(data, width, scaleTypeX, xAttr, xAxisTicks),
-            scaleY = this.createScaleY(data, height, scaleTypeY, attrToShowArray, yAxisTicks, yAxisMaxValue),
+            scaleY = this.createScaleY(data, height, scaleTypeY, attrToShowArray, yAxisTicks),
             xAxis = this.createAxisBottom(scaleX, xAxisTicks),
             yAxis = this.createAxisLeft(scaleY, yAxisTicks),
             svgClass = graphConfig.svgClass,
@@ -914,10 +848,7 @@ const GraphModel = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             .data(dataToAdd)
             .enter()
             .append("rect")
-            .attr("class", typeof selector === "string" ? "bar" + selector.split(".")[1] : "bar")
-            .attr("fill", function (d) {
-                return Radio.request("ColorScale", "getColorScaleByValues", y.domain()).scale(d[attrToShowArray[0]]);
-            })
+            .attr("class", "bar" + selector.split(".")[1])
             .attr("x", function (d) {
                 return x(d[xAttr]);
             })
