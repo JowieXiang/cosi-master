@@ -106,7 +106,8 @@ const map = Backbone.Model.extend(/** @lends map.prototype */{
             "getMap3d": this.getMap3d,
             "getMapMode": this.getMapMode,
             "getFeatures3dAtPosition": this.getFeatures3dAtPosition,
-            "getLayerByName": this.getLayerByName
+            "getLayerByName": this.getLayerByName,
+            "getOverlayById": this.getOverlayById
         }, this);
 
         channel.on({
@@ -932,6 +933,15 @@ const map = Backbone.Model.extend(/** @lends map.prototype */{
             Radio.trigger("Map", "addLayerToIndex", [layer, layers.getArray().length]);
         }
         return resultLayer;
+    },
+
+    /**
+     * gets an overlay by its identifier
+     * @param {string|number} id - identifier
+     * @returns {ol.Overlay} the overlay
+     */
+    getOverlayById: function (id) {
+        return this.get("map").getOverlayById(id);
     },
 
     /**

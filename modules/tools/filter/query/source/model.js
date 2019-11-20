@@ -56,7 +56,7 @@ const SourceModel = QueryModel.extend({
      * @return {void}
      */
     listenToFeaturesLoaded: function () {
-        this.listenTo(Radio.channel("Layer"), {
+        this.listenTo(Radio.channel("VectorLayer"), {
             "featuresLoaded": function (layerId, features) {
                 var urlFilterRules;
 
