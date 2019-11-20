@@ -324,7 +324,8 @@ const DashboardTableModel = Tool.extend({
                 ratio[col][i][1] /= den[col][i][1];
             }
             const match = this.get("unsortedTable").find(distCol => distCol[this.get("sortKey")] === col);
-            console.log(ratio[col], col, match);
+
+            match[`${this.getAttrsForRatio()[0]} / ${this.getAttrsForRatio()[1]}`] = ratio[col];
         }
         console.log(this.get("unsortedTable"));
 

@@ -275,7 +275,7 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
                     if (d % 1 === 0) {
                         return d.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
                     }
-                    return false;
+                    return d;
 
                 });
         }
@@ -1154,8 +1154,30 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
                     .style("opacity", 0.9);
                 tooltipDiv.html(tooltipElement.get(0).outerHTML)
                     .attr("style", "background-color: buttonface; border-radius: 4px; text-align: center;")
-                    .style("right", (window.innerWidth - event.clientX - 25) + "px")
-                    .style("top", (event.clientY + 20) + "px");
+                    .style("right", () => {
+                        if (event.clientX + tooltipDiv.node().clientWidth + 25 >= window.innerWidth) {
+                            return (window.innerWidth - event.clientX + 25) + "px"
+                        }
+                        return false;
+                    })
+                    .style("left", () => {
+                        if (event.clientX + tooltipDiv.node().clientWidth + 25 < window.innerWidth) {
+                            return (event.clientX + 25) + "px"
+                        }
+                        return false;
+                    })
+                    .style("bottom", () => {
+                        if (event.clientY + tooltipDiv.node().clientHeight + 25 >= window.innerHeight) {
+                            return (window.innerHeight - event.clientY + 20) + "px"
+                        }
+                        return false;
+                    })
+                    .style("top", () => {
+                        if (event.clientY + tooltipDiv.node().clientHeight + 20 < window.innerHeight) {
+                            return (event.clientY + 20) + "px"
+                        }
+                        return false;
+                    });
             }, tooltipDiv)
             .on("mouseout", function () {
                 tooltipDiv.transition()

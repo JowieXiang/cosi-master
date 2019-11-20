@@ -26,6 +26,8 @@ const DashboardModel = Tool.extend({
                 return this.get("isActive");
             }
         }, this);
+
+        Radio.trigger("ModelList", "addAlwaysActiveTool", this);
     },
     setIsActive: function (state) {
         this.set("isActive", state);
