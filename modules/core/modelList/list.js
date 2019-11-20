@@ -559,8 +559,6 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
             alwaysActiveTools.push(this.findWhere({id: "gfi"}));
         }
 
-        console.log(alwaysActiveTools);
-
         activeToolsToDeactivate = activeTools.filter(tool => !alwaysActiveTools.includes(tool));
         activeToolsToDeactivate.forEach(tool => tool.setIsActive(false));
     },
@@ -1126,7 +1124,6 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
         });
     },
     addAlwaysActiveTool: function (model) {
-        console.log(model);
         this.alwaysActiveTools.push(model);
     }
 });
