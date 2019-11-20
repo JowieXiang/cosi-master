@@ -20,7 +20,8 @@ const ReachabilityView = Backbone.View.extend({
         },
         "click #help": "showHelp",
         "click #show-in-dashboard": "showInDashboard",
-        "click #backward": "toModeSelection"
+        "click #backward": "toModeSelection",
+        "click #clear": "clearMapLayer"
     },
     initialize: function () {
         this.listenTo(this.model, {
@@ -33,7 +34,6 @@ const ReachabilityView = Backbone.View.extend({
                 else {
                     this.unregisterClickListener();
                     Radio.trigger("SelectDistrict", "revertBboxGeometry");
-                    this.clearMapLayer(this.model.get("mapLayerName"));
                     this.clearInput();
                     Radio.trigger("MapMarker", "hideMarker");
                 }
@@ -63,16 +63,18 @@ const ReachabilityView = Backbone.View.extend({
         this.$el.find("#isochrones-layer").html(dropdownView.render().el);
     },
     createMapLayer: function (name) {
+        // returns the existing layer if already exists
         const newLayer = Radio.request("Map", "createLayerIfNotExists", name);
 
         newLayer.setMap(Radio.request("Map", "getMap"));
-        newLayer.setVisible(false);
+        newLayer.setVisible(true);
     },
-    clearMapLayer: function (name) {
-        const mapLayer = Radio.request("Map", "getLayerByName", name);
+    clearMapLayer: function () {
+        const mapLayer = Radio.request("Map", "getLayerByName", this.model.get("mapLayerName"));
 
-        mapLayer.getSource().clear();
-        mapLayer.setVisible(false);
+        if (mapLayer && mapLayer.getVisible()) {
+            mapLayer.getSource().clear();
+        }
     },
     clearInput: function () {
         this.model.set("coordinate", []);
@@ -101,7 +103,6 @@ const ReachabilityView = Backbone.View.extend({
 
                     mapLayer.getSource().clear();
                     mapLayer.getSource().addFeatures(newFeatures.reverse());
-                    mapLayer.setVisible(true);
                     this.model.set("isochroneFeatures", newFeatures);
 
                     const layerlist = _.union(Radio.request("Parser", "getItemsByAttributes", { typ: "WFS", isBaseLayer: false }), Radio.request("Parser", "getItemsByAttributes", { typ: "GeoJSON", isBaseLayer: false })),
