@@ -55,14 +55,29 @@ describe("modules/legend", function () {
             });
         });
         it("should return empty legend if no vector style is properly set up", function () {
-            expect(model.getLegendParamsFromVector("Fake", "WFS", "123")).to.deep.equal({
+            expect(model.getLegendParamsFromVector("Fake", "123")).to.deep.equal({
                 layername: "Fake",
                 legend: [{
                     img: [],
-                    typ: "WFS",
+                    typ: "svg",
                     legendname: []
                 }]
             });
+        });
+    });
+    describe("determineValueName", function () {
+        const styleModel = new Backbone.Model();
+
+        it("should return layername for style empty styleModel ", function () {
+            expect(model.determineValueName(styleModel, "layerThird")).to.equal("layerThird");
+        });
+        it("should return styleFieldValue for styleModel with the attribute styleFieldValue", function () {
+            styleModel.set("styleFieldValue", "styleFieldValueSecond");
+            expect(model.determineValueName(styleModel, "layerThird")).to.equal("styleFieldValueSecond");
+        });
+        it("should return legendValue for styleModel with the attributes legendValue and styleFieldValue", function () {
+            styleModel.set("legendValue", "legendValueFirst");
+            expect(model.determineValueName(styleModel, "layerThird")).to.equal("legendValueFirst");
         });
     });
 });

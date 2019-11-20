@@ -5,29 +5,25 @@ import VectorLayer from "ol/layer/Vector.js";
 import {GeoJSON} from "ol/format.js";
 
 const GeoJSONLayer = Layer.extend(/** @lends GeoJSONLayer.prototype */{
-    /**
-     * @class Class representing a GeoJSONLayer
-     * @description Module to represent GeoJSONLayer
-     * @extends Layer
-     * @constructs
-     * @memberOf Core.ModelList.Layer
-     * @property {String[]} [supported="2D,3D"] Supported modes "2D" and / or "3D"
-     * @property {number} [clusterDistance="undefined"] Distance to group features to clusters
-     * @property {string} [styleId="ol default"] ID of style in style.json
-     * @fires StyleList#RadioRequestReturnModelById
-     * @fires MapView#RadioRequestGetProjection
-     * @fires Alerting#RadioTriggerAlertAlert
-     * @fires Util#RadioTriggerUtilHideLoader
-     * @fires RemoteInterface#RadioTriggerPostMessage
-     */
     defaults: _.extend({}, Layer.prototype.defaults, {
         supported: ["2D", "3D"],
         isClustered: false
     }),
 
     /**
+     * @class GeoJSONLayer
+     * @description Module to represent GeoJSONLayer
+     * @extends Layer
+     * @constructs
+     * @memberof Core.ModelList.Layer
+     * @property {String[]} supported=["2D", "3D"] Supported modes "2D" and / or "3D"
+     * @property {Boolean} isClustered=[false] Distance to group features to clusters
      * @fires StyleList#RadioRequestReturnModelById
-     * @returns {void}
+     * @fires MapView#RadioRequestGetProjection
+     * @fires Alerting#RadioTriggerAlertAlert
+     * @fires Util#RadioTriggerUtilHideLoader
+     * @fires RemoteInterface#RadioTriggerPostMessage
+     * @listens Layer#RadioRequestVectorLayerGetFeatures
      */
     initialize: function () {
 
@@ -188,7 +184,7 @@ const GeoJSONLayer = Layer.extend(/** @lends GeoJSONLayer.prototype */{
      */
     handleResponse: function (responseText, status, showLoader) {
         if (status === 200) {
-            this.handleData(responseText, Radio.request("MapView", "getProjection").getCode());
+            this.handleData(responseText);
         }
         else {
             Radio.trigger("Alert", "alert", "Datenabfrage fehlgeschlagen. (Technische Details: " + status + ")");
@@ -201,31 +197,22 @@ const GeoJSONLayer = Layer.extend(/** @lends GeoJSONLayer.prototype */{
 
     /**
      * Takes the response, parses the geojson and creates ol.features.
-     * According to the GeoJSON Specification (RFC 7946) the geometry is expected to be in EPSG:4326.
      * @fires RemoteInterface#RadioTriggerPostMessage
      * @param   {string} data   response as GeoJson
-     * @param   {string} mapCrs EPSG-Code of ol.map
      * @returns {void}
      */
-    handleData: function (data, mapCrs) {
-        var jsonCrs = "EPSG:4326",
-            features = this.parseDataToFeatures(data),
+    handleData: function (data) {
+        var mapCrs = Radio.request("MapView", "getProjection"),
+            jsonCrs = this.getJsonProjection(data),
+            features = this.parseDataToFeatures(data, mapCrs, jsonCrs),
             newFeatures = [];
 
         if (!features) {
             return;
         }
-        // else if (jsonCrs !== mapCrs) {
-        //     features = this.transformFeatures(features, jsonCrs, mapCrs);
-        // }
 
-        features.forEach(function (feature) {
-            var id = feature.get("id") || _.uniqueId();
-
-            feature.setId(id);
-        });
+        this.addId(features);
         features = this.getFeaturesIntersectsGeometry(this.get("bboxGeometry"), features);
-
         this.get("layerSource").clear(true);
         this.get("layerSource").addFeatures(features);
         this.get("layer").setStyle(this.get("styleFunction"));
@@ -264,13 +251,40 @@ const GeoJSONLayer = Layer.extend(/** @lends GeoJSONLayer.prototype */{
     },
 
     /**
+     * Takes the data string to extract the crs definition. According to the GeoJSON Specification (RFC 7946) the geometry is expected to be in EPSG:4326.
+     * For downward compatibility a crs tag can be used.
+     * @see https://tools.ietf.org/html/rfc7946
+     * @see https://geojson.org/geojson-spec#named-crs
+     * @param   {string} data   response as GeoJson
+     * @returns {string} epsg definition
+     */
+    getJsonProjection: function (data) {
+        // using indexOf method to increase performance
+        const dataString = data.replace(/\s/g, ""),
+            startIndex = dataString.indexOf("\"crs\":{\"type\":\"name\",\"properties\":{\"name\":\"");
+
+        if (startIndex !== -1) {
+            const endIndex = dataString.indexOf("\"", startIndex + 43);
+
+            return dataString.substring(startIndex + 43, endIndex);
+        }
+
+        return "EPSG:4326";
+    },
+
+    /**
      * Tries to parse data string to ol.format.GeoJson
      * @param   {string} data string to parse
+     * @param   {ol/proj/Projection} mapProjection target projection to parse features into
+     * @param   {string} jsonProjection projection of the json
      * @throws Will throw an error if the argument cannot be parsed.
-     * @returns {object}    ol/format/GeoJSON/features
+     * @returns {object} ol/format/GeoJSON/features
      */
-    parseDataToFeatures: function (data) {
-        const geojsonReader = new GeoJSON();
+    parseDataToFeatures: function (data, mapProjection, jsonProjection) {
+        const geojsonReader = new GeoJSON({
+            featureProjection: mapProjection,
+            dataProjection: jsonProjection
+        });
         let jsonObjects;
 
         try {
@@ -284,21 +298,16 @@ const GeoJSONLayer = Layer.extend(/** @lends GeoJSONLayer.prototype */{
     },
 
     /**
-     * Transforms features between CRS
-     * @param   {feature[]} features Array of ol.features
-     * @param   {string}    crs      EPSG-Code of feature
-     * @param   {string}    mapCrs   EPSG-Code of ol.map
+     * Ensures all given features have an id
+     * @param {ol/feature[]} features features
      * @returns {void}
      */
-    transformFeatures: function (features, crs, mapCrs) {
-        _.each(features, function (feature) {
-            var geometry = feature.getGeometry();
+    addId: function (features) {
+        features.forEach(function (feature) {
+            const id = feature.get("id") || _.uniqueId();
 
-            if (geometry) {
-                geometry.transform(crs, mapCrs);
-            }
+            feature.setId(id);
         });
-        return features;
     },
 
     /**

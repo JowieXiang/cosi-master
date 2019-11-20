@@ -6,8 +6,9 @@ import TableView from "./table/view";
 import DesktopAttachedView from "./desktop/attached/view";
 import MobileView from "./mobile/view";
 import Tool from "../../core/modelList/tool/model";
+import HightlightFeature from "./highlightFeature";
 
-const Gfi = Tool.extend({
+const GFI = Tool.extend(/** @lends GFI.prototype */{
     defaults: _.extend({}, Tool.prototype.defaults, {
         // detached | attached
         desktopViewType: "detached",
@@ -32,10 +33,23 @@ const Gfi = Tool.extend({
         rotateAngle: 0,
         glyphicon: "glyphicon-info-sign",
         isMapMarkerVisible: true,
-        unlisten: false
+        unlisten: false,
+        highlightFeature: undefined,
+        centerMapMarkerPolygon: false
     }),
+    /**
+     * @class GFI
+     * @extends Tools
+     * @memberof Tools.GFI
+     * @constructs
+     */
     initialize: function () {
         var channel = Radio.channel("GFI");
+
+        // check and initiate module to highlight selected Feature
+        if (this.get("highlightVectorRules")) {
+            this.set("highlightFeature", new HightlightFeature(this.get("highlightVectorRules")));
+        }
 
         // Wegen Ladereihenfolge hier die Default-Attribute setzen, sonst sind die Werte noch nicht aus der Config ausgelesen
         this.set("uiStyle", Radio.request("Util", "getUiStyle"));
@@ -66,6 +80,9 @@ const Gfi = Tool.extend({
 
         this.listenTo(this, {
             "change:isVisible": function (model, value) {
+                if (value === false) {
+                    this.lowlightFeature();
+                }
                 channel.trigger("isVisible", value);
                 if (value === false && this.get("numberOfThemes") > 0) {
                     this.get("themeList").setAllInVisible();
@@ -80,6 +97,7 @@ const Gfi = Tool.extend({
                 }
             },
             "change:themeIndex": function (model, value) {
+                this.highlightFeature(model.get("currentView").model);
                 this.get("themeList").appendTheme(value);
             },
             "change:isActive": function (model, value) {
@@ -137,6 +155,7 @@ const Gfi = Tool.extend({
                 else {
                     this.setIsVisible(false);
                 }
+                this.highlightFeature(this.get("currentView").model);
             }
         });
     },
@@ -200,9 +219,10 @@ const Gfi = Tool.extend({
     },
 
     /**
-     *
+     * Function to define the Gfi Parameters.
+     * Determines from which layers and from which coordinate the information of one or more features is retrieved.
      * @param {ol.MapBrowserPointerEvent} evt Event
-     * @return {undefined}
+     * @return {void}
      */
     setGfiParams: function (evt) {
         var visibleLayerList = Radio.request("ModelList", "getModelsByAttributes", { isVisibleInMap: true, isOutOfRange: false }),
@@ -213,8 +233,7 @@ const Gfi = Tool.extend({
             wmsGFIParams = [],
             GFIParams3d = [],
             unionParams = [],
-            coordinate = [],
-            feature;
+            coordinate = [];
 
         Radio.trigger("ClickCounter", "gfi");
         if (Radio.request("Map", "isMap3d")) {
@@ -223,40 +242,13 @@ const Gfi = Tool.extend({
             this.setCoordinate(evt.pickedPosition);
         }
 
-        // für detached MapMarker
-        if (evt.hasOwnProperty("pixel")) {
-            feature = evt.map.forEachFeatureAtPixel(evt.pixel, function (feat) {
-                return feat;
-            }, {
-                layerFilter: function (layer) {
-                    return layer.get("gfiAttributes") !== "ignore" || _.isUndefined(layer.get("gfiAttributes")) === true;
-                }
-            });
-        }
-
-        // Derive (center) coordinate with respect to the feature type
-        if (feature === null || feature === undefined) {
-            this.setIsMapMarkerVisible(false);
-            Radio.trigger("MapMarker", "hideMarker");
-            coordinate = evt.coordinate;
-        }
-        else if ((/polygon/i).test(feature.getGeometry().getType())) {
-            coordinate = getCenter(feature.getGeometry().getExtent());
-        }
-        else {
-            this.setIsMapMarkerVisible(true);
-            coordinate = feature.getGeometry().getFirstCoordinate();
-        }
-
+        coordinate = this.getClickedCoordinate(this.get("centerMapMarkerPolygon"), evt);
         this.setCoordinate(coordinate);
-        // Vector
         vectorGFIParams = this.getVectorGFIParams(visibleVectorLayerList, evt.map.getEventPixel(evt.originalEvent));
-        // WMS
         wmsGFIParams = this.getWMSGFIParams(visibleWMSLayerList);
 
         this.setThemeIndex(0);
         unionParams = vectorGFIParams.concat(wmsGFIParams, GFIParams3d);
-
         if (unionParams.length === 0) {
             this.setIsVisible(false);
         }
@@ -335,6 +327,48 @@ const Gfi = Tool.extend({
     },
 
     /**
+     * Returns the clicked coordinates, if the parameter centerPolygon is false.
+     * If the parameter centerPolygon has the value true, the coordinate of the center of the feature is determined.
+     * @param {boolean} centerPolygon - Parameter for specifying whether the coordinate of the center of a feature should be determined.
+     * @param {ol.MapBrowserPointerEvent} evt - click event.
+     * @returns {number} coordinate of clicked position or center coordinate of clicked feature.
+     */
+    getClickedCoordinate: function (centerPolygon, evt) {
+        let feature,
+            coordinate;
+
+        if (centerPolygon === true) {
+
+            // für detached MapMarker
+            if (evt.hasOwnProperty("pixel")) {
+                feature = evt.map.forEachFeatureAtPixel(evt.pixel, function (feat) {
+                    return feat;
+                },
+                {
+                    layerFilter: function (layer) {
+                        return layer.get("gfiAttributes") !== "ignore" || _.isUndefined(layer.get("gfiAttributes")) === true;
+                    }
+                });
+            }
+
+            // Derive (center) coordinate with respect to the feature type
+            if (feature === null || feature === undefined) {
+                coordinate = evt.coordinate;
+            }
+            else if ((/polygon/i).test(feature.getGeometry().getType())) {
+                coordinate = getCenter(feature.getGeometry().getExtent());
+            }
+            else {
+                coordinate = feature.getGeometry().getFirstCoordinate();
+            }
+        }
+        else {
+            coordinate = evt.coordinate;
+        }
+        return coordinate;
+    },
+
+    /**
      * Aufschlüsselung von WMS und Vector-GFI Abfragen aus einer gemischten Layerliste unter Berücksichtung von GroupLayern.
      * @param   {model[]} layerList Liste der aufzuschlüsselnden Layer
      * @returns {Object}            Objekt der aufgeschlüsslten GFI
@@ -383,11 +417,11 @@ const Gfi = Tool.extend({
         _.each(layerlist, function (vectorLayer) {
             var features = Radio.request("Map", "getFeaturesAtPixel", eventPixel, {
                     layerFilter: function (layer) {
-                        return layer.get("name") === vectorLayer.get("name");
+                        return layer.get("id") === vectorLayer.get("id");
                     },
                     hitTolerance: vectorLayer.get("hitTolerance")
                 }),
-                modelAttributes = _.pick(vectorLayer.attributes, "name", "gfiAttributes", "typ", "gfiTheme", "routable", "id", "isComparable");
+                modelAttributes = _.pick(vectorLayer.attributes, "name", "gfiAttributes", "typ", "gfiTheme", "routable", "id", "isComparable", "layer");
 
             _.each(features, function (featureAtPixel) {
                 // Feature
@@ -460,6 +494,7 @@ const Gfi = Tool.extend({
      * @return {object[]}           GFI-Parameter vom WMS-Layern
      */
     getWMSGFIParams: function (layerlist) {
+
         var wmsGfiParams = [];
 
         _.each(layerlist, function (layer) {
@@ -601,6 +636,22 @@ const Gfi = Tool.extend({
         return false;
     },
 
+    highlightFeature: function (model) {
+        const hf = this.get("highlightFeature");
+
+        if (hf) {
+            hf.highlight(model.get("currentView").model);
+        }
+    },
+
+    lowlightFeature: function () {
+        const hf = this.get("highlightFeature");
+
+        if (hf) {
+            hf.lowlightFeatures();
+        }
+    },
+
     setClickEventKey: function (value) {
         this.set("clickEventKey", value);
     },
@@ -616,4 +667,4 @@ const Gfi = Tool.extend({
 
 });
 
-export default Gfi;
+export default GFI;

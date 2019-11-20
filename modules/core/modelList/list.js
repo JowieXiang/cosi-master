@@ -45,7 +45,6 @@ import Einwohnerabfrage_HH from "../../tools/einwohnerabfrage_hh/model";
 import ParcelSearch from "../../tools/parcelSearch/model";
 import StyleWMS from "../../tools/styleWMS/model";
 import LayerSliderModel from "../../tools/layerSlider/model";
-import AgeGroupSliderModel from "../../tools/ageGroupSlider/model";
 import GFI from "../../tools/gfi/model";
 import Viewpoint from "./viewpoint/model";
 import ColorScale from "../../tools/colorScale/model";
@@ -60,7 +59,7 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
      * @description Collection that manages all models.
      * Models can be of type folder, layer, staticlink, tool, viewpoint, ...
      * @extends Backbone.Collection
-     * @memberOf Core.ModelList
+     * @memberof Core.ModelList
      * @constructs
      * @listens ModelList#RadioRequestModelListGetCollection
      * @listens ModelList#RadioRequestModelListGetModelsByAttributes
@@ -71,7 +70,7 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
      * @listens ModelList#RadioTriggerModelListShowFeaturesById
      * @listens ModelList#RadioTriggerModelListRemoveModelsByParentId
      * @listens ModelList#RadioTriggerModelListRemoveModelsById
-     * @listens ModelList#RadioTriggerModelListAddInitialyNeededModels
+     * @listens ModelList#RadioTriggerModelListAddInitiallyNeededModels
      * @listens ModelList#RadioTriggerModelListAddModelsByAttributes
      * @listens ModelList#RadioTriggerModelListSetIsSelectedOnChildLayers
      * @listens ModelList#RadioTriggerModelListSetIsSelectedOnParent
@@ -80,6 +79,7 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
      * @listens ModelList#RadioTriggerModelListSetAllDescendantsInvisible
      * @listens ModelList#RadioTriggerModelListRenderTree
      * @listens ModelList#RadioTriggerModelListToggleDefaultTool
+     * @listens ModelList#RadioTriggerModelListReplaceModelById
      * @listens ModelList#ChangeIsVisibleInMap
      * @listens ModelList#ChangeIsExpanded
      * @listens ModelList#ChangeIsSelected
@@ -115,8 +115,9 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
             "showFeaturesById": this.showFeaturesById,
             "removeModelsByParentId": this.removeModelsByParentId,
             "removeModelsById": this.removeModelsById,
+            "replaceModelById": this.replaceModelById,
             // Initial sichtbare Layer etc.
-            "addInitialyNeededModels": this.addInitialyNeededModels,
+            "addInitiallyNeededModels": this.addInitiallyNeededModels,
             "addModelsByAttributes": this.addModelsByAttributes,
             "addModel": this.addModel,
             "setIsSelectedOnChildLayers": this.setIsSelectedOnChildLayers,
@@ -148,7 +149,7 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
                 }
                 // Trigger for mobile tree traversion
                 this.trigger("traverseTree", model);
-                channel.trigger("updatedSelectedLayerList", this.where({ isSelected: true, type: "layer" }));
+                channel.trigger("updatedSelectedLayerList", this.where({isSelected: true, type: "layer"}));
             },
             "change:isSelected": function (model, value) {
                 if (model.get("type") === "layer") {
@@ -162,13 +163,13 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
                     this.updateLayerView();
                 }
                 this.trigger("updateSelection");
-                channel.trigger("updatedSelectedLayerList", this.where({ isSelected: true, type: "layer" }));
+                channel.trigger("updatedSelectedLayerList", this.where({isSelected: true, type: "layer"}));
             },
             "change:transparency": function () {
-                channel.trigger("updatedSelectedLayerList", this.where({ isSelected: true, type: "layer" }));
+                channel.trigger("updatedSelectedLayerList", this.where({isSelected: true, type: "layer"}));
             },
             "change:selectionIDX": function () {
-                channel.trigger("updatedSelectedLayerList", this.where({ isSelected: true, type: "layer" }));
+                channel.trigger("updatedSelectedLayerList", this.where({isSelected: true, type: "layer"}));
             }
         });
 
@@ -234,15 +235,15 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
                 // @deprecated in version 3.0.0
                 // do not use the attribute "version"
                 if (attrs.version === undefined) {
-                    return new PrintV2(_.extend(attrs, { center: Radio.request("MapView", "getCenter"), proxyURL: Config.proxyURL }), options);
+                    return new PrintV2(_.extend(attrs, {center: Radio.request("MapView", "getCenter"), proxyURL: Config.proxyURL}), options);
                 }
                 else if (attrs.version === "HighResolutionPlotService") {
-                    return new HighResolutionPrint(_.extend(attrs, { center: Radio.request("MapView", "getCenter"), proxyURL: Config.proxyURL }), options);
+                    return new HighResolutionPrint(_.extend(attrs, {center: Radio.request("MapView", "getCenter"), proxyURL: Config.proxyURL}), options);
                 }
                 return new Print(attrs, options);
             }
             else if (attrs.id === "gfi") {
-                return new GFI(_.extend(attrs, _.has(Config, "gfiWindow") ? { desktopViewType: Config.gfiWindow } : {}), options);
+                return new GFI(_.extend(attrs, _.has(Config, "gfiWindow") ? {desktopViewType: Config.gfiWindow} : {}), options);
             }
             else if (attrs.id === "parcelSearch") {
                 return new ParcelSearch(attrs, options);
@@ -284,7 +285,7 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
                 return new SearchByCoord(attrs, options);
             }
             else if (attrs.id === "saveSelection") {
-                return new SaveSelection(_.extend(attrs, _.has(Config, "simpleMap") ? { simpleMap: Config.simpleMap } : {}), options);
+                return new SaveSelection(_.extend(attrs, _.has(Config, "simpleMap") ? {simpleMap: Config.simpleMap} : {}), options);
             }
             else if (attrs.id === "lines") {
                 return new Lines(attrs, options);
@@ -299,7 +300,7 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
                 return new AddWms(attrs, options);
             }
             else if (attrs.id === "treeFilter") {
-                return new TreeFilter(_.extend(attrs, _.has(Config, "treeConf") ? { treeConf: Config.treeConf } : {}), options);
+                return new TreeFilter(_.extend(attrs, _.has(Config, "treeConf") ? {treeConf: Config.treeConf} : {}), options);
             }
             else if (attrs.id === "contact") {
                 return new Contact(attrs, options);
@@ -308,7 +309,7 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
                 return new WfsFeatureFilter(attrs, options);
             }
             else if (attrs.id === "extendedFilter") {
-                return new ExtendedFilter(_.extend(attrs, _.has(Config, "ignoredKeys") ? { ignoredKeys: Config.ignoredKeys } : {}), options);
+                return new ExtendedFilter(_.extend(attrs, _.has(Config, "ignoredKeys") ? {ignoredKeys: Config.ignoredKeys} : {}), options);
             }
             else if (attrs.id === "featureLister") {
                 return new FeatureLister(attrs, options);
@@ -336,12 +337,6 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
             else if (attrs.id === "layerSlider") {
                 return new LayerSliderModel(attrs, options);
             }
-            else if (attrs.id === "ageGroupSlider") {
-                return new AgeGroupSliderModel(attrs, options);
-            }
-            // else if (attrs.id === "wsClientInput") {
-            //     return new WsClientInput(attrs, options);
-            // }
             else if (attrs.id === "compareDistricts") {
                 return new CompareDistricts(attrs, options);
             }
@@ -388,10 +383,10 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
         var children;
 
         if (parentId === "SelectedLayer") {
-            children = this.where({ isSelected: true });
+            children = this.where({isSelected: true});
         }
         else {
-            children = this.where({ parentId: parentId });
+            children = this.where({parentId: parentId});
         }
         _.each(children, function (item) {
             item.setIsVisibleInTree(false);
@@ -404,7 +399,7 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
     * @return {void}
     */
     setVisibleByParentIsExpanded: function (parentId) {
-        var parent = this.findWhere({ id: parentId });
+        var parent = this.findWhere({id: parentId});
 
         if (!parent.get("isExpanded")) {
             this.setAllDescendantsInvisible(parentId, Radio.request("Util", "isViewMobile"));
@@ -436,7 +431,7 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
             child.setIsVisibleInTree(false);
             if (child.get("type") === "folder") {
                 if (isMobile) {
-                    child.setIsExpanded(false, { silent: true });
+                    child.setIsExpanded(false, {silent: true});
                 }
                 this.setAllDescendantsInvisible(child.get("id"), isMobile);
             }
@@ -449,7 +444,7 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
      * @returns {void}
      */
     setAllDescendantsVisible: function (parentId) {
-        var children = this.where({ parentId: parentId });
+        var children = this.where({parentId: parentId});
 
         _.each(children, function (child) {
             child.setIsVisibleInTree(true);
@@ -467,7 +462,7 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
         this.forEach(function (model) {
             model.setIsVisibleInTree(false);
             if (model.get("type") === "folder") {
-                model.setIsExpanded(false, { silent: true });
+                model.setIsExpanded(false, {silent: true});
             }
         });
     },
@@ -478,7 +473,7 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
      * @return {void}
      */
     setIsSelectedOnChildLayers: function (model) {
-        var descendantModels = this.add(Radio.request("Parser", "getItemsByAttributes", { parentId: model.get("id") }));
+        var descendantModels = this.add(Radio.request("Parser", "getItemsByAttributes", {parentId: model.get("id")}));
 
         // Layers in default tree are always sorted alphabetically while in other tree types, layers are
         // displayed in the order taken from config.json.
@@ -529,8 +524,8 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
      * @return {void}
      */
     setIsSelectedOnParent: function (model) {
-        var layers = this.where({ parentId: model.get("parentId") }),
-            folderModel = this.findWhere({ id: model.get("parentId") }),
+        var layers = this.where({parentId: model.get("parentId")}),
+            folderModel = this.findWhere({id: model.get("parentId")}),
             allLayersSelected = _.every(layers, function (layer) {
                 return layer.get("isSelected") === true;
             });
@@ -568,8 +563,8 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
      * @return {void}
      */
     toggleDefaultTool: function () {
-        var activeTools = this.where({ isActive: true }),
-            legendModel = this.findWhere({ id: "legend" }),
+        var activeTools = this.where({isActive: true}),
+            legendModel = this.findWhere({id: "legend"}),
             defaultTool = this.getDefaultTool();
 
         activeTools = _.without(activeTools, legendModel);
@@ -651,7 +646,7 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
      */
     getTreeLayers: function () {
         var treeType = Radio.request("Parser", "getTreeType"),
-            allLayerModels = this.where({ type: "layer" });
+            allLayerModels = this.where({type: "layer"});
 
         // we dont want to see these layers in the tree
         allLayerModels = allLayerModels.filter(layerModel => {
@@ -737,7 +732,7 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
      * @return {void}
      */
     setIsSettingVisible: function (value) {
-        var models = this.where({ type: "layer" });
+        var models = this.where({type: "layer"});
 
         _.each(models, function (model) {
             model.setIsSettingVisible(value);
@@ -752,7 +747,7 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
      * @fires Parser#RadioRequestParserGetItemByAttributes
      * @return {void}
      */
-    addInitialyNeededModels: function () {
+    addInitiallyNeededModels: function () {
         // lighttree: Alle models gleich hinzufügen, weil es nicht viele sind und sie direkt einen Selection index
         // benötigen, der ihre Reihenfolge in der Config Json entspricht und nicht der Reihenfolge
         // wie sie hinzugefügt werden
@@ -763,35 +758,44 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
             lightModel;
 
         if (treeType === "light") {
-            lightModels = Radio.request("Parser", "getItemsByAttributes", { type: "layer" });
+            lightModels = Radio.request("Parser", "getItemsByAttributes", {type: "layer"});
             lightModels = this.mergeParamsToLightModels(lightModels, paramLayers);
 
-            this.add(lightModels);
+            lightModels.forEach(model => {
+                if (model.hasOwnProperty("children")) {
+                    if (model.children.length > 0) {
+                        this.add(model);
+                    }
+                }
+                else {
+                    this.add(model);
+                }
+            });
         }
         else if (paramLayers.length > 0) {
-            itemIsVisibleInMap = Radio.request("Parser", "getItemsByAttributes", { isVisibleInMap: true });
+            itemIsVisibleInMap = Radio.request("Parser", "getItemsByAttributes", {isVisibleInMap: true});
             _.each(itemIsVisibleInMap, function (layer) {
                 layer.isVisibleInMap = false;
                 layer.isSelected = false;
             }, this);
 
             _.each(paramLayers, function (paramLayer) {
-                lightModel = Radio.request("Parser", "getItemByAttributes", { id: paramLayer.id });
+                lightModel = Radio.request("Parser", "getItemByAttributes", {id: paramLayer.id});
 
                 if (_.isUndefined(lightModel) === false) {
                     this.add(lightModel);
-                    this.setModelAttributesById(paramLayer.id, { isSelected: true, transparency: paramLayer.transparency });
+                    this.setModelAttributesById(paramLayer.id, {isSelected: true, transparency: paramLayer.transparency});
                     // selektierte Layer werden automatisch sichtbar geschaltet, daher muss hier nochmal der Layer auf nicht sichtbar gestellt werden
                     if (paramLayer.visibility === false && _.isUndefined(this.get(paramLayer.id)) === false) {
                         this.get(paramLayer.id).setIsVisibleInMap(false);
                     }
                 }
             }, this);
-            this.addModelsByAttributes({ typ: "Oblique" });
+            this.addModelsByAttributes({typ: "Oblique"});
         }
         else {
-            this.addModelsByAttributes({ type: "layer", isSelected: true });
-            this.addModelsByAttributes({ typ: "Oblique" });
+            this.addModelsByAttributes({type: "layer", isSelected: true});
+            this.addModelsByAttributes({typ: "Oblique"});
         }
 
         this.initLayerIndeces();
@@ -857,7 +861,7 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
     addModelsByAttributes: function (attrs) {
         var lightModels = Radio.request("Parser", "getItemsByAttributes", attrs);
 
-        this.add(lightModels);
+        lightModels.forEach(model => this.add(model));
         this.updateLayerView();
     },
 
@@ -871,7 +875,7 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
     */
     showModelInTree: function (modelId) {
         var mode = Radio.request("Map", "getMapMode"),
-            lightModel = Radio.request("Parser", "getItemByAttributes", { id: modelId });
+            lightModel = Radio.request("Parser", "getItemByAttributes", {id: modelId});
 
         this.closeAllExpandedFolder();
         // open the layerTree
@@ -879,7 +883,7 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
         // Parent and possible siblings are added
         this.addAndExpandModelsRecursive(lightModel.parentId);
         if (this.get(modelId).get("supported").indexOf(mode) >= 0) {
-            this.setModelAttributesById(modelId, { isSelected: true });
+            this.setModelAttributesById(modelId, {isSelected: true});
         }
 
         if (lightModel.parentId !== "Baselayer") {
@@ -888,7 +892,7 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
 
         // für DIPAS Table Ansicht
         if (Radio.request("Util", "getUiStyle") === "TABLE") {
-            Radio.request("ModelList", "getModelByAttributes", { id: modelId }).setIsJustAdded(true);
+            Radio.request("ModelList", "getModelByAttributes", {id: modelId}).setIsJustAdded(true);
             $("#table-nav-layers-panel").collapse("show");
 
         }
@@ -931,8 +935,8 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
      * @return {void}
      */
     addAndExpandModelsRecursive: function (parentId) {
-        var lightSiblingsModels = Radio.request("Parser", "getItemsByAttributes", { parentId: parentId }),
-            parentModel = Radio.request("Parser", "getItemByAttributes", { id: lightSiblingsModels[0].parentId });
+        var lightSiblingsModels = Radio.request("Parser", "getItemsByAttributes", {parentId: parentId}),
+            parentModel = Radio.request("Parser", "getItemByAttributes", {id: lightSiblingsModels[0].parentId});
 
         this.add(lightSiblingsModels);
         // Abbruchbedingung
@@ -949,7 +953,7 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
      * @return {void}
      */
     toggleCatalogs: function (id) {
-        _.each(this.where({ parentId: "tree" }), function (model) {
+        _.each(this.where({parentId: "tree"}), function (model) {
             if (model.get("id") !== id && !model.get("isAlwaysExpanded")) {
                 model.setIsExpanded(false);
             }
@@ -962,7 +966,7 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
     * @return {void}
     */
     removeModelsByParentId: function (parentId) {
-        _.each(this.where({ parentId: parentId }), function (model) {
+        _.each(this.where({parentId: parentId}), function (model) {
             if (model.get("type") === "layer" && model.get("isVisibleInMap") === true) {
                 model.setIsVisibleInMap(false);
             }
@@ -972,6 +976,21 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
         }, this);
     },
 
+    /**
+    * replaces a model by a given id
+    * @param  {String} id from model that be replaced in ModelList
+    * @param  {Object} newModel to add to the ModelList
+    * @return {void}
+    */
+    replaceModelById: function (id, newModel) {
+        var model = this.get(id);
+
+        if (model) {
+            this.remove(model);
+            this.add(newModel);
+            this.updateLayerView();
+        }
+    },
     /**
     * remove a model by a given id
     * @param  {String} id from model that be remove from ModelList
