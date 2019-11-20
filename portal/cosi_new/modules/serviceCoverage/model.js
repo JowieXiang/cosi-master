@@ -1,6 +1,6 @@
 import Tool from "../../../../modules/core/modelList/tool/model";
 import DropdownModel from "../../../../modules/snippets/dropdown/model";
-import {getLayerWhere} from "masterportalAPI/src/rawLayerList";
+import * as Proj from "ol/proj.js";
 
 const ServiceCoverage = Tool.extend({
     defaults: _.extend({}, Tool.prototype.defaults, {
@@ -45,16 +45,13 @@ const ServiceCoverage = Tool.extend({
      * @returns {void}
      */
     setCoordinates: function (valueModel, isSelected) {
-        console.log("dropdownModel attributes: ", this.get("dropDownModel").attributes);
-
         if (isSelected) {
-            const selectedItem = getLayerWhere({featureType: valueModel.get("value")}),
-                selectedLayerModel = Radio.request("ModelList", "getModelByAttributes", {id: selectedItem.id});
+            const selectedLayerModel = Radio.request("ModelList", "getModelByAttributes", {name: valueModel.get("value")});
 
             if (selectedLayerModel) {
                 const features = selectedLayerModel.get("layer").getSource().getFeatures(),
                     coordinatesBefore = features.map(feature => feature.getGeometry().getCoordinates().splice(0, 2)),
-                    coordinates = coordinatesBefore.map(coord => Radio.request("CRS", "transform", {fromCRS: "EPSG:25832", toCRS: "EPSG:4326", point: coord}));
+                    coordinates = coordinatesBefore.map(coord => Proj.transform(coord, "EPSG:25832", "EPSG:4326"));
 
                 this.set("coordinates", coordinates);
             }

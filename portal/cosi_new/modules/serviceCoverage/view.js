@@ -17,7 +17,8 @@ const ServiceCoverageView = Backbone.View.extend({
             this.renderLegend(e);
         },
         "click #help": "showHelp",
-        "click #backward": "toModeSelection"
+        "click #backward": "toModeSelection",
+        "click #clear": "clearMapLayer"
     },
     initialize: function () {
 
@@ -35,7 +36,6 @@ const ServiceCoverageView = Backbone.View.extend({
                 }
                 else {
                     this.clearInput();
-                    this.clearMapLayer(this.model.get("mapLayerName"));
                     Radio.trigger("Alert", "alert:remove");
                 }
             }
@@ -62,7 +62,7 @@ const ServiceCoverageView = Backbone.View.extend({
         const facilityLayerModels = models.filter(model => model.get("isFacility") === true);
 
         if (facilityLayerModels.length > 0) {
-            const facilityNames = facilityLayerModels.map(model => model.get("featureType").trim());
+            const facilityNames = facilityLayerModels.map(model => model.get("name").trim());
 
             this.model.set("facilityNames", facilityNames);
         }
@@ -71,17 +71,16 @@ const ServiceCoverageView = Backbone.View.extend({
         }
         this.renderDropDownView();
     },
-    createMapLayer: function (name) {
-        const newLayer = Radio.request("Map", "createLayerIfNotExists", name);
+    createMapLayer: function () {
+        const newLayer = Radio.request("Map", "createLayerIfNotExists", this.model.get("mapLayerName"));
 
-        newLayer.setVisible(false);
+        newLayer.setVisible(true);
         newLayer.setMap(Radio.request("Map", "getMap"));
     },
-    clearMapLayer: function (name) {
-        const mapLayer = Radio.request("Map", "getLayerByName", name);
+    clearMapLayer: function () {
+        const mapLayer = Radio.request("Map", "getLayerByName", this.model.get("mapLayerName"));
 
         mapLayer.getSource().clear();
-        mapLayer.setVisible(false);
     },
     createIsochrones: function () {
         const pathType = this.model.get("pathType"),
@@ -137,7 +136,6 @@ const ServiceCoverageView = Backbone.View.extend({
 
                 }
 
-                mapLayer.setVisible(true);
                 // this.model.set("isochroneFeatures", unionList);
             });
         }
@@ -278,7 +276,7 @@ const ServiceCoverageView = Backbone.View.extend({
     },
     toModeSelection: function () {
         this.model.set("isActive", false);
-        Radio.request("ModelList", "getModelByAttributes", {name: "Erreichbarkeitsanalyse"}).set("isActive", true);
+        Radio.request("ModelList", "getModelByAttributes", { name: "Erreichbarkeitsanalyse" }).set("isActive", true);
     }
 });
 

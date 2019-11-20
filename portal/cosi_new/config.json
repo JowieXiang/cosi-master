@@ -175,7 +175,20 @@
             "filename": "Ausdruck",
             "title": "Mein Titel",
             "version": "mapfish_print_3"
-          }
+          },
+          "staticlinks": [
+            {
+                "name": "Mousehover ein-/ausschalten",
+                "glyphicon": "glyphicon-globe",
+                "onClickTrigger": [
+                    {
+                        "channel": "MouseHover",
+                        "event": "toggle",
+                        "data": "mousehover-overlay"
+                    }
+                ]
+            }
+          ]
         }
       },
       "legend":
