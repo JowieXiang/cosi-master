@@ -92,7 +92,7 @@
     "webpack-dev-server": "^3.8.2",
     "webpack-merge": "^4.2.2",
     "webpack-visualizer-plugin": "^0.1.11",
-    "whatwg-fetch": "3.0.0",
+    "whatwg-fetch": "^3.0.0",
     "xmlserializer": "^0.6.1"
   },
   "husky": {
