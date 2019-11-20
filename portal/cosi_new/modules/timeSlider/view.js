@@ -67,7 +67,7 @@ const TimeSliderView = Backbone.View.extend({
     renderGraph: function (graphData, value, getMaxYAxisValue) {
         this.$el.find(".time-series-graph").empty();
 
-        Radio.trigger("Graph", "createGraph", {
+        Radio.trigger("GraphV2", "createGraph", {
             graphType: "BarGraph",
             selector: ".time-series-graph",
             scaleTypeX: "ordinal",

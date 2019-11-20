@@ -1,11 +1,12 @@
 import MapHandlerModel from "./model";
+import {transformToMapProjection} from "masterportalAPI/src/crs";
 
 const MapMarkerView = Backbone.View.extend(/** @lends MapMarkerView.prototype */{
     /**
      * @class MapMarkerView
      * @description todo
      * @extends Backbone.View
-     * @memberOf Core.MapMarker
+     * @memberof Core.MapMarker
      * @constructs
      *
      * @listens MapMarker#RadioTriggerMapMarkerZoomTo
@@ -26,7 +27,6 @@ const MapMarkerView = Backbone.View.extend(/** @lends MapMarkerView.prototype */
      * @fires Core#RadioTriggerMapRender
      * @fires MapMarker#RadioTriggerMapMarkerShowMarker
      * @fires Core#RadioRequestUtilIsViewMobile
-     * @fires Core#RadioRequestCRSTransformToMapProjection
      *
      * @returns {void}
      */
@@ -103,8 +103,6 @@ const MapMarkerView = Backbone.View.extend(/** @lends MapMarkerView.prototype */
         else if (!_.isUndefined(hit.coordinate) && !_.isArray(hit.coordinate)) {
             coord = hit.coordinate.split(" ");
         }
-
-        coord = this.model.convertCoordinatesToFloat(coord);
 
         this.hideMarker();
         this.hidePolygon();
@@ -267,7 +265,6 @@ const MapMarkerView = Backbone.View.extend(/** @lends MapMarkerView.prototype */
      * @description todo
      * @returns {void}
      * @fires MapMarker#RadioTriggerMapMarkerShowMarker
-     * @fires Core#RadioRequestCRSTransformToMapProjection
      */
     showStartMarker: function () {
         var startMarker = this.model.get("startMarker"),
@@ -275,7 +272,7 @@ const MapMarkerView = Backbone.View.extend(/** @lends MapMarkerView.prototype */
 
         if (!_.isUndefined(startMarker)) {
             if (!_.isUndefined(projectionFromParamUrl)) {
-                startMarker = Radio.request("CRS", "transformToMapProjection", projectionFromParamUrl, startMarker);
+                startMarker = transformToMapProjection(Radio.request("Map", "getMap"), projectionFromParamUrl, startMarker);
             }
             Radio.trigger("MapMarker", "showMarker", startMarker);
         }

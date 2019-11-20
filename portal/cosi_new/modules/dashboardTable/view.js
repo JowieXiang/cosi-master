@@ -12,17 +12,19 @@ const DashboardTableView = Backbone.View.extend({
         "click .prop button.open": "toggleTimelineTable",
         "click thead button.open": "toggleGroup",
         "click .figure > .header > button.open": "toggleFigure",
-        "click .btn-reset": "resetDropDown",
-        "click #correlation-button": "createCorrelation"
+        "click .btn-reset": "resetDropDown"
+        // "click #correlation-button": "createCorrelation"
     },
     initialize: function () {
         this.exportButtonView = new ExportButtonView({model: this.model.get("exportButtonModel")});
         this.exportFilteredButtonView = new ExportButtonView({model: this.model.get("exportFilteredButtonModel")});
         this.filterDropdownView = new DropdownView({model: this.model.get("filterDropdownModel")});
+        this.contextActionsEl = $(this.contextActions());
 
         this.listenTo(this.model, {
             "isReady": this.render,
-            "correlationValuesUpdated": this.renderCorrelationAttrs
+            // "correlationValuesUpdated": this.renderCorrelationAttrs,
+            "ratioValuesUpdated": this.updateRatioSelection
         });
     },
     id: "dashboard-table",
@@ -34,6 +36,7 @@ const DashboardTableView = Backbone.View.extend({
     template: _.template(Template),
     tableTemplate: _.template(TableTemplate),
     contextActions: _.template(ContextActions),
+    contextActionsEl: {},
     render: async function () {
         var attr = this.model.toJSON();
 
@@ -59,23 +62,34 @@ const DashboardTableView = Backbone.View.extend({
 
         return this;
     },
-    renderCorrelationAttrs () {
-        if (this.model.getAttrsForCorrelation().length > 0) {
-            const btn = document.createElement("button");
+    // renderCorrelationAttrs () {
+    //     if (this.model.getAttrsForCorrelation().length > 0) {
+    //         const btn = document.createElement("button");
 
-            btn.className = "btn btn-primary";
-            btn.id = "correlation-button";
-            btn.innerHTML = `<strong>Korrelation erstellen:</strong><br /> ${this.model.getAttrsForCorrelation().join(" : ")}`;
+    //         btn.className = "btn btn-primary";
+    //         btn.id = "correlation-button";
+    //         btn.innerHTML = `<strong>Korrelation erstellen:</strong><br /> ${this.model.getAttrsForCorrelation().join(" : ")}`;
 
-            if (this.model.getAttrsForCorrelation().length < 2) {
-                btn.setAttribute("disabled", true);
-            }
+    //         if (this.model.getAttrsForCorrelation().length < 2) {
+    //             btn.setAttribute("disabled", true);
+    //         }
 
-            this.$el.find("#correlation").html(btn);
+    //         this.$el.find("#correlation").html(btn);
+    //     }
+    //     else {
+    //         this.$el.find("#correlation").empty();
+    //     }
+    // },
+    updateRatioSelection () {
+        var selectionText = this.$el.find("span#row-selection");
+
+        if (this.model.getAttrsForRatio().length === 0) {
+            this.contextActionsEl.find("li#selection span").empty();
+            return selectionText.empty();
         }
-        else {
-            this.$el.find("#correlation").empty();
-        }
+
+        this.contextActionsEl.find("li#selection span").html("<br />" + this.model.getAttrsForRatio().join(" / "));
+        return selectionText.html(`<strong>Auswahl:</strong> ${this.model.getAttrsForRatio()[0] ? this.model.getAttrsForRatio()[0] + " (y)" : ""}${this.model.getAttrsForRatio()[1] ? " / " + this.model.getAttrsForRatio()[1] + " (x)" : ""}`);
     },
     zoomToFeature (event) {
         const districtName = event.target.innerHTML;
@@ -143,31 +157,55 @@ const DashboardTableView = Backbone.View.extend({
     },
     contextMenuTable: function (event) {
         const row = this.$(event.target).closest("tr"),
-            contextActions = $(this.contextActions());
+            contextActions = this.contextActionsEl;
 
         // Create Bar Chart
-        $(contextActions).find("li#barChart").get(0).addEventListener("click", function () {
+        $(contextActions).find("li#barChart").on("click", function () {
             this.model.createChart([row.find("th.prop").attr("id")], "BarGraph", row.find("th.prop").text());
         }.bind(this));
 
         // Create Line Chart
-        $(contextActions).find("li#lineChart").get(0).addEventListener("click", function () {
+        $(contextActions).find("li#lineChart").on("click", function () {
             this.model.createChart([row.find("th.prop").attr("id")], "Linegraph", row.find("th.prop").text());
         }.bind(this));
 
-        $(contextActions).find("li#timeline").get(0).addEventListener("click", function () {
+        // Create Timeline
+        $(contextActions).find("li#timeline").on("click", function () {
             Radio.trigger("Dashboard", "destroyWidgetById", "time-slider");
             Radio.trigger("TimeSlider", "create", row.find("th.prop").text());
         });
 
-        // Add to Correlation
-        $(contextActions).find("li#correlation").get(0).addEventListener("click", function () {
-            this.model.addAttrForCorrelation(row.find("th.prop").attr("id"));
+        // // Add to Correlation
+        // $(contextActions).find("li#correlation").on("click", function () {
+        //     this.model.addAttrForCorrelation(row.find("th.prop").attr("id"));
+        // }.bind(this));
+
+        // Delete Selection
+        $(contextActions).find("li#delete-selection").on("click", function () {
+            this.model.deleteAttrsForRatio();
         }.bind(this));
 
-        // Delete Correlation Data
-        $(contextActions).find("li#delete-correlation").get(0).addEventListener("click", function () {
-            this.model.deleteAttrsForCorrelation();
+        // Create new ratio data
+        // Add numerator
+        $(contextActions).find("li#numerator").on("click", function () {
+            this.model.addAttrForRatio(row.find("th.prop").attr("id"), 0);
+        }.bind(this));
+
+        // Add denominator
+        $(contextActions).find("li#denominator").on("click", function () {
+            this.model.addAttrForRatio(row.find("th.prop").attr("id"), 1);
+        }.bind(this));
+
+        // Create Correlation
+        $(contextActions).find("li#correlation").on("click", function () {
+            this.model.createCorrelation();
+            this.model.deleteAttrsForRatio();
+        }.bind(this));
+
+        // Create new Data Row
+        $(contextActions).find("li#ratio").on("click", function () {
+            this.model.createRatio();
+            this.model.deleteAttrsForRatio();
         }.bind(this));
 
         Radio.trigger("ContextMenu", "setActions", contextActions, row.find("th.prop").text(), "glyphicon-stats");
