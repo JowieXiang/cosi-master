@@ -323,7 +323,10 @@ const DashboardTableModel = Tool.extend({
             for (let i = 0; i < ratio[col].length; i++) {
                 ratio[col][i][1] /= den[col][i][1];
             }
+            const match = this.get("unsortedTable").find(distCol => distCol[this.get("sortKey")] === col);
+            console.log(ratio[col], col, match);
         }
+        console.log(this.get("unsortedTable"));
 
         if (calcGroup) {
             calcGroup.values[`${this.getAttrsForRatio()[0]} / ${this.getAttrsForRatio()[1]}`] = ratio;

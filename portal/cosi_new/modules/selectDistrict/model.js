@@ -97,7 +97,7 @@ const SelectDistrict = Tool.extend({
             "valuesChanged": this.getScopeFromDropdown
         }, this);
 
-        this.listenTo(Radio.channel("Layer"), "featuresLoaded", function (id) {
+        this.listenTo(Radio.channel("VectorLayer"), "featuresLoaded", function (id) {
             if (!this.get("isReady")) {
                 this.checkDistrictLayersLoaded(id);
             }
@@ -161,7 +161,7 @@ const SelectDistrict = Tool.extend({
             "selectedDistricts": this.get("selectedDistricts").concat(feature)
         });
     },
-    setFeaturesByScopeAndIds(scope, ids, buffer) {
+    setFeaturesByScopeAndIds (scope, ids, buffer) {
         this.setBuffer(buffer);
         this.setScope(scope);
         const layer = Radio.request("ModelList", "getModelByAttributes", { name: scope }),
@@ -345,7 +345,7 @@ const SelectDistrict = Tool.extend({
     getDistrictLayer: function () {
         return this.get("districtLayer");
     },
-    getUrlQuery() {
+    getUrlQuery () {
         const query = window.location.search.split("&").filter(q => q.includes("scope") || q.includes("selectedDistricts") || q.includes("buffer"));
 
         if (query.length > 0) {
