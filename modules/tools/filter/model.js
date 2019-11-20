@@ -61,7 +61,7 @@ const FilterModel = Tool.extend({
             }
         }, this);
 
-        this.listenTo(Radio.channel("Layer"), {
+        this.listenTo(Radio.channel("VectorLayer"), {
             "featuresLoaded": function (layerId) {
                 var predefinedQueries = this.get("predefinedQueries"),
                     queryCollection = this.get("queryCollection"),
