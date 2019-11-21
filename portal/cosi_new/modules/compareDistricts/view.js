@@ -18,11 +18,13 @@ const CompareDistrictsView = Backbone.View.extend({
         },
         "click .district-name": "zoomToDistrict",
         "click #help": "showHelp",
-        "click #set-selected-district": "changeDistrictSelection"
+        "click #set-selected-district": "changeDistrictSelection",
+        "click #show-in-dashboard": "showInDashboard"
     },
 
     initialize: function () {
         const channel = Radio.channel("CompareDistricts");
+
         this.listenTo(channel, {
             "closeFilter": this.addLayerOption,
             "selectRefDistrict": function () {
@@ -152,7 +154,7 @@ const CompareDistrictsView = Backbone.View.extend({
             domString += `<span class="name-tag district-name">${district} </span>`;
         });
         domString += "</p>";
-        this.$el.find("#compare-results").append("<p><strong>| Vergleichbare Gebiete</strong></p>");
+        this.$el.find("#compare-results").append("<p><strong>Vergleichbare Gebiete: </strong></p>");
         this.$el.find("#compare-results").append(domString);
         if (comparableDistricts.length > 0) {
             this.$el.find("#set-selected-district").show();
@@ -305,6 +307,20 @@ const CompareDistrictsView = Backbone.View.extend({
             selectedFeatures = featureCollection.filter(feature => _.contains(this.model.get("comparableFeaturesNames"), feature.getProperties()[selector]));
 
         Radio.request("SelectDistrict", "setSelectedDistrictsToFeatures", selectedFeatures);
+    },
+    showInDashboard: function () {
+        let domString = "<p><strong>Vergleichbare Gebiete: </strong></p><p>";
+
+        _.each(this.model.get("comparableFeaturesNames"), district => {
+            domString += `<span class="name-tag district-name">${district} </span>`;
+        });
+        domString += "</p>";
+        Radio.trigger("Dashboard", "destroyWidgetById", "compareDistricts");
+        Radio.trigger("Dashboard", "append", domString, "#dashboard-containers", {
+            id: "compareDistricts",
+            name: "Vergleichbare Gebiete ermitteln",
+            glyphicon: "glyphicon-screenshot"
+        });
     }
 });
 

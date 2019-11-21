@@ -1,0 +1,15 @@
+<h5><br /><strong>Facilities within the range: </strong></h5>
+<table class="table table-hover">
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">facility type</th>
+        <th scope="col">quantity</th>
+    </tr>
+    <% _.each(layerNames, function(layerName, i){ %>
+    <tr class="dashboard-tr">
+        <th scope="row"><%= i %></th>
+        <td><%= layerName %></td>
+        <td><%= features[layerName].length %></td>
+    </tr>
+    <% }) %>
+</table>
