@@ -5,6 +5,7 @@ import {select, event} from "d3-selection";
 import "d3-transition";
 import * as d3 from "d3-array";
 import evaluate from "./eval";
+import ContextActions from "text-loader!./contextActions.html";
 
 const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
     defaults: {
@@ -55,6 +56,12 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
         }
         else if (graphConfig.graphType === "ScatterPlot") {
             this.createScatterPlot(graphConfig);
+        }
+
+        if (graphConfig.hasContextMenu) {
+            svg.on("mouseup", function () {
+                this.appendContextMenu(svg.select("svg").node(), graphConfig);
+            }.bind(this));
         }
 
         return svg;
@@ -275,7 +282,7 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
                     if (d % 1 === 0) {
                         return d.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
                     }
-                    return false;
+                    return d;
 
                 });
         }
@@ -583,6 +590,78 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             .attr("transform", "translate(" + left + "," + top + ")");
     },
 
+    appendContextMenu: function (svg, graphConfig) {
+        const contextActions = $(_.template(ContextActions)()),
+            width = graphConfig.width,
+            height = graphConfig.height,
+            title = graphConfig.graphTitle;
+
+        // Download SVG
+        $(contextActions).find("li#downloadSvg").on("click", function () {
+            const blob = this.svgToBlob(svg),
+                url = URL.createObjectURL(blob);
+
+            this.download(url, `CoSI_Diagramm_${title}.svg`);
+        }.bind(this));
+
+        // Download PNG
+        $(contextActions).find("li#downloadPng").on("click", async function () {
+            const convertToPng = this.svgToPng(this.svgToBlob(svg), width * 2, height * 2),
+                pngUrl = await convertToPng;
+
+            this.download(pngUrl, `CoSI_Diagramm_${title}.png`);
+        }.bind(this));
+
+        Radio.trigger("ContextMenu", "setActions", contextActions, title, "glyphicon-stats");
+    },
+
+    svgToBlob (svg) {
+        return new Blob([
+            new XMLSerializer().serializeToString(svg)
+        ],
+        {type: "image/svg+xml;charset=utf-8"});
+    },
+
+    download (url, filename) {
+        var link = document.createElement("a");
+
+        if (link.download !== undefined) { // feature detection
+            // Browsers that support HTML5 download attribute
+
+            link.setAttribute("href", url);
+            link.setAttribute("download", filename);
+            link.style.visibility = "hidden";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    },
+
+    svgToPng (blob, width, height) {
+        return new Promise((res, rej) => {
+            try {
+                const domUrl = window.URL || window.webkitURL || window,
+                    url = domUrl.createObjectURL(blob),
+                    canvas = document.createElement("canvas"),
+                    ctx = canvas.getContext("2d"),
+                    img = new Image();
+
+                canvas.width = width;
+                canvas.height = height;
+
+                img.onload = () => {
+                    ctx.drawImage(img, 0, 0);
+                    domUrl.revokeObjectURL(url);
+                    res(canvas.toDataURL("image/png"));
+                };
+                img.src = url;
+            }
+            catch (e) {
+                rej(console.error(e));
+            }
+        });
+    },
+
     /**
      * Creates a legend and adds it on the top left.
      * @param {SVG} svg SVG.
@@ -855,11 +934,11 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
                 return x(d[xAttr]);
             })
             .attr("y", function (d) {
-                return y(d[attrToShowArray[0]]);
+                return !isNaN(d[attrToShowArray[0]]) ? y(d[attrToShowArray[0]]) : 0;
             })
             .attr("width", barWidth - 1)
             .attr("height", function (d) {
-                return height - y(d[attrToShowArray[0]]);
+                return !isNaN(d[attrToShowArray[0]]) ? height - y(d[attrToShowArray[0]]) : height;
             })
             .on("mouseover", function () {
                 select(this);
@@ -1154,8 +1233,30 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
                     .style("opacity", 0.9);
                 tooltipDiv.html(tooltipElement.get(0).outerHTML)
                     .attr("style", "background-color: buttonface; border-radius: 4px; text-align: center;")
-                    .style("right", (window.innerWidth - event.clientX - 25) + "px")
-                    .style("top", (event.clientY + 20) + "px");
+                    .style("right", () => {
+                        if (event.clientX + tooltipDiv.node().clientWidth + 25 >= window.innerWidth) {
+                            return (window.innerWidth - event.clientX + 25) + "px"
+                        }
+                        return false;
+                    })
+                    .style("left", () => {
+                        if (event.clientX + tooltipDiv.node().clientWidth + 25 < window.innerWidth) {
+                            return (event.clientX + 25) + "px"
+                        }
+                        return false;
+                    })
+                    .style("bottom", () => {
+                        if (event.clientY + tooltipDiv.node().clientHeight + 25 >= window.innerHeight) {
+                            return (window.innerHeight - event.clientY + 20) + "px"
+                        }
+                        return false;
+                    })
+                    .style("top", () => {
+                        if (event.clientY + tooltipDiv.node().clientHeight + 20 < window.innerHeight) {
+                            return (event.clientY + 20) + "px"
+                        }
+                        return false;
+                    });
             }, tooltipDiv)
             .on("mouseout", function () {
                 tooltipDiv.transition()

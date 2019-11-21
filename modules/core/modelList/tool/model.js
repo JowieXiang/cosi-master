@@ -14,7 +14,8 @@ const Tool = Item.extend(/** @lends Tool.prototype */{
         supportedOnlyIn3d: ["shadow"],
         supportedInOblique: ["contact"],
         supportedOnlyInOblique: [],
-        toolsToRenderInSidebar: ["filter", "schulwegrouting"]
+        toolsToRenderInSidebar: ["filter", "schulwegrouting"],
+        alwaysActiveTools: []
     },
     /**
      * @class Tool

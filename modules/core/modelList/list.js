@@ -80,6 +80,7 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
      * @listens ModelList#RadioTriggerModelListRenderTree
      * @listens ModelList#RadioTriggerModelListToggleDefaultTool
      * @listens ModelList#RadioTriggerModelListReplaceModelById
+     * @listens ModelList#RadioTriggerModelListAddAlwaysActiveTool
      * @listens ModelList#ChangeIsVisibleInMap
      * @listens ModelList#ChangeIsExpanded
      * @listens ModelList#ChangeIsSelected
@@ -133,7 +134,8 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
             "addModelsAndUpdate": function (models) {
                 this.add(models);
                 this.updateLayerView();
-            }
+            },
+            "addAlwaysActiveTool": this.addAlwaysActiveTool
         }, this);
 
         this.listenTo(this, {
@@ -185,6 +187,8 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
         });
         this.defaultToolId = Config.hasOwnProperty("defaultToolId") ? Config.defaultToolId : "gfi";
     },
+    defaultToolId: "",
+    alwaysActiveTools: [],
     model: function (attrs, options) {
         if (attrs.type === "layer") {
             if (attrs.typ === "WMS") {
@@ -547,7 +551,8 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
     setActiveToolsToFalse: function (activatedToolModel) {
         const legendModel = this.findWhere({id: "legend"}),
             activeTools = this.where({isActive: true}),
-            alwaysActiveTools = [activatedToolModel, legendModel];
+            activatedToolModels = Array.isArray(activatedToolModel) ? activatedToolModel : [activatedToolModel],
+            alwaysActiveTools = [...activatedToolModels, ...this.alwaysActiveTools, legendModel];
         let activeToolsToDeactivate = [];
 
         if (!activatedToolModel.get("deactivateGFI")) {
@@ -1117,6 +1122,9 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
                 model.get("typ") !== "Entities3D" &&
                 model.get("typ") !== "Oblique";
         });
+    },
+    addAlwaysActiveTool: function (model) {
+        this.alwaysActiveTools.push(model);
     }
 });
 

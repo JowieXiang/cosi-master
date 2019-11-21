@@ -324,7 +324,8 @@ const DashboardTableModel = Tool.extend({
                 ratio[col][i][1] /= den[col][i][1];
             }
             const match = this.get("unsortedTable").find(distCol => distCol[this.get("sortKey")] === col);
-            console.log(ratio[col], col, match);
+
+            match[`${this.getAttrsForRatio()[0]} / ${this.getAttrsForRatio()[1]}`] = ratio[col];
         }
         console.log(this.get("unsortedTable"));
 
@@ -372,6 +373,7 @@ const DashboardTableModel = Tool.extend({
 
             graph = Radio.request("GraphV2", "createGraph", {
                 graphType: type,
+                graphTitle: title,
                 selector: document.createElement("div"),
                 scaleTypeX: "ordinal",
                 scaleTypeY: "linear",
@@ -407,7 +409,8 @@ const DashboardTableModel = Tool.extend({
                 height: $(window).height() * 0.4,
                 svgClass: "dashboard-graph-svg",
                 selectorTooltip: ".dashboard-tooltip",
-                hasLineLabel: true
+                hasLineLabel: true,
+                hasContextMenu: true
             });
         }
         else if (type === "BarGraph") {
@@ -415,6 +418,7 @@ const DashboardTableModel = Tool.extend({
 
             graph = Radio.request("GraphV2", "createGraph", {
                 graphType: type,
+                graphTitle: title,
                 selector: document.createElement("div"),
                 scaleTypeX: "ordinal",
                 scaleTypeY: "linear",
@@ -444,7 +448,8 @@ const DashboardTableModel = Tool.extend({
                 width: $(window).width() * 0.4,
                 height: $(window).height() * 0.4,
                 svgClass: "dashboard-graph-svg",
-                selectorTooltip: ".dashboard-tooltip"
+                selectorTooltip: ".dashboard-tooltip",
+                hasContextMenu: true
             });
         }
 
@@ -459,6 +464,7 @@ const DashboardTableModel = Tool.extend({
             data = this.getCorrelationChartData(this.getAttrsForRatio()),
             graph = Radio.request("GraphV2", "createGraph", {
                 graphType: "ScatterPlot",
+                graphTitle: `Korrelation: ${attrsToShow[0]} (y) : ${attrsToShow[1]} (x)`,
                 selector: document.createElement("div"),
                 scaleTypeX: "linear",
                 scaleTypeY: "linear",
@@ -491,7 +497,8 @@ const DashboardTableModel = Tool.extend({
                 height: $(window).height() * 0.4,
                 dotSize: 3,
                 svgClass: "dashboard-graph-svg",
-                selectorTooltip: ".dashboard-tooltip"
+                selectorTooltip: ".dashboard-tooltip",
+                hasContextMenu: true
             });
 
         Radio.trigger("Dashboard", "append", graph, "#dashboard-containers", {
