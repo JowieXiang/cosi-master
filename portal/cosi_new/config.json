@@ -47,7 +47,7 @@
       }
     },
     "mapView": {
-      "backgroundImage":"https://geoportal-hamburg.de/lgv-config/img/backgroundCanvas.jpeg",
+      "backgroundImage": "https://geoportal-hamburg.de/lgv-config/img/backgroundCanvas.jpeg",
       "startCenter": [
         565790,
         5934262
@@ -79,12 +79,30 @@
                 "name": "Schulen",
                 "searchInMapExtent": false,
                 "attributeWhiteList": [
-                  {"name": "kapitelbezeichnung", "matchingMode": "OR"},
-                  {"name": "bezirk", "matchingMode": "OR"},
-                  {"name": "stadtteil", "matchingMode": "OR"},
-                  {"name": "schulform", "matchingMode": "AND"},
-                  {"name": "abschluss", "matchingMode": "AND"},
-                  {"name": "anzahl_schueler", "matchingMode": "AND"}
+                  {
+                    "name": "kapitelbezeichnung",
+                    "matchingMode": "OR"
+                  },
+                  {
+                    "name": "bezirk",
+                    "matchingMode": "OR"
+                  },
+                  {
+                    "name": "stadtteil",
+                    "matchingMode": "OR"
+                  },
+                  {
+                    "name": "schulform",
+                    "matchingMode": "AND"
+                  },
+                  {
+                    "name": "abschluss",
+                    "matchingMode": "AND"
+                  },
+                  {
+                    "name": "anzahl_schueler",
+                    "matchingMode": "AND"
+                  }
                 ]
               },
               {
@@ -178,28 +196,27 @@
           },
           "staticlinks": [
             {
-                "name": "Mousehover ein-/ausschalten",
-                "glyphicon": "glyphicon-globe",
-                "onClickTrigger": [
-                    {
-                        "channel": "MouseHover",
-                        "event": "toggle",
-                        "data": "mousehover-overlay"
-                    }
-                ]
+              "name": "Mousehover ein-/ausschalten",
+              "glyphicon": "glyphicon-globe",
+              "onClickTrigger": [
+                {
+                  "channel": "MouseHover",
+                  "event": "toggle",
+                  "data": "mousehover-overlay"
+                }
+              ]
             }
           ]
         }
       },
-      "legend":
-      {
+      "legend": {
         "name": "Legende",
         "glyphicon": "glyphicon-book"
       }
     },
     "controls": {
-			"zoom": true
-		},
+      "zoom": true
+    },
     "scaleLine": false,
     "treeType": "custom"
   },
@@ -256,185 +273,194 @@
       ]
     },
     "Fachdaten": {
-      "Layer": [
-        {
-          "id": "12868",
-          "name": "Sportstätten",
-          "visibility": false,
-          "searchField": [
-            "name",
-            "typ_zusammen"
-          ],
-          "mouseHoverField": [
-            "name",
-            "typ_zusammen"
-          ],
-          "isFacility": true,
-          "styleId": "12868",
-          "topic": "basic",
-          "numericalProperties": false,
-          "alwaysOnTop": true
-        },
-        {
-          "id": "1534",
-          "name": "Grünflächen",
-          "styleId": "1534",
-          "visibility": false,
-          "topic": "basic",
-          "isFacility": true,
-          "numericalProperties": [
-            "flaeche_qm",
-            "flaeche_ha"
-          ],
-          "alwaysOnTop": true,
-          "searchField": [
-            "anlagenname",
-            "eigentum",
-            "gruenart"
-          ],
-          "mouseHoverField": [
-            "anlagenname",
-            "eigentum",
-            "flaeche_qm"
-          ]
-        },
-        {
-          "id": "753",
-          "name": "Kindertagesstätten",
-          "styleId": "753",
-          "visibility": false,
-          "isFacility": true,
-          "topic": "basic",
-          "defaultProperty": "Einrichtungen",
-          "alwaysOnTop": true,
-          "searchField": [
-            "Traeger",
-            "Leistungsarten",
-            "Name"
-          ],
-          "mouseHoverField": [
-            "Name",
-            "Traeger",
-            "Leistungsarten"
-          ],
-          "gfiAttributes": {
-            "Name": "Name",
-            "Telefon": "Telefon",
-            "Fax": "Fax",
-            "Strasse": "Straße",
-            "Hausnr": "Hausnummer",
-            "PLZ": "PLZ",
-            "Stadtteil": "Stadtteil",
-            "Bezirk": "Bezirk",
-            "Traeger": "Träger",
-            "Spitzenverband": "Spitzenverband",
-            "Informationen": "Informationen",
-            "E-Mail": "E-Mail",
-            "Leistungsarten": "Leistungsarten"
-          }
-        },
-        {
-          "id": "1750"
-        },
-        {
-          "id": "2013"
-        },
-        {
-          "id": "2678"
-        },
-        {
-          "id": "8144"
-        },
-        {
-          "id": "5207"
-        }
-      ],
       "Ordner": [
         {
-          "Titel": "Feinkartierung",
+          "Titel": "Fachdaten - Analyse / Simulation",
+          "isFolderSelectable": false,
           "Layer": [
             {
-              "id": "14859"
+              "id": "12868",
+              "name": "Sportstätten",
+              "visibility": false,
+              "searchField": [
+                "name",
+                "typ_zusammen"
+              ],
+              "mouseHoverField": [
+                "name",
+                "typ_zusammen"
+              ],
+              "isFacility": true,
+              "styleId": "12868",
+              "topic": "basic",
+              "numericalProperties": false,
+              "alwaysOnTop": true
             },
             {
-              "id": "14860"
+              "id": "1534",
+              "name": "Grünflächen",
+              "styleId": "1534",
+              "visibility": false,
+              "topic": "basic",
+              "isFacility": true,
+              "numericalProperties": [
+                "flaeche_qm",
+                "flaeche_ha"
+              ],
+              "alwaysOnTop": true,
+              "searchField": [
+                "anlagenname",
+                "eigentum",
+                "gruenart"
+              ],
+              "mouseHoverField": [
+                "anlagenname",
+                "eigentum",
+                "flaeche_qm"
+              ]
             },
             {
-              "id": "14861"
+              "id": "753",
+              "name": "Kindertagesstätten",
+              "styleId": "753",
+              "visibility": false,
+              "isFacility": true,
+              "topic": "basic",
+              "defaultProperty": "Einrichtungen",
+              "alwaysOnTop": true,
+              "searchField": [
+                "Traeger",
+                "Leistungsarten",
+                "Name"
+              ],
+              "mouseHoverField": [
+                "Name",
+                "Traeger",
+                "Leistungsarten"
+              ],
+              "gfiAttributes": {
+                "Name": "Name",
+                "Telefon": "Telefon",
+                "Fax": "Fax",
+                "Strasse": "Straße",
+                "Hausnr": "Hausnummer",
+                "PLZ": "PLZ",
+                "Stadtteil": "Stadtteil",
+                "Bezirk": "Bezirk",
+                "Traeger": "Träger",
+                "Spitzenverband": "Spitzenverband",
+                "Informationen": "Informationen",
+                "E-Mail": "E-Mail",
+                "Leistungsarten": "Leistungsarten"
+              }
             },
-            {
-              "id": "14862"
-            },
-            {
-              "id": "14863"
-            },
-            {
-              "id": "14864"
-            }
-          ]
-        },
-        {
-          "Titel": "Bebauungspläne",
-          "Layer": [
-            {
-              "id": "1625",
-              "styleId": "1625",
-              "name": "Festgestellte Bebauungspläne (PLIS)"
-            },
-            {
-              "id": "1626",
-              "styleId": "1626",
-              "name": "Bebauungspläne im Verfahren"
-            },
-            {
-              "id": "11094",
-              "name": "PLIS Geodaten - FHHNET"
-            }
-          ]
-        },
-        {
-          "Titel": "Flächen des Bezirks",
-          "Layer": [
-            {
-              "id": "7236",
-              "name": "Stadtgrün belastet mit Erbbaurecht"
-            },
-            {
-              "id": "1427",
-              "name": "Stadtgrün"
-            }
-          ]
-        },
-        {
-          "Titel": "Lärmkarten",
-          "Layer": [
-            {
-              "id": "2431"
-            },
-            {
-              "id": "2413"
-            },
-            {
-              "id": "2412"
-            },
-            {
-              "id": "2414"
-            },
-            {
-              "id": "95"
-            }
-          ]
-        },
-        {
-          "Titel": "Schulen",
-          "Layer": [
             {
               "id": "8712",
               "name": "Öffentliche Schulen Hamburgs",
               "styleId": "8712",
               "styleField": "kapitelbezeichnung",
               "searchField": "schulname",
-              "mouseHoverField": ["schulname", "kapitelbezeichnung"]
+              "mouseHoverField": [
+                "schulname",
+                "kapitelbezeichnung"
+              ]
+            }
+          ]
+        },
+        {
+          "Titel": "Fachdaten - Darstellung",
+          "Ordner": [
+            {
+              "Titel": "Feinkartierung",
+              "Layer": [
+                {
+                  "id": "14859"
+                },
+                {
+                  "id": "14860"
+                },
+                {
+                  "id": "14861"
+                },
+                {
+                  "id": "14862"
+                },
+                {
+                  "id": "14863"
+                },
+                {
+                  "id": "14864"
+                }
+              ]
+            },
+            {
+              "Titel": "Bebauungspläne",
+              "Layer": [
+                {
+                  "id": "1625",
+                  "styleId": "1625",
+                  "name": "Festgestellte Bebauungspläne (PLIS)"
+                },
+                {
+                  "id": "1626",
+                  "styleId": "1626",
+                  "name": "Bebauungspläne im Verfahren"
+                },
+                {
+                  "id": "11094",
+                  "name": "PLIS Geodaten - FHHNET"
+                }
+              ]
+            },
+            {
+              "Titel": "Flächen des Bezirks",
+              "Layer": [
+                {
+                  "id": "7236",
+                  "name": "Stadtgrün belastet mit Erbbaurecht"
+                },
+                {
+                  "id": "1427",
+                  "name": "Stadtgrün"
+                }
+              ]
+            },
+            {
+              "Titel": "Lärmkarten",
+              "Layer": [
+                {
+                  "id": "2431"
+                },
+                {
+                  "id": "2413"
+                },
+                {
+                  "id": "2412"
+                },
+                {
+                  "id": "2414"
+                },
+                {
+                  "id": "95"
+                }
+              ]
+            }
+          ],
+          "Layer": [
+            {
+              "id": "1750"
+            },
+            {
+              "id": "2013"
+            },
+            {
+              "id": "2678"
+            },
+            {
+              "id": "8144"
+            },
+            {
+              "id": "5207"
             }
           ]
         }
