@@ -79,10 +79,10 @@ function initializeCosi () {
 
     if (infoScreenOpen) {
         CosiStorage.setItem("infoScreenOpen", JSON.stringify(true));
+        tools.selectDistrict.set("isActive", true);
     }
 
     Radio.trigger("General", "loaded");
-    tools.selectDistrict.set("isActive", true);
 }
 
 export default initializeCosi;

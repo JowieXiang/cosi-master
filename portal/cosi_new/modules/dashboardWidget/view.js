@@ -6,7 +6,9 @@ const DashboardWidgetView = Backbone.View.extend({
     events: {
         "click .dashboard-widget-close": "removeWidget",
         "click .win-control.open": "toggleOpen",
-        "click .tool-name": "widgetInfo"
+        "click .tool-name": "widgetInfo",
+        "mousedown .drag": "dragStart",
+        "mousedown .header": "dragStart"
     },
     initialize (content, parent, opts = {}) {
         const attrs = opts;
@@ -17,11 +19,18 @@ const DashboardWidgetView = Backbone.View.extend({
             id: attrs.id ? attrs.id : "view",
             name: attrs.name ? attrs.name : "Daten",
             glyphicon: attrs.glyphicon ? attrs.glyphicon : "glyphicon-info-sign",
-            append: attrs.append !== undefined ? attrs.append : true
+            append: attrs.append !== undefined ? attrs.append : true,
+            width: attrs.width ? attrs.width : null,
+            height: attrs.height ? attrs.height : null,
+            scalable: attrs.scalable ? attrs.scalable : false
         };
 
         this.render();
     },
+    minimized: false,
+    resizing: false,
+    moving: false,
+    dragStartXY: [],
     parent: "",
     content: {},
     attrs: {},
@@ -42,6 +51,12 @@ const DashboardWidgetView = Backbone.View.extend({
         else if (this.content instanceof selection) {
             this.renderD3();
         }
+
+        this.el.style.width = this.attrs.width || "auto";
+        this.el.style.height = this.attrs.height || "auto";
+
+        window.addEventListener("mouseup", this.dragEnd.bind(this));
+        window.addEventListener("mousemove", this.drag.bind(this));
 
         Radio.trigger("ContextMenu", "addContextMenu", this.el);
 
@@ -77,10 +92,79 @@ const DashboardWidgetView = Backbone.View.extend({
     },
     toggleOpen (evt) {
         evt.stopPropagation();
-        this.$el.toggleClass("open");
+        this.$el.toggleClass("minimized");
+        this.minimized = !this.minimized;
+
+        if (this.minimized) {
+            this.el.style.height = this.$el.find(".header").outerHeight() + 20 + "px";
+        }
+        else {
+            this.el.style.height = isNaN(this.attrs.height) ? this.attrs.height : this.attrs.height + "px";
+        }
     },
     removeWidget () {
         Radio.trigger("Dashboard", "destroyWidgetById", this.attrs.id);
+    },
+    dragStart (evt) {
+        if (evt.button === 0) {
+            evt.preventDefault();
+            this.dragStartXY = [evt.clientX, evt.clientY];
+            this.$el.addClass("dragging");
+
+            if ($(evt.target).hasClass("drag")) {
+                this.resizing = true;
+            }
+            if ($(evt.target).hasClass("header")) {
+                this.moving = true;
+            }
+        }
+    },
+    dragEnd (evt) {
+        if (evt.button === 0) {
+            if (this.moving) {
+                evt.preventDefault();
+
+                const widgets = document.querySelectorAll(".dashboard-widget"),
+                    newOrder = Array.from(widgets).sort((a, b) => {
+                        var aPos = a === this.el ? [evt.clientX, evt.clientY] : [$(a).offset().left, $(a).offset().top],
+                            bPos = b === this.el ? [evt.clientX, evt.clientY] : [$(b).offset().left, $(b).offset().top];
+
+                        if (aPos[1] < bPos[1]) {
+                            return -1;
+                        }
+                        if (aPos[0] < bPos[0]) {
+                            return -1;
+                        }
+                        return 1;
+                    }, this);
+
+                $(this.parent).empty();
+                newOrder.forEach((el) => {
+                    $(this.parent).append(el);
+                });
+            }
+            this.resizing = false;
+            this.moving = false;
+            this.$el.removeClass("dragging");
+        }
+    },
+    drag (evt) {
+        if (this.resizing) {
+            evt.preventDefault();
+            const dX = evt.clientX - this.dragStartXY[0],
+                dY = evt.clientY - this.dragStartXY[1];
+
+            this.attrs.width = this.el.clientWidth + dX;
+            this.attrs.height = this.el.clientHeight + dY;
+
+            this.el.style.width = this.attrs.width + "px";
+            this.el.style.height = this.attrs.height + "px";
+
+            this.dragStartXY = [evt.clientX, evt.clientY];
+        }
+        if (this.moving) {
+            console.log("moving");
+        }
     },
     widgetInfo () {
         console.log(this);

@@ -327,7 +327,6 @@ const DashboardTableModel = Tool.extend({
 
             match[`${this.getAttrsForRatio()[0]} / ${this.getAttrsForRatio()[1]}`] = ratio[col];
         }
-        console.log(this.get("unsortedTable"));
 
         if (calcGroup) {
             calcGroup.values[`${this.getAttrsForRatio()[0]} / ${this.getAttrsForRatio()[1]}`] = ratio;
@@ -367,6 +366,10 @@ const DashboardTableModel = Tool.extend({
      */
     createChart (props, type, title) {
         let data, graph;
+        const svgParent = document.createElement("div");
+
+        svgParent.className = "svg-container";
+        // svgParent.setAttribute("style", `height: ${$(window).height() * 0.4}px; width: ${$(window).width() * 0.4}px; position: relative;`);
 
         if (type === "Linegraph") {
             data = this.getLineChartData(props);
@@ -374,14 +377,15 @@ const DashboardTableModel = Tool.extend({
             graph = Radio.request("GraphV2", "createGraph", {
                 graphType: type,
                 graphTitle: title,
-                selector: document.createElement("div"),
+                selector: svgParent,
                 scaleTypeX: "ordinal",
                 scaleTypeY: "linear",
                 data: data.data,
                 attrToShowArray: data.xAttrs.map(prop => {
                     return {
                         attrName: prop,
-                        attrClass: prop === "Durchschnitt" ? "average" : "district"
+                        attrClass: prop === "Durchschnitt" ? "average" : "district",
+                        attrColor: prop === "Durchschnitt" ? "#e74d10" : "rgb(8, 88, 158)"
                     };
                 }),
                 xAttr: "year",
@@ -419,7 +423,7 @@ const DashboardTableModel = Tool.extend({
             graph = Radio.request("GraphV2", "createGraph", {
                 graphType: type,
                 graphTitle: title,
-                selector: document.createElement("div"),
+                selector: svgParent,
                 scaleTypeX: "ordinal",
                 scaleTypeY: "linear",
                 data: data,
@@ -456,16 +460,23 @@ const DashboardTableModel = Tool.extend({
         Radio.trigger("Dashboard", "append", graph, "#dashboard-containers", {
             id: title,
             name: title,
-            glyphicon: "glyphicon-stats"
+            glyphicon: "glyphicon-stats",
+            width: $(window).width() * 0.4 + 50 + "px",
+            scalable: true
         });
     },
     createCorrelation () {
+        var svgParent = document.createElement("div");
+
+        svgParent.className = "svg-container";
+        // svgParent.setAttribute("style", `height: ${$(window).height() * 0.4}px; width: ${$(window).width() * 0.4}px; position: relative;`);
+
         const attrsToShow = this.getAttrsForRatio(),
             data = this.getCorrelationChartData(this.getAttrsForRatio()),
             graph = Radio.request("GraphV2", "createGraph", {
                 graphType: "ScatterPlot",
                 graphTitle: `Korrelation: ${attrsToShow[0]} (y) : ${attrsToShow[1]} (x)`,
-                selector: document.createElement("div"),
+                selector: svgParent,
                 scaleTypeX: "linear",
                 scaleTypeY: "linear",
                 dynamicAxisStart: true,
@@ -503,7 +514,9 @@ const DashboardTableModel = Tool.extend({
 
         Radio.trigger("Dashboard", "append", graph, "#dashboard-containers", {
             name: `Korrelation: ${attrsToShow[0]} (y) : ${attrsToShow[1]} (x)`,
-            glyphicon: "glyphicon-flash"
+            glyphicon: "glyphicon-flash",
+            width: $(window).width() * 0.4 + 50 + "px",
+            scalable: true
         });
     },
     getBarChartData (props, year = "2018") {

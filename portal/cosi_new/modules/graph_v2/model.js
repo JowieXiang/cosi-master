@@ -324,9 +324,10 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
      * @param {Object} d3line D3 line object.
      * @param {String} tooltipDiv (optional)
      * @param {String} attrName (optional) name of Attr for hover
+     * @param {String} color (optional) color of the line
      * @returns {void}
      */
-    appendDataToSvg: function (svg, data, className, d3line, tooltipDiv = null, attrName = null) {
+    appendDataToSvg: function (svg, data, className, d3line, tooltipDiv = null, attrName = null, color = "rgb(8, 88, 158)") {
         var dataToAdd = data.filter(function (obj) {
             return obj.yAttrToShow !== "-";
         });
@@ -349,6 +350,9 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             .data([dataToAdd])
             .attr("class", className)
             .attr("d", d3line)
+            .attr("stroke", color)
+            .attr("stroke-width", "3px")
+            .attr("fill", "none")
             .on("mouseover", function () {
                 if (tooltipDiv) {
                     tooltipDiv.transition()
@@ -477,9 +481,10 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
      * @param {Selection} tooltipDiv Selection of the tooltip-div.
      * @param {Number} dotSize The size of the dots.
      * @param {String} className optional className for the dots.
+     * @param {String} color optional color for the dots
      * @returns {void}
      */
-    appendLinePointsToSvg: function (svg, data, scaleX, scaleY, scaleTypeX, xAttr, yAttrToShow, tooltipDiv, dotSize, className = null) {
+    appendLinePointsToSvg: function (svg, data, scaleX, scaleY, scaleTypeX, xAttr, yAttrToShow, tooltipDiv, dotSize, className = null, color = "rgb(8, 88, 158)") {
         var dat = data.filter(function (obj) {
                 return obj[yAttrToShow] !== "-";
             }),
@@ -508,6 +513,7 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             .attr("class", function (d) {
                 return d.class || className;
             })
+            .attr("fill", color)
             .attr("attrname", yAttrToShow)
             .attr("attrval", function (d) {
                 return d[yAttrToShow];
@@ -563,8 +569,8 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             .data(dataArray)
             .enter()
             .append("text")
-            .text(d => d.label)
-            .attr("y", d => scaleY(d.y))
+            .text(d => !isNaN(d.y) ? d.label : null)
+            .attr("y", d => !isNaN(d.y) ? scaleY(d.y) : 0)
             .attr("x", d => {
                 return scaleTypeX === "ordinal" ? scaleX(d.x) + (scaleX.bandwidth() / 2) + 20 : scaleX(d.x) + 20;
             });
@@ -582,8 +588,9 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
      */
     createSvg: function (selector, left, top, width, height, svgClass) {
         return select(selector).append("svg")
-            .attr("width", width)
-            .attr("height", height)
+            .attr("width", "100%")
+            .attr("height", "100%")
+            .attr("viewBox", `0 0 ${width + 20} ${height + 20}`)
             .attr("class", svgClass)
             .append("g")
             .attr("class", "graph")
@@ -616,8 +623,10 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
     },
 
     svgToBlob (svg) {
+        const dupSvg = svg.cloneNode(true);
+
         return new Blob([
-            new XMLSerializer().serializeToString(svg)
+            new XMLSerializer().serializeToString(dupSvg)
         ],
         {type: "image/svg+xml;charset=utf-8"});
     },
@@ -643,14 +652,19 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
                 const domUrl = window.URL || window.webkitURL || window,
                     url = domUrl.createObjectURL(blob),
                     canvas = document.createElement("canvas"),
-                    ctx = canvas.getContext("2d"),
-                    img = new Image();
+                    img = new Image(),
+                    ctx = canvas.getContext("2d");
 
                 canvas.width = width;
                 canvas.height = height;
+                canvas.imageSmoothingEnabled = false;
+
+                ctx.font = "sans-serif";
+                ctx.fillStyle = "white";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
 
                 img.onload = () => {
-                    ctx.drawImage(img, 0, 0);
+                    ctx.drawImage(img, 20, 20);
                     domUrl.revokeObjectURL(url);
                     res(canvas.toDataURL("image/png"));
                 };
@@ -798,9 +812,9 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
         _.each(attrToShowArray, function (yAttrToShow) {
             if (typeof yAttrToShow === "object") {
                 valueLine = this.createValueLine(scaleX, scaleY, xAttr, yAttrToShow.attrName, scaleTypeX);
-                this.appendDataToSvg(svg, data, yAttrToShow.attrClass, valueLine, tooltipDiv, yAttrToShow.attrName, hasLineLabel);
+                this.appendDataToSvg(svg, data, yAttrToShow.attrClass, valueLine, tooltipDiv, yAttrToShow.attrName, yAttrToShow.attrColor);
                 // Add the scatterplot for each point in line
-                this.appendLinePointsToSvg(svg, data, scaleX, scaleY, scaleTypeX, xAttr, yAttrToShow.attrName, tooltipDiv, dotSize, yAttrToShow.attrClass);
+                this.appendLinePointsToSvg(svg, data, scaleX, scaleY, scaleTypeX, xAttr, yAttrToShow.attrName, tooltipDiv, dotSize, yAttrToShow.attrClass, yAttrToShow.attrColor);
             }
             else {
                 valueLine = this.createValueLine(scaleX, scaleY, xAttr, yAttrToShow, scaleTypeX);
@@ -938,7 +952,7 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             })
             .attr("width", barWidth - 1)
             .attr("height", function (d) {
-                return !isNaN(d[attrToShowArray[0]]) ? height - y(d[attrToShowArray[0]]) : height;
+                return !isNaN(d[attrToShowArray[0]]) ? height - y(d[attrToShowArray[0]]) : 0;
             })
             .on("mouseover", function () {
                 select(this);
