@@ -49,7 +49,6 @@ import GFI from "../../tools/gfi/model";
 import Viewpoint from "./viewpoint/model";
 import ColorScale from "../../tools/colorScale/model";
 // import WsClientInput from "../../tools/wsClientInput/model";
-import CompareDistricts from "../../tools/compareDistricts/model";
 import Timeline from "../../tools/timeline/model";
 import VirtualCityModel from "../../tools/virtualcity/model";
 
@@ -340,9 +339,6 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
             }
             else if (attrs.id === "layerSlider") {
                 return new LayerSliderModel(attrs, options);
-            }
-            else if (attrs.id === "compareDistricts") {
-                return new CompareDistricts(attrs, options);
             }
             else if (attrs.id === "virtualcity") {
                 return new VirtualCityModel(attrs, options);

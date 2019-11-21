@@ -1,43 +1,7 @@
-@color_1           : #eee;
-@color_2           : black;
-@background_color_1: rgb(85, 85, 85);
-@background_color_2: #eee;
-
 .compare-districts {
 	width: 400px;
 }
 
-#layerslider {
-	width: 350px;
-
-	.progress-bar {
-		background-color: @background_color_1;
-		transition      : all .6s;
-	}
-
-	.progress {
-		height          : 25px;
-		background-color: @background_color_2;
-	}
-
-	.btn-default {
-		background-color: @background_color_2;
-		transition      : all .2s ease-in-out;
-
-		&:hover {
-			background-color: @background_color_1;
-			color           : @color_1;
-		}
-	}
-
-	input[readonly] {
-		color        : @color_2;
-		cursor       : not-allowed;
-		white-space  : nowrap;
-		overflow     : hidden;
-		text-overflow: ellipsis;
-	}
-}
 
 #compare-results {
 	word-wrap: break-word
@@ -74,20 +38,17 @@
 
 .name-tag {
 	border-radius   : 5px;
-	background-color: black;
-	color           : white;
+	background-color: #E3E3E3;
+	color           : black;
 	padding         : 2px 4px;
 	margin          : 2px;
+	display         : inline-block;
 }
 
 .name-tag.district-name {
 	cursor: pointer;
 }
 
-.name-tag.district-name:hover {
-	background-color: #D3D3D3;
-	color           : black;
-}
 
 #Referenzgebiet {
 	margin-top: 10px;
