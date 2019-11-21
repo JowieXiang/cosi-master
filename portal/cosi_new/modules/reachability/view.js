@@ -30,6 +30,9 @@ const ReachabilityView = Backbone.View.extend({
                     this.registerClickListener();
                     this.render(model, value);
                     this.createMapLayer(this.model.get("mapLayerName"));
+                    if (this.model.get("isochroneFeatures").length > 0) {
+                        this.setIsochroneAsBbox();
+                    }
                 }
                 else {
                     this.unregisterClickListener();
@@ -72,9 +75,9 @@ const ReachabilityView = Backbone.View.extend({
     clearMapLayer: function () {
         const mapLayer = Radio.request("Map", "getLayerByName", this.model.get("mapLayerName"));
 
-        if (mapLayer && mapLayer.getVisible()) {
-            mapLayer.getSource().clear();
-        }
+        mapLayer.getSource().clear();
+        this.model.set("isochroneFeatures", []);
+        Radio.trigger("SelectDistrict", "revertBboxGeometry");
     },
     clearInput: function () {
         this.model.set("coordinate", []);
@@ -104,17 +107,19 @@ const ReachabilityView = Backbone.View.extend({
                     mapLayer.getSource().clear();
                     mapLayer.getSource().addFeatures(newFeatures.reverse());
                     this.model.set("isochroneFeatures", newFeatures);
-
-                    const layerlist = _.union(Radio.request("Parser", "getItemsByAttributes", { typ: "WFS", isBaseLayer: false }), Radio.request("Parser", "getItemsByAttributes", { typ: "GeoJSON", isBaseLayer: false })),
-                        polygonGeometry = this.model.get("isochroneFeatures")[this.model.get("steps") - 1].getGeometry(),
-                        geometryCollection = new GeometryCollection([polygonGeometry]);
-
-                    Radio.trigger("BboxSettor", "setBboxGeometryToLayer", layerlist, geometryCollection)
+                    this.setIsochroneAsBbox();
                 });
         }
         else {
             this.inputReminder();
         }
+    },
+    setIsochroneAsBbox: function () {
+        const layerlist = _.union(Radio.request("Parser", "getItemsByAttributes", { typ: "WFS", isBaseLayer: false }), Radio.request("Parser", "getItemsByAttributes", { typ: "GeoJSON", isBaseLayer: false })),
+            polygonGeometry = this.model.get("isochroneFeatures")[this.model.get("steps") - 1].getGeometry(),
+            geometryCollection = new GeometryCollection([polygonGeometry]);
+
+        Radio.trigger("BboxSettor", "setBboxGeometryToLayer", layerlist, geometryCollection);
     },
     styleFeatures: function (features) {
         for (let i = features.length - 1; i >= 0; i--) {
@@ -250,6 +255,7 @@ const ReachabilityView = Backbone.View.extend({
             dataObj.layerNames.push(layerModel.get("name"));
             dataObj.features[layerModel.get("name")] = layerModel.get("layer").getSource().getFeatures();
         });
+
         Radio.trigger("Dashboard", "destroyWidgetById", "reachability");
         Radio.trigger("Dashboard", "append", this.dashboardTemplate(dataObj), "#dashboard-containers", {
             id: "reachability",
