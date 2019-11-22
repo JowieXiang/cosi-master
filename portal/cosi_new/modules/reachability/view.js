@@ -81,9 +81,11 @@ const ReachabilityView = Backbone.View.extend({
     clearMapLayer: function () {
         const mapLayer = Radio.request("Map", "getLayerByName", this.model.get("mapLayerName"));
 
-        mapLayer.getSource().clear();
-        this.model.set("isochroneFeatures", []);
-        Radio.trigger("SelectDistrict", "revertBboxGeometry");
+        if (mapLayer.getSource().getFeatures().length > 0) {
+            mapLayer.getSource().clear();
+            this.model.set("isochroneFeatures", []);
+            Radio.trigger("SelectDistrict", "revertBboxGeometry");
+        }
     },
     hideDashboardButton: function () {
         this.$el.find("#show-in-dashboard").hide();
@@ -308,7 +310,7 @@ const ReachabilityView = Backbone.View.extend({
             for (let i = steps - 1; i >= 0; i--) {
                 this.$el.find("#legend").append(`
                 <svg width="15" height="15">
-                    <circle cx="7.5"  cy="7.5" r="7.5" style="fill:rgba(${200 - 100 * i}, ${100 * i}, 3, ${0.1 * (i + 1) + 0.3});" />
+                    <circle cx="7.5"  cy="7.5" r="7.5" style="fill:rgba(${200 - 100 * i}, ${100 * i}, 3, ${0.1 * (i + 1) + 0.3}); stroke-width: .5; stroke: #E3E3E3" />
                 </svg>
                 <span>${Number.isInteger(range * ((steps - i) / 3)) ? range * ((steps - i) / 3) : (range * ((steps - i) / 3)).toFixed(2)}  </span>
                 `);
@@ -319,7 +321,7 @@ const ReachabilityView = Backbone.View.extend({
             for (let i = steps - 1; i >= 0; i--) {
                 this.$el.find("#legend").append(`
                 <svg width="15" height="15">
-                    <circle cx="7.5"  cy="7.5" r="7.5" style="fill:rgba(${200 - 100 * i}, ${100 * i}, 3, ${0.1 * i + 0.3});" />
+                    <circle cx="7.5"  cy="7.5" r="7.5" style="fill:rgba(${200 - 100 * i}, ${100 * i}, 3, ${0.1 * i + 0.3}); stroke-width: .5; stroke: #E3E3E3" />
                 </svg>
                 <span>0</span>
                 `);

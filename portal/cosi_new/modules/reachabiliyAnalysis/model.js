@@ -23,7 +23,7 @@ const ReachabilityAnalysis = Tool.extend({
             snippetType: "dropdown",
             isMultiple: false,
             isGrouped: false,
-            displayName: "select function",
+            displayName: "",
             liveSearch: false,
             isDropup: false
         });

@@ -74,8 +74,6 @@ const LegendModel = Tool.extend(/** @lends LegendModel.prototype */{
     getLegend: function (layer) {
         var layerSources = layer.get("layerSource"); // Array oder undefined
 
-        console.log("getting stuff");
-
         return this.getLegendDefinition(layer.get("name"), layer.get("typ"), layer.get("legendURL"), layer.get("styleId"), layerSources);
     },
     /**

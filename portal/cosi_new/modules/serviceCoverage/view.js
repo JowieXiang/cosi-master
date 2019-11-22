@@ -80,7 +80,9 @@ const ServiceCoverageView = Backbone.View.extend({
     clearMapLayer: function () {
         const mapLayer = Radio.request("Map", "getLayerByName", this.model.get("mapLayerName"));
 
-        mapLayer.getSource().clear();
+        if (mapLayer.getSource().getFeatures().length > 0) {
+            mapLayer.getSource().clear();
+        }
     },
     createIsochrones: function () {
         const pathType = this.model.get("pathType"),
@@ -255,10 +257,10 @@ const ServiceCoverageView = Backbone.View.extend({
             this.$el.find("#legend").empty();
             for (let i = steps - 1; i >= 0; i--) {
                 this.$el.find("#legend").append(`
-                <svg width="20" height="20">
-                    <rect width="20"  height="20" style="fill:rgba(200 , 3, 3, ${0.3 * (i + 1)});stroke-width:.5;stroke:rgb(0,0,0)" />
+                <svg width="15" height="15">
+                    <circle cx="7.5"  cy="7.5" r="7.5" style="fill:rgba(200 , 3, 3, ${0.3 * (i + 1)}); stroke-width: .5; stroke: #E3E3E3" />
                 </svg>
-                <span style="font-size: 20px;">${Number.isInteger(range * ((steps - i) / 3)) ? range * ((steps - i) / 3) : (range * ((steps - i) / 3)).toFixed(2)}  </span>
+                <span>${Number.isInteger(range * ((steps - i) / 3)) ? range * ((steps - i) / 3) : (range * ((steps - i) / 3)).toFixed(2)}  </span>
                 `);
             }
         }
@@ -266,10 +268,10 @@ const ServiceCoverageView = Backbone.View.extend({
             this.$el.find("#legend").empty();
             for (let i = steps - 1; i >= 0; i--) {
                 this.$el.find("#legend").append(`
-                <svg width="20" height="20">
-                    <circle cx="10" cy="10" r="10" style="fill:rgba(0, 0, 0, 0);stroke-width:.5;stroke:rgb(0,0,0)" />
+                <svg width="15" height="15">
+                    <circle cx="7.5" cy="7.5" r="7.5" style="fill:rgba(0, 0, 0, 0); stroke-width: .5; stroke: #E3E3E3" />
                 </svg>
-                <span style="font-size: 20px;">0</span>
+                <span>0</span>
                 `);
             }
         }
