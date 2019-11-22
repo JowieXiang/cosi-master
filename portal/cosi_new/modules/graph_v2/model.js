@@ -1042,7 +1042,7 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             this.appendDataToScatterPlot(svg, attrData.data, scaleX, scaleY, xAttr, refAttr, yAttrToShow, tooltipDiv, dotSize);
             // Add Regression-line and pearson correlation value
             this.appendRegressionLine(svg, attrData.data, regressionLine);
-            this.appendStats(svg, attrData.stats, width, height);
+            this.appendStats(svg, attrData.stats, yAxisLabel);
         }, this);
         // Add the Axis
         this.appendYAxisToSvg(svg, yAxis, yAxisLabel, height);
@@ -1134,19 +1134,23 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             .append("path")
             .data([data])
             .attr("class", "regression-line")
-            .attr("d", d3line);
+            .attr("d", d3line)
+            .attr("stroke", "#e74d10")
+            .attr("stroke-weight", "2px")
+            .attr("fill", "none");
     },
 
-    appendStats (svg, data, width, height) {
+    appendStats (svg, data, yAxisLabel) {
         svg.append("g")
             .attr("class", "graph-legend")
             .selectAll("text")
             .data(data)
             .enter()
             .append("text")
-            .attr("x", width)
+            .attr("font-size", yAxisLabel.fontSize || 12)
+            .attr("x", yAxisLabel.offset ? yAxisLabel.offset + 25 : 25)
             .attr("y", (d, i) => {
-                return i * 20;
+                return i * (yAxisLabel.fontSize + 5) || i * 17;
             })
             .text(d => {
                 return `${d.name}: ${d.val.toFixed(3).toLocaleString("de-DE")}`;

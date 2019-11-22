@@ -461,7 +461,7 @@ const DashboardTableModel = Tool.extend({
             id: title,
             name: title,
             glyphicon: "glyphicon-stats",
-            width: $(window).width() * 0.4 + 50 + "px",
+            width: $("#dashboard-containers").width() - 50 + "px",
             scalable: true
         });
     },
@@ -515,7 +515,7 @@ const DashboardTableModel = Tool.extend({
         Radio.trigger("Dashboard", "append", graph, "#dashboard-containers", {
             name: `Korrelation: ${attrsToShow[0]} (y) : ${attrsToShow[1]} (x)`,
             glyphicon: "glyphicon-flash",
-            width: $(window).width() * 0.4 + 50 + "px",
+            width: $("#dashboard-containers").width() - 50 + "px",
             scalable: true
         });
     },
