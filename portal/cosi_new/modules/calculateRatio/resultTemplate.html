@@ -16,8 +16,8 @@ else { %>
             <% for (var district in results) { %>
                 <tr>
                     <th scope="row"><%= district %></th>
-                    <td><%= results[district].ratio.toFixed(2) %></td>
-                    <td><%= results[district].facilities.toFixed(1) %></td>
+                    <td><%= results[district].ratio.toLocaleString('de-DE') %></td>
+                    <td><%= results[district].facilities.toLocaleString('de-DE') %></td>
                     <td><%= results[district].demographics %></td>
                 </tr>
             <% } %>

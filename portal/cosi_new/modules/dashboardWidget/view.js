@@ -52,6 +52,13 @@ const DashboardWidgetView = Backbone.View.extend({
             this.renderD3();
         }
 
+        if (this.attrs.width === "full") {
+            this.attrs.width = ($(this.parent).width() - 50) + "px";
+        }
+        if (this.attrs.height === "full") {
+            this.attrs.height = ($(this.parent).height() - 50) + "px";
+        }
+
         this.el.style.width = this.attrs.width || "auto";
         this.el.style.height = this.attrs.height || "auto";
 
@@ -117,6 +124,8 @@ const DashboardWidgetView = Backbone.View.extend({
 
             this.moving = true;
         }
+
+        console.log("move");
     },
     resizeStart (evt) {
         if (evt.button === 0) {
@@ -126,6 +135,8 @@ const DashboardWidgetView = Backbone.View.extend({
 
             this.resizing = true;
         }
+
+        console.log("size");
     },
     dragEnd (evt) {
         if (evt.button === 0) {
