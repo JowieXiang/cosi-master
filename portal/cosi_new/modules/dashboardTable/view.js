@@ -49,7 +49,8 @@ const DashboardTableView = Backbone.View.extend({
                     id: "dashboard",
                     name: "Übersicht",
                     glyphicon: "glyphicon-stats",
-                    append: false
+                    append: false,
+                    width: "100%"
                 });
             }
 

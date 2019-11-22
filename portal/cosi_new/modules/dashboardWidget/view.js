@@ -7,8 +7,8 @@ const DashboardWidgetView = Backbone.View.extend({
         "click .dashboard-widget-close": "removeWidget",
         "click .win-control.open": "toggleOpen",
         "click .tool-name": "widgetInfo",
-        "mousedown .drag": "dragStart",
-        "mousedown .header": "dragStart"
+        "mousedown .drag": "resizeStart",
+        "mousedown .header": "moveStart"
     },
     initialize (content, parent, opts = {}) {
         const attrs = opts;
@@ -105,24 +105,33 @@ const DashboardWidgetView = Backbone.View.extend({
     removeWidget () {
         Radio.trigger("Dashboard", "destroyWidgetById", this.attrs.id);
     },
-    dragStart (evt) {
+    moveStart (evt) {
+        if (evt.button === 0) {
+            evt.preventDefault();
+            this.$el.addClass("dragging");
+
+            this.$el.find(".widget-shadow").css({
+                width: this.el.clientWidth + "px",
+                height: this.el.clientHeight + "px"
+            }).addClass("dragging");
+
+            this.moving = true;
+        }
+    },
+    resizeStart (evt) {
         if (evt.button === 0) {
             evt.preventDefault();
             this.dragStartXY = [evt.clientX, evt.clientY];
             this.$el.addClass("dragging");
 
-            if ($(evt.target).hasClass("drag")) {
-                this.resizing = true;
-            }
-            if ($(evt.target).hasClass("header")) {
-                this.moving = true;
-            }
+            this.resizing = true;
         }
     },
     dragEnd (evt) {
         if (evt.button === 0) {
             if (this.moving) {
                 evt.preventDefault();
+                this.$el.find(".widget-shadow").removeClass("dragging");
 
                 const widgets = document.querySelectorAll(".dashboard-widget"),
                     newOrder = Array.from(widgets).sort((a, b) => {
@@ -138,10 +147,9 @@ const DashboardWidgetView = Backbone.View.extend({
                         return 1;
                     }, this);
 
-                $(this.parent).empty();
-                newOrder.forEach((el) => {
-                    $(this.parent).append(el);
-                });
+                for (let i = 0; i < newOrder.length; i++) {
+                    newOrder[i].style.order = i;
+                }
             }
             this.resizing = false;
             this.moving = false;
@@ -163,7 +171,10 @@ const DashboardWidgetView = Backbone.View.extend({
             this.dragStartXY = [evt.clientX, evt.clientY];
         }
         if (this.moving) {
-            console.log("moving");
+            this.$el.find(".widget-shadow").css({
+                top: evt.clientY + "px",
+                left: evt.clientX + "px"
+            });
         }
     },
     widgetInfo () {
