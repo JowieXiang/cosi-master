@@ -83,6 +83,36 @@ function initializeCosi () {
 
     Radio.trigger("General", "loaded");
     tools.selectDistrict.set("isActive", true);
+    addInfoButtons();
+}
+
+
+/**
+ * kleiner Hack um Info Button für die Fachdaten anzeigen zu lassen
+ * @returns {void}
+ */
+function addInfoButtons () {
+    Backbone.Radio.on("ModelList", "updatedSelectedLayerList", function () {
+        if (document.getElementById("Overlayer") !== null) {
+            if (document.getElementById("Overlayer").hasChildNodes()) {
+                const list = document.getElementById("Overlayer").getElementsByTagName("li");
+
+                for (const item of list) {
+                    if (item.children.length === 2 && item.style.paddingLeft === "5px") {
+                        const node = document.createElement("SPAN");
+
+                        node.className = "glyphicon glyphicon-info-sign pull-right";
+                        node.addEventListener("click", function () {
+                            Radio.trigger("Alert", "alert:remove");
+                            Radio.trigger("Alert", "alert", `<ul><li><b>Fachdaten - Analyse / Simulation:</b> Die Fachdaten in dieser Gruppe können mit den COSI Analysewerkzeugen verwendet werden.</li><li>
+                                                                <b>Fachdaten - Darstellung:</b> Die Fachdaten in dieser Gruppe werden in COSI nur dargestellt und können nicht mit den Analysewerkzeugen verwendet werden.</li></ul>`);
+                        });
+                        item.appendChild(node);
+                    }
+                }
+            }
+        }
+    });
 }
 
 export default initializeCosi;
