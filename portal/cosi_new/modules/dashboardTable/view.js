@@ -20,6 +20,7 @@ const DashboardTableView = Backbone.View.extend({
         this.exportFilteredButtonView = new ExportButtonView({model: this.model.get("exportFilteredButtonModel")});
         this.filterDropdownView = new DropdownView({model: this.model.get("filterDropdownModel")});
         this.contextActionsEl = $(this.contextActions());
+        this.updateRatioSelection();
 
         this.listenTo(this.model, {
             "isReady": this.render,
@@ -86,7 +87,12 @@ const DashboardTableView = Backbone.View.extend({
 
         if (this.model.getAttrsForRatio().length === 0) {
             this.contextActionsEl.find("li#selection span").empty();
+            this.contextActionsEl.find("li.calculate").addClass("inactive");
             return selectionText.empty();
+        }
+
+        if (this.model.getAttrsForRatio().length >= 2) {
+            this.contextActionsEl.find("li.calculate").removeClass("inactive");
         }
 
         this.contextActionsEl.find("li#selection span").html("<br />" + this.model.getAttrsForRatio().join(" / "));

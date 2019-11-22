@@ -40,7 +40,7 @@
             border-top: 1px solid whitesmoke;
             padding: 5px 10px;
 
-            &:not(.group):hover {
+            &:not(.group):not(.inactive):hover {
                 background: whitesmoke;
                 cursor: pointer;
             }
@@ -49,6 +49,12 @@
                 background: #fdfdfd;
                 border-bottom: 2px solid whitesmoke;
                 font-weight: bold;
+            }
+
+            &.inactive {
+                color: grey;
+                pointer-events: none;
+                cursor: not-allowed;
             }
         }
     }
