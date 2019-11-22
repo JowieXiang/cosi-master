@@ -1,7 +1,16 @@
 import DropdownModel from "../../../../modules/snippets/dropdown/model";
-import {Fill, Stroke, Style, Text} from "ol/style.js";
+import { Fill, Stroke, Style, Text } from "ol/style.js";
 
-const LayerModel = Backbone.Model.extend({
+const LayerModel = Backbone.Model.extend(/** @lends LayerModel.prototype */{
+    /**
+     * @class LayerModel
+     * @extends Backbone.Model
+     * @memberof ColorCodeMap
+     * @constructs
+     * @property {object} dropDownModel ToDo
+     * @property {Array} statisticsFeatures ToDo
+     * @property {Array} districtFeatures ToDo
+     */
     defaults: {
         dropDownModel: undefined,
         // the statistics features that have no geometry (Bevölkerung, Haushalte, Arbeitslose, ...)
@@ -15,6 +24,9 @@ const LayerModel = Backbone.Model.extend({
                 this.reset();
                 this.trigger("resetView");
             }
+        });
+        this.listenTo(Radio.channel("FeaturesLoader"), {
+            "districtsLoaded": this.updateColorCodeMap
         });
         // to do for stadtteil
         this.setDropDownModel(Radio.request("FeaturesLoader", "getAllValuesByScope", "statgebiet"));
@@ -61,6 +73,18 @@ const LayerModel = Backbone.Model.extend({
 
             this.setStatisticsFeatures(statisticsFeatures);
             this.styleDistrictFeatures(this.get("statisticsFeatures"), this.getLastYearAttribute(statisticsFeatures[0].getProperties()));
+        }
+    },
+
+    updateColorCodeMap: function () {
+        const value = this.get("dropDownModel").getSelectedValues().values[0];
+
+        if (value) {
+            const scope = Radio.request("SelectDistrict", "getScope"),
+                statisticsFeatures = Radio.request("FeaturesLoader", "getDistrictsByValue", scope, value);
+
+            this.setStatisticsFeatures(statisticsFeatures);
+            this.styleDistrictFeatures(statisticsFeatures, this.getLastYearAttribute(statisticsFeatures[0].getProperties()));
         }
     },
 

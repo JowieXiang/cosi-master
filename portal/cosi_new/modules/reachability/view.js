@@ -6,7 +6,7 @@ import { Fill, Stroke, Style } from "ol/style.js";
 import GeoJSON from "ol/format/GeoJSON";
 import GeometryCollection from "ol/geom/GeometryCollection";
 import InfoTemplate from "text-loader!./info.html";
-import dashboardTemplate from "text-loader!./dashboardTemplate.html";
+import resultTemplate from "text-loader!./resultTemplate.html";
 
 const ReachabilityView = Backbone.View.extend({
     events: {
@@ -20,20 +20,30 @@ const ReachabilityView = Backbone.View.extend({
         },
         "click #help": "showHelp",
         "click #show-in-dashboard": "showInDashboard",
-        "click #backward": "toModeSelection"
+        "click #backward": "toModeSelection",
+        "click #clear": function () {
+            this.clearMapLayer();
+            this.clearResult();
+            this.hideDashboardButton();
+        },
+        "click #show-result": "updateResult"
     },
     initialize: function () {
         this.listenTo(this.model, {
             "change:isActive": function (model, value) {
                 if (value) {
+                    this.$el.find("#show-result").prop("disabled", true);
                     this.registerClickListener();
                     this.render(model, value);
                     this.createMapLayer(this.model.get("mapLayerName"));
+                    if (this.model.get("isochroneFeatures").length > 0) {
+                        this.updateResult();
+                        this.setIsochroneAsBbox();
+                    }
                 }
                 else {
                     this.unregisterClickListener();
                     Radio.trigger("SelectDistrict", "revertBboxGeometry");
-                    this.clearMapLayer(this.model.get("mapLayerName"));
                     this.clearInput();
                     Radio.trigger("MapMarker", "hideMarker");
                 }
@@ -45,16 +55,15 @@ const ReachabilityView = Backbone.View.extend({
     },
     model: {},
     template: _.template(Template),
-    dashboardTemplate: _.template(dashboardTemplate),
-    render: function (model, value) {
+    dashboardTemplate: _.template(resultTemplate),
+    render: function () {
         var attr = this.model.toJSON();
 
-        if (value) {
-            this.setElement(document.getElementsByClassName("win-body")[0]);
-            this.$el.html(this.template(attr));
-            this.renderDropDownView(this.model.get("dropDownModel"));
-            this.renderLegend();
-        }
+        this.setElement(document.getElementsByClassName("win-body")[0]);
+        this.$el.html(this.template(attr));
+        this.renderDropDownView(this.model.get("dropDownModel"));
+        this.renderLegend();
+        this.$el.find("#show-in-dashboard").hide();
         return this;
     },
     renderDropDownView: function (dropdownModel) {
@@ -63,16 +72,24 @@ const ReachabilityView = Backbone.View.extend({
         this.$el.find("#isochrones-layer").html(dropdownView.render().el);
     },
     createMapLayer: function (name) {
+        // returns the existing layer if already exists
         const newLayer = Radio.request("Map", "createLayerIfNotExists", name);
 
         newLayer.setMap(Radio.request("Map", "getMap"));
-        newLayer.setVisible(false);
+        newLayer.setVisible(true);
     },
-    clearMapLayer: function (name) {
-        const mapLayer = Radio.request("Map", "getLayerByName", name);
+    clearMapLayer: function () {
+        const mapLayer = Radio.request("Map", "getLayerByName", this.model.get("mapLayerName"));
 
         mapLayer.getSource().clear();
-        mapLayer.setVisible(false);
+        this.model.set("isochroneFeatures", []);
+        Radio.trigger("SelectDistrict", "revertBboxGeometry");
+    },
+    hideDashboardButton: function () {
+        this.$el.find("#show-in-dashboard").hide();
+    },
+    clearResult: function () {
+        this.$el.find("#result").empty();
     },
     clearInput: function () {
         this.model.set("coordinate", []);
@@ -101,19 +118,22 @@ const ReachabilityView = Backbone.View.extend({
 
                     mapLayer.getSource().clear();
                     mapLayer.getSource().addFeatures(newFeatures.reverse());
-                    mapLayer.setVisible(true);
                     this.model.set("isochroneFeatures", newFeatures);
-
-                    const layerlist = _.union(Radio.request("Parser", "getItemsByAttributes", { typ: "WFS", isBaseLayer: false }), Radio.request("Parser", "getItemsByAttributes", { typ: "GeoJSON", isBaseLayer: false })),
-                        polygonGeometry = this.model.get("isochroneFeatures")[this.model.get("steps") - 1].getGeometry(),
-                        geometryCollection = new GeometryCollection([polygonGeometry]);
-
-                    Radio.trigger("BboxSettor", "setBboxGeometryToLayer", layerlist, geometryCollection)
+                    this.setIsochroneAsBbox();
+                    this.clearResult();
+                    this.hideDashboardButton();
                 });
         }
         else {
             this.inputReminder();
         }
+    },
+    setIsochroneAsBbox: function () {
+        const layerlist = _.union(Radio.request("Parser", "getItemsByAttributes", { typ: "WFS", isBaseLayer: false }), Radio.request("Parser", "getItemsByAttributes", { typ: "GeoJSON", isBaseLayer: false })),
+            polygonGeometry = this.model.get("isochroneFeatures")[this.model.get("steps") - 1].getGeometry(),
+            geometryCollection = new GeometryCollection([polygonGeometry]);
+
+        Radio.trigger("BboxSettor", "setBboxGeometryToLayer", layerlist, geometryCollection);
     },
     styleFeatures: function (features) {
         for (let i = features.length - 1; i >= 0; i--) {
@@ -240,6 +260,28 @@ const ReachabilityView = Backbone.View.extend({
             kategorie: "alert-warning"
         });
     },
+    selectionReminder: function () {
+        Radio.trigger("Alert", "alert", {
+            text: "<strong>Please open at least one layer in Fachdaten, for example \"Sportstätten\"</strong>",
+            kategorie: "alert-warning"
+        });
+    },
+    updateResult: function () {
+        const visibleLayerModels = Radio.request("ModelList", "getModelsByAttributes", { typ: "WFS", isBaseLayer: false, isSelected: true }),
+            dataObj = { layerNames: [], features: {} };
+
+        if (visibleLayerModels.length > 0) {
+            _.each(visibleLayerModels, layerModel => {
+                dataObj.layerNames.push(layerModel.get("name"));
+                dataObj.features[layerModel.get("name")] = layerModel.get("layer").getSource().getFeatures();
+            });
+            this.$el.find("#result").html(this.dashboardTemplate(dataObj));
+            this.$el.find("#show-in-dashboard").show();
+        }
+        else {
+            this.selectionReminder();
+        }
+    },
     // show results in dashboard
     showInDashboard: function () {
         const visibleLayerModels = Radio.request("ModelList", "getModelsByAttributes", { typ: "WFS", isBaseLayer: false, isSelected: true }),
@@ -249,10 +291,11 @@ const ReachabilityView = Backbone.View.extend({
             dataObj.layerNames.push(layerModel.get("name"));
             dataObj.features[layerModel.get("name")] = layerModel.get("layer").getSource().getFeatures();
         });
+
         Radio.trigger("Dashboard", "destroyWidgetById", "reachability");
         Radio.trigger("Dashboard", "append", this.dashboardTemplate(dataObj), "#dashboard-containers", {
             id: "reachability",
-            name: "Erreichbarkeit",
+            name: "Erreichbarkeit ab einem Referenzpunkt",
             glyphicon: "glyphicon-road"
         });
     },
@@ -264,10 +307,10 @@ const ReachabilityView = Backbone.View.extend({
             this.$el.find("#legend").empty();
             for (let i = steps - 1; i >= 0; i--) {
                 this.$el.find("#legend").append(`
-                <svg width="20" height="20">
-                    <rect width="20"  height="20" style="fill:rgba(${200 - 100 * i}, ${100 * i}, 3, ${0.1 * (i + 1) + 0.3});stroke-width:.5;stroke:rgb(0,0,0)" />
+                <svg width="15" height="15">
+                    <circle cx="7.5"  cy="7.5" r="7.5" style="fill:rgba(${200 - 100 * i}, ${100 * i}, 3, ${0.1 * (i + 1) + 0.3});" />
                 </svg>
-                <span style="font-size: 20px;">${Number.isInteger(range * ((steps - i) / 3)) ? range * ((steps - i) / 3) : (range * ((steps - i) / 3)).toFixed(2)}  </span>
+                <span>${Number.isInteger(range * ((steps - i) / 3)) ? range * ((steps - i) / 3) : (range * ((steps - i) / 3)).toFixed(2)}  </span>
                 `);
             }
         }
@@ -275,10 +318,10 @@ const ReachabilityView = Backbone.View.extend({
             this.$el.find("#legend").empty();
             for (let i = steps - 1; i >= 0; i--) {
                 this.$el.find("#legend").append(`
-                <svg width="20" height="20">
-                    <circle cx="10" cy="10" r="10" style="fill:rgba(${200 - 100 * i}, ${100 * i}, 3, ${0.1 * i + 0.3});stroke-width:.5;stroke:rgb(0,0,0)" />
+                <svg width="15" height="15">
+                    <circle cx="7.5"  cy="7.5" r="7.5" style="fill:rgba(${200 - 100 * i}, ${100 * i}, 3, ${0.1 * i + 0.3});" />
                 </svg>
-                <span style="font-size: 20px;">0</span>
+                <span>0</span>
                 `);
             }
         }

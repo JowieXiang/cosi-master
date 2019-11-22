@@ -324,9 +324,9 @@ const DashboardTableModel = Tool.extend({
                 ratio[col][i][1] /= den[col][i][1];
             }
             const match = this.get("unsortedTable").find(distCol => distCol[this.get("sortKey")] === col);
-            console.log(ratio[col], col, match);
+
+            match[`${this.getAttrsForRatio()[0]} / ${this.getAttrsForRatio()[1]}`] = ratio[col];
         }
-        console.log(this.get("unsortedTable"));
 
         if (calcGroup) {
             calcGroup.values[`${this.getAttrsForRatio()[0]} / ${this.getAttrsForRatio()[1]}`] = ratio;
@@ -366,20 +366,26 @@ const DashboardTableModel = Tool.extend({
      */
     createChart (props, type, title) {
         let data, graph;
+        const svgParent = document.createElement("div");
+
+        svgParent.className = "svg-container";
+        // svgParent.setAttribute("style", `height: ${$(window).height() * 0.4}px; width: ${$(window).width() * 0.4}px; position: relative;`);
 
         if (type === "Linegraph") {
             data = this.getLineChartData(props);
 
             graph = Radio.request("GraphV2", "createGraph", {
                 graphType: type,
-                selector: document.createElement("div"),
+                graphTitle: title,
+                selector: svgParent,
                 scaleTypeX: "ordinal",
                 scaleTypeY: "linear",
                 data: data.data,
                 attrToShowArray: data.xAttrs.map(prop => {
                     return {
                         attrName: prop,
-                        attrClass: prop === "Durchschnitt" ? "average" : "district"
+                        attrClass: prop === "Durchschnitt" ? "average" : "district",
+                        attrColor: prop === "Durchschnitt" ? "#e74d10" : "rgb(8, 88, 158)"
                     };
                 }),
                 xAttr: "year",
@@ -407,7 +413,8 @@ const DashboardTableModel = Tool.extend({
                 height: $(window).height() * 0.4,
                 svgClass: "dashboard-graph-svg",
                 selectorTooltip: ".dashboard-tooltip",
-                hasLineLabel: true
+                hasLineLabel: true,
+                hasContextMenu: true
             });
         }
         else if (type === "BarGraph") {
@@ -415,7 +422,8 @@ const DashboardTableModel = Tool.extend({
 
             graph = Radio.request("GraphV2", "createGraph", {
                 graphType: type,
-                selector: document.createElement("div"),
+                graphTitle: title,
+                selector: svgParent,
                 scaleTypeX: "ordinal",
                 scaleTypeY: "linear",
                 data: data,
@@ -444,22 +452,31 @@ const DashboardTableModel = Tool.extend({
                 width: $(window).width() * 0.4,
                 height: $(window).height() * 0.4,
                 svgClass: "dashboard-graph-svg",
-                selectorTooltip: ".dashboard-tooltip"
+                selectorTooltip: ".dashboard-tooltip",
+                hasContextMenu: true
             });
         }
 
         Radio.trigger("Dashboard", "append", graph, "#dashboard-containers", {
             id: title,
             name: title,
-            glyphicon: "glyphicon-stats"
+            glyphicon: "glyphicon-stats",
+            width: $("#dashboard-containers").width() - 50 + "px",
+            scalable: true
         });
     },
     createCorrelation () {
+        var svgParent = document.createElement("div");
+
+        svgParent.className = "svg-container";
+        // svgParent.setAttribute("style", `height: ${$(window).height() * 0.4}px; width: ${$(window).width() * 0.4}px; position: relative;`);
+
         const attrsToShow = this.getAttrsForRatio(),
             data = this.getCorrelationChartData(this.getAttrsForRatio()),
             graph = Radio.request("GraphV2", "createGraph", {
                 graphType: "ScatterPlot",
-                selector: document.createElement("div"),
+                graphTitle: `Korrelation: ${attrsToShow[0]} (y) : ${attrsToShow[1]} (x)`,
+                selector: svgParent,
                 scaleTypeX: "linear",
                 scaleTypeY: "linear",
                 dynamicAxisStart: true,
@@ -491,12 +508,15 @@ const DashboardTableModel = Tool.extend({
                 height: $(window).height() * 0.4,
                 dotSize: 3,
                 svgClass: "dashboard-graph-svg",
-                selectorTooltip: ".dashboard-tooltip"
+                selectorTooltip: ".dashboard-tooltip",
+                hasContextMenu: true
             });
 
         Radio.trigger("Dashboard", "append", graph, "#dashboard-containers", {
             name: `Korrelation: ${attrsToShow[0]} (y) : ${attrsToShow[1]} (x)`,
-            glyphicon: "glyphicon-flash"
+            glyphicon: "glyphicon-flash",
+            width: $("#dashboard-containers").width() - 50 + "px",
+            scalable: true
         });
     },
     getBarChartData (props, year = "2018") {

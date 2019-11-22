@@ -7,7 +7,7 @@
             <td> <strong>Zeit (in min)</strong></td>
             <td></td>
             <td></td>
-
+            <td></td>
         </tr>
         <tr>
             <td><input class="form-control input-sm" title="range" id="coordinate" type="text" min="0">
@@ -36,18 +36,25 @@
                     <span class="glyphicon glyphicon-arrow-left"></span>
                 </div>
             </td>
+            <td>
+                <div id="clear" title="clear current result">
+                    <span class="glyphicon glyphicon-trash"></span>
+                </div>
+            </td>
         </tr>
     </table>
-    <br>
-    <button type="button" class="btn btn-lgv-grey measure-delete" id="create-isochrones">
-        <span class="glyphicon glyphicon-plus"></span>berechnen
-    </button>
-    <p> </p>
-    <button type="button" class="btn btn-lgv-grey measure-delete" id="show-in-dashboard">
-        show result in dashboard
-    </button>
-
     <h5><br /><strong>legend - Zeit (in min): </strong></h5>
     <div id="legend">
     </div>
+    <br />
+    <button type="button" class="btn btn-lgv-grey measure-delete" id="create-isochrones">
+        <span class="glyphicon glyphicon-plus"></span>berechnen
+    </button>
+    <button type="button" class="btn btn-lgv-grey measure-delete" id="show-result">
+        <span class="glyphicon glyphicon-th-list"></span>Einrichtungsabdeckung
+    </button>
+    <div id="result"></div>
+    <button type="button" class="btn btn-lgv-grey measure-delete" id="show-in-dashboard">
+        Im Dashboard anzeigen
+    </button>
 </div>

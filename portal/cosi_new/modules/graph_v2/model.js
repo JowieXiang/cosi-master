@@ -5,6 +5,7 @@ import {select, event} from "d3-selection";
 import "d3-transition";
 import * as d3 from "d3-array";
 import evaluate from "./eval";
+import ContextActions from "text-loader!./contextActions.html";
 
 const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
     defaults: {
@@ -55,6 +56,12 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
         }
         else if (graphConfig.graphType === "ScatterPlot") {
             this.createScatterPlot(graphConfig);
+        }
+
+        if (graphConfig.hasContextMenu) {
+            svg.on("mouseup", function () {
+                this.appendContextMenu(svg.select("svg").node(), graphConfig);
+            }.bind(this));
         }
 
         return svg;
@@ -275,7 +282,7 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
                     if (d % 1 === 0) {
                         return d.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
                     }
-                    return false;
+                    return d;
 
                 });
         }
@@ -317,9 +324,10 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
      * @param {Object} d3line D3 line object.
      * @param {String} tooltipDiv (optional)
      * @param {String} attrName (optional) name of Attr for hover
+     * @param {String} color (optional) color of the line
      * @returns {void}
      */
-    appendDataToSvg: function (svg, data, className, d3line, tooltipDiv = null, attrName = null) {
+    appendDataToSvg: function (svg, data, className, d3line, tooltipDiv = null, attrName = null, color = "rgb(8, 88, 158)") {
         var dataToAdd = data.filter(function (obj) {
             return obj.yAttrToShow !== "-";
         });
@@ -342,6 +350,9 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             .data([dataToAdd])
             .attr("class", className)
             .attr("d", d3line)
+            .attr("stroke", color)
+            .attr("stroke-width", "3px")
+            .attr("fill", "none")
             .on("mouseover", function () {
                 if (tooltipDiv) {
                     tooltipDiv.transition()
@@ -470,9 +481,10 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
      * @param {Selection} tooltipDiv Selection of the tooltip-div.
      * @param {Number} dotSize The size of the dots.
      * @param {String} className optional className for the dots.
+     * @param {String} color optional color for the dots
      * @returns {void}
      */
-    appendLinePointsToSvg: function (svg, data, scaleX, scaleY, scaleTypeX, xAttr, yAttrToShow, tooltipDiv, dotSize, className = null) {
+    appendLinePointsToSvg: function (svg, data, scaleX, scaleY, scaleTypeX, xAttr, yAttrToShow, tooltipDiv, dotSize, className = null, color = "rgb(8, 88, 158)") {
         var dat = data.filter(function (obj) {
                 return obj[yAttrToShow] !== "-";
             }),
@@ -501,6 +513,7 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             .attr("class", function (d) {
                 return d.class || className;
             })
+            .attr("fill", color)
             .attr("attrname", yAttrToShow)
             .attr("attrval", function (d) {
                 return d[yAttrToShow];
@@ -556,8 +569,8 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             .data(dataArray)
             .enter()
             .append("text")
-            .text(d => d.label)
-            .attr("y", d => scaleY(d.y))
+            .text(d => !isNaN(d.y) ? d.label : null)
+            .attr("y", d => !isNaN(d.y) ? scaleY(d.y) : 0)
             .attr("x", d => {
                 return scaleTypeX === "ordinal" ? scaleX(d.x) + (scaleX.bandwidth() / 2) + 20 : scaleX(d.x) + 20;
             });
@@ -575,12 +588,92 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
      */
     createSvg: function (selector, left, top, width, height, svgClass) {
         return select(selector).append("svg")
-            .attr("width", width)
-            .attr("height", height)
+            .attr("width", "100%")
+            .attr("height", "100%")
+            .attr("viewBox", `0 0 ${width + 20} ${height + 20}`)
             .attr("class", svgClass)
             .append("g")
             .attr("class", "graph")
             .attr("transform", "translate(" + left + "," + top + ")");
+    },
+
+    appendContextMenu: function (svg, graphConfig) {
+        const contextActions = $(_.template(ContextActions)()),
+            width = graphConfig.width,
+            height = graphConfig.height,
+            title = graphConfig.graphTitle;
+
+        // Download SVG
+        $(contextActions).find("li#downloadSvg").on("click", function () {
+            const blob = this.svgToBlob(svg),
+                url = URL.createObjectURL(blob);
+
+            this.download(url, `CoSI_Diagramm_${title}.svg`);
+        }.bind(this));
+
+        // Download PNG
+        $(contextActions).find("li#downloadPng").on("click", async function () {
+            const convertToPng = this.svgToPng(this.svgToBlob(svg), width * 2, height * 2),
+                pngUrl = await convertToPng;
+
+            this.download(pngUrl, `CoSI_Diagramm_${title}.png`);
+        }.bind(this));
+
+        Radio.trigger("ContextMenu", "setActions", contextActions, title, "glyphicon-stats");
+    },
+
+    svgToBlob (svg) {
+        const dupSvg = svg.cloneNode(true);
+
+        return new Blob([
+            new XMLSerializer().serializeToString(dupSvg)
+        ],
+        {type: "image/svg+xml;charset=utf-8"});
+    },
+
+    download (url, filename) {
+        var link = document.createElement("a");
+
+        if (link.download !== undefined) { // feature detection
+            // Browsers that support HTML5 download attribute
+
+            link.setAttribute("href", url);
+            link.setAttribute("download", filename);
+            link.style.visibility = "hidden";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    },
+
+    svgToPng (blob, width, height) {
+        return new Promise((res, rej) => {
+            try {
+                const domUrl = window.URL || window.webkitURL || window,
+                    url = domUrl.createObjectURL(blob),
+                    canvas = document.createElement("canvas"),
+                    img = new Image(),
+                    ctx = canvas.getContext("2d");
+
+                canvas.width = width;
+                canvas.height = height;
+                canvas.imageSmoothingEnabled = false;
+
+                ctx.font = "sans-serif";
+                ctx.fillStyle = "white";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                img.onload = () => {
+                    ctx.drawImage(img, 20, 20);
+                    domUrl.revokeObjectURL(url);
+                    res(canvas.toDataURL("image/png"));
+                };
+                img.src = url;
+            }
+            catch (e) {
+                rej(console.error(e));
+            }
+        });
     },
 
     /**
@@ -719,9 +812,9 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
         _.each(attrToShowArray, function (yAttrToShow) {
             if (typeof yAttrToShow === "object") {
                 valueLine = this.createValueLine(scaleX, scaleY, xAttr, yAttrToShow.attrName, scaleTypeX);
-                this.appendDataToSvg(svg, data, yAttrToShow.attrClass, valueLine, tooltipDiv, yAttrToShow.attrName, hasLineLabel);
+                this.appendDataToSvg(svg, data, yAttrToShow.attrClass, valueLine, tooltipDiv, yAttrToShow.attrName, yAttrToShow.attrColor);
                 // Add the scatterplot for each point in line
-                this.appendLinePointsToSvg(svg, data, scaleX, scaleY, scaleTypeX, xAttr, yAttrToShow.attrName, tooltipDiv, dotSize, yAttrToShow.attrClass);
+                this.appendLinePointsToSvg(svg, data, scaleX, scaleY, scaleTypeX, xAttr, yAttrToShow.attrName, tooltipDiv, dotSize, yAttrToShow.attrClass, yAttrToShow.attrColor);
             }
             else {
                 valueLine = this.createValueLine(scaleX, scaleY, xAttr, yAttrToShow, scaleTypeX);
@@ -855,11 +948,11 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
                 return x(d[xAttr]);
             })
             .attr("y", function (d) {
-                return y(d[attrToShowArray[0]]);
+                return !isNaN(d[attrToShowArray[0]]) ? y(d[attrToShowArray[0]]) : 0;
             })
             .attr("width", barWidth - 1)
             .attr("height", function (d) {
-                return height - y(d[attrToShowArray[0]]);
+                return !isNaN(d[attrToShowArray[0]]) ? height - y(d[attrToShowArray[0]]) : 0;
             })
             .on("mouseover", function () {
                 select(this);
@@ -949,7 +1042,7 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             this.appendDataToScatterPlot(svg, attrData.data, scaleX, scaleY, xAttr, refAttr, yAttrToShow, tooltipDiv, dotSize);
             // Add Regression-line and pearson correlation value
             this.appendRegressionLine(svg, attrData.data, regressionLine);
-            this.appendStats(svg, attrData.stats, width, height);
+            this.appendStats(svg, attrData.stats, yAxisLabel);
         }, this);
         // Add the Axis
         this.appendYAxisToSvg(svg, yAxis, yAxisLabel, height);
@@ -1041,19 +1134,23 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             .append("path")
             .data([data])
             .attr("class", "regression-line")
-            .attr("d", d3line);
+            .attr("d", d3line)
+            .attr("stroke", "#e74d10")
+            .attr("stroke-weight", "2px")
+            .attr("fill", "none");
     },
 
-    appendStats (svg, data, width, height) {
+    appendStats (svg, data, yAxisLabel) {
         svg.append("g")
             .attr("class", "graph-legend")
             .selectAll("text")
             .data(data)
             .enter()
             .append("text")
-            .attr("x", width)
+            .attr("font-size", yAxisLabel.fontSize || 12)
+            .attr("x", yAxisLabel.offset ? yAxisLabel.offset + 25 : 25)
             .attr("y", (d, i) => {
-                return i * 20;
+                return i * (yAxisLabel.fontSize + 5) || i * 17;
             })
             .text(d => {
                 return `${d.name}: ${d.val.toFixed(3).toLocaleString("de-DE")}`;
@@ -1154,8 +1251,30 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
                     .style("opacity", 0.9);
                 tooltipDiv.html(tooltipElement.get(0).outerHTML)
                     .attr("style", "background-color: buttonface; border-radius: 4px; text-align: center;")
-                    .style("right", (window.innerWidth - event.clientX - 25) + "px")
-                    .style("top", (event.clientY + 20) + "px");
+                    .style("right", () => {
+                        if (event.clientX + tooltipDiv.node().clientWidth + 25 >= window.innerWidth) {
+                            return (window.innerWidth - event.clientX + 25) + "px"
+                        }
+                        return false;
+                    })
+                    .style("left", () => {
+                        if (event.clientX + tooltipDiv.node().clientWidth + 25 < window.innerWidth) {
+                            return (event.clientX + 25) + "px"
+                        }
+                        return false;
+                    })
+                    .style("bottom", () => {
+                        if (event.clientY + tooltipDiv.node().clientHeight + 25 >= window.innerHeight) {
+                            return (window.innerHeight - event.clientY + 20) + "px"
+                        }
+                        return false;
+                    })
+                    .style("top", () => {
+                        if (event.clientY + tooltipDiv.node().clientHeight + 20 < window.innerHeight) {
+                            return (event.clientY + 20) + "px"
+                        }
+                        return false;
+                    });
             }, tooltipDiv)
             .on("mouseout", function () {
                 tooltipDiv.transition()

@@ -103,8 +103,6 @@ const featuresLoader = Backbone.Model.extend({
             }, this);
             Promise.all(featurePromiseList).then((featureList) => {
                 this.set(attribute, featureList.reduce((total, feature) => total.concat(feature), []));
-                console.info(this.get("statistischeGebiete"));
-
                 Radio.trigger("FeaturesLoader", "districtsLoaded", layerList);
                 Radio.trigger("Util", "hideLoader");
                 Radio.trigger("Alert", "alert:remove");

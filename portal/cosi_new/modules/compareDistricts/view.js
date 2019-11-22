@@ -1,4 +1,5 @@
 import template from "text-loader!./template.html";
+import "./style.less";
 import DistrictSelectorView from "./districtSelector/view";
 import LayerFilterSelectorModel from "./layerFilterSelector/model";
 import LayerFilterSelectorView from "./layerFilterSelector/view";
@@ -16,12 +17,14 @@ const CompareDistrictsView = Backbone.View.extend({
             this.filterLayerOptions();
         },
         "click .district-name": "zoomToDistrict",
-        "click #compare-district-help": "showHelp",
-        "click #set-selected-district": "changeDistrictSelection"
+        "click #help": "showHelp",
+        "click #set-selected-district": "changeDistrictSelection",
+        "click #show-in-dashboard": "showInDashboard"
     },
 
     initialize: function () {
         const channel = Radio.channel("CompareDistricts");
+
         this.listenTo(channel, {
             "closeFilter": this.addLayerOption,
             "selectRefDistrict": function () {
@@ -65,8 +68,9 @@ const CompareDistrictsView = Backbone.View.extend({
         this.setElement(document.getElementsByClassName("win-body")[0]);
         this.$el.html(this.template(attr));
         this.delegateEvents();
-        // disable the set selected district buttonw
-        this.$el.find("#set-selected-district").prop("disabled", true);
+        // disable buttons
+        this.$el.find("#show-in-dashboard").hide();
+        this.$el.find("#set-selected-district").hide();
         this.createSelectors();
 
         return this;
@@ -150,9 +154,13 @@ const CompareDistrictsView = Backbone.View.extend({
             domString += `<span class="name-tag district-name">${district} </span>`;
         });
         domString += "</p>";
-        this.$el.find("#compare-results").append("<p><strong>| Vergleichbare Gebiete</strong></p>");
+        this.$el.find("#compare-results").append("<p><strong>Vergleichbare Gebiete: </strong></p>");
         this.$el.find("#compare-results").append(domString);
-        this.$el.find("#set-selected-district").prop("disabled", false);
+        if (comparableDistricts.length > 0) {
+            this.$el.find("#set-selected-district").show();
+            this.$el.find("#show-in-dashboard").show();
+
+        }
     },
     addOneToLayerFilterList: function (model) {
         const newItem = { layerId: model.get("layerInfo").layerId, filter: model.get("filter"), districtInfo: model.get("districtInfo") },
@@ -205,7 +213,8 @@ const CompareDistrictsView = Backbone.View.extend({
         }
         else {
             this.$el.find("#compare-results").empty();
-            this.$el.find("#set-selected-district").prop("disabled", true);
+            this.$el.find("#show-in-dashboard").hide();
+            this.$el.find("#set-selected-district").hide();
             this.clearMapLayer();
         }
     },
@@ -298,6 +307,20 @@ const CompareDistrictsView = Backbone.View.extend({
             selectedFeatures = featureCollection.filter(feature => _.contains(this.model.get("comparableFeaturesNames"), feature.getProperties()[selector]));
 
         Radio.request("SelectDistrict", "setSelectedDistrictsToFeatures", selectedFeatures);
+    },
+    showInDashboard: function () {
+        let domString = "<p><strong>Vergleichbare Gebiete: </strong></p><p>";
+
+        _.each(this.model.get("comparableFeaturesNames"), district => {
+            domString += `<span class="name-tag district-name">${district} </span>`;
+        });
+        domString += "</p>";
+        Radio.trigger("Dashboard", "destroyWidgetById", "compareDistricts");
+        Radio.trigger("Dashboard", "append", domString, "#dashboard-containers", {
+            id: "compareDistricts",
+            name: "Vergleichbare Gebiete ermitteln",
+            glyphicon: "glyphicon-screenshot"
+        });
     }
 });
 
