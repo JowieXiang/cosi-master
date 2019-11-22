@@ -8,11 +8,11 @@ import SaveSelectionCosiView from "./saveSelection/view";
 import InfoScreenView from "./infoScreen/view";
 import TimeSliderView from "./timeSlider/view";
 import CalculateRatioView from "./calculateRatio/selectView";
-import ReachabilityView from "./reachability/view";
-import ServiceCoverageView from "./serviceCoverage/view";
+import ReachabilityFromPointView from "./reachabilityFromPoint/view";
+import ReachabilityInAreaView from "./reachabilityInArea/view";
 import PrintView from "../../../modules/tools/print/view";
 import GraphModel from "./graph_v2/model";
-import ReachabilityAnalysisView from "./reachabiliyAnalysis/view";
+import ReachabilitySelectView from "./reachabilitySelect/view";
 import {storageListener, updateFromStorage, setupStorage} from "./storage";
 import CompareDistrictsView from "./compareDistricts/view";
 
@@ -41,9 +41,9 @@ function initializeCosi () {
 
         Radio.trigger("ModelList", "addModelsAndUpdate", Object.values(tools));
         new CalculateRatioView({model: tools.calculateRatio});
-        new ReachabilityAnalysisView({model: tools.reachabilityAnalysis});
-        new ReachabilityView({model: tools.reachability});
-        new ServiceCoverageView({model: tools.serviceCoverage});
+        new ReachabilitySelectView({model: tools.reachabilitySelect});
+        new ReachabilityFromPointView({model: tools.reachabilityFromPoint});
+        new ReachabilityInAreaView({model: tools.reachabilityInArea});
         new ColorCodeMapView({model: tools.colorCodeMap});
         new SaveSelectionCosiView({model: tools.saveSelectionCosi});
         new SelectDistrictView({model: tools.selectDistrict});

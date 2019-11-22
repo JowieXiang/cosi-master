@@ -2,7 +2,7 @@ import Tool from "../../../../modules/core/modelList/tool/model";
 import DropdownModel from "../../../../modules/snippets/dropdown/model";
 import * as Proj from "ol/proj.js";
 
-const ServiceCoverage = Tool.extend({
+const ReachabilityInAreaModel = Tool.extend(/** @lends ReachabilityInAreaModel.prototype */{
     defaults: _.extend({}, Tool.prototype.defaults, {
         coordinates: [],
         pathType: "",
@@ -10,8 +10,21 @@ const ServiceCoverage = Tool.extend({
         steps: 3, // step of subIsochrones
         isochroneFeatures: [], // isochrone features
         dropDownModel: {},
-        mapLayerName: "service-coverage"
+        mapLayerName: "reachability-in-area"
     }),
+    /**
+    * @class ReachabilityInAreaModel
+    * @extends Tool
+    * @memberof Tools.Reachability.ReachabilityInArea
+    * @constructs
+    * @property {Array} coordinates origin coordinates (in "EPSG:4326")
+    * @property {string} pathType type of transportation
+    * @property {number} range time of traveling (in seconds)
+    * @property {number} steps how many times to subdivide the time of traveling
+    * @property {Array} isochroneFeatures calculation results as openlayer features
+    * @property {object} dropDownModel dropdown menu model
+    * @property {Array} mapLayerName="reachability-in-area" name of the openlayers layer that contains the result features
+    */
     initialize: function () {
         this.superInitialize();
     },
@@ -60,4 +73,4 @@ const ServiceCoverage = Tool.extend({
 
 });
 
-export default ServiceCoverage;
+export default ReachabilityInAreaModel;

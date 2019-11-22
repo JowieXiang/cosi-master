@@ -7,7 +7,7 @@ import GeoJSON from "ol/format/GeoJSON";
 import InfoTemplate from "text-loader!./info.html";
 import union from "turf-union";
 
-const ServiceCoverageView = Backbone.View.extend({
+const ReachabilityInAreaView = Backbone.View.extend({
     events: {
         "click #create-isochrones": "createIsochrones",
         "click button#Submit": "checkIfSelected",
@@ -282,4 +282,4 @@ const ServiceCoverageView = Backbone.View.extend({
     }
 });
 
-export default ServiceCoverageView;
+export default ReachabilityInAreaView;

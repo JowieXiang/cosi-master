@@ -1,14 +1,21 @@
 import Tool from "../../../../modules/core/modelList/tool/model";
 import DropdownModel from "../../../../modules/snippets/dropdown/model";
 
-const ReachabilityAnalysis = Tool.extend({
+const SelectModel = Tool.extend(/** @lends SelectModel.prototype */{
     defaults: _.extend({}, Tool.prototype.defaults, {
         dropDownModel: {},
-        toolList: ["Erreichbarkeit ab einem Referenzpunkt", "Erreichbarket im Gebiet"]
+        modes: ["Erreichbarkeit ab einem Referenzpunkt", "Erreichbarket im Gebiet"]
     }),
+    /**
+    * @class SelectModel
+    * @extends Tool
+    * @memberof Tools.Reachability
+    * @constructs
+    * @property {object} dropDownModel dropdown menu model
+    * @property {Array} modes=["Erreichbarkeit ab einem Referenzpunkt", "Erreichbarket im Gebiet"] two modes of this function
+    */
     initialize: function () {
         this.superInitialize();
-
     },
     /**
      * sets the selection list for the time slider
@@ -19,7 +26,7 @@ const ReachabilityAnalysis = Tool.extend({
         const dropdownModel = new DropdownModel({
             name: "Thema",
             type: "string",
-            values: this.get("toolList"),
+            values: this.get("modes"),
             snippetType: "dropdown",
             isMultiple: false,
             isGrouped: false,
@@ -42,4 +49,4 @@ const ReachabilityAnalysis = Tool.extend({
     }
 });
 
-export default ReachabilityAnalysis;
+export default SelectModel;
