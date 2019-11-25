@@ -46,6 +46,7 @@ const ReachabilityFromPointView = Backbone.View.extend({
                     Radio.trigger("SelectDistrict", "revertBboxGeometry");
                     this.clearInput();
                     Radio.trigger("MapMarker", "hideMarker");
+                    Radio.trigger("Alert", "alert:remove");
                 }
             },
             "change:coordinate": function (model, value) {
