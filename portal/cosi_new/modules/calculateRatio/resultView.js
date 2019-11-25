@@ -68,9 +68,11 @@ const ResultView = Backbone.View.extend({
         });
     },
     pushToDashboard: function () {
-        Radio.trigger("Dashboard", "append", this, "#dashboard-containers", {
+        Radio.trigger("Dashboard", "append", this.$el, "#dashboard-containers", {
             name: `Angebotsdeckung: ${this.model.getNumerators().join(", ")} : ${this.model.getDenominators().join(", ")}`,
-            glyphicon: "glyphicon-tasks"
+            glyphicon: "glyphicon-tasks",
+            width: "full",
+            scalable: true
         });
     }
 });

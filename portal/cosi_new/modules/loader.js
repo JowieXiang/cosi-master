@@ -83,7 +83,6 @@ function initializeCosi () {
     }
 
     Radio.trigger("General", "loaded");
-    tools.selectDistrict.set("isActive", true);
     addInfoButtons();
 }
 

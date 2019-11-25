@@ -17,7 +17,7 @@
                                             <ul class="list-group list-group-flush">
                                             <% group.values[val][dist].forEach(function (val) { %>
                                                     <li class="list-group-item nowrap">
-                                                            <span class="val"><%= isNaN(val[1]) ? val[1] : Number.isInteger(parseFloat(val[1])) ? parseFloat(val[1]) : parseFloat(val[1]).toFixed(2) %></span>
+                                                            <span class="val"><%= isNaN(val[1]) ? val[1] : Number.isInteger(parseFloat(val[1])) ? parseFloat(val[1]).toLocaleString('de-DE') : parseFloat(val[1]).toLocaleString('de-DE') %></span>
                                                             <small class="year">(<%= val[0] %>)</small>
                                                     </li>
                                             <% }); %>

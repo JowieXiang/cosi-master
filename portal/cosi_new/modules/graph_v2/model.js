@@ -608,15 +608,25 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             const blob = this.svgToBlob(svg),
                 url = URL.createObjectURL(blob);
 
-            this.download(url, `CoSI_Diagramm_${title}.svg`);
+            if (navigator.msSaveBlob) { // IE 10+
+                navigator.msSaveBlob(blob, `CoSI_Diagramm_${title}.svg`);
+            }
+            else {
+                this.download(url, `CoSI_Diagramm_${title}.svg`);
+            }
         }.bind(this));
 
         // Download PNG
         $(contextActions).find("li#downloadPng").on("click", async function () {
             const convertToPng = this.svgToPng(this.svgToBlob(svg), width * 2, height * 2),
-                pngUrl = await convertToPng;
+                png = await convertToPng;
 
-            this.download(pngUrl, `CoSI_Diagramm_${title}.png`);
+            if (navigator.msSaveBlob) { // IE 10+
+                navigator.msSaveBlob(png.blob, `CoSI_Diagramm_${title}.png`);
+            }
+            else {
+                this.download(png.url, `CoSI_Diagramm_${title}.png`);
+            }
         }.bind(this));
 
         Radio.trigger("ContextMenu", "setActions", contextActions, title, "glyphicon-stats");
@@ -666,7 +676,12 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
                 img.onload = () => {
                     ctx.drawImage(img, 20, 20);
                     domUrl.revokeObjectURL(url);
-                    res(canvas.toDataURL("image/png"));
+                    canvas.toBlob((newBlob) => {
+                        res({
+                            url: canvas.toDataURL("image/png"),
+                            blob: newBlob
+                        });
+                    });
                 };
                 img.src = url;
             }
