@@ -1,11 +1,20 @@
 import DropdownModel from "../../../../../modules/snippets/dropdown/model";
 
-const DistrictSelectorModel = Backbone.Model.extend({
+const DistrictSelectorModel = Backbone.Model.extend(/** @lends DistrictSelectorModel.prototype */{
     defaults: {
         districtNames: [], // all select options (vector layers in the map)
         selectedDistrict: "Leeren", // selected option
-        dropDownModel: undefined
+        dropDownModel: {}
     },
+    /**
+     * @class DistrictSelectorModel
+     * @extends Backbone.Model
+     * @memberof Tools.CompareDistricts.DistrictSelector
+     * @constructs
+     * @property {Array} districtNames list of districtname options
+     * @property {string} selectedDistrict="Leeren" selected districtname
+     * @property {object} dropDownModel dropdown menu model
+     */
     initialize: function () {
         this.initializeDistrictNames();
     },

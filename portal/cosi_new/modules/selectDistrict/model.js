@@ -6,11 +6,11 @@ import * as Extent from "ol/extent";
 import * as Polygon from "ol/geom/Polygon";
 import SaveSelectionCosi from "../saveSelection/model";
 
-const SelectDistrict = Tool.extend({
+const SelectDistrictModel = Tool.extend(/** @lends SelectDistrictModel.prototype */{
     defaults: _.extend({}, Tool.prototype.defaults, {
         id: "selectDistrict",
         selectedDistricts: [],
-        districtLayer: [], // e.g.  {name: "Statistische Gebiete", selector: "statgebiet", layerIds:[]}
+        districtLayer: [], // e.g.  {name:  "Statistische Gebiete", selector: "statgebiet", layerIds:[]}
         districtLayerNames: ["Statistische Gebiete", "Stadtteile"],
         districtLayerIds: ["6071", "1694"],
         districtLayersLoaded: [],
@@ -41,6 +41,28 @@ const SelectDistrict = Tool.extend({
         channel: Radio.channel("SelectDistrict"),
         bboxGeometry: null
     }),
+    /**
+    * @class SelectDistrictModel
+    * @extends Tool
+    * @memberof Tools.SelectDistrict
+    * @constructs
+    * @property {string} id="selectDistrict"
+    * @property {Array} selectedDistricts list of selected areas as OpenLayers feature
+    * @property {Array} districtLayer data mapping. e.g.  {name: "Statistische Gebiete", selector: "statgebiet", layerIds:[]}
+    * @property {Array} districtLayerNames=["Statistische Gebiete", "Stadtteile"] data mapping
+    * @property {Array} districtLayerIds=["6071", "1694"]
+    * @property {Array} districtLayersLoaded TO DO
+    * @property {number} buffer=0 bounding box buffer
+    * @property {bool} isReady=false TODO
+    * @property {object} scopeDropdownModel drop down model for scope selection
+    * @property {string} activeScope e.g. "Stadtteile" or "Statistische Gebiete"
+    * @property {string} activeSelector  e.g. "stadtteil" or "statgebiet"
+    * @property {bool} deactivateGFI=false
+    * @property {Style} defaultStyle OpenLayer's default feature style
+    * @property {Style} selectedStyle selected features style
+    * @property {Radio.channel} channel
+    * @property {GeometryCollection} bboxGeometry bounding box geometry
+    */
     initialize: function () {
         this.superInitialize();
         this.getUrlQuery();
@@ -388,4 +410,4 @@ const SelectDistrict = Tool.extend({
     }
 });
 
-export default SelectDistrict;
+export default SelectDistrictModel;

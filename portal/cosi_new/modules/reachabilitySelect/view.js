@@ -2,7 +2,13 @@ import "./style.less";
 import template from "text-loader!./template.html";
 import SnippetDropdownView from "../../../../modules/snippets/dropdown/view";
 
-const SelectView = Backbone.View.extend({
+const SelectView = Backbone.View.extend(/** @lends SelectView.prototype */{
+    /**
+     * @class SelectView
+     * @extends Backbone.View
+     * @memberof Tools.Reachability
+     * @constructs
+     */
     initialize: function () {
         this.listenTo(this.model, {
             "change:isActive": function (model, value) {
