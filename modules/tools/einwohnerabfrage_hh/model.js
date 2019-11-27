@@ -101,15 +101,15 @@ const EinwohnerabfrageModel = Tool.extend(/** @lends EinwohnerabfrageModel.proto
         this.setDropDownSnippet(new GraphicalSelectModel({id: this.id}));
         this.listenTo(Radio.channel("GraphicalSelect"), {
             "onDrawEnd": function (geoJson, setActive = false) {
-                console.log("yah");
                 if (setActive) {
+                    this.collection.setActiveToolsToFalse(this);
                     this.setIsActive(true);
                 }
                 if (this.get("isActive")) {
                     this.makeRequest(geoJson);
                 }
             }
-        });
+        }, this);
 
         this.setMetaDataLink(Radio.request("RestReader", "getServiceById", this.get("populationReqServiceId")).get("url"));
     },
@@ -332,7 +332,6 @@ const EinwohnerabfrageModel = Tool.extend(/** @lends EinwohnerabfrageModel.proto
      * @returns {void}
      */
     makeRequest: function (geoJson) {
-        console.log(geoJson);
         this.setDataReceived(false);
         this.setRequesting(true);
         this.trigger("renderResult");

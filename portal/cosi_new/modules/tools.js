@@ -29,7 +29,8 @@ const general = {
             name: "Dashboard",
             id: "dashboard",
             glyphicon: "glyphicon-dashboard",
-            renderToWindow: false
+            renderToWindow: false,
+            keepOtherToolsOpened: true
         }),
         dashboardWidgetHandler: new DashboardWidgetHandler()
     },

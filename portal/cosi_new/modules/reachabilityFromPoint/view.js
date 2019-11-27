@@ -66,6 +66,7 @@ const ReachabilityFromPointView = Backbone.View.extend({
         this.renderDropDownView(this.model.get("dropDownModel"));
         this.renderLegend();
         this.$el.find("#show-in-dashboard").hide();
+        this.$el.find("#hh-request").hide();
         return this;
     },
     renderDropDownView: function (dropdownModel) {
@@ -91,6 +92,7 @@ const ReachabilityFromPointView = Backbone.View.extend({
     },
     hideDashboardButton: function () {
         this.$el.find("#show-in-dashboard").hide();
+        this.$el.find("#hh-request").hide();
     },
     clearResult: function () {
         this.$el.find("#result").empty();
@@ -127,6 +129,7 @@ const ReachabilityFromPointView = Backbone.View.extend({
                     this.setIsochroneAsBbox();
                     this.clearResult();
                     this.hideDashboardButton();
+                    this.$el.find("#hh-request").show();
                 });
         }
         else {
