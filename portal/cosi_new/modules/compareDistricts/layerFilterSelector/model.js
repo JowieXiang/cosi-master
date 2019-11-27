@@ -82,7 +82,7 @@ const LayerFilterSelectorModel = Backbone.Model.extend(/** @lends LayerFilterSel
         const selectedObj = this.get("dropDownModel").attributes.values.filter(item => item.value === value)[0],
             layerModel = getLayerWhere({ featureType: "v_hh_statistik_" + selectedObj.category.toLowerCase() });
 
-        this.set("selectedLayer", { layerName: layerModel.name, layerId: layerModel.id });
+        this.set("selectedLayer", {layerName: layerModel.name, layerId: layerModel.id, layerText: selectedObj});
     },
     setLayerOptions: function (value) {
         this.set("layerOptions", value);

@@ -1,4 +1,5 @@
 import Tool from "../../../../modules/core/modelList/tool/model";
+import ExportButtonModel from "../../../../modules/snippets/exportButton/model";
 
 const DashboardModel = Tool.extend({
     defaults: _.extend({}, Tool.prototype.defaults, {
@@ -6,7 +7,8 @@ const DashboardModel = Tool.extend({
         name: "",
         glyphicon: "",
         width: "60%",
-        infoScreenOpen: false
+        infoScreenOpen: false,
+        exportDashboardButton: {}
     }),
 
     /**
@@ -18,8 +20,14 @@ const DashboardModel = Tool.extend({
 
     initialize: function () {
         this.superInitialize();
-
         const channel = Radio.channel("Dashboard");
+
+        this.set("exportDashboardButton", new ExportButtonModel({
+            tag: "Dashboard als PDF speichern",
+            rawData: ".dashboard",
+            filename: "CoSI-Dashboard-Export",
+            fileExtension: "doc"
+        }));
 
         channel.reply({
             "dashboardOpen": function () {

@@ -10,13 +10,11 @@ const ResultView = Backbone.View.extend({
     model: {},
     template: _.template(ResultTemplate),
     textStyle: new Style({}),
-    render: function (isDashboard = true) {
+    render: function () {
         this.exportButtonView = new ExportButtonView({model: this.model.get("exportButtonModel")});
 
         const attr = this.model.toJSON(),
             results = this.model.getResults();
-
-        attr.isDashboard = isDashboard;
 
         this.$el.html(this.template(attr));
         this.$el.find("#export-button").append(this.exportButtonView.render().el);
@@ -47,11 +45,11 @@ const ResultView = Backbone.View.extend({
         _.each(features, (feature) => {
             feature.setStyle(new Style({
                 fill: new Fill({
-                    color: "rgba(255, 255, 255, 0)"
+                    color: colorScale.scale(results[feature.getProperties()[selector]].ratio).replace("rgb", "rgba").replace(")", ", 0.8)")
                 }),
                 stroke: new Stroke({
                     color: colorScale.scale(results[feature.getProperties()[selector]].ratio),
-                    width: 5
+                    width: 3
                 }),
                 text: new Text({
                     font: "16px Calibri,sans-serif",
@@ -59,8 +57,8 @@ const ResultView = Backbone.View.extend({
                         color: "#FFF"
                     }),
                     stroke: new Stroke({
-                        color: colorScale.scale(results[feature.getProperties()[selector]].ratio),
-                        width: 3
+                        color: "#000",
+                        width: 2
                     }),
                     text: results[feature.getProperties()[selector]].ratio.toFixed(2)
                 })
@@ -68,6 +66,7 @@ const ResultView = Backbone.View.extend({
         });
     },
     pushToDashboard: function () {
+        this.$el.find("#push-dashboard-button").empty();
         Radio.trigger("Dashboard", "append", this.$el, "#dashboard-containers", {
             name: `Angebotsdeckung: ${this.model.getNumerators().join(", ")} : ${this.model.getDenominators().join(", ")}`,
             glyphicon: "glyphicon-tasks",

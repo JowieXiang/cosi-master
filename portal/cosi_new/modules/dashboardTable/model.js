@@ -39,13 +39,13 @@ const DashboardTableModel = Tool.extend({
         this.set("exportButtonModel", new ExportButtonModel({
             tag: "Als CSV herunterladen",
             rawData: [],
-            filename: "CoSI-Dashboard-Export",
+            filename: "CoSI-Dashboard-Datenblatt",
             fileExtension: "csv"
         }));
         this.set("exportFilteredButtonModel", new ExportButtonModel({
             tag: "Als CSV herunterladen (gefiltert)",
             rawData: [],
-            filename: "CoSI-Dashboard-Export-(gefiltert)",
+            filename: "CoSI-Dashboard-Datenblatt-(gefiltert)",
             fileExtension: "csv"
         }));
 

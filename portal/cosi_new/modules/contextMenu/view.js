@@ -33,7 +33,8 @@ const ContextMenuView = Backbone.View.extend({
         return this;
     },
     addContextMenu (element) {
-        element.onmouseup = this.mouseButtonHandler.bind(this);
+        element.addEventListener("mouseup", this.mouseButtonHandler.bind(this));
+        element.addEventListener("touchstart", this.touchHandler.bind(this));
     },
     setActions (element, title = "Aktionen", glyphicon = "glyphicon-wrench") {
         this.$el.find("#actions").html(element);
@@ -51,6 +52,19 @@ const ContextMenuView = Backbone.View.extend({
                 this.openContextMenu(evt);
                 break;
             default:
+                break;
+        }
+    },
+    touchHandler (evt) {
+        const touchCount = evt.touches.length;
+        console.log(evt, touchCount);
+
+        switch (touchCount) {
+            case 2:
+                this.openContextMenu(evt.touches[0]);
+                break;
+            default:
+                this.closeContextMenu();
                 break;
         }
     },

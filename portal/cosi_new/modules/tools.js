@@ -29,7 +29,8 @@ const general = {
             name: "Dashboard",
             id: "dashboard",
             glyphicon: "glyphicon-dashboard",
-            renderToWindow: false
+            renderToWindow: false,
+            keepOtherToolsOpened: true
         }),
         dashboardWidgetHandler: new DashboardWidgetHandler()
     },
@@ -73,7 +74,7 @@ const general = {
             parentId: "tools",
             type: "tool",
             id: "calculateRatio",
-            name: "Angebotsdeckung ermitteln",
+            name: "Versorgungsanalyse",
             glyphicon: "glyphicon-tasks",
             modifierInfoText: "<h3>Gewichtung:</h3><p>Hiermit können Sie eine beliebige Gewichtung für die Berechnung der Angebots/Zielgruppen-Verhältnisse festlegen um die Deckung der Nachfrage zu überprüfen.<br />z.B.: 'Wieviele Qudaratmeter pädagogische Fläche benötigt ein Kitakind?'<br />Sie können zwischen 'geteilt' ('/') und 'multipliziert' ('x') wählen.</p><p><strong>Der eingegebene Wert entspricht keinem offiziellen, rechtlich bindenden Schlüssel, sonder dient rein der explorativen Analyse.</strong></p>"
         }),

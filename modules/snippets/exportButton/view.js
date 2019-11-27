@@ -1,10 +1,14 @@
 import Template from "text-loader!./template.html";
+import JsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
 const ExportButtonView = Backbone.View.extend({
     events: {
-        "click .btn": "download"
+        "click .btn": "export"
     },
     initialize: function () {
+        window.html2canvas = html2canvas;
+
         this.listenTo(this.model, {
             "render": this.render
         });
@@ -19,6 +23,14 @@ const ExportButtonView = Backbone.View.extend({
         this.delegateEvents();
 
         return this;
+    },
+    export: function () {
+        if (this.model.get("data") === "printHtml") {
+            this.print();
+        }
+        else {
+            this.download();
+        }
     },
     download: function () {
         const blob = this.model.get("data");
@@ -41,6 +53,16 @@ const ExportButtonView = Backbone.View.extend({
                 document.body.removeChild(link);
             }
         }
+    },
+    print: function () {
+        const pdf = new JsPDF(),
+            html = document.querySelector(this.model.get("rawData"));
+
+        pdf.html(html, {
+            callback: function () {
+                pdf.save();
+            }
+        });
     }
 });
 

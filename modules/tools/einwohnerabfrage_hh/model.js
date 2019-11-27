@@ -51,6 +51,7 @@ const EinwohnerabfrageModel = Tool.extend(/** @lends EinwohnerabfrageModel.proto
      * @listens Tools.Einwohnerabfrage_hh#ChangeIsActive
      * @listens CswParser#RadioTriggerCswParserFetchedMetaData
      * @listens Core#RadioTriggerModelListUpdateVisibleInMapList
+     * @listens GraphicalSelect#RadioTriggerOnDrawEnd
      * @fires RestReader#RadioRequestRestReaderGetServiceById
      * @fires Tools.Einwohnerabfrage_hh#RenderResult
      * @fires Alerting#RadioTriggerAlertAlert
@@ -99,12 +100,16 @@ const EinwohnerabfrageModel = Tool.extend(/** @lends EinwohnerabfrageModel.proto
         this.on("change:isActive", this.handleCswRequests, this);
         this.setDropDownSnippet(new GraphicalSelectModel({id: this.id}));
         this.listenTo(Radio.channel("GraphicalSelect"), {
-            "onDrawEnd": function (geoJson) {
+            "onDrawEnd": function (geoJson, setActive = false) {
+                if (setActive) {
+                    this.collection.setActiveToolsToFalse(this);
+                    this.setIsActive(true);
+                }
                 if (this.get("isActive")) {
                     this.makeRequest(geoJson);
                 }
             }
-        });
+        }, this);
 
         this.setMetaDataLink(Radio.request("RestReader", "getServiceById", this.get("populationReqServiceId")).get("url"));
     },

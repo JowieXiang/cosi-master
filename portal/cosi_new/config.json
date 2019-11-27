@@ -159,6 +159,10 @@
               }
             ]
           },
+          "einwohnerabfrage": {
+            "name": "Einwohnerabfrage",
+            "glyphicon": "glyphicon-user"
+          },
           "measure": {
             "name": "Strecke / Fläche messen",
             "glyphicon": "glyphicon-resize-full"
@@ -360,6 +364,7 @@
               "styleId": "8712",
               "styleField": "kapitelbezeichnung",
               "searchField": "schulname",
+              "isFacility": true,
               "mouseHoverField": [
                 "schulname",
                 "kapitelbezeichnung"
