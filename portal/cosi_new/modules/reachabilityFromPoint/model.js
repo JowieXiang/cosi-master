@@ -2,7 +2,7 @@ import Tool from "../../../../modules/core/modelList/tool/model";
 import DropdownModel from "../../../../modules/snippets/dropdown/model";
 import {getLayerWhere} from "masterportalAPI/src/rawLayerList";
 
-const Reachability = Tool.extend({
+const ReachabilityFromPointModel = Tool.extend(/** @lends ReachabilityFromPointModel.prototype */{
     defaults: _.extend({}, Tool.prototype.defaults, {
         coordinate: [],
         pathType: "",
@@ -10,8 +10,21 @@ const Reachability = Tool.extend({
         steps: 3, // step of subIsochrones
         isochroneFeatures: [], // isochrone features
         dropDownModel: {},
-        mapLayerName: "reachability"
+        mapLayerName: "reachability-from-point"
     }),
+    /**
+    * @class ReachabilityFromPointModel
+    * @extends Tool
+    * @memberof Tools.Reachability.ReachabilityFromPoint
+    * @constructs
+    * @property {Array} coordinate origin coordinate (in "EPSG:4326")
+    * @property {string} pathType type of transportation
+    * @property {number} range time of traveling (in seconds)
+    * @property {number} steps how many times to subdivide the time of traveling
+    * @property {Array} isochroneFeatures calculation results as openlayer features
+    * @property {object} dropDownModel dropdown menu model
+    * @property {Array} mapLayerName="reachability-from-point" name of the openlayers layer that contains the result features
+    */
     initialize: function () {
         this.superInitialize();
         const layerList = _.union(Radio.request("Parser", "getItemsByAttributes", {typ: "WFS", isBaseLayer: false}), Radio.request("Parser", "getItemsByAttributes", {typ: "GeoJSON", isBaseLayer: false})),
@@ -65,4 +78,4 @@ const Reachability = Tool.extend({
 
 });
 
-export default Reachability;
+export default ReachabilityFromPointModel;

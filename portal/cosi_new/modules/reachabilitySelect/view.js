@@ -2,7 +2,7 @@ import "./style.less";
 import template from "text-loader!./template.html";
 import SnippetDropdownView from "../../../../modules/snippets/dropdown/view";
 
-const ReachabilityAnalysisView = Backbone.View.extend({
+const SelectView = Backbone.View.extend({
     initialize: function () {
         this.listenTo(this.model, {
             "change:isActive": function (model, value) {
@@ -29,4 +29,4 @@ const ReachabilityAnalysisView = Backbone.View.extend({
     }
 });
 
-export default ReachabilityAnalysisView;
+export default SelectView;

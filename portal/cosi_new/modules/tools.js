@@ -7,11 +7,11 @@ import DashboardWidgetHandler from "./dashboardWidget/handler";
 import SelectDistrict from "./selectDistrict/model";
 import SaveSelectionCosi from "./saveSelection/model";
 import InfoScreenHandler from "./infoScreen/infoScreenHandler/model";
-import Reachability from "./reachability/model";
-import ServiceCoverage from "./serviceCoverage/model";
+import ReachabilityFromPoint from "./reachabilityFromPoint/model";
+import ReachabilityInArea from "./reachabilityInArea/model";
 import OpenRouteService from "./openRouteService/model";
 import CalculateRatio from "./calculateRatio/model";
-import ReachabilityAnalysis from "./reachabiliyAnalysis/model";
+import ReachabilitySelect from "./reachabilitySelect/model";
 import CompareDistricts from "./compareDistricts/model";
 
 new FeaturesLoader();
@@ -77,14 +77,14 @@ const general = {
             glyphicon: "glyphicon-tasks",
             modifierInfoText: "<h3>Gewichtung:</h3><p>Hiermit können Sie eine beliebige Gewichtung für die Berechnung der Angebots/Zielgruppen-Verhältnisse festlegen um die Deckung der Nachfrage zu überprüfen.<br />z.B.: 'Wieviele Qudaratmeter pädagogische Fläche benötigt ein Kitakind?'<br />Sie können zwischen 'geteilt' ('/') und 'multipliziert' ('x') wählen.</p><p><strong>Der eingegebene Wert entspricht keinem offiziellen, rechtlich bindenden Schlüssel, sonder dient rein der explorativen Analyse.</strong></p>"
         }),
-        reachabilityAnalysis: new ReachabilityAnalysis({
-            id: "reachabilityAnalysis",
+        reachabilitySelect: new ReachabilitySelect({
+            id: "reachabilitySelect",
             parentId: "tools",
             type: "tool",
             name: "Erreichbarkeitsanalyse",
             glyphicon: "glyphicon-road"
         }),
-        reachability: new Reachability({
+        reachabilityFromPoint: new ReachabilityFromPoint({
             id: "reachability",
             parentId: "tools",
             type: "tool",
@@ -92,8 +92,8 @@ const general = {
             name: "Erreichbarkeit ab einem Referenzpunkt",
             glyphicon: "glyphicon-road"
         }),
-        serviceCoverage: new ServiceCoverage({
-            id: "serviceCoverage",
+        reachabilityInArea: new ReachabilityInArea({
+            id: "reachabilityInArea",
             parentId: "tools",
             type: "tool",
             name: "Erreichbarket im Gebiet",

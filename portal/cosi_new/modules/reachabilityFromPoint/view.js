@@ -8,7 +8,7 @@ import GeometryCollection from "ol/geom/GeometryCollection";
 import InfoTemplate from "text-loader!./info.html";
 import resultTemplate from "text-loader!./resultTemplate.html";
 
-const ReachabilityView = Backbone.View.extend({
+const ReachabilityFromPointView = Backbone.View.extend({
     events: {
         "click #create-isochrones": "createIsochrones",
         "click button#Submit": "checkIfSelected",
@@ -47,6 +47,7 @@ const ReachabilityView = Backbone.View.extend({
                     Radio.trigger("SelectDistrict", "revertBboxGeometry");
                     this.clearInput();
                     Radio.trigger("MapMarker", "hideMarker");
+                    Radio.trigger("Alert", "alert:remove");
                 }
             },
             "change:coordinate": function (model, value) {
@@ -339,4 +340,4 @@ const ReachabilityView = Backbone.View.extend({
     }
 });
 
-export default ReachabilityView;
+export default ReachabilityFromPointView;
