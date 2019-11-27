@@ -51,6 +51,7 @@ const EinwohnerabfrageModel = Tool.extend(/** @lends EinwohnerabfrageModel.proto
      * @listens Tools.Einwohnerabfrage_hh#ChangeIsActive
      * @listens CswParser#RadioTriggerCswParserFetchedMetaData
      * @listens Core#RadioTriggerModelListUpdateVisibleInMapList
+     * @listens GraphicalSelect#RadioTriggerOnDrawEnd
      * @fires RestReader#RadioRequestRestReaderGetServiceById
      * @fires Tools.Einwohnerabfrage_hh#RenderResult
      * @fires Alerting#RadioTriggerAlertAlert
@@ -99,7 +100,11 @@ const EinwohnerabfrageModel = Tool.extend(/** @lends EinwohnerabfrageModel.proto
         this.on("change:isActive", this.handleCswRequests, this);
         this.setDropDownSnippet(new GraphicalSelectModel({id: this.id}));
         this.listenTo(Radio.channel("GraphicalSelect"), {
-            "onDrawEnd": function (geoJson) {
+            "onDrawEnd": function (geoJson, setActive = false) {
+                console.log("yah");
+                if (setActive) {
+                    this.setIsActive(true);
+                }
                 if (this.get("isActive")) {
                     this.makeRequest(geoJson);
                 }
@@ -327,6 +332,7 @@ const EinwohnerabfrageModel = Tool.extend(/** @lends EinwohnerabfrageModel.proto
      * @returns {void}
      */
     makeRequest: function (geoJson) {
+        console.log(geoJson);
         this.setDataReceived(false);
         this.setRequesting(true);
         this.trigger("renderResult");

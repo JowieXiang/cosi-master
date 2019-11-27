@@ -26,7 +26,8 @@ const ReachabilityView = Backbone.View.extend({
             this.clearResult();
             this.hideDashboardButton();
         },
-        "click #show-result": "updateResult"
+        "click #show-result": "updateResult",
+        "click #hh-request": "requestInhabitants"
     },
     initialize: function () {
         this.listenTo(this.model, {
@@ -116,6 +117,7 @@ const ReachabilityView = Backbone.View.extend({
                     let newFeatures = this.parseDataToFeatures(JSON.stringify(json));
 
                     newFeatures = this.transformFeatures(newFeatures, "EPSG:4326", "EPSG:25832");
+                    this.model.set("rawGeoJson", Radio.request("GraphicalSelect", "featureToGeoJson", newFeatures[0]));
                     this.styleFeatures(newFeatures);
 
                     mapLayer.getSource().clear();
@@ -331,6 +333,9 @@ const ReachabilityView = Backbone.View.extend({
     toModeSelection: function () {
         this.model.set("isActive", false);
         Radio.request("ModelList", "getModelByAttributes", { name: "Erreichbarkeitsanalyse" }).set("isActive", true);
+    },
+    requestInhabitants: function () {
+        Radio.trigger("GraphicalSelect", "onDrawEnd", this.model.get("rawGeoJson"), true);
     }
 });
 

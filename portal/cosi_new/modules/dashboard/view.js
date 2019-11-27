@@ -1,5 +1,6 @@
 import Template from "text-loader!./template.html";
 import InfoTemplate from "text-loader!./info.html";
+import ExportButtonView from "../../../../modules/snippets/exportButton/view";
 import "./style.less";
 
 const DashboardView = Backbone.View.extend({
@@ -7,9 +8,12 @@ const DashboardView = Backbone.View.extend({
         "click .close": "close",
         "click #help": "showHelp",
         "mousedown .drag-bar": "dragStart",
+        "touchstart .drag-bar": "dragStart",
         "click .tool-name": "dashboardInfo"
     },
     initialize: function () {
+        this.exportButtonView = new ExportButtonView({model: this.model.get("exportDashboardButton")});
+
         this.listenTo(this.model, {
             "change:isActive": function (model, isActive) {
                 if (isActive & !this.model.get("infoScreenOpen")) {
@@ -30,6 +34,12 @@ const DashboardView = Backbone.View.extend({
             this.dragEnd();
         });
         window.addEventListener("mousemove", (event) => {
+            this.dragMove(event);
+        });
+        window.addEventListener("touchend", () => {
+            this.dragEnd();
+        });
+        window.addEventListener("touchmove", (event) => {
             this.dragMove(event);
         });
 
@@ -57,6 +67,7 @@ const DashboardView = Backbone.View.extend({
         var attr = this.model.toJSON();
 
         this.$el.html(this.template(attr));
+        this.$el.find("#print-button").html(this.exportButtonView.render().el);
 
         Radio.trigger("Sidebar", "append", this.$el);
         Radio.trigger("Sidebar", "toggle", true, this.model.get("width"));
@@ -77,7 +88,9 @@ const DashboardView = Backbone.View.extend({
         this.model.setIsActive(false);
         Radio.trigger("ModelList", "toggleDefaultTool");
     },
-    dragStart: function () {
+    dragStart: function (event) {
+        event.preventDefault();
+        console.log(event);
         this.isDragging = true;
         this.$el.find(".drag-bar").addClass("dragging");
     },
@@ -97,7 +110,7 @@ const DashboardView = Backbone.View.extend({
             text: InfoTemplate,
             kategorie: "alert-info"
         });
-    },
+    }
 });
 
 export default DashboardView;

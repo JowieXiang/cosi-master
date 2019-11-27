@@ -75,7 +75,7 @@ const CalculateRatioModel = Tool.extend({
             displayName: "Einrichtungstypen auswählen",
             values: layerNameList,
             snippetType: "dropdown",
-            isMultiple: true
+            isMultiple: false
         }));
         this.listenTo(this.get("numDropdownModel"), {
             "valuesChanged": this.setNumerators
