@@ -41,7 +41,7 @@ const LayerFilterSelectorModel = Backbone.Model.extend(/** @lends LayerFilterSel
         }, this);
     },
     /**
-      * sets the selection list for the time slider
+      * sets the selection list for the layer filters
       * @param {object[]} valueList - available values
       * @returns {void}
       */
