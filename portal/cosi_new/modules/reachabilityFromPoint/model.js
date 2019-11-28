@@ -10,7 +10,9 @@ const ReachabilityFromPointModel = Tool.extend(/** @lends ReachabilityFromPointM
         steps: 3, // step of subIsochrones
         isochroneFeatures: [], // isochrone features
         dropDownModel: {},
-        mapLayerName: "reachability-from-point"
+        mapLayerName: "reachability-from-point",
+        markerId: "markerOverlay", // overlay id of the marker
+        setBySearch: false  // if coordinate is set by searchbar
     }),
     /**
     * @class ReachabilityFromPointModel

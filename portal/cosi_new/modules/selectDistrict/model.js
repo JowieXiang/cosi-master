@@ -6,11 +6,11 @@ import * as Extent from "ol/extent";
 import * as Polygon from "ol/geom/Polygon";
 import SaveSelectionCosi from "../saveSelection/model";
 
-const SelectDistrict = Tool.extend({
+const SelectDistrictModel = Tool.extend(/** @lends SelectDistrictModel.prototype */{
     defaults: _.extend({}, Tool.prototype.defaults, {
         id: "selectDistrict",
         selectedDistricts: [],
-        districtLayer: [], // e.g.  {name: "Statistische Gebiete", selector: "statgebiet", layerIds:[]}
+        districtLayer: [], // e.g.  {name:  "Statistische Gebiete", selector: "statgebiet", layerIds:[]}
         districtLayerNames: ["Statistische Gebiete", "Stadtteile"],
         districtLayerIds: ["6071", "1694"],
         districtLayersLoaded: [],
@@ -41,6 +41,28 @@ const SelectDistrict = Tool.extend({
         channel: Radio.channel("SelectDistrict"),
         bboxGeometry: null
     }),
+    /**
+    * @class SelectDistrictModel
+    * @extends Tool
+    * @memberof Tools.SelectDistrict
+    * @constructs
+    * @property {string} id="selectDistrict"
+    * @property {Array} selectedDistricts list of selected areas as OpenLayers feature
+    * @property {Array} districtLayer data mapping. e.g.  {name: "Statistische Gebiete", selector: "statgebiet", layerIds:[]}
+    * @property {Array} districtLayerNames=["Statistische Gebiete", "Stadtteile"] data mapping
+    * @property {Array} districtLayerIds=["6071", "1694"]
+    * @property {Array} districtLayersLoaded TO DO
+    * @property {number} buffer=0 bounding box buffer
+    * @property {bool} isReady=false TODO
+    * @property {object} scopeDropdownModel drop down model for scope selection
+    * @property {string} activeScope e.g. "Stadtteile" or "Statistische Gebiete"
+    * @property {string} activeSelector  e.g. "stadtteil" or "statgebiet"
+    * @property {bool} deactivateGFI=false
+    * @property {Style} defaultStyle OpenLayer's default feature style
+    * @property {Style} selectedStyle selected features style
+    * @property {Radio.channel} channel
+    * @property {GeometryCollection} bboxGeometry bounding box geometry
+    */
     initialize: function () {
         this.superInitialize();
         this.getUrlQuery();
@@ -79,13 +101,14 @@ const SelectDistrict = Tool.extend({
                         this.setBboxGeometry(bboxGeometry);
 
                         // set map view to bbox
-                        Radio.trigger("Map", "zoomToExtent", this.getSelectedGeometries().getExtent());
+                        this.setMapViewToBbox();
                         // triggers "selectionChanged"
                         this.get("channel").trigger("selectionChanged", this.getSelectedGeometries().getExtent().toString(), this.get("activeScope"), this.getSelectedDistrictNames(this.get("selectedDistricts")));
                         Radio.trigger("Map", "zoomToExtent", this.getSelectedGeometries().getExtent());
                     }
                     else {
                         this.set("bboxGeometry", null);
+                        this.setBboxGeometry(null);
                     }
                     this.unlisten();
                     CosiStorage.setItem("sortKey", this.get("activeSelector"));
@@ -115,7 +138,8 @@ const SelectDistrict = Tool.extend({
 
         this.get("channel").on({
             "zoomToDistrict": this.zoomAndHighlightFeature,
-            "revertBboxGeometry": this.revertBboxGeometry
+            "revertBboxGeometry": this.revertBboxGeometry,
+            "setMapViewToBbox": this.setMapViewToBbox
         }, this);
     },
 
@@ -161,7 +185,7 @@ const SelectDistrict = Tool.extend({
             "selectedDistricts": this.get("selectedDistricts").concat(feature)
         });
     },
-    setFeaturesByScopeAndIds (scope, ids, buffer) {
+    setFeaturesByScopeAndIds(scope, ids, buffer) {
         this.setBuffer(buffer);
         this.setScope(scope);
         const layer = Radio.request("ModelList", "getModelByAttributes", { name: scope }),
@@ -237,7 +261,7 @@ const SelectDistrict = Tool.extend({
     toggleScopeLayers: function () {
         _.each(this.get("districtLayerNames"), (layerName) => {
             if (layerName !== "Stadtteile") {
-                const layer = Radio.request("ModelList", "getModelByAttributes", {"name": layerName});
+                const layer = Radio.request("ModelList", "getModelByAttributes", { "name": layerName });
 
                 if (layerName !== this.getScope()) {
                     layer.setIsVisibleInMap(false);
@@ -345,7 +369,7 @@ const SelectDistrict = Tool.extend({
     getDistrictLayer: function () {
         return this.get("districtLayer");
     },
-    getUrlQuery () {
+    getUrlQuery() {
         const query = window.location.search.split("&").filter(q => q.includes("scope") || q.includes("selectedDistricts") || q.includes("buffer"));
 
         if (query.length > 0) {
@@ -370,7 +394,9 @@ const SelectDistrict = Tool.extend({
             this.setBboxGeometry(this.get("bboxGeometry"));
         }
     },
-
+    setMapViewToBbox: function () {
+        Radio.trigger("Map", "zoomToExtent", this.getSelectedGeometries().getExtent());
+    },
     setSelectedDistrictsToFeatures: function (features) {
         const that = this,
             geometries = features.map(feature => feature.getGeometry()),
@@ -388,4 +414,4 @@ const SelectDistrict = Tool.extend({
     }
 });
 
-export default SelectDistrict;
+export default SelectDistrictModel;

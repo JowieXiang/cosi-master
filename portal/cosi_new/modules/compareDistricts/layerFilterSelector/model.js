@@ -1,7 +1,7 @@
 import DropdownModel from "../../../../../modules/snippets/dropdown/model";
-import {getLayerList, getLayerWhere} from "masterportalAPI/src/rawLayerList";
+import { getLayerList, getLayerWhere } from "masterportalAPI/src/rawLayerList";
 
-const LayerFilterSelectorModel = Backbone.Model.extend({
+const LayerFilterSelectorModel = Backbone.Model.extend(/** @lends LayerFilterSelectorModel.prototype */{
     defaults: {
         layerOptions: [], // all select options (vector layers in the map) e.g. [{layerName:"",layerId:""},...]
         selectedLayer: null, // selected option e.g. {layerName:"",layerId:""}
@@ -9,8 +9,18 @@ const LayerFilterSelectorModel = Backbone.Model.extend({
             "statgebiet": "https://geodienste.hamburg.de/HH_WFS_Statistische_Gebiete_Test",
             "stadtteile": ""
         },
-        dropDownModel: undefined
+        dropDownModel: {}
     },
+    /**
+     * @class LayerFilterSelectorModel
+     * @extends Backbone.Model
+     * @memberof Tools.CompareDistricts.LayerFilterSelector
+     * @constructs
+     * @property {Array} layerOptions list of layer filter options
+     * @property {string} selectedDistrict="Leeren" selected districtname
+     * @property {object} urls={"statgebiet": "https://geodienste.hamburg.de/HH_WFS_Statistische_Gebiete_Test", "stadtteile": ""} mapping of district scopes and urls
+     * @property {object} dropDownModel dropdown menu model
+     */
     initialize: function () {
         const currentSelector = Radio.request("SelectDistrict", "getSelector"),
             layers = getLayerList().filter(function (layer) {
@@ -31,7 +41,7 @@ const LayerFilterSelectorModel = Backbone.Model.extend({
         }, this);
     },
     /**
-      * sets the selection list for the time slider
+      * sets the selection list for the layer filters
       * @param {object[]} valueList - available values
       * @returns {void}
       */
@@ -69,10 +79,10 @@ const LayerFilterSelectorModel = Backbone.Model.extend({
         }
     },
     setSelectedLayer: function (value) {
-        const selectedObj = this.get("dropDownModel").attributes.values.filter(item => item.value === value)[0],
-            layerModel = getLayerWhere({featureType: "v_hh_statistik_" + selectedObj.category.toLowerCase()});
+        const mappingObj = this.get("dropDownModel").attributes.values.filter(item => item.value === value)[0],
+            layerModel = getLayerWhere({ featureType: "v_hh_statistik_" + mappingObj.category.toLowerCase() });
 
-        this.set("selectedLayer", {layerName: layerModel.name, layerId: layerModel.id, layerText: selectedObj});
+        this.set("selectedLayer", { layerName: layerModel.name, layerId: layerModel.id, layerText: mappingObj });
     },
     setLayerOptions: function (value) {
         this.set("layerOptions", value);

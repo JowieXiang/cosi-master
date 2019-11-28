@@ -1,6 +1,12 @@
-const bboxSettor = Backbone.Model.extend({
+const bboxSettorModel = Backbone.Model.extend(/** @lends bboxSettorModel.prototype */{
     defaults: {
     },
+    /**
+     * @class bboxSettorModel
+     * @extends Backbone.Model
+     * @memberof BboxSettor
+     * @constructs
+     */
     initialize: function () {
         const channel = Radio.channel("BboxSettor");
 
@@ -9,8 +15,8 @@ const bboxSettor = Backbone.Model.extend({
         }, this);
     },
     /**
-     * sets the bbox geometry for all vector layers and updates already loaded layers
-     * @param {Object[]} itemList - all available vector layers(WFS)
+     * sets the bbox geometry for targeted raw layers or exisiting vector layers
+     * @param {Array} itemList - list of target raw layers
      * @param {GeometryCollection} bboxGeometry - target geometry to be set as bbox
      * @returns {void}
      */
@@ -37,4 +43,4 @@ const bboxSettor = Backbone.Model.extend({
 
 });
 
-export default bboxSettor;
+export default bboxSettorModel;

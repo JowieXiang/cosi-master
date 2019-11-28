@@ -231,7 +231,9 @@ const CompareDistrictsView = Backbone.View.extend({
             const tolerance = [parseFloat(filterCollection[filterKey][0]), parseFloat(filterCollection[filterKey][1])],
                 refValue = layerFilter.districtInfo.filter(item => item.key === filterKey)[0].value,
                 selectedFeatures = featureCollection.filter(feature => {
-                    return feature.getProperties()[filterKey] >= refValue - tolerance[0] && feature.getProperties()[filterKey] <= refValue + tolerance[1];
+                    return feature.getProperties()[filterKey] >= refValue - tolerance[0]
+                        && feature.getProperties()[filterKey] <= refValue + tolerance[1]
+                        && feature.getProperties()[Radio.request("SelectDistrict", "getSelector")] !== Radio.request("DistrictSelector", "getSelectedDistrict");
                 });
 
             filterResults.push(selectedFeatures);
