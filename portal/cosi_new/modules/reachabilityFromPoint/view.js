@@ -32,22 +32,30 @@ const ReachabilityFromPointView = Backbone.View.extend({
     initialize: function () {
         this.listenTo(this.model, {
             "change:isActive": function (model, value) {
+                const mapLayer = Radio.request("Map", "getLayerByName", this.model.get("mapLayerName"));
+
                 if (value) {
-                    this.$el.find("#show-result").prop("disabled", true);
                     this.registerClickListener();
                     this.render(model, value);
                     this.createMapLayer(this.model.get("mapLayerName"));
                     if (this.model.get("isochroneFeatures").length > 0) {
-                        this.updateResult();
+                        this.initializeUi();
                         this.setIsochroneAsBbox();
                     }
+                    this.listenTo(Radio.channel("Searchbar"), {
+                        "hit": this.setSearchResultToOrigin
+                    });
                 }
                 else {
                     this.unregisterClickListener();
                     Radio.trigger("SelectDistrict", "revertBboxGeometry");
-                    this.clearInput();
-                    Radio.trigger("MapMarker", "hideMarker");
                     Radio.trigger("Alert", "alert:remove");
+                    if (mapLayer.getSource().getFeatures().length === 0) {
+                        this.clearInput();
+                    }
+                    if (!this.model.get("setBySearch")) {
+                        Radio.trigger("MapMarker", "hideMarker");
+                    }
                 }
             },
             "change:coordinate": function (model, value) {
@@ -136,6 +144,11 @@ const ReachabilityFromPointView = Backbone.View.extend({
             this.inputReminder();
         }
     },
+    initializeUi: function () {
+        this.$el.find("#coordinate").val(`${this.model.get("coordinate")[0]},${this.model.get("coordinate")[1]}`);
+        this.$el.find("#path-type").val(`${this.model.get("pathType")}`);
+        this.$el.find("#range").val(`${this.model.get("range")}`);
+    },
     setIsochroneAsBbox: function () {
         const layerlist = _.union(Radio.request("Parser", "getItemsByAttributes", { typ: "WFS", isBaseLayer: false }), Radio.request("Parser", "getItemsByAttributes", { typ: "GeoJSON", isBaseLayer: false })),
             polygonGeometry = this.model.get("isochroneFeatures")[this.model.get("steps") - 1].getGeometry(),
@@ -180,6 +193,7 @@ const ReachabilityFromPointView = Backbone.View.extend({
 
         Radio.trigger("MapMarker", "showMarker", evt.coordinate);
         this.model.set("coordinate", coordinate);
+        this.model.set("setBySearch", false);
     },
     /**
      * set coordinate value in model according to input value
@@ -200,6 +214,9 @@ const ReachabilityFromPointView = Backbone.View.extend({
      */
     rerenderCoordinate: function (value) {
         this.$el.find("#coordinate").val(`${value[0]},${value[1]}`);
+        this.$el.find("#coordinate").val(`${value[0]},${value[1]}`);
+        this.$el.find("#coordinate").val(`${value[0]},${value[1]}`);
+
     },
     /**
      * set pathType value in model
@@ -261,7 +278,6 @@ const ReachabilityFromPointView = Backbone.View.extend({
             kategorie: "alert-info"
         });
     },
-    // reminds user to select district before using the ageGroup slider
     inputReminder: function () {
         Radio.trigger("Alert", "alert", {
             text: "<strong>Please make sure all input information are provided</strong>",
@@ -340,6 +356,19 @@ const ReachabilityFromPointView = Backbone.View.extend({
     },
     requestInhabitants: function () {
         Radio.trigger("GraphicalSelect", "onDrawEnd", this.model.get("rawGeoJson"), true);
+    },
+    /**
+     * set search result from the searchbar to origin coordinates
+     * @returns {void}
+     */
+    setSearchResultToOrigin: function () {
+        const overlayPosition = Radio.request("Map", "getOverlayById", this.model.get("markerId")).getPosition(),
+            // handels both polygon features and point features
+            parsedPosition = overlayPosition.map(item => typeof item === "string" ? parseFloat(item) : item),
+            coordinate = Proj.transform(parsedPosition, "EPSG:25832", "EPSG:4326");
+
+        this.model.set("coordinate", coordinate);
+        this.model.set("setBySearch", true);
     }
 });
 

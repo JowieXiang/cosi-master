@@ -50,7 +50,6 @@ function initializeCosi() {
         new SelectDistrictView({ model: tools.selectDistrict });
         new PrintView({ model: tools.print });
         new CompareDistrictsView({ model: tools.compareDistricts });
-        console.log("refocus: ", addRowTR("refocus"));
         $(document).ready(function () {
             new RefocusView({ el: addRowTR("refocus") });
         });
@@ -128,7 +127,6 @@ function addInfoButtons() {
  */
 function addRowTR(id) {
     $(".controls-view").find(".control-view-top-right").append("<div class='row controls-row-right hidden-xs' id='" + id + "'></div>");
-    console.log("controls-view: ", $(".controls-view").html());
     return $(".controls-view").find(".control-view-top-right").children().last();
 }
 

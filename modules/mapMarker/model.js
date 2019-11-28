@@ -8,7 +8,8 @@ const MapMarkerModel = Backbone.Model.extend(/** @lends MapMarkerModel.prototype
     defaults: {
         marker: new Overlay({
             positioning: "bottom-center",
-            stopEvent: false
+            stopEvent: false,
+            id: "markerOverlay"
         }),
         polygon: new VectorLayer({
             name: "mapMarker",
