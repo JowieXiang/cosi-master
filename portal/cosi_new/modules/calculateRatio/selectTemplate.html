@@ -17,16 +17,16 @@
             Die für die Analyse verfügbaren Layer müssen zuvor im Layer-Panel aktiviert werden.
         </small>
     </div>
-    <div class="form-group form-group-sm" id="resolution-input-form-group">
+    <div class="form-group form-group-sm hidden" id="resolution-input-form-group">
         <div class="input-group-prepend">
             <label class="input-group-text" id="resolution" for="resolution-input">berechnen pro</label>
         </div>
-        <input class="form-control" type="text" value="1000" id="resolution-input" step="1">
+        <input class="form-control" type="text" value="1" id="resolution-input" step="1" min="1">
         <div class="input-group-append">
-            <label class="input-group-text" id="resoltion" for="resolution-input">Einwohner</label>
+            <label class="input-group-text" id="res-reference">der Bezugsgröße</label>
         </div>
     </div>
     <div class="modifiers"></div>
-    <button id="submit" class="btn btn-primary btn-md btn-block">Suchen</button>
+    <button id="submit" class="btn btn-primary btn-md btn-block">Berechnen</button>
     <div class="result"></div>
 </div>

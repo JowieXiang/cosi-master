@@ -5,20 +5,22 @@
 <% }
 else { %>
     <% if (Object.getOwnPropertyNames(results).length > 0) { %>
-        <div class="heading">Versorgungschlüssel<br />(gewählter Einrichtungswert pro <%= resolution %> Einwohner der gewählten Zielgruppen):</div>
+        <div class="heading">Versorgungschlüssel<br />(<%= numerators.values[0] %> pro <%= resolution %> <%= denominators.values.join(', ') %>):</div>
         <table class="table">
             <tr>
                 <th scope="col">Gebiet</th>
-                <th scope="col">Verhältnis</th>
-                <th scope="col">Einrichtungswert</th>
-                <th scope="col">Zielgruppe</th>
+                <th scope="col"><%= numerators.values[0] %></th>
+                <th scope="col"><%= denominators.values.join(', ') %></th>
+                <th scope="col">Versorgung</th>
+                <th scope="col">Abdeckung (gewichtet)</th>
             </tr>
             <% for (var district in results) { %>
                 <tr>
                     <th scope="row"><%= district %></th>
-                    <td><%= results[district].ratio.toLocaleString('de-DE') %></td>
                     <td><%= results[district].facilities.toLocaleString('de-DE') %></td>
                     <td><%= results[district].demographics %></td>
+                    <td><%= results[district].ratio.toLocaleString('de-DE') %></td>
+                    <td><%= results[district].coverage.toLocaleString('de-DE') %></td>
                 </tr>
             <% } %>
         </table>

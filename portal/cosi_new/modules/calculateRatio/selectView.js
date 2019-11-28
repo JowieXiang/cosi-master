@@ -14,7 +14,9 @@ const SelectView = Backbone.View.extend({
             "renderResult": this.renderResult,
             "renderFacilityDropDown": this.renderFacilityDropDown,
             "renderResults": this.renderResult,
-            "change:adjustParameterViews": this.renderModifiers
+            "change:adjustParameterView": this.renderModifiers,
+            "change:numerators": this.updateTexts,
+            "change:denominators": this.updateTexts
         });
 
         if (this.model.get("isActive") === true) {
@@ -48,11 +50,16 @@ const SelectView = Backbone.View.extend({
         this.$el.find(".result").append(new ResultView({model: this.model}).render(false).el);
     },
     renderModifiers: function () {
-        this.$el.find(".modifiers").html("");
-
-        _.each(this.model.get("adjustParameterViews"), (modifier) => {
-            this.$el.find(".modifiers").append(modifier.render().el);
-        });
+        this.$el.find(".modifiers").html(this.model.get("adjustParameterView").render().el);
+    },
+    updateTexts: function () {
+        if (this.model.get("denominators").values.length === 0) {
+            $("#resolution-input-form-group").addClass("hidden");
+        }
+        else {
+            $("#resolution-input-form-group").removeClass("hidden");
+            $(".denDropdown .filter-option").text(this.model.get("denominators").values[0]);
+        }
     },
     calculateRatios: function () {
         this.model.getRatiosForSelectedFeatures();
