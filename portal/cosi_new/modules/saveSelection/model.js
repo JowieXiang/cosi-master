@@ -25,6 +25,7 @@ const SaveSelectionCosi = SaveSelection.extend({
         this.set("buffer", buffer);
     },
     setUrl: function () {
+        // console.log(location);
         this.set("url", location.origin + location.pathname + "?layerIDs=" + this.get("layerIdList") + "&visibility=" + this.get("layerVisibilityList") + "&transparency=" + this.get("layerTransparencyList") + "&center=" + this.get("centerCoords") + "&zoomlevel=" + this.get("zoomLevel") + "&scope=" + this.get("scope") + "&selectedDistricts=" + this.get("selectedDistrictIds") + "&buffer=" + this.get("buffer"));
     }
 });

@@ -82,7 +82,7 @@ function initializeCosi() {
         general.dashboardTable
     ]);
 
-    if (infoScreenOpen) {
+    if (!window.location.pathname.includes("infoscreen.html")) {
         CosiStorage.setItem("infoScreenOpen", JSON.stringify(true));
         tools.selectDistrict.set("isActive", true);
     }

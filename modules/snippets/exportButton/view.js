@@ -59,6 +59,8 @@ const ExportButtonView = Backbone.View.extend({
             html = document.querySelector(this.model.get("rawData"));
 
         pdf.html(html, {
+            width: window.innerWidth,
+            height: html.clientHeight,
             callback: function () {
                 pdf.save();
             }

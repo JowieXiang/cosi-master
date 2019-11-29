@@ -25,9 +25,6 @@ const AdjustParameterModel = SnippetModel.extend({
             "infoText": infoText ? infoText : this.get("infoText")
         });
 
-        this.listenTo(this, {
-            "change:selectedOption": this.test
-        });
     },
     getProperties: function (layerId) {
         const layer = Radio.request("ModelList", "getModelByAttributes", {id: layerId});
