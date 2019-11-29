@@ -316,7 +316,6 @@ const ReachabilityFromPointView = Backbone.View.extend({
             dataObj.features[layerModel.get("name")] = layerModel.get("layer").getSource().getFeatures();
         });
 
-        Radio.trigger("Dashboard", "destroyWidgetById", "reachability");
         Radio.trigger("Dashboard", "append", this.dashboardTemplate(dataObj), "#dashboard-containers", {
             id: "reachability",
             name: "Erreichbarkeit ab einem Referenzpunkt",
