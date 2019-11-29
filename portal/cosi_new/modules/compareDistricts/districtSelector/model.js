@@ -26,6 +26,7 @@ const DistrictSelectorModel = Backbone.Model.extend(/** @lends DistrictSelectorM
                 districtNames = selectedDistricts.map(feature => feature.getProperties()[selector]);
 
             this.set("districtNames", districtNames);
+            districtNames.unshift("Leeren");
             this.setDropDownModel(districtNames);
         }
         else {
@@ -34,6 +35,7 @@ const DistrictSelectorModel = Backbone.Model.extend(/** @lends DistrictSelectorM
                 districtNames = districts.map(district => district.getProperties()[selector]);
 
             this.set("districtNames", districtNames);
+            districtNames.unshift("Leeren");
             this.setDropDownModel(districtNames);
         }
     },
