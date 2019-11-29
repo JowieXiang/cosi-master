@@ -37,7 +37,7 @@ const ResultView = Backbone.View.extend({
             selector = Radio.request("SelectDistrict", "getSelector");
 
         for (const district in results) {
-            values.push(results[district].ratio);
+            values.push(results[district].coverage);
         }
 
         const colorScale = Radio.request("ColorScale", "getColorScaleByValues", values);
@@ -45,10 +45,10 @@ const ResultView = Backbone.View.extend({
         _.each(features, (feature) => {
             feature.setStyle(new Style({
                 fill: new Fill({
-                    color: colorScale.scale(results[feature.getProperties()[selector]].ratio).replace("rgb", "rgba").replace(")", ", 0.8)")
+                    color: colorScale.scale(results[feature.getProperties()[selector]].coverage).replace("rgb", "rgba").replace(")", ", 0.8)")
                 }),
                 stroke: new Stroke({
-                    color: colorScale.scale(results[feature.getProperties()[selector]].ratio),
+                    color: colorScale.scale(results[feature.getProperties()[selector]].coverage),
                     width: 3
                 }),
                 text: new Text({
@@ -60,7 +60,7 @@ const ResultView = Backbone.View.extend({
                         color: "#000",
                         width: 2
                     }),
-                    text: results[feature.getProperties()[selector]].ratio.toFixed(2)
+                    text: results[feature.getProperties()[selector]].coverage.toFixed(2)
                 })
             }));
         });

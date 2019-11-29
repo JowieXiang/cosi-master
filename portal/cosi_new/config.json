@@ -313,12 +313,12 @@
               ],
               "alwaysOnTop": true,
               "searchField": [
-                "anlagenname",
+                "belegenheit",
                 "eigentum",
                 "gruenart"
               ],
               "mouseHoverField": [
-                "anlagenname",
+                "belegenheit",
                 "eigentum",
                 "flaeche_qm"
               ]

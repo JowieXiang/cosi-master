@@ -145,13 +145,19 @@ const CalculateRatioModel = Tool.extend({
                 facilities: totalFacilities,
                 demographics: totalDemographics
             });
+            this.setResultForDistrict("Durchschnitt", {
+                ratio: totalRatio / selectedDistricts.length,
+                coverage: (totalRatio * this.get("modifier")[1]) / selectedDistricts.length,
+                facilities: totalFacilities / selectedDistricts.length,
+                demographics: totalDemographics / selectedDistricts.length
+            });
         }
         else {
             this.setMessage("Bitte wählen Sie mindestens einen Stadtteil aus.");
         }
 
         Object.keys(this.getResults()).forEach(function (objectKey) {
-            renameResults[objectKey] = Radio.request("Util", "renameKeys", {ratio: "Verhaeltnis", facilities: "Einrichtungswert", demographics: "Zielgruppe"}, this.getResults()[objectKey]);
+            renameResults[objectKey] = Radio.request("Util", "renameKeys", {ratio: "Verhältnis", coverage: "Abdeckung", facilities: this.getNumerators()[0], demographics: this.getDenominators().join(", ")}, this.getResults()[objectKey]);
         }, this);
         this.get("exportButtonModel").set("rawData", renameResults);
         this.trigger("renderResults");

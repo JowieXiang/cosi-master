@@ -1,12 +1,14 @@
 import Template from "text-loader!./selectTemplate.html";
 import SnippetDropdownView from "../../../../modules/snippets/dropdown/view";
 import ResultView from "./resultView";
+import InfoTemplate from "text-loader!./info.html";
 import "./style.less";
 
 const SelectView = Backbone.View.extend({
     events: {
         "click #submit": "calculateRatios",
-        "change #resolution-input": "setResolution"
+        "change #resolution-input": "setResolution",
+        "click .tool-info #help": "showInfo"
     },
     initialize: function () {
         this.listenTo(this.model, {
@@ -54,10 +56,10 @@ const SelectView = Backbone.View.extend({
     },
     updateTexts: function () {
         if (this.model.get("denominators").values.length === 0) {
-            $("#resolution-input-form-group").addClass("hidden");
+            $("#resolution-input-container").addClass("hidden");
         }
         else {
-            $("#resolution-input-form-group").removeClass("hidden");
+            $("#resolution-input-container").removeClass("hidden").find("#den-name").text(this.model.get("denominators").values.join(", "));
             $(".denDropdown .filter-option").text(this.model.get("denominators").values[0]);
         }
     },
@@ -66,6 +68,13 @@ const SelectView = Backbone.View.extend({
     },
     setResolution: function (evt) {
         this.model.set("resolution", parseInt(evt.target.value, 10));
+    },
+    showInfo: function () {
+        Radio.trigger("Alert", "alert:remove");
+        Radio.trigger("Alert", "alert", {
+            text: InfoTemplate,
+            kategorie: "alert-info"
+        });
     }
 });
 

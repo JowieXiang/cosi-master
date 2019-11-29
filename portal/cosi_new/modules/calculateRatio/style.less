@@ -1,4 +1,7 @@
 .calculate-ratio {
+    .tool-info {
+        display: flex;
+    }
     .table, #submit {
         margin-top: 10px;
     }
@@ -8,37 +11,28 @@
     .message {
         color: red;
     }
-    #resolution-input-form-group {
-        display:flex;
-        label {
-            line-height: 30px;
-            padding: 0 10px;
-            margin:0;
-            font-size: 12px;
+    .table {
+        th {
+            border-bottom: none;
         }
-        .input-group-prepend {
-            background-color: #e9ecef;
-            border: 1px solid #ccc;
-            color: #495057;
-            flex-shrink: 0;
-            height: 30px;
-        }
-        .input-group-append {
-            flex-shrink: 0;
-            height: 30px;
-            border: 1px solid #ccc;
-            border-left: 0px;
-            max-width: 60%;
-            overflow: hidden;
-        }
-        .form-control {
-            border-right: 0;
-            box-shadow: none;
-            text-align: right;
+        td {
+            position: relative;
+            .inline-tag {
+                position: absolute;
+                top: 25%;
+                right: 15px;
+                padding-top:2px;
+            }
         }
     }
 
     #export-button, #push-dashboard-button {
         display: inline-block;
+    }
+    
+    .result {
+        .heading {
+            margin-top:20px;
+        }
     }
 }
