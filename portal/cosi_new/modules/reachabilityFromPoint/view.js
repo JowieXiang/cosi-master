@@ -139,6 +139,7 @@ const ReachabilityFromPointView = Backbone.View.extend({
                     this.hideDashboardButton();
                     this.$el.find("#hh-request").show();
                 });
+            Radio.trigger("Alert", "alert:remove");
         }
         else {
             this.inputReminder();
@@ -295,6 +296,7 @@ const ReachabilityFromPointView = Backbone.View.extend({
             dataObj = { layerNames: [], features: {} };
 
         if (visibleLayerModels.length > 0) {
+            Radio.trigger("Alert", "alert:remove");
             _.each(visibleLayerModels, layerModel => {
                 dataObj.layerNames.push(layerModel.get("name"));
                 dataObj.features[layerModel.get("name")] = layerModel.get("layer").getSource().getFeatures();
@@ -331,7 +333,7 @@ const ReachabilityFromPointView = Backbone.View.extend({
             for (let i = steps - 1; i >= 0; i--) {
                 this.$el.find("#legend").append(`
                 <svg width="15" height="15">
-                    <circle cx="7.5"  cy="7.5" r="7.5" style="fill:rgba(${200 - 100 * i}, ${100 * i}, 3, ${0.1 * (i + 1) + 0.3}); stroke-width: .5; stroke: #E3E3E3" />
+                    <circle cx="7.5"  cy="7.5" r="7.5" style="fill:rgba(${200 - 100 * i}, ${100 * i}, 3, ${0.1 * (i + 1) + 0.3}); stroke-width: .5; stroke: #E3E3E3;" />
                 </svg>
                 <span>${Number.isInteger(range * ((steps - i) / 3)) ? range * ((steps - i) / 3) : (range * ((steps - i) / 3)).toFixed(2)}  </span>
                 `);
@@ -342,7 +344,7 @@ const ReachabilityFromPointView = Backbone.View.extend({
             for (let i = steps - 1; i >= 0; i--) {
                 this.$el.find("#legend").append(`
                 <svg width="15" height="15">
-                    <circle cx="7.5"  cy="7.5" r="7.5" style="fill:rgba(${200 - 100 * i}, ${100 * i}, 3, ${0.1 * i + 0.3}); stroke-width: .5; stroke: #E3E3E3" />
+                    <circle cx="7.5"  cy="7.5" r="7.5" style="fill:rgba(${200 - 100 * i}, ${100 * i}, 3, ${0.1 * i + 0.3}); stroke-width: .5; stroke: #E3E3E3;" />
                 </svg>
                 <span>0</span>
                 `);

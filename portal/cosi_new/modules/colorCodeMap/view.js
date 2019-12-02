@@ -1,6 +1,7 @@
 import "./style.less";
 import template from "text-loader!./template.html";
 import SnippetDropdownView from "../../../../modules/snippets/dropdown/view";
+import InfoTemplate from "text-loader!./info.html";
 
 const ColorCodeMapView = Backbone.View.extend({
     events: {
@@ -8,7 +9,8 @@ const ColorCodeMapView = Backbone.View.extend({
             this.reset();
             this.model.unStyleDistrictFeatures(this.model.get("districtFeatures"));
         },
-        "click .btn-prev-next": "prevNext"
+        "click .btn-prev-next": "prevNext",
+        "click #legend-help": "showHelp"
     },
     initialize: function () {
         this.listenTo(this.model, {
@@ -27,25 +29,36 @@ const ColorCodeMapView = Backbone.View.extend({
         $(".masterportal-container").append(this.$el.html(this.template()));
         this.renderDropDownView(this.model.get("dropDownModel"));
         this.$el.find("button").prop("disabled", true);
+        this.setLengendEmpty();
         return this;
     },
     renderDropDownView: function (dropdownModel) {
-        const dropdownView = new SnippetDropdownView({model: dropdownModel});
+        const dropdownView = new SnippetDropdownView({ model: dropdownModel });
 
         this.$el.find(".color-code").prepend(dropdownView.render().el);
     },
 
-    clearLegend: function () {
+    setLengendEmpty: function () {
         this.$el.find("#color-code-legend").empty();
+        for (let i = 0; i < 5; i++) {
+            this.$el.find("#color-code-legend").append(`
+            <li style="display:inline;">
+                <svg width="20" height="20">
+                    <circle cx="10" cy="10" r="10" style="fill:rgb(255, 255, 255);stroke-width: .5; stroke: #E3E3E3;" />
+                </svg>
+                    <span style="font-size: 20px;">  - </span>
+            </li>
+            `);
+        }
     },
     setLegend: function (data) {
-        this.clearLegend();
+        this.$el.find("#color-code-legend").empty();
         if (data !== null) {
             for (let i = 0; i < data.values.length; i++) {
                 this.$el.find("#color-code-legend").append(`
                 <li style="display:inline;">
                     <svg width="20" height="20">
-                        <circle cx="10" cy="10" r="10" style="fill:${data.colors[i]};stroke-width:.5;stroke:rgb(0,0,0)" />
+                        <circle cx="10" cy="10" r="10" style="fill:${data.colors[i]};stroke-width: .5; stroke: #E3E3E3;" />
                     </svg>
                         <span style="font-size: 20px;">${Number.isInteger(data.values[i]) ? data.values[i].toLocaleString("de-DE") : data.values[i].toLocaleString("de-DE")}</span>
                 </li>
@@ -84,19 +97,26 @@ const ColorCodeMapView = Backbone.View.extend({
     reset: function () {
         this.$el.find(".dropdown-toggle").addClass("bs-placeholder");
         this.setDropdownValues(0, "Statistische Daten anzeigen");
-        this.clearLegend();
+        this.setLengendEmpty();
         if (this.model.get("districtFeatures").length === 0) {
             this.$el.find("button").prop("disabled", true);
         }
     },
 
-    checkDistrictSelection (extent) {
+    checkDistrictSelection: function (extent) {
         if (extent.length > 0) {
             this.$el.find("button").prop("disabled", false);
         }
         else {
             this.$el.find("button").prop("disabled", true);
         }
+    },
+    showHelp: function () {
+        Radio.trigger("Alert", "alert:remove");
+        Radio.trigger("Alert", "alert", {
+            text: InfoTemplate,
+            kategorie: "alert-info"
+        });
     }
 });
 

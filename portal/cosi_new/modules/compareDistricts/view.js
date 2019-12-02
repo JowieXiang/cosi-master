@@ -12,9 +12,8 @@ import InfoTemplate from "text-loader!./info.html";
 
 const CompareDistrictsView = Backbone.View.extend({
     events: {
-        "click #add-filter": function (e) {
-            this.addFilterModel(e);
-            this.filterLayerOptions();
+        "click #add-filter": function () {
+            this.checkSelected();
         },
         "click .district-name": "zoomToDistrict",
         "click #help": "showHelp",
@@ -75,17 +74,12 @@ const CompareDistrictsView = Backbone.View.extend({
 
         return this;
     },
-
     // reminds user to select district before using the ageGroup slider
-    selectDistrictReminder: function () {
-        const selectedDistricts = Radio.request("SelectDistrict", "getSelectedDistricts");
-
-        if (selectedDistricts.length === 0) {
-            Radio.trigger("Alert", "alert", {
-                text: "<strong> Bitte wählen Sie zuerst die Gebiet mit 'Gebiet wählen' im Werkzeugmenü aus</strong>",
-                kategorie: "alert-warning"
-            });
-        }
+    selectFilterReminder: function () {
+        Radio.trigger("Alert", "alert", {
+            text: "<strong> Please select the layer filter you want to add in the layerfilter dropdown menu</strong>",
+            kategorie: "alert-warning"
+        });
     },
     updateLayerFilterCollection: function () {
         this.layerFilterCollection.each(function (layerFilter) {
@@ -100,11 +94,19 @@ const CompareDistrictsView = Backbone.View.extend({
         this.layerFilterSelector = new LayerFilterSelectorView({ model: new LayerFilterSelectorModel() });
         this.$el.find("#layerfilter-selector-container").append(this.layerFilterSelector.render().el);
     },
-
+    checkSelected: function () {
+        if (this.layerFilterSelector.getSelectedLayer()) {
+            Radio.trigger("Alert", "alert:remove");
+            this.addFilterModel();
+            this.filterLayerOptions();
+        }
+        else {
+            this.selectFilterReminder();
+        }
+    },
     addFilterModel: function () {
         const layerInfo = this.layerFilterSelector.getSelectedLayer(),
             layerFilterModel = new LayerFilterModel({ layerInfo: layerInfo });
-
 
         this.addOneToLayerFilterList(layerFilterModel);
         this.layerFilterCollection.add(layerFilterModel);
