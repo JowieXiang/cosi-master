@@ -11,18 +11,18 @@ else { %>
                 <th scope="col">Gebiet</th>
                 <th scope="col"><%= numerators.values[0] %></th>
                 <th scope="col"><%= denominators.values.join(', ') %></th>
-                <th scope="col">Verhältnis</th>
-                <% if (modifier[1] !== 1) { %>
-                    <th scope="col">Abdeckung (gewichtet)</th>
+                <th scope="col">Versorgungschlüssel</th>
+                <% if (isModified) { %>
+                    <th scope="col">Unter- / Überversorgung</th>
                 <% } %>
             </tr>
             <% for (var district in results) { %>
                 <tr>
                     <th scope="row"><%= district %></th>
                     <td><%= results[district].facilities.toLocaleString('de-DE') %></td>
-                    <td><%= results[district].demographics %></td>
+                    <td><%= results[district].demographics.toLocaleString('de-DE') %></td>
                     <td><%= results[district].ratio.toLocaleString('de-DE') %></td>
-                    <% if (modifier[1] !== 1) { %>
+                    <% if (isModified) { %>
                         <td><%= results[district].coverage.toLocaleString('de-DE') %></td>
                     <% } %>
                 </tr>

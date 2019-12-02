@@ -22,7 +22,8 @@ const AdjustParameterModel = SnippetModel.extend({
             "numericalValues": opts.numericalValues,
             "defaultOption": opts.defaultOption,
             "selectedOption": [opts.defaultOption, 1.00],
-            "infoText": infoText ? infoText : this.get("infoText")
+            "infoText": infoText ? infoText : this.get("infoText"),
+            "isModified": false
         });
 
     },

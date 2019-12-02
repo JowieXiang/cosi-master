@@ -14,7 +14,7 @@
         width: 100%;
         border-bottom: 1px solid #e5e5e5;
         padding: 10px;
-        display:flex;
+        // display:flex;
 
         #name {
             padding-left: 15px;
@@ -39,6 +39,7 @@
             border-bottom: 1px solid whitesmoke;
             border-top: 1px solid whitesmoke;
             padding: 5px 10px;
+            position: relative;
 
             &:not(.group):not(.inactive):hover {
                 background: whitesmoke;
@@ -55,6 +56,27 @@
                 color: grey;
                 pointer-events: none;
                 cursor: not-allowed;
+            }
+
+            &.has-sub-menu {
+                &:hover {
+                    ul.sub-menu {
+                        display: block;
+                    }
+                }
+            }
+
+            ul.sub-menu {
+                display: none;
+                position: absolute;
+                list-style-type: none;
+                padding: 0;
+                left: 100%;
+                top: 0;
+                background: white;
+                -webkit-box-shadow: 1px 4px 5px 2px rgba(0,0,0,0.2);
+                -moz-box-shadow: 1px 4px 5px 2px rgba(0,0,0,0.2);
+                box-shadow: 1px 4px 5px 2px rgba(0,0,0,0.2);
             }
         }
     }

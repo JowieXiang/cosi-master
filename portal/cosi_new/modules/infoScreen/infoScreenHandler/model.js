@@ -44,6 +44,9 @@ const InfoScreenHandler = Tool.extend({
                 if (!isOpen) {
                     this.setIsActive(false);
                 }
+                else {
+                    this.setIsWindowOpen(isOpen);
+                }
             }
         });
     },

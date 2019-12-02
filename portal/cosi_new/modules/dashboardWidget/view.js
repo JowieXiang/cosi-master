@@ -8,7 +8,10 @@ const DashboardWidgetView = Backbone.View.extend({
         "click .win-control.open": "toggleOpen",
         "click .tool-name": "widgetInfo",
         "mousedown .drag": "resizeStart",
-        "mousedown .header": "moveStart"
+        "mousedown .header": "moveStart",
+        "mousedown .win-control.open": function (evt) {
+            evt.stopPropagation();
+        }
     },
     initialize (content, parent, opts = {}) {
         const attrs = opts;
@@ -20,8 +23,8 @@ const DashboardWidgetView = Backbone.View.extend({
             name: attrs.name ? attrs.name : "Daten",
             glyphicon: attrs.glyphicon ? attrs.glyphicon : "glyphicon-info-sign",
             append: attrs.append !== undefined ? attrs.append : true,
-            width: attrs.width ? attrs.width : null,
-            height: attrs.height ? attrs.height : null,
+            width: attrs.width ? attrs.width : "auto    ",
+            height: attrs.height ? attrs.height : "auto",
             scalable: attrs.scalable ? attrs.scalable : false
         };
 
@@ -118,6 +121,8 @@ const DashboardWidgetView = Backbone.View.extend({
             this.$el.addClass("dragging");
 
             this.$el.find(".widget-shadow").css({
+                top: evt.clientY + "px",
+                left: evt.clientX + "px",
                 width: this.el.clientWidth + "px",
                 height: this.el.clientHeight + "px"
             }).addClass("dragging");

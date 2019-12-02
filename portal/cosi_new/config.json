@@ -249,7 +249,7 @@
           "gfiAttributes": "ignore",
           "isNeverVisibleInTree": true,
           "alwaysOnTop": true,
-          "legendURL": "",
+          "legendURL": "ignore",
           "searchField": [
             "statgebiet"
           ]
@@ -264,7 +264,8 @@
           ],
           "gfiAttributes": "ignore",
           "isNeverVisibleInTree": true,
-          "alwaysOnTop": true
+          "alwaysOnTop": true,
+          "legendURL": "ignore"
         },
         {
           "id": "1692",
@@ -272,7 +273,8 @@
           "visibility": true,
           "gfiAttributes": "ignore",
           "isNeverVisibleInTree": true,
-          "alwaysOnTop": true
+          "alwaysOnTop": true,
+          "legendURL": "ignore"
         }
       ]
     },

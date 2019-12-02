@@ -1,31 +1,39 @@
 <table class="table group">
-    <% filteredTableView.forEach(function (group) { %>
-            <thead id="<%= group.group.replace(/\s/g, '') %>">
-                    <tr>
-                            <th scope="col"><span><%= group.group %></span><button type="button" class="btn btn-outline-secondary open"><span></span></th>
-                            <% for (var dist in Object.values(group.values)[0]) { %>
-                                    <th scope="col" style="text-align:right;" class="district"><%= dist %></th>
-                            <% } %>
-                    </tr>
-            </thead>
-            <tbody id="<%= group.group.replace(/\s/g, '') %>" class="<%= group.group === 'Berechnungen' ? 'open' : '' %>">
-            <% for (var val in group.values) { %>
-                    <tr class="row">
-                            <th class="prop" scope="row" title="<%= val %>" id="<%= val %>"><span class="prop-name"><%= val %></span><button type="button" class="btn btn-outline-secondary open"><span></span></button></th>
-                            <% for (var dist in group.values[val]) { %>
-                                    <td class="timeline-table">
-                                            <ul class="list-group list-group-flush">
-                                            <% group.values[val][dist].forEach(function (val) { %>
-                                                    <li class="list-group-item nowrap">
-                                                            <span class="val"><%= isNaN(val[1]) ? val[1] : Number.isInteger(parseFloat(val[1])) ? parseFloat(val[1]).toLocaleString('de-DE') : parseFloat(val[1]).toLocaleString('de-DE') %></span>
-                                                            <small class="year">(<%= val[0] %>)</small>
-                                                    </li>
-                                            <% }); %>
-                                            </ul>
-                                    </td>
-                            <% } %>
-                    </tr>
-            <% } %>
-            </tbody>
-    <% }) %>
-    </table>
+<% filteredTableView.forEach(function (group) { %>
+        <thead id="<%= group.group.replace(/\s/g, '') %>">
+                <tr>
+                        <th scope="col"><span><%= group.group %></span><button type="button" class="btn btn-outline-secondary open"><span></span></th>
+                        <th scope="col" class="years">Jahr</th>
+                        <% for (var dist in Object.values(group.values)[0]) { %>
+                                <th scope="col" style="text-align:right;" class="district"><%= dist %></th>
+                        <% } %>
+                </tr>
+        </thead>
+        <tbody id="<%= group.group.replace(/\s/g, '') %>" class="<%= group.group === 'Berechnungen' ? 'open' : '' %>">
+        <% for (var val in group.values) { %>
+                <tr class="row">
+                        <th class="prop" scope="row" title="<%= val %>" id="<%= val %>"><span class="prop-name"><%= val %></span><button type="button" class="btn btn-outline-secondary open"><span></span></button></th>
+                        <td class="years timeline-table">
+                                <ul class="list-group list-group-flush">
+                                        <% group.values[val][_.allKeys(group.values[val])[0]].forEach(val => { %>
+                                                <li class="list-group-item nowrap"><small><%= val[0] %></small></li>
+                                        <% }) %>
+                                </ul>
+                        </td>
+                        <% for (var dist in group.values[val]) { %>
+                        <td class="timeline-table">
+                                <ul class="list-group list-group-flush">
+                                <% group.values[val][dist].forEach(function (val) { %>
+                                        <li class="list-group-item nowrap">
+                                                <span class="val"><%= isNaN(val[1]) ? val[1] : Number.isInteger(parseFloat(val[1])) ? parseFloat(val[1]).toLocaleString('de-DE') : parseFloat(val[1]).toLocaleString('de-DE') %></span>
+                                                <!-- <small class="year">(<%= val[0] %>)</small> -->
+                                        </li>
+                                <% }); %>
+                                </ul>
+                        </td>
+                        <% } %>
+                </tr>
+        <% } %>
+        </tbody>
+<% }) %>
+</table>

@@ -3,7 +3,7 @@
 @background_color_1: rgba(0, 0, 0,.5);
 
 .dashboard-table {
-    .header, .table-footer {
+    .head-bar, .table-footer {
         width: 100%;
         border-bottom: 1px solid rgb(229,229,229);
         padding: 10px 0;
@@ -75,14 +75,17 @@
                     display: table-row-group;
                 }
             }
-            th.prop {
-                font-weight: 300;
-                &#statgebiet {
-                    font-weight: bold;
-                } 
-            }
             th, td {
-                width:auto;
+                width: auto;
+                &.prop {
+                    font-weight: 300;
+                    &#statgebiet {
+                        font-weight: bold;
+                    }
+                }
+                &.years {
+                    font-weight: 300;
+                }
                 &.district {
                     cursor: pointer;
                 }
@@ -138,6 +141,10 @@
             &.selected {
                 td, th {
                     background: #3399CC;
+                    color: white;
+                    small {
+                        color: rgb(155, 222, 255) !important;
+                    }
                 }
                 td {
                     &:hover {
@@ -192,7 +199,7 @@
                 line-height: 1.5;
             }
         }
-        .header {
+        .head-bar {
             padding: 10px;
         }
     }

@@ -1,15 +1,24 @@
 <div>
     <li id="barChart">Balkendiagramm erstellen</li>
-    <li id="lineChart">Liniendiagramm erstellen</li>
+    <li id="lineChart" class="has-sub-menu">
+        Liniendiagramm erstellen
+        <ul class="sub-menu" id="lineChart">
+            <li id="unscaled">Unskalierte Achsen</li>
+            <li id="scaled">Skalierte Achsen</li>
+        </ul>
+    </li>
     <li id="timeline">Zeitstrahl erstellen</li>
-    <!-- <li class="group" title="Wählt den Datensatz für eine Korrelation aus. Die erste Auswahl wird auf der x-Achse, die zweite auf der y-Achse dargestellt">Korrelation</li>
-    <li id="correlation" title="Wählt den Datensatz für eine Korrelation aus. Die erste Auswahl wird auf der x-Achse, die zweite auf der y-Achse dargestellt">Wert für Korrelation auswählen</li>
-    <li id="delete-correlation" title="Löscht die aktuelle Korrelationsauswahl">Korrelationswerte löschen</li> -->
     <li class="group">Auswahl</li>
     <li id="numerator">Als Zähler hinzufügen</li>
     <li id="denominator">Als Nenner hinzufügen</li>
     <li id="delete-selection" title="Löscht die aktuelle Auswahl">Auswahl aufheben</li>
     <li class="group" id="selection">Verhältnisse berechnen<span style="font-weight: 300;"></span></li>
     <li id="ratio" class="calculate">Neuen Datensatz berechnen</li>
-    <li id="correlation" class="calculate">Korrelationsdiagramm erstellen</li>
+    <li id="correlation" class="calculate has-sub-menu">
+        Korrelationsdiagramm erstellen
+        <ul class="sub-menu" id="calculate">
+            <li id="unscaled">Unskalierte Achsen</li>
+            <li id="scaled">Skalierte Achsen</li>
+        </ul>
+    </li>
 </div>

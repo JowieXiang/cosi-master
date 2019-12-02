@@ -16,6 +16,8 @@ const ResultView = Backbone.View.extend({
         const attr = this.model.toJSON(),
             results = this.model.getResults();
 
+        attr.isModified = this.model.get("adjustParameterView").model.get("isModified");
+
         this.$el.html(this.template(attr));
         this.$el.find("#export-button").append(this.exportButtonView.render().el);
 
@@ -35,6 +37,8 @@ const ResultView = Backbone.View.extend({
         var features = Radio.request("SelectDistrict", "getSelectedDistricts"),
             values = [],
             selector = Radio.request("SelectDistrict", "getSelector");
+
+        Radio.trigger("ColorCodeMap", "reset");
 
         for (const district in results) {
             values.push(results[district].coverage);

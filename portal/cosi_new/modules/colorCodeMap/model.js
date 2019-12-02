@@ -23,6 +23,14 @@ const LayerModel = Backbone.Model.extend(/** @lends LayerModel.prototype */{
             "reset": function () {
                 this.reset();
                 this.trigger("resetView");
+            },
+            "selectionChanged": function (districts) {
+                this.set("districtFeatures", districts);
+            }
+        });
+        this.listenTo(Radio.channel("ColorCodeMap"), {
+            "reset": function () {
+                this.trigger("resetView");
             }
         });
         this.listenTo(Radio.channel("FeaturesLoader"), {

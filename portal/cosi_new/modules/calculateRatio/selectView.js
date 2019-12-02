@@ -8,7 +8,8 @@ const SelectView = Backbone.View.extend({
     events: {
         "click #submit": "calculateRatios",
         "change #resolution-input": "setResolution",
-        "click .tool-info #help": "showInfo"
+        "click .tool-info #help": "showInfo",
+        "click #clear": "clearResult"
     },
     initialize: function () {
         this.listenTo(this.model, {
@@ -38,6 +39,13 @@ const SelectView = Backbone.View.extend({
             this.denDropdownView = new SnippetDropdownView({model: this.model.get("denDropdownModel")});
             this.$el.find(".denDropdown").append(this.denDropdownView.render().el);
             this.renderFacilityDropDown();
+
+            this.updateTexts();
+            this.renderModifiers();
+
+            if (this.resultView) {
+                this.renderResult();
+            }
         }
 
         return this;
@@ -49,10 +57,13 @@ const SelectView = Backbone.View.extend({
     },
     renderResult: function () {
         this.$el.find(".result").html("");
-        this.$el.find(".result").append(new ResultView({model: this.model}).render(false).el);
+        this.resultView = new ResultView({model: this.model});
+        this.$el.find(".result").append(this.resultView.render(false).el);
     },
     renderModifiers: function () {
-        this.$el.find(".modifiers").html(this.model.get("adjustParameterView").render().el);
+        if (this.model.get("adjustParameterView").model) {
+            this.$el.find(".modifiers").html(this.model.get("adjustParameterView").render().el);
+        }
     },
     updateTexts: function () {
         if (this.model.get("denominators").values.length === 0) {
@@ -61,6 +72,10 @@ const SelectView = Backbone.View.extend({
         else {
             $("#resolution-input-container").removeClass("hidden").find("#den-name").text(this.model.get("denominators").values.join(", "));
             $(".denDropdown .filter-option").text(this.model.get("denominators").values[0]);
+        }
+
+        if (this.model.get("numDropdownModel").get("values").length > 0) {
+            $("#facilities-info").hide();
         }
     },
     calculateRatios: function () {
@@ -75,6 +90,10 @@ const SelectView = Backbone.View.extend({
             text: InfoTemplate,
             kategorie: "alert-info"
         });
+    },
+    clearResult: function () {
+        this.resultView.remove();
+        Radio.trigger("ColorCodeMap", "reset");
     }
 });
 

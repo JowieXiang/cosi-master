@@ -6,7 +6,6 @@ const ColorCodeMapView = Backbone.View.extend({
     events: {
         "click .btn-reset": function () {
             this.reset();
-            this.model.unStyleDistrictFeatures(this.model.get("districtFeatures"));
         },
         "click .btn-prev-next": "prevNext"
     },
@@ -87,6 +86,9 @@ const ColorCodeMapView = Backbone.View.extend({
         this.clearLegend();
         if (this.model.get("districtFeatures").length === 0) {
             this.$el.find("button").prop("disabled", true);
+        }
+        else {
+            this.model.unStyleDistrictFeatures(this.model.get("districtFeatures"));
         }
     },
 

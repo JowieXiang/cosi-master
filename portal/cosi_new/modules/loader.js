@@ -13,15 +13,17 @@ import ReachabilityInAreaView from "./reachabilityInArea/view";
 import PrintView from "../../../modules/tools/print/view";
 import GraphModel from "./graph_v2/model";
 import ReachabilitySelectView from "./reachabilitySelect/view";
-import { storageListener, updateFromStorage, setupStorage } from "./storage";
+import {storageListener, updateFromStorage, setupStorage} from "./storage";
 import CompareDistrictsView from "./compareDistricts/view";
 import ControlsView from "../../../modules/controls/view";
 import RefocusView from "./controls/refocus/view";
+import "../cosi.style.less";
+
 /**
  * @returns {void}
  * @summary that is incredibly unelegant!
  */
-function initializeCosi() {
+function initializeCosi () {
     // Define CoSI Namespace on window object
     var infoScreenOpen = JSON.parse(window.localStorage.getItem("infoScreenOpen"));
 
