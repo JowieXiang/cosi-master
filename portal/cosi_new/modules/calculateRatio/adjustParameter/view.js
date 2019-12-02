@@ -7,8 +7,9 @@ const AdjustParameterView = Backbone.View.extend({
     events: {
         "change #parameter-select": "setModifier",
         "change #modifier-input": "setModifier",
-        "change #operator": "setModifier",
-        "click .info-button": "showInfo"
+        "change #operator-input": "setModifier",
+        "click #help": "showInfo",
+        "click #toggle-modifier": "toggleModifier"
     },
     initialize: function (layerId, infoText = null) {
         if (layerId) {
@@ -25,6 +26,9 @@ const AdjustParameterView = Backbone.View.extend({
         this.delegateEvents();
 
         return this;
+    },
+    toggleModifier: function () {
+        this.$el.find(".modifier").toggleClass("hidden");
     },
     setModifier: function () {
         const modValue = this.$el.find("#operator").val() === "/" ? 1 / parseFloat(this.$el.find("#modifier-input").val()) : parseFloat(this.$el.find("#modifier-input").val());

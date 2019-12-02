@@ -1,20 +1,39 @@
 <!DOCTYPE html>
-<div class="input-group mb-3">
-    <div class="input-group-prepend">
-      <label class="input-group-text" id="layer-name" for="parameter-select"><%= layerName %></label>
-    </div>
-    <select class="form-control custom-select" id="parameter-select">
-        <option value="count"><%= defaultOption %></option>
-        <% _.each(numericalValues, function (value) { %>
-            <option value="<%= value %>"><%= value %></option>
-        <% }) %>
-    </select>
-    <select class="form-control" id="operator" title="Rechenoperator für die Gewichtung wählen">
-        <option value="*" title="Multiplizieren - Bsp.: '1 Lehrer kann 20 Schüler betreuen'">x</option>
-        <option value="/" title="Dividieren - Bsp.: '1 Schüler braucht 5qm Sportplatzfläche'">/</option>
-    </select>
-    <input class="form-control" type="number" value="<%= initValue %>" id="modifier-input" step="<%= step %>">
-    <div class="input-group-append">
-        <label class="input-group-text" for="modifier-input">Gewichtung<span class="glyphicon glyphicon-info-sign info-button"></span></label>
-    </div>
-</div>
+<h4><%= layerName %></h4>
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col" id="param-label">Parameter wählen</th>
+            <th class="modifier hidden" scope="col" id="modifier-label">Gewichtung</th>
+            <th class="modifier hidden" scope="col" id="operator-label">Operator</th>
+            <th>
+                <div id="help">
+                    <span class="glyphicon glyphicon-question-sign"></span>
+                </div>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                <select class="form-control custom-select" id="parameter-select">
+                    <option value="count"><%= defaultOption %></option>
+                    <% _.each(numericalValues, function (value) { %>
+                        <option value="<%= value %>"><%= value %></option>
+                    <% }) %>
+                </select>
+            </td>
+            <td class="modifier hidden"><input class="form-control" type="number" value="<%= initValue %>" id="modifier-input" step="<%= step %>"></td>
+            <td class="modifier hidden">
+                <select class="form-control" id="operator" title="Rechenoperator für die Gewichtung wählen">
+                    <option value="*" title="Multiplizieren - Bsp.: '1 Lehrer kann 20 Schüler betreuen'">x</option>
+                    <option value="/" title="Dividieren - Bsp.: '1 Schüler braucht 5qm Sportplatzfläche'">/</option>
+                </select>
+            </td>
+            <td>
+                <button class="btn btn-lgv-grey modifier" id="toggle-modifier">Gewichtung hinzufügen</button>
+                <button class="btn btn-lgv-grey modifier hidden" id="toggle-modifier">Gewichtung entfernen</button>
+            </td>
+        </tr>
+    </tbody>
+</table>

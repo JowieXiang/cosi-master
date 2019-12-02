@@ -1,32 +1,32 @@
 <!DOCTYPE html>
 <div class="calculate-ratio">
     <div class="tool-info">
-        Die Versorgungsanalyse kann sowohl für den gesamten Untersuchungsbereich, als auch einzeln erfolgen.
+        <div>
+            Mit der Versorgungsanalyse können Sie die Abdeckung eines Gebietes mit einem bestimmten Einrichtungstyp / Infrastruktur ermitteln (s. "Themen").
+        </div>
+        <div id="help">
+            <span class="glyphicon glyphicon-question-sign"></span>
+        </div>
     </div>
     <div class="numDropdown"></div>
-    <small id="numHelp" class="form-text text-muted">
-        Sie können den Wert der Einrichtungen, gegen den getestet werden soll auswählen, sobald sie die gewünschen Einrichtungen gewählt haben.<br/>
-        z.B. "Fläche", "Mitarbeiter", "Plätze", etc.
-    </small>
     <div class="denDropdown"></div>
     <div class="toggleMulti"></div>
-    <div class="form-group form-group-sm">
-        <small id="toolHelp" class="form-text text-muted">
-            Bitte beachten Sie: <br>
-            Die angezeigten Werte unterliegen Ungenauigkeiten.<br>
-            Die für die Analyse verfügbaren Layer müssen zuvor im Layer-Panel aktiviert werden.
-        </small>
-    </div>
-    <div class="form-group form-group-sm hidden" id="resolution-input-form-group">
-        <div class="input-group-prepend">
-            <label class="input-group-text" id="resolution" for="resolution-input">berechnen pro</label>
-        </div>
-        <input class="form-control" type="text" value="1" id="resolution-input" step="1" min="1">
-        <div class="input-group-append">
-            <label class="input-group-text" id="res-reference">der Bezugsgröße</label>
-        </div>
-    </div>
     <div class="modifiers"></div>
+    <div class="hidden" id="resolution-input-container">
+        <h4 id="den-name"></h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">berechnen pro</th>
+                </tr>
+                <tbody>
+                    <tr>
+                        <td><input class="form-control" type="text" value="1" id="resolution-input" step="1" min="1"><span class="inline-tag">der Bezugsgröße</span></td>
+                    </tr>
+                </tbody>
+            </thead>
+        </table>
+    </div>
     <button id="submit" class="btn btn-primary btn-md btn-block">Berechnen</button>
     <div class="result"></div>
 </div>
