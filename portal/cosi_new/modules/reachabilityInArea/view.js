@@ -91,6 +91,7 @@ const ReachabilityInAreaView = Backbone.View.extend({
             promiseList = [];
 
         if (this.model.get("coordinates").length > 0 && pathType !== "" && range !== 0) {
+            Radio.trigger("Alert", "alert:remove");
             // group coordinates into groups of 5
             for (let i = 0; i < this.model.get("coordinates").length; i += 5) {
                 const arrayItem = this.model.get("coordinates").slice(i, i + 5);
@@ -131,13 +132,10 @@ const ReachabilityInAreaView = Backbone.View.extend({
                         layerUnion = union(layerUnion, layeredList[j]);
                     }
                     layerUnionFeatures = this.parseDataToFeatures(JSON.stringify(layerUnion));
-
                     layerUnionFeatures = this.transformFeatures(layerUnionFeatures, "EPSG:4326", "EPSG:25832");
                     this.styleFeatures(layerUnionFeatures);
                     mapLayer.getSource().addFeatures(layerUnionFeatures);
-
                 }
-
                 // this.model.set("isochroneFeatures", unionList);
             });
         }
