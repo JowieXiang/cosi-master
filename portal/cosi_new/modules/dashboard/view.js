@@ -91,13 +91,13 @@ const DashboardView = Backbone.View.extend({
     },
     dragStart: function (event) {
         event.preventDefault();
-        console.log(event);
         this.isDragging = true;
         this.$el.find(".drag-bar").addClass("dragging");
     },
     dragMove: function (event) {
         if (this.isDragging) {
-            const newWidth = (((window.innerWidth - event.clientX) / window.innerWidth) * 100).toFixed(2) + "%";
+            const eventX = event.type === "touchmove" ? event.touches[0].clientX : event.clientX,
+                newWidth = (((window.innerWidth - eventX) / window.innerWidth) * 100).toFixed(2) + "%";
 
             Radio.trigger("Sidebar", "resize", newWidth);
         }

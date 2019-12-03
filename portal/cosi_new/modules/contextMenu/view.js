@@ -37,7 +37,8 @@ const ContextMenuView = Backbone.View.extend({
     },
     addContextMenu (element) {
         element.addEventListener("mouseup", this.mouseButtonHandler.bind(this));
-        element.addEventListener("touchstart", this.touchHandler.bind(this));
+        element.addEventListener("touchstart", this.touchStart.bind(this));
+        element.addEventListener("touchend", this.touchEnd.bind(this));
     },
     setActions (element, title = "Aktionen", glyphicon = "glyphicon-wrench") {
         this.$el.find("#actions").html(element);
@@ -58,45 +59,48 @@ const ContextMenuView = Backbone.View.extend({
                 break;
         }
     },
-    touchHandler (evt) {
-        const touchCount = evt.touches.length;
-        console.log(evt, touchCount);
-
-        switch (touchCount) {
-            case 2:
-                this.openContextMenu(evt.touches[0]);
-                break;
-            default:
-                this.closeContextMenu();
-                break;
+    touchStart () {
+        this.touchStart = Date.now();
+        console.log(Date.now());
+    },
+    touchEnd (evt) {
+        if (Date.now() > this.touchStart + 500) {
+            this.openContextMenu(evt);
         }
+        else {
+            this.closeContextMenu();
+        }
+
+        console.log(Date.now());
     },
     openContextMenu (evt) {
         this.$el.removeClass("hidden");
 
-        if (evt.clientY + this.el.clientHeight < window.innerHeight) {
+        const _evt = evt.type === "touchend" ? evt.touches[0] : evt;
+
+        if (_evt.clientY + this.el.clientHeight < window.innerHeight) {
             this.$el.css({
-                "top": evt.clientY,
+                "top": _evt.clientY,
                 "bottom": "auto"
             });
         }
         else {
             this.$el.css({
                 "top": "auto",
-                "bottom": window.innerHeight - evt.clientY
+                "bottom": window.innerHeight - _evt.clientY
             });
         }
 
-        if (evt.clientX + this.el.clientWidth < window.innerWidth) {
+        if (_evt.clientX + this.el.clientWidth < window.innerWidth) {
             this.$el.css({
-                "left": evt.clientX,
+                "left": _evt.clientX,
                 "right": "auto"
             });
         }
         else {
             this.$el.css({
                 "left": "auto",
-                "right": window.innerWidth - evt.clientX
+                "right": window.innerWidth - _evt.clientX
             });
         }
     },

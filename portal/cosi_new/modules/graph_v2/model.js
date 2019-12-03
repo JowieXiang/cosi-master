@@ -823,7 +823,8 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             offset = 10,
             dotSize = graphConfig.dotSize || 5,
             valueLine,
-            hasLineLabel = graphConfig.hasLineLabel;
+            hasLineLabel = graphConfig.hasLineLabel,
+            attribution = graphConfig.attribution || {};
 
         if (_.has(graphConfig, "legendData")) {
             this.appendLegend(svg, graphConfig.legendData);
@@ -855,6 +856,7 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             this.appendLineLabel(svg, data, scaleX, scaleY, scaleTypeX, xAttr);
         }
 
+        this.appendAttribution(svg, attribution, height, margin.bottom);
         this.setGraphParams({
             scaleX: scaleX,
             scaleY: scaleY,
@@ -915,7 +917,8 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             svgClass = graphConfig.svgClass,
             svg = this.createSvg(selector, margin.left, margin.top, graphConfig.width, graphConfig.height, svgClass),
             barWidth = width / data.length,
-            tooltipDiv = select(graphConfig.selectorTooltip);
+            tooltipDiv = select(graphConfig.selectorTooltip),
+            attribution = graphConfig.attribution || {};
 
         if (_.has(graphConfig, "legendData")) {
             this.appendLegend(svg, graphConfig.legendData);
@@ -923,6 +926,8 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
         this.drawBars(svg, data, scaleX, scaleY, height, selector, barWidth, xAttr, attrToShowArray, tooltipDiv);
         this.appendYAxisToSvg(svg, yAxis, yAxisLabel, height);
         this.appendXAxisToSvg(svg, xAxis, xAxisLabel, width);
+
+        this.appendAttribution(svg, attribution, height, margin.bottom);
 
         return svg;
     },
@@ -1077,7 +1082,8 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             svg = this.createSvg(selector, margin.left, margin.top, graphConfig.width, graphConfig.height, svgClass),
             tooltipDiv = select(graphConfig.selectorTooltip),
             offset = 10,
-            dotSize = graphConfig.dotSize || 5;
+            dotSize = graphConfig.dotSize || 5,
+            attribution = graphConfig.attribution || {};
 
         if (_.has(graphConfig, "legendData")) {
             this.appendLegend(svg, graphConfig.legendData);
@@ -1102,6 +1108,7 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             this.translateXAxislabelText(svg, xAxisLabel.translate);
         }
 
+        this.appendAttribution(svg, attribution, height, margin.bottom);
         this.setGraphParams({
             scaleX: scaleX,
             scaleY: scaleY,
@@ -1301,25 +1308,25 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
                     .attr("style", "background-color: buttonface; border-radius: 4px; text-align: center;")
                     .style("right", () => {
                         if (event.clientX + tooltipDiv.node().clientWidth + 25 >= window.innerWidth) {
-                            return (window.innerWidth - event.clientX + 25) + "px"
+                            return (window.innerWidth - event.clientX + 25) + "px";
                         }
                         return false;
                     })
                     .style("left", () => {
                         if (event.clientX + tooltipDiv.node().clientWidth + 25 < window.innerWidth) {
-                            return (event.clientX + 25) + "px"
+                            return (event.clientX + 25) + "px";
                         }
                         return false;
                     })
                     .style("bottom", () => {
                         if (event.clientY + tooltipDiv.node().clientHeight + 25 >= window.innerHeight) {
-                            return (window.innerHeight - event.clientY + 20) + "px"
+                            return (window.innerHeight - event.clientY + 20) + "px";
                         }
                         return false;
                     })
                     .style("top", () => {
                         if (event.clientY + tooltipDiv.node().clientHeight + 20 < window.innerHeight) {
-                            return (event.clientY + 20) + "px"
+                            return (event.clientY + 20) + "px";
                         }
                         return false;
                     });
@@ -1333,6 +1340,33 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
                         tooltipDiv.style("top", "0px");
                     }, tooltipDiv);
             }, tooltipDiv);
+    },
+
+    appendAttribution (svg, attribution, height, margin) {
+        const attrToAppend = {
+            x: attribution.x ? attribution.x : 0,
+            y: attribution.y ? attribution.y : height + margin,
+            lineHeight: attribution.lineHeight || 10,
+            fontSize: attribution.fontSize || "7px",
+            anchor: attribution.anchor || "start",
+            text: attribution.text || [new Date().toLocaleDateString("de-DE"), "Landesbetrieb Geoinformation und Vermessung"]
+        };
+
+        console.log(attrToAppend.y);
+
+        svg.append("g")
+            .classed("attribution", true)
+            .selectAll("text")
+            .data(attrToAppend.text)
+            .enter()
+            .append("text")
+            .attr("x", attrToAppend.x)
+            .attr("y", attrToAppend.y)
+            .attr("dy", (d, i) => -i * attrToAppend.lineHeight)
+            .style("text-anchor", attrToAppend.anchor)
+            .style("fill", "black")
+            .style("font-size", "10px")
+            .text(d => d);
     },
 
     /**

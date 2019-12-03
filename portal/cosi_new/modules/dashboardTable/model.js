@@ -411,7 +411,15 @@ const DashboardTableModel = Tool.extend({
                 selectorTooltip: ".dashboard-tooltip",
                 hasLineLabel: true,
                 hasContextMenu: true,
-                dynamicAxisStart: dynamicAxisStart
+                dynamicAxisStart: dynamicAxisStart,
+                attribution: {
+                    x: 0,
+                    y: $(window).height() * 0.4,
+                    lineHeight: 10,
+                    fontSize: "7px",
+                    anchor: "start",
+                    text: ["Datum: " + new Date().toLocaleDateString("de-DE"), "Quelle: Cockpit für Städtische Infrastruktur (CoSI)"]
+                }
             });
         }
         else if (type === "BarGraph") {
@@ -454,7 +462,15 @@ const DashboardTableModel = Tool.extend({
                 height: $(window).height() * 0.4,
                 svgClass: "dashboard-graph-svg",
                 selectorTooltip: ".dashboard-tooltip",
-                hasContextMenu: true
+                hasContextMenu: true,
+                attribution: {
+                    x: 0,
+                    y: $(window).height() * 0.4,
+                    lineHeight: 10,
+                    fontSize: "7px",
+                    anchor: "start",
+                    text: ["Datum: " + new Date().toLocaleDateString("de-DE"), "Quelle: Cockpit für Städtische Infrastruktur (CoSI)"]
+                }
             });
         }
 
@@ -517,7 +533,15 @@ const DashboardTableModel = Tool.extend({
                 dotSize: 3,
                 svgClass: "dashboard-graph-svg",
                 selectorTooltip: ".dashboard-tooltip",
-                hasContextMenu: true
+                hasContextMenu: true,
+                attribution: {
+                    x: 0,
+                    y: $(window).height() * 0.4,
+                    lineHeight: 10,
+                    fontSize: "7px",
+                    anchor: "start",
+                    text: ["Datum: " + new Date().toLocaleDateString("de-DE"), "Quelle: Cockpit für Städtische Infrastruktur (CoSI)"]
+                }
             });
 
         Radio.trigger("Dashboard", "append", graph, "#dashboard-containers", {
