@@ -260,7 +260,7 @@ const SelectDistrictModel = Tool.extend(/** @lends SelectDistrictModel.prototype
     },
     toggleScopeLayers: function () {
         _.each(this.get("districtLayerNames"), (layerName) => {
-            if (layerName !== "Stadtteile") {
+            if (layerName !== "Gebiete") {
                 const layer = Radio.request("ModelList", "getModelByAttributes", { "name": layerName });
 
                 if (layerName !== this.getScope()) {
