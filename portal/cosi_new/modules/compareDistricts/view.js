@@ -340,6 +340,9 @@ const CompareDistrictsView = Backbone.View.extend({
             featureCollection = districtLayer.get("layer").getSource().getFeatures(),
             selectedFeatures = featureCollection.filter(feature => _.contains(this.model.get("comparableFeaturesNames"), feature.getProperties()[selector]));
 
+        if (this.model.get("refDistrict")) {
+            selectedFeatures.push(this.model.get("refDistrict"));
+        }
         Radio.request("SelectDistrict", "setSelectedDistrictsToFeatures", selectedFeatures);
     },
     showInDashboard: function () {
