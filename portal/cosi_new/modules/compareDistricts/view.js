@@ -4,7 +4,6 @@ import DistrictSelectorView from "./districtSelector/view";
 import LayerFilterSelectorModel from "./layerFilterSelector/model";
 import LayerFilterSelectorView from "./layerFilterSelector/view";
 import VectorSource from "ol/source/Vector";
-import { Fill, Stroke, Style } from "ol/style.js";
 import LayerFilterModel from "./layerFilter/model";
 import LayerFilterView from "./layerFilter/view";
 import LayerFilterCollection from "./layerFilter/list";
@@ -27,6 +26,7 @@ const CompareDistrictsView = Backbone.View.extend({
         this.listenTo(channel, {
             "closeFilter": this.addLayerOption,
             "selectRefDistrict": function () {
+                this.setRefDistrict();
                 this.updateLayerFilterCollection();
             }
         });
@@ -148,6 +148,21 @@ const CompareDistrictsView = Backbone.View.extend({
         });
         this.model.set("layerFilterList", JSON.stringify(newList));
     },
+    setRefDistrict: function () {
+        const refDistrictName = Radio.request("DistrictSelector", "getSelectedDistrict"),
+            domObj = this.$el.find("#reference-district");
+
+        if (refDistrictName !== "Leeren") {
+            domObj.empty();
+            domObj.append("<p><strong>Referenzgebiet: </strong></p>");
+            domObj.append(`<span class="name-tag district-name">${refDistrictName} </span>`);
+            this.showRefDistrict(refDistrictName);
+        }
+        else {
+            domObj.empty();
+            this.model.set("refDistrict", null);
+        }
+    },
     setCompareResults: function (comparableDistricts) {
         let domString = "<p>";
 
@@ -161,7 +176,6 @@ const CompareDistrictsView = Backbone.View.extend({
         if (comparableDistricts.length > 0) {
             this.$el.find("#set-selected-district").show();
             this.$el.find("#show-in-dashboard").show();
-
         }
     },
     addOneToLayerFilterList: function (model) {
@@ -184,7 +198,6 @@ const CompareDistrictsView = Backbone.View.extend({
                 }
             });
             this.model.set("layerFilterList", JSON.stringify(newList));
-
         }
     },
     setCompareFeatures: function (model, value) {
@@ -251,6 +264,24 @@ const CompareDistrictsView = Backbone.View.extend({
 
         mapLayer.getSource().clear();
     },
+    showRefDistrict: function (refDistrictName) {
+        /**
+         * should add a radio function in the FeatureLoader module!!!
+         */
+        const mapLayer = Radio.request("Map", "getLayerByName", this.model.get("mapLayerName")),
+            scope = Radio.request("SelectDistrict", "getScope"),
+            districtLayer = Radio.request("ModelList", "getModelByAttributes", { "name": scope }),
+            selector = Radio.request("SelectDistrict", "getDistrictLayer").filter(item => item.name === scope)[0].selector,
+            featureCollection = districtLayer.get("layer").getSource().getFeatures(),
+            refDistrict = featureCollection.filter(feature => feature.getProperties()[selector] === refDistrictName)[0],
+            featureClone = refDistrict.clone();
+
+        this.clearMapLayer();
+        featureClone.setStyle(this.model.get("selectedStyle"));
+        mapLayer.setVisible(true);
+        mapLayer.getSource().addFeature(featureClone);
+        this.model.set("refDistrict", refDistrict);
+    },
     showComparableDistricts: function (districtFeatures) {
         const mapLayer = Radio.request("Map", "getLayerByName", this.model.get("mapLayerName")),
             cloneCollection = [];
@@ -259,17 +290,16 @@ const CompareDistrictsView = Backbone.View.extend({
         _.each(districtFeatures, (feature) => {
             const featureClone = feature.clone();
 
-            featureClone.setStyle(new Style({
-                fill: new Fill({
-                    color: [8, 119, 95, 0.3]
-                }),
-                stroke: new Stroke({
-                    color: [8, 119, 95, 0.3],
-                    width: 3
-                })
-            }));
+            featureClone.setStyle(this.model.get("selectedStyle"));
             cloneCollection.push(featureClone);
         });
+        //  add refDistrict feature to the collection
+        if (this.model.get("refDistrict")) {
+            const refDistrictClone = this.model.get("refDistrict").clone();
+
+            refDistrictClone.setStyle(this.model.get("selectedStyle"));
+            cloneCollection.push(refDistrictClone);
+        }
         mapLayer.setVisible(true);
         mapLayer.getSource().addFeatures(cloneCollection);
     },
@@ -313,14 +343,10 @@ const CompareDistrictsView = Backbone.View.extend({
         Radio.request("SelectDistrict", "setSelectedDistrictsToFeatures", selectedFeatures);
     },
     showInDashboard: function () {
-        let domString = "<p><strong>Vergleichbare Gebiete: </strong></p><p>";
+        const resultsClone = this.$el.find("#results").clone();
 
-        _.each(this.model.get("comparableFeaturesNames"), district => {
-            domString += `<span class="name-tag district-name">${district} </span>`;
-        });
-        domString += "</p>";
         Radio.trigger("Dashboard", "destroyWidgetById", "compareDistricts");
-        Radio.trigger("Dashboard", "append", domString, "#dashboard-containers", {
+        Radio.trigger("Dashboard", "append", resultsClone, "#dashboard-containers", {
             id: "compareDistricts",
             name: "Vergleichbare Gebiete ermitteln",
             glyphicon: "glyphicon-screenshot"

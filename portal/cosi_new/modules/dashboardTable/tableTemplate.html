@@ -3,9 +3,9 @@
         <thead id="<%= group.group.replace(/\s/g, '') %>">
                 <tr>
                         <th scope="col"><span><%= group.group %></span><button type="button" class="btn btn-outline-secondary open"><span></span></th>
-                        <th scope="col" class="years">Jahr</th>
+                        <th scope="col" class="years"><span>Jahr</span><span class="toggle-col glyphicon glyphicon-triangle-right"></span></th>
                         <% for (var dist in Object.values(group.values)[0]) { %>
-                                <th scope="col" style="text-align:right;" class="district"><%= dist %></th>
+                                <th scope="col" style="text-align:right;" class="district"><span><%= dist %></span><span class="toggle-col glyphicon glyphicon-triangle-right"></span></th>
                         <% } %>
                 </tr>
         </thead>
