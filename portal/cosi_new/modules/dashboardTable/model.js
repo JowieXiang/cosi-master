@@ -363,10 +363,11 @@ const DashboardTableModel = Tool.extend({
      * @param {string} type the diagram type (BarGraph, Linegraph)
      * @param {string} title the label for the diagram
      * @param {boolean} dynamicAxisStart is the y-Axis scaled?
+     * @param {number} year the year to create the bar graph from
      * @fires Dashboard#RadioTriggerAppend
      * @returns {void}
      */
-    createChart (props, type, title, dynamicAxisStart = false) {
+    createChart (props, type, title, dynamicAxisStart = false, year = null) {
         let data, graph;
         const svgParent = document.createElement("div");
 
@@ -414,7 +415,11 @@ const DashboardTableModel = Tool.extend({
             });
         }
         else if (type === "BarGraph") {
-            data = this.getBarChartData(props);
+            data = this.getBarChartData(props, year);
+
+            if (Object.keys(data[0]).length <= 1) {
+                return Radio.trigger("Alert", "alert", `Für das Jahr ${year} sind leider keine Werte zu ${title} verfügbar.`);
+            }
 
             graph = Radio.request("GraphV2", "createGraph", {
                 graphType: type,
@@ -455,10 +460,11 @@ const DashboardTableModel = Tool.extend({
 
         Radio.trigger("Dashboard", "append", graph, "#dashboard-containers", {
             id: title,
-            name: title,
+            name: `${title} (${year})`,
             glyphicon: "glyphicon-stats",
             width: $("#dashboard-containers").width() - 50 + "px",
-            scalable: true
+            scalable: true,
+            focus: true
         });
     },
 
@@ -530,7 +536,9 @@ const DashboardTableModel = Tool.extend({
                 };
 
                 props.forEach(prop => {
-                    districtProps[prop] = district[prop].filter(value => value[0] === year)[0][1];
+                    if (district[prop].find(value => value[0] === year)) {
+                        districtProps[prop] = district[prop].find(value => value[0] === year)[1];
+                    }
                 });
 
                 return districtProps;

@@ -4,7 +4,10 @@ import Template from "text-loader!./template.html";
 const ContextMenuView = Backbone.View.extend({
     events: {
         "click .close": "closeContextMenu",
-        "click #actions": "closeContextMenu"
+        "click #actions": "closeContextMenu",
+        "click #actions input": function (evt) {
+            evt.stopPropagation();
+        }
     },
     initialize () {
         $(".masterportal-container").after(this.$el);

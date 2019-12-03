@@ -16,7 +16,8 @@ const DashboardWidgetHandler = Backbone.Model.extend({
 
         channel.on({
             "append": this.append,
-            "destroyWidgetById": this.destroyWidgetById
+            "destroyWidgetById": this.destroyWidgetById,
+            "destroyWidgetsByAttributes": this.destroyWidgetsByAttributes
         }, this);
 
         channel.reply({
@@ -73,6 +74,18 @@ const DashboardWidgetHandler = Backbone.Model.extend({
                 return false;
             }
             return true;
+        }, this));
+    },
+    destroyWidgetsByAttributes (attrs) {
+        this.set("children", this.getChildren.filter(v => {
+            for (const prop in attrs) {
+                if (v.attrs[prop] === attrs[prop]) {
+                    v.remove();
+                    this.removeId(v.attrs.id);
+                    return false;
+                }
+                return true;
+            }
         }, this));
     },
     getChildren () {

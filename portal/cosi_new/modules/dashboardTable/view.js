@@ -153,8 +153,13 @@ const DashboardTableView = Backbone.View.extend({
             contextActions = this.contextActionsEl;
 
         // Create Bar Chart
-        $(contextActions).find("li#barChart").on("click", function () {
-            this.model.createChart([row.find("th.prop").attr("id")], "BarGraph", row.find("th.prop").text());
+        $(contextActions).find("li#barChart #input-year button").on("click", function () {
+            this.model.createChart([row.find("th.prop").attr("id")],
+                "BarGraph",
+                row.find("th.prop").text(),
+                false,
+                $(contextActions).find("li#barChart #input-year input").val()
+            );
         }.bind(this));
 
         // Create unscaled Line Chart
@@ -208,6 +213,9 @@ const DashboardTableView = Backbone.View.extend({
         }.bind(this));
 
         Radio.trigger("ContextMenu", "setActions", contextActions, row.find("th.prop").text(), "glyphicon-stats");
+
+        // Set the current year for all inputs
+        $(contextActions).find("li#barChart #input-year input").val(new Date().getFullYear() - 1);
 
         // Highlight the selected row
         row.parent("tbody").parent("table").find("tr").removeClass("selected");

@@ -26,7 +26,7 @@ const DashboardModel = Tool.extend({
             tag: "Dashboard als PDF speichern",
             rawData: ".dashboard",
             filename: "CoSI-Dashboard-Export",
-            fileExtension: "doc"
+            fileExtension: "pdf"
         }));
 
         channel.reply({

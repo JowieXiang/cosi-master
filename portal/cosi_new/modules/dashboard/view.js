@@ -9,7 +9,8 @@ const DashboardView = Backbone.View.extend({
         "click #help": "showHelp",
         "mousedown .drag-bar": "dragStart",
         "touchstart .drag-bar": "dragStart",
-        "click .tool-name": "dashboardInfo"
+        "click .tool-name": "dashboardInfo",
+        "click #reset-button": "resetWidgets"
     },
     initialize: function () {
         this.exportButtonView = new ExportButtonView({model: this.model.get("exportDashboardButton")});
@@ -109,6 +110,13 @@ const DashboardView = Backbone.View.extend({
         Radio.trigger("Alert", "alert", {
             text: InfoTemplate,
             kategorie: "alert-info"
+        });
+    },
+    resetWidgets () {
+        Radio.request("Dashboard", "getChildren").forEach(widget => {
+            if (widget.getId() !== "dashboard") {
+                widget.removeWidget();
+            }
         });
     }
 });

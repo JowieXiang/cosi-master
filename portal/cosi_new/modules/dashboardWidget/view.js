@@ -25,7 +25,8 @@ const DashboardWidgetView = Backbone.View.extend({
             append: attrs.append !== undefined ? attrs.append : true,
             width: attrs.width ? attrs.width : "auto    ",
             height: attrs.height ? attrs.height : "auto",
-            scalable: attrs.scalable ? attrs.scalable : false
+            scalable: attrs.scalable ? attrs.scalable : false,
+            focusOnInit: attrs.focus || false
         };
 
         this.render();
@@ -70,12 +71,17 @@ const DashboardWidgetView = Backbone.View.extend({
 
         Radio.trigger("ContextMenu", "addContextMenu", this.el);
 
+        if (this.attrs.focusOnInit) {
+            this.findScrollableParent($(this.parent)).scrollTop(this.el.offsetTop);
+        }
+
         return this;
     },
     initializeDOMElement () {
         const widget = document.createElement("div");
 
         widget.className = "dashboard-widget";
+        widget.id = this.attrs.id;
         // check to prepend or append the widget
         if (this.attrs.append) {
             $(this.parent).append($(widget));
@@ -129,8 +135,6 @@ const DashboardWidgetView = Backbone.View.extend({
 
             this.moving = true;
         }
-
-        console.log("move");
     },
     resizeStart (evt) {
         if (evt.button === 0) {
@@ -140,8 +144,6 @@ const DashboardWidgetView = Backbone.View.extend({
 
             this.resizing = true;
         }
-
-        console.log("size");
     },
     dragEnd (evt) {
         if (evt.button === 0) {
@@ -193,8 +195,17 @@ const DashboardWidgetView = Backbone.View.extend({
             });
         }
     },
-    widgetInfo () {
-        console.log(this);
+    getId () {
+        return this.attrs.id;
+    },
+    findScrollableParent ($el) {
+        if ($el.css("overflow-y") === "auto" || $el.css("overflow-y") === "scroll") {
+            return $el;
+        }
+        else if ($el === $(window)) {
+            return $el;
+        }
+        return this.findScrollableParent($el.parent());
     }
 });
 
