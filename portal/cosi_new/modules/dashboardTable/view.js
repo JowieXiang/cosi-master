@@ -11,9 +11,8 @@ const DashboardTableView = Backbone.View.extend({
         "mouseup .row": "contextMenuTable",
         "click .prop button.open": "toggleTimelineTable",
         "click thead button.open": "toggleGroup",
-        "click .figure > .header > button.open": "toggleFigure",
-        "click .btn-reset": "resetDropDown"
-        // "click #correlation-button": "createCorrelation"
+        "click .btn-reset": "resetDropDown",
+        "click .toggle-col": "toggleCol"
     },
     initialize: function () {
         this.exportButtonView = new ExportButtonView({model: this.model.get("exportButtonModel")});
@@ -115,8 +114,14 @@ const DashboardTableView = Backbone.View.extend({
 
         this.$el.find(`tbody#${group}`).toggleClass("open");
     },
-    toggleFigure: function (event) {
-        this.$(event.target).parent(".header").parent(".figure").toggleClass("open");
+    toggleCol: function (event) {
+        event.stopPropagation();
+
+        const cellIndex = event.target.parentNode.cellIndex;
+
+        this.el.querySelectorAll("tr").forEach((row) => {
+            $(row.children[cellIndex]).toggleClass("minimized");
+        });
     },
     dragStart: function () {
         this.isDragging = true;
