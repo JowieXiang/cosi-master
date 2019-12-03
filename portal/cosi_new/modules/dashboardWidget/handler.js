@@ -1,10 +1,12 @@
 import DashboardWidgetView from "./view";
+import {selection} from "d3-selection";
 
 const DashboardWidgetHandler = Backbone.Model.extend({
     defaults: {
         children: [],
         channel: "",
-        ids: []
+        ids: [],
+        rawDashboardWidget: {}
     },
     initialize (attrs = {}) {
         const channel = Radio.channel("Dashboard");
@@ -21,16 +23,40 @@ const DashboardWidgetHandler = Backbone.Model.extend({
             "getChildren": this.getChildren,
             "getWidgetById": this.getWidgetById
         }, this);
+
+        this.listenTo(this, {
+            "change:rawDashboardWidget": function () {
+                const newWidget = this.get("rawDashboardWidget");
+
+                this.append(newWidget.child, newWidget.parent, newWidget.opts, true);
+            }
+        });
     },
     initDefaults (attrs) {
         for (const attr in attrs) {
             this.set(attr, attrs[attr]);
         }
     },
-    append (child, parent = ".info-screen-children", opts) {
+    append (child, parent = ".info-screen-children", opts, cullButtons = false) {
+        var _child = child;
         const _opts = opts ? this.assignId(opts) : this.assignId({});
 
-        this.getChildren().push(new DashboardWidgetView(child, parent, _opts));
+        // send Widget to InfoScreen if infoScreenOpen
+        if (Radio.request("InfoScreen", "getIsWindowOpen")) {
+            CosiStorage.setItem("rawDashboardWidget", JSON.stringify({
+                child: this.convertChildToHtml(_child),
+                parent,
+                opts
+            }));
+        }
+
+        // remove Buttons on transfer via localStorage
+        if (cullButtons) {
+            _child = $(_child);
+            _child.find("button").remove();
+        }
+
+        this.getChildren().push(new DashboardWidgetView(_child, parent, _opts));
         this.pushId(_opts.id);
     },
     assignId (opts) {
@@ -79,8 +105,20 @@ const DashboardWidgetHandler = Backbone.Model.extend({
     },
     removeId (id) {
         this.set("ids", this.getIds().filter(_id => _id !== id));
+    },
+    convertChildToHtml (child) {
+        if (child instanceof Backbone.View) {
+            return this.content.render().el;
+        }
+        else if (child instanceof $) {
+            return child.html();
+        }
+        else if (child instanceof selection) {
+            return child.node();
+        }
+
+        return child;
     }
 });
 
 export default DashboardWidgetHandler;
-

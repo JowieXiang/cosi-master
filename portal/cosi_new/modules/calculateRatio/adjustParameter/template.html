@@ -5,7 +5,7 @@
         <tr>
             <th scope="col" id="param-label">Parameter wählen</th>
             <th class="modifier hidden" scope="col" id="modifier-label">Gewichtung</th>
-            <th class="modifier hidden" scope="col" id="operator-label">Operator</th>
+            <!-- <th class="modifier hidden" scope="col" id="operator-label">Operator</th> -->
             <th>
                 <div id="help">
                     <span class="glyphicon glyphicon-question-sign"></span>
@@ -23,11 +23,11 @@
                     <% }) %>
                 </select>
             </td>
-            <td class="modifier hidden"><input class="form-control" type="number" value="<%= initValue %>" id="modifier-input" step="<%= step %>"></td>
-            <td class="modifier hidden">
+            <td class="modifier hidden" title="Hier können Sie auswählen, wieviel des Parameters pro Person gebraucht wird."><input class="form-control" type="number" value="<%= initValue %>" id="modifier-input" step="<%= step %>"></td>
+            <td class="hidden">
                 <select class="form-control" id="operator" title="Rechenoperator für die Gewichtung wählen">
-                    <option value="*" title="Multiplizieren - Bsp.: '1 Lehrer kann 20 Schüler betreuen'">x</option>
                     <option value="/" title="Dividieren - Bsp.: '1 Schüler braucht 5qm Sportplatzfläche'">/</option>
+                    <option value="*" title="Multiplizieren - Bsp.: '1 Lehrer kann 20 Schüler betreuen'">x</option>
                 </select>
             </td>
             <td>

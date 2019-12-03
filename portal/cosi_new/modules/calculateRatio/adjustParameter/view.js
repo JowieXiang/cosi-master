@@ -29,6 +29,7 @@ const AdjustParameterView = Backbone.View.extend({
     },
     toggleModifier: function () {
         this.$el.find(".modifier").toggleClass("hidden");
+        this.model.set("isModified", !this.model.get("isModified"));
     },
     setModifier: function () {
         const modValue = this.$el.find("#operator").val() === "/" ? 1 / parseFloat(this.$el.find("#modifier-input").val()) : parseFloat(this.$el.find("#modifier-input").val());

@@ -11,9 +11,8 @@ const DashboardTableView = Backbone.View.extend({
         "mouseup .row": "contextMenuTable",
         "click .prop button.open": "toggleTimelineTable",
         "click thead button.open": "toggleGroup",
-        "click .figure > .header > button.open": "toggleFigure",
-        "click .btn-reset": "resetDropDown"
-        // "click #correlation-button": "createCorrelation"
+        "click .btn-reset": "resetDropDown",
+        "click .toggle-col": "toggleCol"
     },
     initialize: function () {
         this.exportButtonView = new ExportButtonView({model: this.model.get("exportButtonModel")});
@@ -24,7 +23,6 @@ const DashboardTableView = Backbone.View.extend({
 
         this.listenTo(this.model, {
             "isReady": this.render,
-            // "correlationValuesUpdated": this.renderCorrelationAttrs,
             "ratioValuesUpdated": this.updateRatioSelection
         });
     },
@@ -64,24 +62,6 @@ const DashboardTableView = Backbone.View.extend({
 
         return this;
     },
-    // renderCorrelationAttrs () {
-    //     if (this.model.getAttrsForCorrelation().length > 0) {
-    //         const btn = document.createElement("button");
-
-    //         btn.className = "btn btn-primary";
-    //         btn.id = "correlation-button";
-    //         btn.innerHTML = `<strong>Korrelation erstellen:</strong><br /> ${this.model.getAttrsForCorrelation().join(" : ")}`;
-
-    //         if (this.model.getAttrsForCorrelation().length < 2) {
-    //             btn.setAttribute("disabled", true);
-    //         }
-
-    //         this.$el.find("#correlation").html(btn);
-    //     }
-    //     else {
-    //         this.$el.find("#correlation").empty();
-    //     }
-    // },
     updateRatioSelection () {
         var selectionText = this.$el.find("span#row-selection");
 
@@ -134,8 +114,14 @@ const DashboardTableView = Backbone.View.extend({
 
         this.$el.find(`tbody#${group}`).toggleClass("open");
     },
-    toggleFigure: function (event) {
-        this.$(event.target).parent(".header").parent(".figure").toggleClass("open");
+    toggleCol: function (event) {
+        event.stopPropagation();
+
+        const cellIndex = event.target.parentNode.cellIndex;
+
+        this.el.querySelectorAll("tr").forEach((row) => {
+            $(row.children[cellIndex]).toggleClass("minimized");
+        });
     },
     dragStart: function () {
         this.isDragging = true;
@@ -171,9 +157,14 @@ const DashboardTableView = Backbone.View.extend({
             this.model.createChart([row.find("th.prop").attr("id")], "BarGraph", row.find("th.prop").text());
         }.bind(this));
 
-        // Create Line Chart
-        $(contextActions).find("li#lineChart").on("click", function () {
+        // Create unscaled Line Chart
+        $(contextActions).find("li#lineChart #unscaled").on("click", function () {
             this.model.createChart([row.find("th.prop").attr("id")], "Linegraph", row.find("th.prop").text());
+        }.bind(this));
+
+        // Create scaled Line Chart
+        $(contextActions).find("li#lineChart #scaled").on("click", function () {
+            this.model.createChart([row.find("th.prop").attr("id")], "Linegraph", row.find("th.prop").text(), true);
         }.bind(this));
 
         // Create Timeline
@@ -181,11 +172,6 @@ const DashboardTableView = Backbone.View.extend({
             Radio.trigger("Dashboard", "destroyWidgetById", "time-slider");
             Radio.trigger("TimeSlider", "create", row.find("th.prop").text());
         });
-
-        // // Add to Correlation
-        // $(contextActions).find("li#correlation").on("click", function () {
-        //     this.model.addAttrForCorrelation(row.find("th.prop").attr("id"));
-        // }.bind(this));
 
         // Delete Selection
         $(contextActions).find("li#delete-selection").on("click", function () {
@@ -203,9 +189,15 @@ const DashboardTableView = Backbone.View.extend({
             this.model.addAttrForRatio(row.find("th.prop").attr("id"), 1);
         }.bind(this));
 
-        // Create Correlation
-        $(contextActions).find("li#correlation").on("click", function () {
-            this.model.createCorrelation();
+        // Create unscaled Correlation
+        $(contextActions).find("li#correlation #unscaled").on("click", function () {
+            this.model.createCorrelation(false);
+            this.model.deleteAttrsForRatio();
+        }.bind(this));
+
+        // Create scaled Correlation
+        $(contextActions).find("li#correlation #scaled").on("click", function () {
+            this.model.createCorrelation(true);
             this.model.deleteAttrsForRatio();
         }.bind(this));
 

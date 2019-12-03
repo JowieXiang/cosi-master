@@ -801,14 +801,16 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             xAttr = graphConfig.xAttr,
             xAxisLabel = graphConfig.xAxisLabel,
             yAxisLabel = graphConfig.yAxisLabel,
+            refColorScale = Radio.request("ColorScale", "getColorScaleByValues", [0, 1], "interpolateRainbow", graphConfig.attrToShowArray.length),
             attrToShowArray = graphConfig.attrToShowArray,
             flatAttrToShowArray = this.flattenAttrToShowArray(attrToShowArray),
             margin = graphConfig.margin,
             marginBottom = isMobile ? margin.bottom + 20 : margin.bottom,
             width = graphConfig.width - margin.left - margin.right,
             height = graphConfig.height - margin.top - marginBottom,
-            scaleX = this.createScaleX(data, width, scaleTypeX, xAttr),
-            scaleY = this.createScaleY(data, height, scaleTypeY, flatAttrToShowArray),
+            dynamicAxisStart = graphConfig.dynamicAxisStart,
+            scaleX = this.createScaleX(data, width, scaleTypeX, xAttr, dynamicAxisStart),
+            scaleY = this.createScaleY(data, height, scaleTypeY, flatAttrToShowArray, dynamicAxisStart),
             xAxisTicks = graphConfig.xAxisTicks,
             yAxisTicks = graphConfig.yAxisTicks,
             xAxis = this.createAxisBottom(scaleX, xAxisTicks),
@@ -824,7 +826,7 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
         if (_.has(graphConfig, "legendData")) {
             this.appendLegend(svg, graphConfig.legendData);
         }
-        _.each(attrToShowArray, function (yAttrToShow) {
+        _.each(attrToShowArray, function (yAttrToShow, i) {
             if (typeof yAttrToShow === "object") {
                 valueLine = this.createValueLine(scaleX, scaleY, xAttr, yAttrToShow.attrName, scaleTypeX);
                 this.appendDataToSvg(svg, data, yAttrToShow.attrClass, valueLine, tooltipDiv, yAttrToShow.attrName, yAttrToShow.attrColor);
@@ -833,9 +835,9 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             }
             else {
                 valueLine = this.createValueLine(scaleX, scaleY, xAttr, yAttrToShow, scaleTypeX);
-                this.appendDataToSvg(svg, data, "line", valueLine);
+                this.appendDataToSvg(svg, data, "line-stroke", valueLine, tooltipDiv, yAttrToShow, refColorScale.legend.colors[i]);
                 // Add the scatterplot for each point in line
-                this.appendLinePointsToSvg(svg, data, scaleX, scaleY, scaleTypeX, xAttr, yAttrToShow, tooltipDiv, dotSize);
+                this.appendLinePointsToSvg(svg, data, scaleX, scaleY, scaleTypeX, xAttr, yAttrToShow, tooltipDiv, dotSize, "line-point", refColorScale.legend.colors[i]);
             }
         }, this);
         // Add the Axis
@@ -1217,7 +1219,6 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
                 return res.includes(val[refAttr]) ? res : [...res, val[refAttr]];
             }, []),
             refColorScale = Radio.request("ColorScale", "getColorScaleByValues", [0, 1], "interpolateRainbow", refValues.length),
-            // refColors = _.fromPairs(refValues.map((val, i) => [val, refColorScale.legend.colors[i]])),
             refColors = _.object(refValues.map((val, i) => [val, refColorScale.legend.colors[i]])),
             yAttributeToShow,
             xAttributeToShow,

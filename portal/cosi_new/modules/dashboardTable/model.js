@@ -362,14 +362,15 @@ const DashboardTableModel = Tool.extend({
      * @param {string[]} props the array of attributes to visualize
      * @param {string} type the diagram type (BarGraph, Linegraph)
      * @param {string} title the label for the diagram
+     * @param {boolean} dynamicAxisStart is the y-Axis scaled?
+     * @fires Dashboard#RadioTriggerAppend
      * @returns {void}
      */
-    createChart (props, type, title) {
+    createChart (props, type, title, dynamicAxisStart = false) {
         let data, graph;
         const svgParent = document.createElement("div");
 
         svgParent.className = "svg-container";
-        // svgParent.setAttribute("style", `height: ${$(window).height() * 0.4}px; width: ${$(window).width() * 0.4}px; position: relative;`);
 
         if (type === "Linegraph") {
             data = this.getLineChartData(props);
@@ -381,13 +382,7 @@ const DashboardTableModel = Tool.extend({
                 scaleTypeX: "ordinal",
                 scaleTypeY: "linear",
                 data: data.data,
-                attrToShowArray: data.xAttrs.map(prop => {
-                    return {
-                        attrName: prop,
-                        attrClass: prop === "Durchschnitt" ? "average" : "district",
-                        attrColor: prop === "Durchschnitt" ? "#e74d10" : "rgb(8, 88, 158)"
-                    };
-                }),
+                attrToShowArray: data.xAttrs,
                 xAttr: "year",
                 xAxisLabel: {
                     offset: 5,
@@ -414,7 +409,8 @@ const DashboardTableModel = Tool.extend({
                 svgClass: "dashboard-graph-svg",
                 selectorTooltip: ".dashboard-tooltip",
                 hasLineLabel: true,
-                hasContextMenu: true
+                hasContextMenu: true,
+                dynamicAxisStart: dynamicAxisStart
             });
         }
         else if (type === "BarGraph") {
@@ -465,11 +461,17 @@ const DashboardTableModel = Tool.extend({
             scalable: true
         });
     },
-    createCorrelation () {
+
+    /**
+     * @description appends a scatterplot to the dashboard widgets based on the selected columns
+     * @param {boolean} dynamicAxisStart is the y-Axis scaled?
+     * @fires Dashboard#RadioTriggerAppend
+     * @returns {void}
+     */
+    createCorrelation (dynamicAxisStart = true) {
         var svgParent = document.createElement("div");
 
         svgParent.className = "svg-container";
-        // svgParent.setAttribute("style", `height: ${$(window).height() * 0.4}px; width: ${$(window).width() * 0.4}px; position: relative;`);
 
         const attrsToShow = this.getAttrsForRatio(),
             data = this.getCorrelationChartData(this.getAttrsForRatio()),
@@ -479,7 +481,7 @@ const DashboardTableModel = Tool.extend({
                 selector: svgParent,
                 scaleTypeX: "linear",
                 scaleTypeY: "linear",
-                dynamicAxisStart: true,
+                dynamicAxisStart: dynamicAxisStart,
                 data: data,
                 refAttr: this.get("sortKey"),
                 attrToShowArray: [attrsToShow[0]],
