@@ -59,7 +59,7 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
         }
 
         if (graphConfig.hasContextMenu) {
-            svg.on("mouseup", function () {
+            svg.on("pointerup", function () {
                 this.appendContextMenu(svg.select("svg").node(), graphConfig);
             }.bind(this));
         }
@@ -1351,8 +1351,6 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             anchor: attribution.anchor || "start",
             text: attribution.text || [new Date().toLocaleDateString("de-DE"), "Landesbetrieb Geoinformation und Vermessung"]
         };
-
-        console.log(attrToAppend.y);
 
         svg.append("g")
             .classed("attribution", true)

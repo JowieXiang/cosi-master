@@ -8,7 +8,7 @@ import ExportButtonView from "../../../../modules/snippets/exportButton/view";
 const DashboardTableView = Backbone.View.extend({
     events: {
         "click .district": "zoomToFeature",
-        "mouseup .row": "contextMenuTable",
+        "pointerup .row": "contextMenuTable",
         "click .prop button.open": "toggleTimelineTable",
         "click thead button.open": "toggleGroup",
         "click .btn-reset": "resetDropDown",

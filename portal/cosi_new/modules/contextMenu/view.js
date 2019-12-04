@@ -50,7 +50,7 @@ const ContextMenuView = Backbone.View.extend({
 
         switch (button) {
             case 0:
-                this.closeContextMenu();
+                this.closeContextMenu(evt);
                 break;
             case 2:
                 this.openContextMenu(evt);
@@ -59,24 +59,25 @@ const ContextMenuView = Backbone.View.extend({
                 break;
         }
     },
-    touchStart () {
-        this.touchStart = Date.now();
-        console.log(Date.now());
+    touchStart (evt) {
+        this.touchCount = evt.touches.length;
+        this.touchStartTime = Date.now();
     },
     touchEnd (evt) {
-        if (Date.now() > this.touchStart + 500) {
-            this.openContextMenu(evt);
+        if (this.touchCount <= 1 && evt.changedTouches[0].force < 0.01) {
+            if (Date.now() > this.touchStartTime + 500) {
+                evt.preventDefault();
+                this.openContextMenu(evt);
+            }
+            else {
+                this.closeContextMenu(evt.changedTouches[0]);
+            }
         }
-        else {
-            this.closeContextMenu();
-        }
-
-        console.log(Date.now());
     },
     openContextMenu (evt) {
         this.$el.removeClass("hidden");
 
-        const _evt = evt.type === "touchend" ? evt.touches[0] : evt;
+        const _evt = evt.type === "touchend" ? evt.changedTouches[0] : evt;
 
         if (_evt.clientY + this.el.clientHeight < window.innerHeight) {
             this.$el.css({
@@ -104,9 +105,11 @@ const ContextMenuView = Backbone.View.extend({
             });
         }
     },
-    closeContextMenu () {
-        this.$el.addClass("hidden");
-        this.$el.find("#actions").empty();
+    closeContextMenu (evt) {
+        if (!$(evt.target).hasClass("has-sub-menu")) {
+            this.$el.addClass("hidden");
+            this.$el.find("#actions").empty();
+        }
     }
 });
 
