@@ -30,12 +30,13 @@ const ReachabilityFromPointView = Backbone.View.extend({
         "click #hh-request": "requestInhabitants"
     },
     initialize: function () {
+        this.registerClickListener();
         this.listenTo(this.model, {
             "change:isActive": function (model, value) {
                 const mapLayer = Radio.request("Map", "getLayerByName", this.model.get("mapLayerName"));
 
                 if (value) {
-                    this.registerClickListener();
+                    this.registerSetCoordListener();
                     this.render(model, value);
                     this.createMapLayer(this.model.get("mapLayerName"));
                     if (this.model.get("isochroneFeatures").length > 0) {
@@ -47,7 +48,7 @@ const ReachabilityFromPointView = Backbone.View.extend({
                     });
                 }
                 else {
-                    this.unregisterClickListener();
+                    this.unregisterSetCoordListener();
                     Radio.trigger("SelectDistrict", "revertBboxGeometry");
                     Radio.trigger("Alert", "alert:remove");
                     if (mapLayer.getSource().getFeatures().length === 0) {
@@ -128,6 +129,9 @@ const ReachabilityFromPointView = Backbone.View.extend({
                     let newFeatures = this.parseDataToFeatures(JSON.stringify(json));
 
                     newFeatures = this.transformFeatures(newFeatures, "EPSG:4326", "EPSG:25832");
+                    _.each(newFeatures, feature => {
+                        feature.set("featureType", this.model.get("featureType"));
+                    });
                     this.model.set("rawGeoJson", Radio.request("GraphicalSelect", "featureToGeoJson", newFeatures[0]));
                     this.styleFeatures(newFeatures);
 
@@ -174,15 +178,15 @@ const ReachabilityFromPointView = Backbone.View.extend({
      * listen for click events on the map when range input is focused
      * @returns {void}
      */
-    registerClickListener: function () {
-        this.clickListener = Radio.request("Map", "registerListener", "singleclick", this.setCoordinateFromClick.bind(this));
+    registerSetCoordListener: function () {
+        this.setCoordListener = Radio.request("Map", "registerListener", "singleclick", this.setCoordinateFromClick.bind(this));
     },
     /**
      * unlisten click events when range input is blurred
      * @returns {void}
      */
-    unregisterClickListener: function () {
-        Radio.trigger("Map", "unregisterListener", this.clickListener);
+    unregisterSetCoordListener: function () {
+        Radio.trigger("Map", "unregisterListener", this.setCoordListener);
     },
     /**
      * set coordinate value in model according to click
@@ -370,6 +374,38 @@ const ReachabilityFromPointView = Backbone.View.extend({
 
         this.model.set("coordinate", coordinate);
         this.model.set("setBySearch", true);
+    },
+
+    // listen  to click event and trigger setGfiParams
+    registerClickListener: function () {
+        this.clickListener = Radio.request("Map", "registerListener", "click", this.selectIsochrone.bind(this));
+    },
+
+    unregisterClickListener: function () {
+        Radio.trigger("Map", "unregisterListener", this.get("clickEventKey"));
+        this.stopListening(Radio.channel("Map"), this.clickEventKey);
+    },
+
+    // select isochrone on click
+    selectIsochrone: function (evt) {
+        const features = [];
+
+        Radio.request("Map", "getMap").forEachFeatureAtPixel(evt.pixel, (feature, layer) => {
+            features.push(feature);
+        });
+        //  check "featureType" for the isochrone layer
+        if (_.contains(features.map(feature => feature.getProperties().featureType), this.model.get("featureType"))) {
+            const modelList = Radio.request("ModelList", "getModelsByAttributes", { isActive: true });
+
+            _.each(modelList, model => {
+                if (model.get("isActive")) {
+                    model.set("isActive", false);
+                }
+            });
+            if (!this.model.get("isActive")) {
+                this.model.set("isActive", true);
+            }
+        }
     }
 });
 
