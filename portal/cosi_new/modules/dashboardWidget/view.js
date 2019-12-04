@@ -1,5 +1,5 @@
 import Template from "text-loader!./template.html";
-import {selection} from "d3-selection";
+import { selection } from "d3-selection";
 import "./style.less";
 
 const DashboardWidgetView = Backbone.View.extend({
@@ -11,9 +11,10 @@ const DashboardWidgetView = Backbone.View.extend({
         "mousedown .header": "moveStart",
         "mousedown .win-control.open": function (evt) {
             evt.stopPropagation();
-        }
+        },
+        "click .isochrone-origin": "zoomToOrigin"
     },
-    initialize (content, parent, opts = {}) {
+    initialize(content, parent, opts = {}) {
         const attrs = opts;
 
         this.parent = parent;
@@ -39,7 +40,7 @@ const DashboardWidgetView = Backbone.View.extend({
     content: {},
     attrs: {},
     template: _.template(Template),
-    render () {
+    render() {
         this.initializeDOMElement();
         this.$el.append(this.template(this.attrs));
 
@@ -77,7 +78,7 @@ const DashboardWidgetView = Backbone.View.extend({
 
         return this;
     },
-    initializeDOMElement () {
+    initializeDOMElement() {
         const widget = document.createElement("div");
 
         widget.className = "dashboard-widget";
@@ -93,20 +94,20 @@ const DashboardWidgetView = Backbone.View.extend({
 
         return this;
     },
-    renderView () {
+    renderView() {
         this.content.setElement(this.$el.find("#content").get(0));
         this.content.render();
     },
-    render$el () {
+    render$el() {
         this.$el.find("#content").append(this.content);
     },
-    renderHtml () {
+    renderHtml() {
         this.$el.find("#content").html(this.content);
     },
-    renderD3 () {
+    renderD3() {
         this.$el.find("#content").html(this.content.node());
     },
-    toggleOpen (evt) {
+    toggleOpen(evt) {
         evt.stopPropagation();
         this.$el.toggleClass("minimized");
         this.minimized = !this.minimized;
@@ -118,10 +119,10 @@ const DashboardWidgetView = Backbone.View.extend({
             this.el.style.height = isNaN(this.attrs.height) ? this.attrs.height : this.attrs.height + "px";
         }
     },
-    removeWidget () {
+    removeWidget() {
         Radio.trigger("Dashboard", "destroyWidgetById", this.attrs.id);
     },
-    moveStart (evt) {
+    moveStart(evt) {
         if (evt.button === 0) {
             evt.preventDefault();
             this.$el.addClass("dragging");
@@ -136,7 +137,7 @@ const DashboardWidgetView = Backbone.View.extend({
             this.moving = true;
         }
     },
-    resizeStart (evt) {
+    resizeStart(evt) {
         if (evt.button === 0) {
             evt.preventDefault();
             this.dragStartXY = [evt.clientX, evt.clientY];
@@ -145,7 +146,7 @@ const DashboardWidgetView = Backbone.View.extend({
             this.resizing = true;
         }
     },
-    dragEnd (evt) {
+    dragEnd(evt) {
         if (evt.button === 0) {
             if (this.moving) {
                 evt.preventDefault();
@@ -174,7 +175,7 @@ const DashboardWidgetView = Backbone.View.extend({
             this.$el.removeClass("dragging");
         }
     },
-    drag (evt) {
+    drag(evt) {
         if (this.resizing) {
             evt.preventDefault();
             const dX = evt.clientX - this.dragStartXY[0],
@@ -195,10 +196,10 @@ const DashboardWidgetView = Backbone.View.extend({
             });
         }
     },
-    getId () {
+    getId() {
         return this.attrs.id;
     },
-    findScrollableParent ($el) {
+    findScrollableParent($el) {
         if ($el.css("overflow-y") === "auto" || $el.css("overflow-y") === "scroll") {
             return $el;
         }
@@ -206,6 +207,9 @@ const DashboardWidgetView = Backbone.View.extend({
             return $el;
         }
         return this.findScrollableParent($el.parent());
+    },
+    zoomToOrigin(evt) {
+        Radio.trigger("ReachabilityFromPoint", "zoomToOrigin", evt);
     }
 });
 
