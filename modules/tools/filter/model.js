@@ -58,7 +58,8 @@ const FilterModel = Tool.extend({
             },
             "closeFilter": function () {
                 this.setIsActive(false);
-            }
+            },
+            "change:isLayerVisible": this.checkVisibleQueries
         }, this);
 
         this.listenTo(Radio.channel("VectorLayer"), {
@@ -333,23 +334,6 @@ const FilterModel = Tool.extend({
     },
 
     /**
-     * Sets the parameters isActive and isSelected for each model to the configured values.
-     * @param {Object} queryCollectionModel - configured model in filter
-     * @param {Object[]} predefinedQueriesModels - configured values
-     * @returns {Object} queryCollectionModel with default values
-     */
-    regulateInitialActivating: function (queryCollectionModel, predefinedQueriesModels) {
-        const predefinedQueriesModel = predefinedQueriesModels.find(function (element) {
-            return element.layerId === queryCollectionModel.attributes.layerId && element.name === queryCollectionModel.attributes.name;
-        });
-
-        queryCollectionModel.attributes.isActive = predefinedQueriesModel.isActive;
-        queryCollectionModel.attributes.isSelected = predefinedQueriesModel.isSelected;
-
-        return queryCollectionModel;
-    },
-
-    /**
      * Sets the attributes isActive and isVisible to true for the first model of the passed array.
      * @param {Object[]} queryCollectionModels - configured models in filter
      * @returns {void}
@@ -358,6 +342,21 @@ const FilterModel = Tool.extend({
         if (queryCollectionModels.length) {
             queryCollectionModels[0].attributes.isActive = true;
             queryCollectionModels[0].attributes.isSelected = true;
+        }
+    },
+
+    /**
+     * checks whether only one query is visible. if so, this query is selected
+     * @returns {void}
+     */
+    checkVisibleQueries: function () {
+        const visibleQueries = this.get("queryCollection").where({isLayerVisible: true});
+
+        if (visibleQueries.length === 1) {
+            this.get("queryCollection").forEach(function (query) {
+                query.setIsSelected(false);
+            });
+            visibleQueries[0].setIsSelected(true);
         }
     },
 

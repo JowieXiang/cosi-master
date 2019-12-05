@@ -83,13 +83,10 @@ const FilterView = Backbone.View.extend({
 
     renderSimpleViews: function () {
         var view,
-            queryCollectionModels = this.model.get("queryCollection").models,
-            predefinedQueriesModels = this.model.get("predefinedQueries");
+            queryCollectionModels = this.model.get("queryCollection").models;
 
         if (queryCollectionModels.length > 1) {
-            _.each(queryCollectionModels, function (queryCollectionModel) {
-                const query = this.model.regulateInitialActivating(queryCollectionModel, predefinedQueriesModels);
-
+            _.each(queryCollectionModels, function (query) {
                 view = new QuerySimpleView({model: query});
                 this.$el.find(".simple-views-container").append(view.render().$el);
             }, this);
@@ -100,7 +97,6 @@ const FilterView = Backbone.View.extend({
         }
     },
     closeFilter: function () {
-        console.info("close");
         this.model.setIsActive(false);
         this.model.collapseOpenSnippet();
         Radio.trigger("ModelList", "toggleDefaultTool");
