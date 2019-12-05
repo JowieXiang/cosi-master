@@ -4,7 +4,10 @@ import Template from "text-loader!./template.html";
 const ContextMenuView = Backbone.View.extend({
     events: {
         "click .close": "closeContextMenu",
-        "click #actions": "closeContextMenu"
+        "click #actions": "closeContextMenu",
+        "click #actions input": function (evt) {
+            evt.stopPropagation();
+        }
     },
     initialize () {
         $(".masterportal-container").after(this.$el);
@@ -34,7 +37,8 @@ const ContextMenuView = Backbone.View.extend({
     },
     addContextMenu (element) {
         element.addEventListener("mouseup", this.mouseButtonHandler.bind(this));
-        element.addEventListener("touchstart", this.touchHandler.bind(this));
+        element.addEventListener("touchstart", this.touchStart.bind(this));
+        element.addEventListener("touchend", this.touchEnd.bind(this));
     },
     setActions (element, title = "Aktionen", glyphicon = "glyphicon-wrench") {
         this.$el.find("#actions").html(element);
@@ -46,7 +50,7 @@ const ContextMenuView = Backbone.View.extend({
 
         switch (button) {
             case 0:
-                this.closeContextMenu();
+                this.closeContextMenu(evt);
                 break;
             case 2:
                 this.openContextMenu(evt);
@@ -55,51 +59,57 @@ const ContextMenuView = Backbone.View.extend({
                 break;
         }
     },
-    touchHandler (evt) {
-        const touchCount = evt.touches.length;
-        console.log(evt, touchCount);
-
-        switch (touchCount) {
-            case 2:
-                this.openContextMenu(evt.touches[0]);
-                break;
-            default:
-                this.closeContextMenu();
-                break;
+    touchStart (evt) {
+        this.touchCount = evt.touches.length;
+        this.touchStartTime = Date.now();
+    },
+    touchEnd (evt) {
+        if (this.touchCount <= 1 && evt.changedTouches[0].force < 0.01) {
+            if (Date.now() > this.touchStartTime + 500) {
+                evt.preventDefault();
+                this.openContextMenu(evt);
+            }
+            else {
+                this.closeContextMenu(evt.changedTouches[0]);
+            }
         }
     },
     openContextMenu (evt) {
         this.$el.removeClass("hidden");
 
-        if (evt.clientY + this.el.clientHeight < window.innerHeight) {
+        const _evt = evt.type === "touchend" ? evt.changedTouches[0] : evt;
+
+        if (_evt.clientY + this.el.clientHeight < window.innerHeight) {
             this.$el.css({
-                "top": evt.clientY,
+                "top": _evt.clientY,
                 "bottom": "auto"
             });
         }
         else {
             this.$el.css({
                 "top": "auto",
-                "bottom": window.innerHeight - evt.clientY
+                "bottom": window.innerHeight - _evt.clientY
             });
         }
 
-        if (evt.clientX + this.el.clientWidth < window.innerWidth) {
+        if (_evt.clientX + this.el.clientWidth < window.innerWidth) {
             this.$el.css({
-                "left": evt.clientX,
+                "left": _evt.clientX,
                 "right": "auto"
             });
         }
         else {
             this.$el.css({
                 "left": "auto",
-                "right": window.innerWidth - evt.clientX
+                "right": window.innerWidth - _evt.clientX
             });
         }
     },
-    closeContextMenu () {
-        this.$el.addClass("hidden");
-        this.$el.find("#actions").empty();
+    closeContextMenu (evt) {
+        if (!$(evt.target).hasClass("has-sub-menu")) {
+            this.$el.addClass("hidden");
+            this.$el.find("#actions").empty();
+        }
     }
 });
 

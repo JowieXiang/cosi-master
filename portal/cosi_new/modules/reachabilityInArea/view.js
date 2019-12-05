@@ -21,6 +21,7 @@ const ReachabilityInAreaView = Backbone.View.extend({
         "click #clear": "clearMapLayer"
     },
     initialize: function () {
+        this.registerClickListener();
 
         this.listenTo(Radio.channel("ModelList"), {
             "updatedSelectedLayerList": function (models) {
@@ -133,6 +134,9 @@ const ReachabilityInAreaView = Backbone.View.extend({
                     }
                     layerUnionFeatures = this.parseDataToFeatures(JSON.stringify(layerUnion));
                     layerUnionFeatures = this.transformFeatures(layerUnionFeatures, "EPSG:4326", "EPSG:25832");
+                    _.each(layerUnionFeatures, feature => {
+                        feature.set("featureType", this.model.get("featureType"));
+                    });
                     this.styleFeatures(layerUnionFeatures);
                     mapLayer.getSource().addFeatures(layerUnionFeatures);
                 }
@@ -277,6 +281,38 @@ const ReachabilityInAreaView = Backbone.View.extend({
     toModeSelection: function () {
         this.model.set("isActive", false);
         Radio.request("ModelList", "getModelByAttributes", { name: "Erreichbarkeitsanalyse" }).set("isActive", true);
+    },
+    
+    // listen  to click event and trigger setGfiParams
+    registerClickListener: function () {
+        this.clickListener = Radio.request("Map", "registerListener", "click", this.selectIsochrone.bind(this));
+    },
+
+    unregisterClickListener: function () {
+        Radio.trigger("Map", "unregisterListener", this.get("clickEventKey"));
+        this.stopListening(Radio.channel("Map"), this.clickEventKey);
+    },
+
+     // select isochrone on click
+     selectIsochrone: function (evt) {
+        const features = [];
+
+        Radio.request("Map", "getMap").forEachFeatureAtPixel(evt.pixel, (feature, layer) => {
+            features.push(feature);
+        });
+        //  check "featureType" for the isochrone layer
+        if (_.contains(features.map(feature => feature.getProperties().featureType), this.model.get("featureType"))) {
+            const modelList = Radio.request("ModelList", "getModelsByAttributes", { isActive: true });
+
+            _.each(modelList, model => {
+                if (model.get("isActive")) {
+                    model.set("isActive", false);
+                }
+            });
+            if (!this.model.get("isActive")) {
+                this.model.set("isActive", true);
+            }
+        }
     }
 });
 

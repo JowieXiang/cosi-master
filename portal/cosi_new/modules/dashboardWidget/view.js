@@ -1,5 +1,5 @@
 import Template from "text-loader!./template.html";
-import {selection} from "d3-selection";
+import { selection } from "d3-selection";
 import "./style.less";
 
 const DashboardWidgetView = Backbone.View.extend({
@@ -8,10 +8,11 @@ const DashboardWidgetView = Backbone.View.extend({
         "click .win-control.open": "toggleOpen",
         "click .tool-name": "widgetInfo",
         "mousedown .drag": "resizeStart",
-        "mousedown .header": "moveStart",
-        "mousedown .win-control.open": function (evt) {
+        "mousedown .header": "moveMouse",
+        "pointerdown .win-control.open": function (evt) {
             evt.stopPropagation();
-        }
+        },
+        "click .isochrone-origin": "zoomToOrigin"
     },
     initialize (content, parent, opts = {}) {
         const attrs = opts;
@@ -25,7 +26,8 @@ const DashboardWidgetView = Backbone.View.extend({
             append: attrs.append !== undefined ? attrs.append : true,
             width: attrs.width ? attrs.width : "auto    ",
             height: attrs.height ? attrs.height : "auto",
-            scalable: attrs.scalable ? attrs.scalable : false
+            scalable: attrs.scalable ? attrs.scalable : false,
+            focusOnInit: attrs.focus || false
         };
 
         this.render();
@@ -70,12 +72,17 @@ const DashboardWidgetView = Backbone.View.extend({
 
         Radio.trigger("ContextMenu", "addContextMenu", this.el);
 
+        if (this.attrs.focusOnInit) {
+            this.findScrollableParent($(this.parent)).scrollTop(this.el.offsetTop);
+        }
+
         return this;
     },
     initializeDOMElement () {
         const widget = document.createElement("div");
 
         widget.className = "dashboard-widget";
+        widget.id = this.attrs.id;
         // check to prepend or append the widget
         if (this.attrs.append) {
             $(this.parent).append($(widget));
@@ -115,21 +122,25 @@ const DashboardWidgetView = Backbone.View.extend({
     removeWidget () {
         Radio.trigger("Dashboard", "destroyWidgetById", this.attrs.id);
     },
-    moveStart (evt) {
+    moveMouse (evt) {
         if (evt.button === 0) {
-            evt.preventDefault();
-            this.$el.addClass("dragging");
-
-            this.$el.find(".widget-shadow").css({
-                top: evt.clientY + "px",
-                left: evt.clientX + "px",
-                width: this.el.clientWidth + "px",
-                height: this.el.clientHeight + "px"
-            }).addClass("dragging");
-
-            this.moving = true;
+            this.moveStart(evt);
         }
+    },
+    moveStart (evt) {
+        evt.preventDefault();
+        this.$el.addClass("dragging");
 
+        const _evt = evt.type === "touchend" ? evt.changedTouches[0] : evt;
+
+        this.$el.find(".widget-shadow").css({
+            top: _evt.clientY + "px",
+            left: _evt.clientX + "px",
+            width: this.el.clientWidth + "px",
+            height: this.el.clientHeight + "px"
+        }).addClass("dragging");
+
+        this.moving = true;
         console.log("move");
     },
     resizeStart (evt) {
@@ -139,44 +150,43 @@ const DashboardWidgetView = Backbone.View.extend({
             this.$el.addClass("dragging");
 
             this.resizing = true;
+            console.log("size");
         }
-
-        console.log("size");
     },
     dragEnd (evt) {
-        if (evt.button === 0) {
-            if (this.moving) {
-                evt.preventDefault();
-                this.$el.find(".widget-shadow").removeClass("dragging");
+        if (this.moving) {
+            evt.preventDefault();
+            this.$el.find(".widget-shadow").removeClass("dragging");
 
-                const widgets = document.querySelectorAll(".dashboard-widget"),
-                    newOrder = Array.from(widgets).sort((a, b) => {
-                        var aPos = a === this.el ? [evt.clientX, evt.clientY] : [$(a).offset().left, $(a).offset().top],
-                            bPos = b === this.el ? [evt.clientX, evt.clientY] : [$(b).offset().left, $(b).offset().top];
+            const widgets = document.querySelectorAll(".dashboard-widget"),
+                newOrder = Array.from(widgets).sort((a, b) => {
+                    var aPos = a === this.el ? [evt.clientX, evt.clientY] : [$(a).offset().left, $(a).offset().top],
+                        bPos = b === this.el ? [evt.clientX, evt.clientY] : [$(b).offset().left, $(b).offset().top];
 
-                        if (aPos[1] < bPos[1]) {
-                            return -1;
-                        }
-                        if (aPos[0] < bPos[0]) {
-                            return -1;
-                        }
-                        return 1;
-                    }, this);
+                    if (aPos[1] < bPos[1]) {
+                        return -1;
+                    }
+                    if (aPos[0] < bPos[0]) {
+                        return -1;
+                    }
+                    return 1;
+                }, this);
 
-                for (let i = 0; i < newOrder.length; i++) {
-                    newOrder[i].style.order = i;
-                }
+            for (let i = 0; i < newOrder.length; i++) {
+                newOrder[i].style.order = i;
             }
-            this.resizing = false;
-            this.moving = false;
-            this.$el.removeClass("dragging");
         }
+        this.resizing = false;
+        this.moving = false;
+        this.$el.removeClass("dragging");
     },
     drag (evt) {
+        const _evt = evt.type === "touchmove" ? evt.changedTouches[0] : evt;
+
         if (this.resizing) {
-            evt.preventDefault();
-            const dX = evt.clientX - this.dragStartXY[0],
-                dY = evt.clientY - this.dragStartXY[1];
+            _evt.preventDefault();
+            const dX = _evt.clientX - this.dragStartXY[0],
+                dY = _evt.clientY - this.dragStartXY[1];
 
             this.attrs.width = this.el.clientWidth + dX;
             this.attrs.height = this.el.clientHeight + dY;
@@ -184,17 +194,29 @@ const DashboardWidgetView = Backbone.View.extend({
             this.el.style.width = this.attrs.width + "px";
             this.el.style.height = this.attrs.height + "px";
 
-            this.dragStartXY = [evt.clientX, evt.clientY];
+            this.dragStartXY = [_evt.clientX, _evt.clientY];
         }
         if (this.moving) {
             this.$el.find(".widget-shadow").css({
-                top: evt.clientY + "px",
-                left: evt.clientX + "px"
+                top: _evt.clientY + "px",
+                left: _evt.clientX + "px"
             });
         }
     },
-    widgetInfo () {
-        console.log(this);
+    getId () {
+        return this.attrs.id;
+    },
+    findScrollableParent ($el) {
+        if ($el.css("overflow-y") === "auto" || $el.css("overflow-y") === "scroll") {
+            return $el;
+        }
+        else if ($el === $(window)) {
+            return $el;
+        }
+        return this.findScrollableParent($el.parent());
+    },
+    zoomToOrigin (evt) {
+        Radio.trigger("ReachabilityFromPoint", "zoomToOrigin", evt);
     }
 });
 

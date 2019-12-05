@@ -10,7 +10,9 @@ const ReachabilityInAreaModel = Tool.extend(/** @lends ReachabilityInAreaModel.p
         steps: 3, // step of subIsochrones
         isochroneFeatures: [], // isochrone features
         dropDownModel: {},
-        mapLayerName: "reachability-in-area"
+        mapLayerName: "reachability-in-area",
+        featureType: "Erreichbarket im Gebiet" // used for targeting the features within the layer
+
     }),
     /**
     * @class ReachabilityInAreaModel

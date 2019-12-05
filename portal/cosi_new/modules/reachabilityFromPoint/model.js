@@ -1,6 +1,6 @@
 import Tool from "../../../../modules/core/modelList/tool/model";
 import DropdownModel from "../../../../modules/snippets/dropdown/model";
-import {getLayerWhere} from "masterportalAPI/src/rawLayerList";
+import { getLayerWhere } from "masterportalAPI/src/rawLayerList";
 
 const ReachabilityFromPointModel = Tool.extend(/** @lends ReachabilityFromPointModel.prototype */{
     defaults: _.extend({}, Tool.prototype.defaults, {
@@ -12,7 +12,8 @@ const ReachabilityFromPointModel = Tool.extend(/** @lends ReachabilityFromPointM
         dropDownModel: {},
         mapLayerName: "reachability-from-point",
         markerId: "markerOverlay", // overlay id of the marker
-        setBySearch: false  // if coordinate is set by searchbar
+        setBySearch: false, // if coordinate is set by searchbar
+        featureType: "Erreichbarkeit ab einem Referenzpunkt" // used for targeting the features within the layer
     }),
     /**
     * @class ReachabilityFromPointModel
@@ -29,7 +30,7 @@ const ReachabilityFromPointModel = Tool.extend(/** @lends ReachabilityFromPointM
     */
     initialize: function () {
         this.superInitialize();
-        const layerList = _.union(Radio.request("Parser", "getItemsByAttributes", {typ: "WFS", isBaseLayer: false}), Radio.request("Parser", "getItemsByAttributes", {typ: "GeoJSON", isBaseLayer: false})),
+        const layerList = _.union(Radio.request("Parser", "getItemsByAttributes", { typ: "WFS", isBaseLayer: false }), Radio.request("Parser", "getItemsByAttributes", { typ: "GeoJSON", isBaseLayer: false })),
             layerNames = layerList.map(layer => layer.featureType.trim());
 
         this.setDropDownModel(layerNames);
@@ -66,8 +67,8 @@ const ReachabilityFromPointModel = Tool.extend(/** @lends ReachabilityFromPointM
      */
     displayLayer: function (valueModel, isSelected) {
         if (isSelected) {
-            const selectedItem = getLayerWhere({featureType: valueModel.get("value")}),
-                selectedLayerModel = Radio.request("ModelList", "getModelByAttributes", {id: selectedItem.id});
+            const selectedItem = getLayerWhere({ featureType: valueModel.get("value") }),
+                selectedLayerModel = Radio.request("ModelList", "getModelByAttributes", { id: selectedItem.id });
 
             if (selectedLayerModel) {
                 selectedLayerModel.setIsSelected(true);
@@ -77,7 +78,6 @@ const ReachabilityFromPointModel = Tool.extend(/** @lends ReachabilityFromPointM
             }
         }
     }
-
 });
 
 export default ReachabilityFromPointModel;

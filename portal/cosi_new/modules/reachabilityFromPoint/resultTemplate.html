@@ -1,4 +1,3 @@
-<h5><br /><strong>Einrichtungen im Gebiet: </strong></h5>
 <table class="table table-hover">
     <tr>
         <th scope="col">#</th>
@@ -12,4 +11,18 @@
         <td><%= features[layerName].length %></td>
     </tr>
     <% }) %>
+</table>
+<table>
+    <tr>
+        <td>
+            <button class="btn btn-lgv-grey measure-delete isochrone-origin" value=<%= coordinate %>>
+                zoom
+            </button>
+        </td>
+        <td>
+            <button type="button" class="btn btn-lgv-grey measure-delete" id="show-in-dashboard">
+                Im Dashboard anzeigen
+            </button>
+        </td>
+    </tr>
 </table>

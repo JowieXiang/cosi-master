@@ -2,7 +2,7 @@
 @font_family_1: "UniversNextW04-620CondB","Arial Narrow",Arial,sans-serif;
 @background_color_1: rgba(0, 0, 0,.5);
 
-.sidebar .header, .dashboard-inner .header{
+.sidebar .header, .sidebar .dashboard-footer, .dashboard-inner .header, .dashboard-inner .dashboard-footer {
     width: 100%;
     border-bottom: 1px solid rgb(229,229,229);
     padding: 10px;
@@ -34,13 +34,22 @@
         width: calc(100% - 25px);
         height: 100%;
         margin-left:25px;
-        .header {
+        .header, .dashboard-footer {
             button#help {
                 float: right;
                 border: none;
                 width: auto;
                 padding: 0;
                 opacity: 0.6;
+            }
+            div#print-button {
+                float: left;
+            }
+            button {
+                margin-right: 4px;
+                span.glyphicon {
+                    margin-right: 5px;
+                }
             }
         }
     }
