@@ -10,7 +10,8 @@ const SelectDistrictModel = Tool.extend(/** @lends SelectDistrictModel.prototype
         id: "selectDistrict",
         selectedDistricts: [],
         districtLayer: [], // e.g.  {name:  "Statistische Gebiete", selector: "statgebiet", layerIds:[]}
-        districtLayerNames: ["Statistische Gebiete", "Gebiete"],
+        // districtLayerNames: ["Statistische Gebiete", "Gebiete"], // replace temporarily to enable loading from URLQuery
+        districtLayerNames: ["Statistische Gebiete"],
         districtLayerIds: ["6071", "1694"],
         districtLayersLoaded: [],
         buffer: 0,

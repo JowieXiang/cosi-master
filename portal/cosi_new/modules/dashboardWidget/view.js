@@ -12,7 +12,7 @@ const DashboardWidgetView = Backbone.View.extend({
         "pointerdown .win-control.open": function (evt) {
             evt.stopPropagation();
         },
-        "click .isochrone-origin": "zoomToOrigin"
+        // "click .isochrone-origin": "zoomToOrigin"
     },
     initialize (content, parent, opts = {}) {
         const attrs = opts;
