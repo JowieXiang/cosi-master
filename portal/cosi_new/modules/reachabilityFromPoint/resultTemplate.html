@@ -6,7 +6,7 @@
     </tr>
     <% _.each(dataObj.layerNames, function(layerName, i){ %>
     <tr class="dashboard-tr">
-        <th scope="row"><%= i %></th>
+        <th scope="row"><%= i + 1 %></th>
         <td><%= layerName %></td>
         <td><%= dataObj.features[layerName].length %></td>
     </tr>

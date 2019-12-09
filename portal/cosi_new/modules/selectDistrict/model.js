@@ -2,8 +2,10 @@ import {Fill, Stroke, Style} from "ol/style.js";
 import GeometryCollection from "ol/geom/GeometryCollection";
 import Tool from "../../../../modules/core/modelList/tool/model";
 import SnippetDropdownModel from "../../../../modules/snippets/dropdown/model";
+import GraphicalSelectModel from "../../../../modules/snippets/graphicalselect/model";
 import * as Extent from "ol/extent";
 import * as Polygon from "ol/geom/Polygon";
+import GeoJSON from 'ol/format/GeoJSON';
 
 const SelectDistrictModel = Tool.extend(/** @lends SelectDistrictModel.prototype */{
     defaults: _.extend({}, Tool.prototype.defaults, {
@@ -17,6 +19,7 @@ const SelectDistrictModel = Tool.extend(/** @lends SelectDistrictModel.prototype
         buffer: 0,
         isReady: false,
         scopeDropdownModel: {},
+        graphicalSelectModel: new GraphicalSelectModel({id: "selectDistrict"}),
         activeScope: "", // e.g. "Stadtteile" or "Statistische Gebiete"
         activeSelector: "", // e.g. "stadtteil" or "statgebiet"
         deactivateGFI: true,
@@ -39,7 +42,8 @@ const SelectDistrictModel = Tool.extend(/** @lends SelectDistrictModel.prototype
             })
         }),
         channel: Radio.channel("SelectDistrict"),
-        bboxGeometry: null
+        bboxGeometry: null,
+        isDrawing: false
     }),
     /**
     * @class SelectDistrictModel
@@ -126,6 +130,10 @@ const SelectDistrictModel = Tool.extend(/** @lends SelectDistrictModel.prototype
             }
         });
 
+        this.listenTo(Radio.channel("GraphicalSelect"), "onDrawEnd", function (geoJson) {
+            this.boxSelect(geoJson);
+        });
+
         this.get("channel").reply({
             "getSelectedDistricts": this.getSelectedDistricts,
             "getScope": this.getScope,
@@ -179,6 +187,20 @@ const SelectDistrictModel = Tool.extend(/** @lends SelectDistrictModel.prototype
             }
         }
 
+    },
+    boxSelect: function (geoJson) {
+        const extent = new GeoJSON().readGeometry(geoJson).getExtent(),
+            layerSource = Radio.request("ModelList", "getModelByAttributes", {"name": this.getScope()}).get("layerSource");
+
+        this.resetSelectedDistricts();
+        layerSource.forEachFeatureIntersectingExtent(extent, (feature) => {
+            this.pushSelectedDistrict(feature);
+            feature.setStyle(this.get("selectedStyle"));
+        });
+
+        setTimeout(() => {
+            this.toggleDrawSelection();
+        }, 500);
     },
     pushSelectedDistrict: function (feature) {
         this.set({
@@ -310,6 +332,24 @@ const SelectDistrictModel = Tool.extend(/** @lends SelectDistrictModel.prototype
         if (extent) {
             Radio.trigger("Map", "zoomToExtent", extent, {padding: [20, 20, 20, 20]});
         }
+    },
+    toggleDrawSelection: function () {
+        this.set("isDrawing", !this.get("isDrawing"));
+        if (this.get("isDrawing")) {
+            this.enableDrawSelect();
+        }
+        else {
+            this.disableDrawSelect();
+        }
+    },
+    enableDrawSelect: function () {
+        this.get("graphicalSelectModel").createDrawInteraction(this.id, "Rechteck aufziehen");
+        this.unlisten();
+    },
+    disableDrawSelect: function () {
+        this.get("graphicalSelectModel").setStatus(this.id, false);
+        Radio.trigger("GraphicalSelect", "resetView", this.id);
+        this.listen();
     },
     getSelector: function () {
         return this.get("activeSelector");
