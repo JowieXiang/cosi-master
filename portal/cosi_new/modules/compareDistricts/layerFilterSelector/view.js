@@ -41,6 +41,11 @@ const LayerFilterSelectorView = Backbone.View.extend({
     },
     setLayerOptions: function (options) {
         this.model.setLayerOptions(options);
+    },
+    resetDropDown: function () {
+        this.model.get("dropDownModel").deselectValueModels();
+        this.model.get("dropDownModel").setDisplayName(this.model.get("dropDownDisplayName"));
+        this.model.get("dropDownModel").trigger("render");
     }
 
 });
