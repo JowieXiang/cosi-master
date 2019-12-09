@@ -3,7 +3,7 @@ import "./style.less";
 
 const RefocusView = Backbone.View.extend(/** @lends RefocusView.prototype */{
     events: {
-        "click .glyphicon-share-alt": "refocus"
+        "click .glyphicon": "refocus"
     },
 
     initialize: function () {
