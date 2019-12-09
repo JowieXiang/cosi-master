@@ -7,6 +7,7 @@ import GeoJSON from "ol/format/GeoJSON";
 import GeometryCollection from "ol/geom/GeometryCollection";
 import InfoTemplate from "text-loader!./info.html";
 import resultTemplate from "text-loader!./resultTemplate.html";
+import ReachabilityResultView from "./resultView";
 
 const ReachabilityFromPointView = Backbone.View.extend({
     events: {
@@ -19,7 +20,6 @@ const ReachabilityFromPointView = Backbone.View.extend({
             this.renderLegend(e);
         },
         "click #help": "showHelp",
-        "click #show-in-dashboard": "showInDashboard",
         "click #backward": "toModeSelection",
         "click #clear": function () {
             this.clearMapLayer();
@@ -28,7 +28,7 @@ const ReachabilityFromPointView = Backbone.View.extend({
         },
         "click #show-result": "updateResult",
         "click #hh-request": "requestInhabitants",
-        "click .isochrone-origin": "zoomToOrigin"
+        // "click .isochrone-origin": "zoomToOrigin"
 
     },
     initialize: function () {
@@ -313,31 +313,16 @@ const ReachabilityFromPointView = Backbone.View.extend({
                 dataObj.features[layerModel.get("name")] = layerModel.get("layer").getSource().getFeatures();
             });
             dataObj.coordinate = Proj.transform(this.model.get("coordinate"), "EPSG:4326", "EPSG:25832");
-            this.$el.find("#result").html(this.resultTemplate(dataObj));
+
+            this.model.set("dataObj", dataObj);
+
+            this.resultView = new ReachabilityResultView({model: this.model});
+            this.$el.find("#result").html(this.resultView.render().$el);
             this.$el.find("#show-in-dashboard").show();
         }
         else {
             this.selectionReminder();
         }
-    },
-    // show results in dashboard
-    showInDashboard: function () {
-        const visibleLayerModels = Radio.request("ModelList", "getModelsByAttributes", { typ: "WFS", isBaseLayer: false, isSelected: true }),
-            dataObj = { layerNames: [], features: {} };
-
-        _.each(visibleLayerModels, layerModel => {
-            dataObj.layerNames.push(layerModel.get("name"));
-            dataObj.features[layerModel.get("name")] = layerModel.get("layer").getSource().getFeatures();
-        });
-
-
-        dataObj.coordinate = Proj.transform(this.model.get("coordinate"), "EPSG:4326", "EPSG:25832");;
-
-        Radio.trigger("Dashboard", "append", this.resultTemplate(dataObj), "#dashboard-containers", {
-            id: "reachability",
-            name: "Erreichbarkeit ab einem Referenzpunkt",
-            glyphicon: "glyphicon-road"
-        });
     },
     renderLegend: function () {
         const steps = this.model.get("steps"),
@@ -417,12 +402,6 @@ const ReachabilityFromPointView = Backbone.View.extend({
                 this.model.set("isActive", true);
             }
         }
-    },
-    zoomToOrigin: function (evt) {
-        const coord = [parseFloat(evt.target.value.split(",")[0].trim()), parseFloat(evt.target.value.split(",")[1].trim())];
-
-        Radio.trigger("MapMarker", "showMarker", coord);
-        Radio.trigger("MapView", "setCenter", coord);
     }
 });
 

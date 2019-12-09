@@ -4,18 +4,18 @@
         <th scope="col">Art der Infrastruktur</th>
         <th scope="col">Menge</th>
     </tr>
-    <% _.each(layerNames, function(layerName, i){ %>
+    <% _.each(dataObj.layerNames, function(layerName, i){ %>
     <tr class="dashboard-tr">
         <th scope="row"><%= i %></th>
         <td><%= layerName %></td>
-        <td><%= features[layerName].length %></td>
+        <td><%= dataObj.features[layerName].length %></td>
     </tr>
     <% }) %>
 </table>
 <table>
     <tr>
         <td>
-            <button class="btn btn-lgv-grey measure-delete isochrone-origin" value=<%= coordinate %>>
+            <button class="btn btn-lgv-grey measure-delete isochrone-origin" value=<%= dataObj.coordinate %>>
                 zoom
             </button>
         </td>

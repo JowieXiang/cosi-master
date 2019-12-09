@@ -12,7 +12,7 @@ const DashboardWidgetView = Backbone.View.extend({
         "pointerdown .win-control.open": function (evt) {
             evt.stopPropagation();
         },
-        "click .isochrone-origin": "zoomToOrigin"
+        // "click .isochrone-origin": "zoomToOrigin"
     },
     initialize (content, parent, opts = {}) {
         const attrs = opts;
@@ -129,19 +129,21 @@ const DashboardWidgetView = Backbone.View.extend({
     },
     moveStart (evt) {
         evt.preventDefault();
-        this.$el.addClass("dragging");
+        if (evt.target.tagName !== "BUTTON") {
+            this.$el.addClass("dragging");
 
-        const _evt = evt.type === "touchend" ? evt.changedTouches[0] : evt;
+            const _evt = evt.type === "touchstart" ? evt.touches[0] : evt;
 
-        this.$el.find(".widget-shadow").css({
-            top: _evt.clientY + "px",
-            left: _evt.clientX + "px",
-            width: this.el.clientWidth + "px",
-            height: this.el.clientHeight + "px"
-        }).addClass("dragging");
+            this.$el.find(".widget-shadow").css({
+                top: _evt.clientY + "px",
+                left: _evt.clientX + "px",
+                width: this.el.clientWidth + "px",
+                height: this.el.clientHeight + "px"
+            }).addClass("dragging");
 
-        this.moving = true;
-        console.log("move");
+            this.moving = true;
+            console.log("move");
+        }
     },
     resizeStart (evt) {
         if (evt.button === 0) {
