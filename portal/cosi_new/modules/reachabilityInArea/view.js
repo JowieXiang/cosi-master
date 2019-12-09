@@ -247,7 +247,7 @@ const ReachabilityInAreaView = Backbone.View.extend({
     // reminds user to select district before using the ageGroup slider
     inputReminder: function () {
         Radio.trigger("Alert", "alert", {
-            text: "<strong>Please make sure all input information are provided</strong>",
+            text: "<strong>Bitte füllen Sie alle Felder aus.</strong>",
             kategorie: "alert-warning"
         });
     },

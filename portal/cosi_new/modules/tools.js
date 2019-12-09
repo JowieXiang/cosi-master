@@ -68,7 +68,7 @@ const general = {
             parentId: "tools",
             type: "tool",
             name: "Vergleichbare Gebiete ermitteln",
-            glyphicon: "glyphicon-screenshot"
+            glyphicon: "glyphicon glyphicon-random"
         }),
         calculateRatio: new CalculateRatio({
             parentId: "tools",

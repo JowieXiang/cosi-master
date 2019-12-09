@@ -12,7 +12,7 @@ import InfoTemplate from "text-loader!./info.html";
 const CompareDistrictsView = Backbone.View.extend({
     events: {
         "click #add-filter": function () {
-            this.checkSelected();
+            this.checkSelection();
         },
         "click .district-name": "zoomToDistrict",
         "click #help": "showHelp",
@@ -74,10 +74,16 @@ const CompareDistrictsView = Backbone.View.extend({
 
         return this;
     },
+    duplicateFilterReminder: function () {
+        Radio.trigger("Alert", "alert", {
+            text: "<strong>The layerfilter already exist in the filter stack.</strong>",
+            kategorie: "alert-warning"
+        });
+    },
     // reminds user to select district before using the ageGroup slider
     selectFilterReminder: function () {
         Radio.trigger("Alert", "alert", {
-            text: "<strong> Please select the layer filter you want to add in the layerfilter dropdown menu</strong>",
+            text: "<strong>Bitte wählen Sie das Thema, welches zum Drop Down Menü hinzugefügt werden sollte.</strong>",
             kategorie: "alert-warning"
         });
     },
@@ -94,14 +100,20 @@ const CompareDistrictsView = Backbone.View.extend({
         this.layerFilterSelector = new LayerFilterSelectorView({ model: new LayerFilterSelectorModel() });
         this.$el.find("#layerfilter-selector-container").append(this.layerFilterSelector.render().el);
     },
-    checkSelected: function () {
-        if (this.layerFilterSelector.getSelectedLayer()) {
-            Radio.trigger("Alert", "alert:remove");
-            this.addFilterModel();
-            this.filterLayerOptions();
+    checkSelection: function () {
+        const IdList = this.model.get("layerFilterList") !== "" ? JSON.parse(this.model.get("layerFilterList")).map(item => item.layerId) : [],
+            newFilter = this.layerFilterSelector.getSelectedLayer();
+
+        if (!newFilter) {
+            this.selectFilterReminder();
+        }
+        else if (_.contains(IdList, newFilter.layerId)) {
+            this.duplicateFilterReminder();
         }
         else {
-            this.selectFilterReminder();
+            Radio.trigger("Alert", "alert:remove");
+            this.addFilterModel();
+            this.layerFilterSelector.resetDropDown();
         }
     },
     addFilterModel: function () {
@@ -110,17 +122,6 @@ const CompareDistrictsView = Backbone.View.extend({
 
         this.addOneToLayerFilterList(layerFilterModel);
         this.layerFilterCollection.add(layerFilterModel);
-    },
-    filterLayerOptions: function () {
-        const selectedLayer = this.layerFilterSelector.getSelectedLayer(),
-            layerOptions = this.layerFilterSelector.getLayerOptions(),
-            newOptions = layerOptions.filter(layer => layer.layerId !== selectedLayer.layerId);
-
-        this.layerFilterSelector.setLayerOptions(newOptions);
-        this.layerFilterSelector.render();
-        this.layerFilterSelector.clearSelectedLayer();
-        // this.$el.find("#layerfilter-selector-container").empty();
-        // this.$el.find("#layerfilter-selector-container").append(this.layerFilterSelector.render().el);
     },
     addLayerOption: function (layerInfo) {
         const newOptions = this.layerFilterSelector.getLayerOptions();
