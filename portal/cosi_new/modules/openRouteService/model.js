@@ -25,7 +25,7 @@ const openRouteService = Backbone.Model.extend({
                 url = that.get("baseUrl") + pathType.trim();
             var xhr = new XMLHttpRequest();
 
-            console.log("query: ", queryBody);
+            // console.log("query: ", queryBody);
             xhr.open("POST", url);
             xhr.setRequestHeader("Accept", "application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8");
             xhr.setRequestHeader("Content-Type", "application/json");

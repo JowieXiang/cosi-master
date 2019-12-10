@@ -20,7 +20,7 @@ const LayerFilterSelectorView = Backbone.View.extend({
         return this;
     },
     renderDropDownView: function (dropdownModel) {
-        const dropdownView = new SnippetDropdownView({ model: dropdownModel }),
+        const dropdownView = new SnippetDropdownView({model: dropdownModel}),
             dropdownObj = dropdownView.render().el;
 
         this.$el.append(dropdownObj);

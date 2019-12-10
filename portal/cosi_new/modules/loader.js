@@ -17,7 +17,6 @@ import GraphModel from "./graph_v2/model";
 import ReachabilitySelectView from "./reachabilitySelect/view";
 import {storageListener, updateFromStorage, setupStorage} from "./storage";
 import CompareDistrictsView from "./compareDistricts/view";
-import ControlsView from "../../../modules/controls/view";
 import RefocusView from "./controls/refocus/view";
 import "../cosi.style.less";
 
@@ -31,9 +30,9 @@ function initializeCosi () {
 
     window.CosiStorage = window.localStorage;
 
-    const dashboard = new DashboardView({ model: general.dashboard });
+    const dashboard = new DashboardView({model: general.dashboard});
 
-    new DashboardTableView({ model: general.dashboardTable });
+    new DashboardTableView({model: general.dashboardTable});
     new ContextMenuView();
     new GraphModel();
     new TimeSliderView();
@@ -45,17 +44,17 @@ function initializeCosi () {
         CosiStorage.clear();
 
         Radio.trigger("ModelList", "addModelsAndUpdate", Object.values(tools));
-        new CalculateRatioView({ model: tools.calculateRatio });
-        new ReachabilitySelectView({ model: tools.reachabilitySelect });
-        new ReachabilityFromPointView({ model: tools.reachabilityFromPoint });
-        new ReachabilityInAreaView({ model: tools.reachabilityInArea });
-        new ColorCodeMapView({ model: tools.colorCodeMap });
-        new SaveSelectionCosiView({ model: tools.saveSelectionCosi });
-        new SelectDistrictView({ model: tools.selectDistrict });
-        new PrintView({ model: tools.print });
-        new CompareDistrictsView({ model: tools.compareDistricts });
+        new CalculateRatioView({model: tools.calculateRatio});
+        new ReachabilitySelectView({model: tools.reachabilitySelect});
+        new ReachabilityFromPointView({model: tools.reachabilityFromPoint});
+        new ReachabilityInAreaView({model: tools.reachabilityInArea});
+        new ColorCodeMapView({model: tools.colorCodeMap});
+        new SaveSelectionCosiView({model: tools.saveSelectionCosi});
+        new SelectDistrictView({model: tools.selectDistrict});
+        new PrintView({model: tools.print});
+        new CompareDistrictsView({model: tools.compareDistricts});
         $(document).ready(function () {
-            new RefocusView({ el: addRowTR("refocus") });
+            new RefocusView({el: addRowTR("refocus")});
         });
 
     }
