@@ -28,7 +28,7 @@ const ColorScale = Backbone.Model.extend({
      * @returns {(function|object)} - returns both the scale function and a legend with value/color-pairs for visualization.
      */
 
-    generateColorScale (values = [0, 1], colorspace = "interpolateBlues", legendSteps = 5, type = "sequential", defaultColor = "#3399CC") {
+    generateColorScale (values = [0, 1], colorspace = "interpolateBlues", legendSteps = 5, type = "sequential", defaultColor = "rgb(51, 153, 204)") {
         var _values = values.filter(val => !isNaN(val)),
             minValue = Math.min(..._values),
             maxValue = Math.max(..._values),

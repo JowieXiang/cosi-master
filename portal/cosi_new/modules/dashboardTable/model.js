@@ -548,7 +548,8 @@ const DashboardTableModel = Tool.extend({
             name: `Korrelation: ${attrsToShow[0]} (y) : ${attrsToShow[1]} (x)`,
             glyphicon: "glyphicon-flash",
             width: $("#dashboard-containers").width() - 50 + "px",
-            scalable: true
+            scalable: true,
+            focus: true
         });
     },
     getBarChartData (props, year = "2018") {

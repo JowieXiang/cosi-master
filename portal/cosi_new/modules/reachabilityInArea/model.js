@@ -64,7 +64,7 @@ const ReachabilityInAreaModel = Tool.extend(/** @lends ReachabilityInAreaModel.p
             const selectedLayerModel = Radio.request("ModelList", "getModelByAttributes", {name: valueModel.get("value")});
 
             if (selectedLayerModel) {
-                const features = selectedLayerModel.get("layer").getSource().getFeatures(),
+                const features = selectedLayerModel.get("layer").getSource().getFeatures().filter(f => typeof f.style_ === "object" || f.style_ === null),
                     coordinatesBefore = features.map(feature => feature.getGeometry().getCoordinates().splice(0, 2)),
                     coordinates = coordinatesBefore.map(coord => Proj.transform(coord, "EPSG:25832", "EPSG:4326"));
 

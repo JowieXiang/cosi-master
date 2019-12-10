@@ -1,4 +1,6 @@
-import { tools, general } from "./tools";
+import {tools, general} from "./tools";
+import {addPolyfills} from "./polyfills";
+
 import ColorCodeMapView from "./colorCodeMap/view";
 import DashboardView from "./dashboard/view";
 import DashboardTableView from "./dashboardTable/view";
@@ -85,12 +87,13 @@ function initializeCosi () {
     ]);
 
     if (!window.location.pathname.includes("infoscreen.html")) {
-        CosiStorage.setItem("infoScreenOpen", JSON.stringify(true));
+        CosiStorage.setItem("infoScreenOpen", JSON.stringify(infoScreenOpen));
         tools.selectDistrict.set("isActive", true);
     }
 
     Radio.trigger("General", "loaded");
     addInfoButtons();
+    addPolyfills();
 }
 
 
@@ -98,7 +101,7 @@ function initializeCosi () {
  * kleiner Hack um Info Button für die Fachdaten anzeigen zu lassen
  * @returns {void}
  */
-function addInfoButtons() {
+function addInfoButtons () {
     Backbone.Radio.on("ModelList", "updatedSelectedLayerList", function () {
         if (document.getElementById("Overlayer") !== null) {
             if (document.getElementById("Overlayer").hasChildNodes()) {
@@ -127,7 +130,7 @@ function addInfoButtons() {
  * @param {Boolean} showMobile Flag if control should also be shown in mobile mode
  * @returns {object} - JQueryObject of the generated element
  */
-function addRowTR(id) {
+function addRowTR (id) {
     $(".controls-view").find(".control-view-top-right").append("<div class='row controls-row-right hidden-xs' id='" + id + "'></div>");
     return $(".controls-view").find(".control-view-top-right").children().last();
 }

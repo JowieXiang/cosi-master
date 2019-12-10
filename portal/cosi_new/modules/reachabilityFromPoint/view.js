@@ -140,9 +140,9 @@ const ReachabilityFromPointView = Backbone.View.extend({
                         feature.set("featureType", this.model.get("featureType"));
                     });
                     this.model.set("rawGeoJson", Radio.request("GraphicalSelect", "featureToGeoJson", newFeatures[0]));
-                    this.styleFeatures(newFeatures);
+                    this.styleFeatures(newFeatures, coordinate);
 
-                    mapLayer.getSource().clear();
+                    mapLayer.getSource().clear(); // Persistence of more than one isochrones?
                     mapLayer.getSource().addFeatures(newFeatures.reverse());
                     this.model.set("isochroneFeatures", newFeatures);
                     this.setIsochroneAsBbox();
@@ -168,8 +168,9 @@ const ReachabilityFromPointView = Backbone.View.extend({
 
         Radio.trigger("BboxSettor", "setBboxGeometryToLayer", layerlist, geometryCollection);
     },
-    styleFeatures: function (features) {
+    styleFeatures: function (features, coordinate) {
         for (let i = features.length - 1; i >= 0; i--) {
+            features[i].setProperties({coordinate});
             features[i].setStyle(new Style({
                 fill: new Fill({
                     color: `rgba(${200 - 100 * i}, ${100 * i}, 3, ${0.05 * i + 0.1})`
@@ -356,7 +357,7 @@ const ReachabilityFromPointView = Backbone.View.extend({
         Radio.request("ModelList", "getModelByAttributes", { name: "Erreichbarkeitsanalyse" }).set("isActive", true);
     },
     requestInhabitants: function () {
-        Radio.trigger("GraphicalSelect", "onDrawEnd", this.model.get("rawGeoJson"), true);
+        Radio.trigger("GraphicalSelect", "onDrawEnd", "einwohnerabfrage", this.model.get("rawGeoJson"), true);
     },
     /**
      * set search result from the searchbar to origin coordinates

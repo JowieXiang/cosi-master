@@ -132,24 +132,33 @@ const CalculateRatioModel = Tool.extend({
                 ratio = this.calculateRatio(facilities, demographics, district.getProperties()[selector]);
                 this.setResultForDistrict(district.getProperties()[selector], {
                     ratio: ratio,
+                    capacity: facilities * this.get("modifier")[1],
+                    demand: demographics / this.get("modifier")[1],
                     coverage: ratio * this.get("modifier")[1],
                     facilities: facilities,
-                    demographics: demographics
+                    demographics: demographics,
+                    f: this.get("modifier")[1]
                 });
             });
             // Calculate total value and add it to results
             totalRatio = this.calculateRatio(totalFacilities, totalDemographics);
             this.setResultForDistrict("Gesamt", {
                 ratio: totalRatio,
+                capacity: totalFacilities * this.get("modifier")[1],
+                demand: totalDemographics / this.get("modifier")[1],
                 coverage: totalRatio * this.get("modifier")[1],
                 facilities: totalFacilities,
-                demographics: totalDemographics
+                demographics: totalDemographics,
+                f: this.get("modifier")[1]
             });
             this.setResultForDistrict("Durchschnitt", {
                 ratio: totalRatio / selectedDistricts.length,
+                capacity: (totalFacilities * this.get("modifier")[1]) / selectedDistricts.length,
+                demand: totalDemographics / this.get("modifier")[1] / selectedDistricts.length,
                 coverage: (totalRatio * this.get("modifier")[1]) / selectedDistricts.length,
                 facilities: totalFacilities / selectedDistricts.length,
-                demographics: totalDemographics / selectedDistricts.length
+                demographics: totalDemographics / selectedDistricts.length,
+                f: this.get("modifier")[1]
             });
         }
         else {
@@ -157,7 +166,15 @@ const CalculateRatioModel = Tool.extend({
         }
 
         Object.keys(this.getResults()).forEach(function (objectKey) {
-            renameResults[objectKey] = Radio.request("Util", "renameKeys", {ratio: "Verhältnis", coverage: "Abdeckung", facilities: this.getNumerators()[0], demographics: this.getDenominators().join(", ")}, this.getResults()[objectKey]);
+            renameResults[objectKey] = Radio.request("Util", "renameKeys", {
+                ratio: "Verhältnis",
+                coverage: "Abdeckung",
+                facilities: `${this.getNumerators()[0]} (${this.get("modifier")[0]})`,
+                demographics: this.getDenominators().join(", "),
+                demand: "Bedarf (Soll)",
+                capacity: "Kapazität",
+                f: "Faktor (F)"
+            }, this.getResults()[objectKey]);
         }, this);
         this.get("exportButtonModel").set("rawData", renameResults);
         this.trigger("renderResults");

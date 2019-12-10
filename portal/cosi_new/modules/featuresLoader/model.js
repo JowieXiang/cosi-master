@@ -97,7 +97,10 @@ const featuresLoader = Backbone.Model.extend({
                         });
                     })
                     .catch(function (error) {
-                        // to do
+                        Radio.trigger("Alert", "alert", {
+                            text: "Datensätze konnten nicht geladen werden. Vermutlich liegt ein Verbindungsproblem zum Server vor. Bestätigen Sie die Auswahl erneut oder laden Sie die CoSI neu.",
+                            kategorie: "alert-warning"
+                        });
                         console.error(error);
                     }));
             }, this);

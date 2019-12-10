@@ -33,6 +33,7 @@ const ContextMenuView = Backbone.View.extend({
     channel: "",
     render () {
         this.$el.html(this.template());
+        this.$el.addClass("hidden");
         return this;
     },
     addContextMenu (element) {

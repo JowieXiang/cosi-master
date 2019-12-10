@@ -9,9 +9,13 @@ else { %>
         <table class="table">
             <tr>
                 <th scope="col">Gebiet</th>
-                <th scope="col"><%= numerators.values[0] %></th>
+                <th scope="col"><%= numerators.values[0] %> (<%= modifier[0] %>)</th>
+                <% if (isModified) { %>
+                    <th scope="col">Kapazität</th>
+                    <th scope="col">Bedarf (Soll-Wert)</th>
+                <% } %>
                 <th scope="col"><%= denominators.values.join(', ') %></th>
-                <th scope="col">Versorgungschlüssel</th>
+                <th scope="col"><%= modifier[0] %> / Bezugsgröße</th>
                 <% if (isModified) { %>
                     <th scope="col">Unter- / Überversorgung</th>
                 <% } %>
@@ -20,6 +24,10 @@ else { %>
                 <tr>
                     <th scope="row"><%= district %></th>
                     <td><%= results[district].facilities.toLocaleString('de-DE') %></td>
+                    <% if (isModified) { %>
+                        <td><%= results[district].capacity.toLocaleString('de-DE') %></td>
+                        <td><%= results[district].demand.toLocaleString('de-DE') %></td>
+                    <% } %>
                     <td><%= results[district].demographics.toLocaleString('de-DE') %></td>
                     <td><%= results[district].ratio.toLocaleString('de-DE') %></td>
                     <% if (isModified) { %>

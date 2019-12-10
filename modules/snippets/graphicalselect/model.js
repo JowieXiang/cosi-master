@@ -84,7 +84,7 @@ const GraphicalSelectModel = SnippetDropdownModel.extend(/** @lends GraphicalSel
         }, this);
         this.listenTo(this, {
             "change:selectedAreaGeoJson": function () {
-                channel.trigger("onDrawEnd", this.get("selectedAreaGeoJson"));
+                channel.trigger("onDrawEnd", this.get("selectedAreaGeoJson"), this.id);
             }
         });
         this.createDomOverlay("circle-overlay", this.get("circleOverlay"));

@@ -100,12 +100,12 @@ const EinwohnerabfrageModel = Tool.extend(/** @lends EinwohnerabfrageModel.proto
         this.on("change:isActive", this.handleCswRequests, this);
         this.setDropDownSnippet(new GraphicalSelectModel({id: this.id}));
         this.listenTo(Radio.channel("GraphicalSelect"), {
-            "onDrawEnd": function (geoJson, setActive = false) {
+            "onDrawEnd": function (geoJson, id, setActive = false) {
                 if (setActive) {
                     this.collection.setActiveToolsToFalse(this);
                     this.setIsActive(true);
                 }
-                if (this.get("isActive")) {
+                if (this.get("isActive") && id === this.id) {
                     this.makeRequest(geoJson);
                 }
             }

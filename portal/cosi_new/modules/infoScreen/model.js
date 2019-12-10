@@ -1,5 +1,3 @@
-import { runInThisContext } from "vm";
-
 const InfoScreenModel = Backbone.Model.extend({
     defaults: {
         id: "infoScreen",

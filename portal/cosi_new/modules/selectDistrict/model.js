@@ -130,8 +130,10 @@ const SelectDistrictModel = Tool.extend(/** @lends SelectDistrictModel.prototype
             }
         });
 
-        this.listenTo(Radio.channel("GraphicalSelect"), "onDrawEnd", function (geoJson) {
-            this.boxSelect(geoJson);
+        this.listenTo(Radio.channel("GraphicalSelect"), "onDrawEnd", function (geoJson, id) {
+            if (id === this.id) {
+                this.boxSelect(geoJson);
+            }
         });
 
         this.get("channel").reply({
@@ -416,7 +418,7 @@ const SelectDistrictModel = Tool.extend(/** @lends SelectDistrictModel.prototype
             this.set("urlQuery", [
                 query[0].substring(query[0].indexOf("=") + 1).replace("%20", " "),
                 query[1].substring(query[1].indexOf("=") + 1).split(","),
-                query[2].substring(query[1].indexOf("=") + 1)
+                query[2].substring(query[2].indexOf("=") + 1)
             ]);
         }
     },

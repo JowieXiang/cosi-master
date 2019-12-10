@@ -93,6 +93,7 @@ const SelectView = Backbone.View.extend({
     },
     clearResult: function () {
         this.resultView.remove();
+        this.model.resetResults();
         Radio.trigger("ColorCodeMap", "reset");
     }
 });

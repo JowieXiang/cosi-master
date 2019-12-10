@@ -114,8 +114,16 @@ const ToolView = Backbone.View.extend(/** @lends ToolView.prototype */{
                 // In that case 'this.model' of this class has not full content, e.g. collection is undefined --> replace it by the new model in the list
                 this.model = Radio.request("ModelList", "getModelByAttributes", {id: this.model.id});
             }
-            this.model.collection.setActiveToolsToFalse(this.model);
-            this.model.setIsActive(true);
+            if (!this.model.get("isActive")) {
+                // active the tool if it is not active
+                // deactivate all other modules as long as the tool is not set to "keepOtherToolsOpen"
+                this.model.collection.setActiveToolsToFalse(this.model);
+                this.model.setIsActive(true);
+            }
+            else {
+                // deactivate tool if it is already active
+                this.model.setIsActive(false);
+            }
         }
         // Navigation wird geschlossen
         $("div.collapse.navbar-collapse").removeClass("in");
