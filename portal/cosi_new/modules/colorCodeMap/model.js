@@ -1,5 +1,5 @@
 import DropdownModel from "../../../../modules/snippets/dropdown/model";
-import { Fill, Stroke, Style, Text } from "ol/style.js";
+import {Fill, Stroke, Style, Text} from "ol/style.js";
 
 const LayerModel = Backbone.Model.extend(/** @lends LayerModel.prototype */{
     /**

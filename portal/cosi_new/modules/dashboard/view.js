@@ -83,7 +83,7 @@ const DashboardView = Backbone.View.extend({
         return this;
     },
     dashboardInfo () {
-        console.log(Radio.request("Dashboard", "getChildren"));
+        // console.log(Radio.request("Dashboard", "getChildren"));
     },
     close: function () {
         this.model.setIsActive(false);

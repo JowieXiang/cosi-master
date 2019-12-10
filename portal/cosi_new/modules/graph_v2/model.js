@@ -1133,7 +1133,7 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             term1 = 0,
             term2 = 0,
             a, b,
-            covariance, pearson, err;
+            covariance, pearson;
 
         // calculate coefficients
         for (let i = 0; i < dat.length; i++) {

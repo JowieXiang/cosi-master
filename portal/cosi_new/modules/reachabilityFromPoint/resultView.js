@@ -1,5 +1,4 @@
 import resultTemplate from "text-loader!./resultTemplate.html";
-import * as Proj from "ol/proj.js";
 
 const ReachabilityResultView = Backbone.View.extend({
     events: {

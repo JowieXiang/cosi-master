@@ -29,7 +29,7 @@ const SelectView = Backbone.View.extend(/** @lends SelectView.prototype */{
     },
     renderDropDownView: function () {
         this.model.setDropDownModel();
-        const dropdownView = new SnippetDropdownView({ model: this.model.get("dropDownModel") });
+        const dropdownView = new SnippetDropdownView({model: this.model.get("dropDownModel")});
 
         this.$el.find("#reachabilityAnalysis").append(dropdownView.render().el);
     }

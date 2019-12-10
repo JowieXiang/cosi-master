@@ -29,8 +29,13 @@ const LayerFilterModel = Backbone.Model.extend(/** @lends LayerFilterModel.proto
             layerId = this.get("layerInfo").layerId,
             featureCollection = Radio.request("FeaturesLoader", "getAllFeaturesByAttribute", {
                 id: layerId
-            });
-        let refValue = 0;
+            }),
+            districtInfo = [],
+            values = featureCollection.map(feature => parseFloat(feature.getProperties().jahr_2018)).filter(value => !_.isNaN(value)),
+            max = parseInt(Math.max(...values), 10),
+            min = parseInt(Math.min(...values), 10);
+        let refValue = 0,
+            newInfo = {};
 
         if (Radio.request("DistrictSelector", "getSelectedDistrict") !== "Leeren") {
             const districtName = Radio.request("DistrictSelector", "getSelectedDistrict"),
@@ -41,13 +46,10 @@ const LayerFilterModel = Backbone.Model.extend(/** @lends LayerFilterModel.proto
         else {
             refValue = 0;
         }
-        const districtInfo = [],
-            values = featureCollection.map(feature => parseFloat(feature.getProperties().jahr_2018)).filter(value => !_.isNaN(value)),
-            max = parseInt(Math.max(...values), 10),
-            min = parseInt(Math.min(...values), 10),
-            newInfo = {
-                key: "jahr_2018", value: refValue, max: max, min: min
-            };
+
+        newInfo = {
+            key: "jahr_2018", value: refValue, max: max, min: min
+        };
 
         districtInfo.push(newInfo);
         this.set("districtInfo", districtInfo);

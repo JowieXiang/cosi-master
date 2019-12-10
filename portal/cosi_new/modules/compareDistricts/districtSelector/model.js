@@ -31,7 +31,7 @@ const DistrictSelectorModel = Backbone.Model.extend(/** @lends DistrictSelectorM
         }
         else {
             const scope = Radio.request("SelectDistrict", "getScope"),
-                districts = Radio.request("ModelList", "getModelByAttributes", { name: scope }).get("layer").getSource().getFeatures(),
+                districts = Radio.request("ModelList", "getModelByAttributes", {name: scope}).get("layer").getSource().getFeatures(),
                 districtNames = districts.map(district => district.getProperties()[selector]);
 
             this.set("districtNames", districtNames);

@@ -1,5 +1,5 @@
 import Template from "text-loader!./template.html";
-import { selection } from "d3-selection";
+import {selection} from "d3-selection";
 import "./style.less";
 
 const DashboardWidgetView = Backbone.View.extend({
@@ -11,7 +11,7 @@ const DashboardWidgetView = Backbone.View.extend({
         "mousedown .header": "moveMouse",
         "pointerdown .win-control.open": function (evt) {
             evt.stopPropagation();
-        },
+        }
         // "click .isochrone-origin": "zoomToOrigin"
     },
     initialize (content, parent, opts = {}) {

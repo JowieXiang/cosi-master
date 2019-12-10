@@ -2,7 +2,7 @@ import Template from "text-loader!./template.html";
 import SnippetDropdownView from "../../../../modules/snippets/dropdown/view";
 import * as Proj from "ol/proj.js";
 import "./style.less";
-import { Fill, Stroke, Style } from "ol/style.js";
+import {Fill, Stroke, Style} from "ol/style.js";
 import GeoJSON from "ol/format/GeoJSON";
 import InfoTemplate from "text-loader!./info.html";
 import union from "turf-union";
@@ -55,7 +55,7 @@ const ReachabilityInAreaView = Backbone.View.extend({
     },
     renderDropDownView: function () {
         this.model.setDropDownModel();
-        const dropdownView = new SnippetDropdownView({ model: this.model.get("dropDownModel") });
+        const dropdownView = new SnippetDropdownView({model: this.model.get("dropDownModel")});
 
         this.$el.find("#select-layer").html(dropdownView.render().el);
     },
@@ -280,9 +280,9 @@ const ReachabilityInAreaView = Backbone.View.extend({
     },
     toModeSelection: function () {
         this.model.set("isActive", false);
-        Radio.request("ModelList", "getModelByAttributes", { name: "Erreichbarkeitsanalyse" }).set("isActive", true);
+        Radio.request("ModelList", "getModelByAttributes", {name: "Erreichbarkeitsanalyse"}).set("isActive", true);
     },
-    
+
     // listen  to click event and trigger setGfiParams
     registerClickListener: function () {
         this.clickListener = Radio.request("Map", "registerListener", "click", this.selectIsochrone.bind(this));
@@ -293,16 +293,16 @@ const ReachabilityInAreaView = Backbone.View.extend({
         this.stopListening(Radio.channel("Map"), this.clickEventKey);
     },
 
-     // select isochrone on click
-     selectIsochrone: function (evt) {
+    // select isochrone on click
+    selectIsochrone: function (evt) {
         const features = [];
 
-        Radio.request("Map", "getMap").forEachFeatureAtPixel(evt.pixel, (feature, layer) => {
+        Radio.request("Map", "getMap").forEachFeatureAtPixel(evt.pixel, (feature) => {
             features.push(feature);
         });
         //  check "featureType" for the isochrone layer
         if (_.contains(features.map(feature => feature.getProperties().featureType), this.model.get("featureType"))) {
-            const modelList = Radio.request("ModelList", "getModelsByAttributes", { isActive: true });
+            const modelList = Radio.request("ModelList", "getModelsByAttributes", {isActive: true});
 
             _.each(modelList, model => {
                 if (model.get("isActive")) {

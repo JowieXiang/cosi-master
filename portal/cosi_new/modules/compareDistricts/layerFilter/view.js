@@ -41,10 +41,10 @@ const LayerFilterView = Backbone.View.extend({
 
         _.each(Object.keys(filterData), filterKey => {
             const newToleranceModel = new ToleranceModel({
-                key: filterKey,
-                lowerTolerance: parseInt(filterData[filterKey][0], 10),
-                upperTolerance: parseInt(filterData[filterKey][1], 10)
-            }),
+                    key: filterKey,
+                    lowerTolerance: parseInt(filterData[filterKey][0], 10),
+                    upperTolerance: parseInt(filterData[filterKey][1], 10)
+                }),
                 toleranceView = new ToleranceView({
                     model: newToleranceModel
                 });
