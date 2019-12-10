@@ -30,16 +30,17 @@ const ColorScale = Backbone.Model.extend({
 
     generateColorScale (values = [0, 1], colorspace = "interpolateBlues", legendSteps = 5, type = "sequential", defaultColor = "#3399CC") {
         var _values = values.filter(val => !isNaN(val)),
+            _undefineds = values.filter(val => val === undefined),
             minValue = Math.min(..._values),
             maxValue = Math.max(..._values),
             scale,
             legend = {
-                _values: [],
+                values: [],
                 colors: []
             };
 
         // Check if more than one value has been submitted
-        if (minValue !== maxValue) {
+        if (minValue !== maxValue && _values.length > 0) {
             switch (type) {
                 case "linear":
                     scale = scaleLinear()
@@ -55,14 +56,25 @@ const ColorScale = Backbone.Model.extend({
 
             legend.values = this.interpolateValues(minValue, maxValue, legendSteps);
             legend.colors = this.createLegendValues(scale, legend.values);
+            if (_undefineds.length > 0) {
+                legend.values.push("Keine Daten");
+                legend.colors.push("rbg(0,0,0)");
+            }
         }
 
         // return default color if not
-        else {
+        else if (values.length !== _undefineds.length) {
             scale = function () {
                 return defaultColor;
             };
             legend = null;
+        }
+        else if (values.length === _undefineds.length) {
+            scale = function () {
+                return "#000000";
+            };
+            legend.values.push("Keine Daten");
+            legend.colors.push("rbg(0,0,0)");
         }
 
         return {scale, legend};

@@ -154,7 +154,7 @@ const LayerModel = Backbone.Model.extend(/** @lends LayerModel.prototype */{
                         color: "#FFF",
                         width: 3
                     }),
-                    text: feature.getProperties()[attribute] ? parseFloat(feature.getProperties()[attribute]).toLocaleString("de-DE") : "Kein Wert vorhanden"
+                    text: feature.getProperties()[attribute] ? parseFloat(feature.getProperties()[attribute]).toLocaleString("de-DE") : "Keine Daten"
                 })
             }));
             foundDistrictFeatures.push(foundFeature);
