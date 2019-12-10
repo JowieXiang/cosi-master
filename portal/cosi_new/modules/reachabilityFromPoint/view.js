@@ -292,13 +292,13 @@ const ReachabilityFromPointView = Backbone.View.extend({
     },
     inputReminder: function () {
         Radio.trigger("Alert", "alert", {
-            text: "<strong>Please make sure all input information are provided</strong>",
+            text: "<strong>Bitte füllen Sie alle Felder aus.</strong>",
             kategorie: "alert-warning"
         });
     },
     selectionReminder: function () {
         Radio.trigger("Alert", "alert", {
-            text: "<strong>Please open at least one layer in Fachdaten, for example \"Sportstätten\"</strong>",
+            text: "<strong>Bitte wählen Sie mindestens ein Thema unter Fachdaten aus, zum Beispiel \"Sportstätten\".</strong>",
             kategorie: "alert-warning"
         });
     },

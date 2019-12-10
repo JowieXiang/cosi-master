@@ -9,7 +9,8 @@ const LayerFilterSelectorModel = Backbone.Model.extend(/** @lends LayerFilterSel
             "statgebiet": "https://geodienste.hamburg.de/HH_WFS_Statistische_Gebiete_Test",
             "stadtteile": ""
         },
-        dropDownModel: {}
+        dropDownModel: {},
+        dropDownDisplayName: "Auswahl statistische Daten"
     },
     /**
      * @class LayerFilterSelectorModel
@@ -53,7 +54,7 @@ const LayerFilterSelectorModel = Backbone.Model.extend(/** @lends LayerFilterSel
             snippetType: "dropdown",
             isMultiple: false,
             isGrouped: true,
-            displayName: "Auswahl statistische Daten",
+            displayName: this.get("dropDownDisplayName"),
             liveSearch: true
         });
 
@@ -74,7 +75,6 @@ const LayerFilterSelectorModel = Backbone.Model.extend(/** @lends LayerFilterSel
      */
     dropDownCallback: function (valueModel, isSelected) {
         if (isSelected) {
-
             this.setSelectedLayer(valueModel.get("value"));
         }
     },

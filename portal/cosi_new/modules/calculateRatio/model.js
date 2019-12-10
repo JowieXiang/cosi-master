@@ -100,7 +100,7 @@ const CalculateRatioModel = Tool.extend({
         this.set("exportButtonModel", new ExportButtonModel({
             tag: "Als CSV herunterladen",
             rawData: this.get("results"),
-            filename: "CoSI-Angebotsdeckung",
+            filename: "CoSI-Versorgungsanalyse",
             fileExtension: "csv"
         }));
     },

@@ -8,6 +8,7 @@ const SelectDistrictView = Backbone.View.extend({
         "click button#Submit": "checkIfSelected",
         "click button#Reset": "reset",
         "click button#Help": "showHelp",
+        "click button#Draw": "toggleDrawSelection",
         "change input#buffer": "setBuffer"
     },
     initialize: function () {
@@ -64,6 +65,9 @@ const SelectDistrictView = Backbone.View.extend({
     },
     toggleIsActive: function () {
         this.model.toggleIsActive();
+    },
+    toggleDrawSelection: function () {
+        this.model.toggleDrawSelection();
     },
     selectDistrictReminder: function () {
         Radio.trigger("Alert", "alert", {
