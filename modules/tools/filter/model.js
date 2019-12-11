@@ -64,11 +64,12 @@ const FilterModel = Tool.extend({
 
         this.listenTo(Radio.channel("VectorLayer"), {
             "featuresLoaded": function (layerId) {
+                // to-do erstmal prüfen ob layerId überhaupt relevant
                 var predefinedQueries = this.get("predefinedQueries"),
                     queryCollection = this.get("queryCollection"),
                     filterModels;
 
-                if (!this.isModelInQueryCollection(layerId, queryCollection) && this.get("isActive")) {
+                if (!this.isModelInQueryCollection(layerId, queryCollection)) {
                     filterModels = predefinedQueries.filter(function (query) {
                         return query.layerId === layerId;
                     });
@@ -87,7 +88,7 @@ const FilterModel = Tool.extend({
                     queryCollection.remove(oldQuery);
                     this.createQuery(newQuery);
                 }
-
+                this.checkVisibleQueries();
             }
         }, this);
     },
