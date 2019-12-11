@@ -2,11 +2,10 @@ import Template from "text-loader!./template.html";
 import SnippetDropdownView from "../../../../modules/snippets/dropdown/view";
 import * as Proj from "ol/proj.js";
 import "./style.less";
-import {Fill, Stroke, Style} from "ol/style.js";
+import { Fill, Stroke, Style } from "ol/style.js";
 import GeoJSON from "ol/format/GeoJSON";
 import GeometryCollection from "ol/geom/GeometryCollection";
 import InfoTemplate from "text-loader!./info.html";
-import resultTemplate from "text-loader!./resultTemplate.html";
 import ReachabilityResultView from "./resultView";
 
 const ReachabilityFromPointView = Backbone.View.extend({
@@ -73,7 +72,6 @@ const ReachabilityFromPointView = Backbone.View.extend({
     },
     model: {},
     template: _.template(Template),
-    resultTemplate: _.template(resultTemplate),
     render: function () {
         var attr = this.model.toJSON();
 
@@ -86,7 +84,7 @@ const ReachabilityFromPointView = Backbone.View.extend({
         return this;
     },
     renderDropDownView: function (dropdownModel) {
-        const dropdownView = new SnippetDropdownView({model: dropdownModel});
+        const dropdownView = new SnippetDropdownView({ model: dropdownModel });
 
         this.$el.find("#isochrones-layer").html(dropdownView.render().el);
     },
@@ -162,7 +160,7 @@ const ReachabilityFromPointView = Backbone.View.extend({
         this.$el.find("#range").val(`${this.model.get("range")}`);
     },
     setIsochroneAsBbox: function () {
-        const layerlist = _.union(Radio.request("Parser", "getItemsByAttributes", {typ: "WFS", isBaseLayer: false}), Radio.request("Parser", "getItemsByAttributes", {typ: "GeoJSON", isBaseLayer: false})),
+        const layerlist = _.union(Radio.request("Parser", "getItemsByAttributes", { typ: "WFS", isBaseLayer: false }), Radio.request("Parser", "getItemsByAttributes", { typ: "GeoJSON", isBaseLayer: false })),
             polygonGeometry = this.model.get("isochroneFeatures")[this.model.get("steps") - 1].getGeometry(),
             geometryCollection = new GeometryCollection([polygonGeometry]);
 
@@ -170,7 +168,7 @@ const ReachabilityFromPointView = Backbone.View.extend({
     },
     styleFeatures: function (features, coordinate) {
         for (let i = features.length - 1; i >= 0; i--) {
-            features[i].setProperties({coordinate});
+            features[i].setProperties({ coordinate });
             features[i].setStyle(new Style({
                 fill: new Fill({
                     color: `rgba(${200 - 100 * i}, ${100 * i}, 3, ${0.05 * i + 0.1})`
@@ -304,20 +302,43 @@ const ReachabilityFromPointView = Backbone.View.extend({
         });
     },
     updateResult: function () {
-        const visibleLayerModels = Radio.request("ModelList", "getModelsByAttributes", {typ: "WFS", isBaseLayer: false, isSelected: true}),
-            dataObj = {layerNames: [], features: {}};
+        const visibleLayerModels = Radio.request("ModelList", "getModelsByAttributes", { typ: "WFS", isBaseLayer: false, isSelected: true }),
+            dataObj = { layers: [] };
 
         if (visibleLayerModels.length > 0) {
             Radio.trigger("Alert", "alert:remove");
             _.each(visibleLayerModels, layerModel => {
-                dataObj.layerNames.push(layerModel.get("name"));
-                dataObj.features[layerModel.get("name")] = layerModel.get("layer").getSource().getFeatures();
+                const features = layerModel.get("layer").getSource().getFeatures();
+                let idSelector;
+
+                /**
+                 * hard coded id selector for facility layers
+                 */
+                if (features[0].getProperties().schul_id) {
+                    idSelector = "schul_id";
+                }
+                else if (features[0].getProperties().einrichtung) {
+                    idSelector = "einrichtung";
+                }
+                else if (features[0].getProperties().Einrichtungsnummer) {
+                    idSelector = "Einrichtungsnummer";
+                }
+                else if (features[0].getProperties().identnummer) {
+                    idSelector = "identnummer";
+                }
+
+                dataObj.layers.push({
+                    layerName: layerModel.get("name"),
+                    layerId: layerModel.get("id"),
+                    features: features,
+                    idSelector: idSelector
+                });
             });
             dataObj.coordinate = Proj.transform(this.model.get("coordinate"), "EPSG:4326", "EPSG:25832");
 
             this.model.set("dataObj", dataObj);
 
-            this.resultView = new ReachabilityResultView({model: this.model});
+            this.resultView = new ReachabilityResultView({ model: this.model });
             this.$el.find("#result").html(this.resultView.render().$el);
             this.$el.find("#show-in-dashboard").show();
         }
@@ -354,7 +375,7 @@ const ReachabilityFromPointView = Backbone.View.extend({
     },
     toModeSelection: function () {
         this.model.set("isActive", false);
-        Radio.request("ModelList", "getModelByAttributes", {name: "Erreichbarkeitsanalyse"}).set("isActive", true);
+        Radio.request("ModelList", "getModelByAttributes", { name: "Erreichbarkeitsanalyse" }).set("isActive", true);
     },
     requestInhabitants: function () {
         Radio.trigger("GraphicalSelect", "onDrawEnd", "einwohnerabfrage", this.model.get("rawGeoJson"), true);
@@ -392,7 +413,7 @@ const ReachabilityFromPointView = Backbone.View.extend({
         });
         //  check "featureType" for the isochrone layer
         if (_.contains(features.map(feature => feature.getProperties().featureType), this.model.get("featureType"))) {
-            const modelList = Radio.request("ModelList", "getModelsByAttributes", {isActive: true});
+            const modelList = Radio.request("ModelList", "getModelsByAttributes", { isActive: true });
 
             _.each(modelList, model => {
                 if (model.get("isActive")) {
