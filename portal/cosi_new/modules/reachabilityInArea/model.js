@@ -1,6 +1,7 @@
 import Tool from "../../../../modules/core/modelList/tool/model";
 import DropdownModel from "../../../../modules/snippets/dropdown/model";
 import * as Proj from "ol/proj.js";
+import * as Extent from "ol/extent";
 
 const ReachabilityInAreaModel = Tool.extend(/** @lends ReachabilityInAreaModel.prototype */{
     defaults: _.extend({}, Tool.prototype.defaults, {
@@ -12,7 +13,6 @@ const ReachabilityInAreaModel = Tool.extend(/** @lends ReachabilityInAreaModel.p
         dropDownModel: {},
         mapLayerName: "reachability-in-area",
         featureType: "Erreichbarket im Gebiet" // used for targeting the features within the layer
-
     }),
     /**
     * @class ReachabilityInAreaModel
@@ -61,13 +61,23 @@ const ReachabilityInAreaModel = Tool.extend(/** @lends ReachabilityInAreaModel.p
      */
     setCoordinates: function (valueModel, isSelected) {
         if (isSelected) {
-            const selectedLayerModel = Radio.request("ModelList", "getModelByAttributes", {name: valueModel.get("value")});
+            const selectedLayerModel = Radio.request("ModelList", "getModelByAttributes", { name: valueModel.get("value") });
 
             if (selectedLayerModel) {
-                const features = selectedLayerModel.get("layer").getSource().getFeatures().filter(f => typeof f.style_ === "object" || f.style_ === null),
-                    coordinatesBefore = features.map(feature => feature.getGeometry().getCoordinates().splice(0, 2)),
-                    coordinates = coordinatesBefore.map(coord => Proj.transform(coord, "EPSG:25832", "EPSG:4326"));
+                let coordinates = [];
+                const features = selectedLayerModel.get("layer").getSource().getFeatures().filter(f => typeof f.style_ === "object" || f.style_ === null);
 
+                _.each(features, (feature) => {
+                    const geometry = feature.getGeometry();
+
+                    if (geometry.getType() === "Point") {
+                        coordinates.push(geometry.getCoordinates().splice(0, 2));
+                    }
+                    else {
+                        coordinates.push(Extent.getCenter(geometry.getExtent()));
+                    }
+                });
+                coordinates = coordinates.map(coord => Proj.transform(coord, "EPSG:25832", "EPSG:4326"));
                 this.set("coordinates", coordinates);
             }
         }
