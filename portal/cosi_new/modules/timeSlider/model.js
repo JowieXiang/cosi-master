@@ -54,8 +54,7 @@ const TimeSliderModel = Backbone.Model.extend({
         this.setMaxYAxisValue(this.get("featuresProperties"), this.get("attribute_prefix"), sliderValues);
         // for the init call
         this.sliderCallback(undefined, sliderValues[1]);
-        this.trigger("renderSliderView", sliderModel, title);
-        this.trigger("renderGraph", this.get("featuresProperties"), sliderValues[1], this.get("maxYAxisValue"));
+        this.trigger("renderGraph", this.get("featuresProperties"), sliderValues[1], this.get("maxYAxisValue"), title);
     },
 
     /**

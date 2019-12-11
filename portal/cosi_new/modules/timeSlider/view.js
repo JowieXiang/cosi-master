@@ -38,7 +38,10 @@ const TimeSliderView = Backbone.View.extend({
         Radio.trigger("Dashboard", "append", this.$el, "#dashboard-containers", {
             id: "time-slider",
             name: "Zeitreihen Analyse " + title,
-            glyphicon: "glyphicon-time"
+            glyphicon: "glyphicon-time",
+            width: $("#dashboard-containers").width() - 50 + "px",
+            scalable: true,
+            focus: true
         });
     },
 
@@ -64,7 +67,7 @@ const TimeSliderView = Backbone.View.extend({
         this.$el.find("button > .glyphicon").removeClass("glyphicon-play");
     },
 
-    renderGraph: function (graphData, value, getMaxYAxisValue) {
+    renderGraph: function (graphData, value, getMaxYAxisValue, title) {
         this.$el.find(".time-series-graph").empty();
 
         Radio.trigger("GraphV2", "createGraph", {
@@ -87,10 +90,20 @@ const TimeSliderView = Backbone.View.extend({
                 right: 20,
                 bottom: 40
             },
+            attribution: {
+                x: 0,
+                y: $(window).height() * 0.4,
+                lineHeight: 10,
+                fontSize: "7px",
+                anchor: "start",
+                text: ["Datum: " + new Date().toLocaleDateString("de-DE"), "Quelle: Cockpit für Städtische Infrastruktur (CoSI)"]
+            },
             width: $(window).width() * 0.4,
             height: $(window).height() * 0.4,
             svgClass: "time-series-graph-svg"
         });
+
+        this.renderSliderView(this.model.get("sliderModel"), title);
     }
 });
 
