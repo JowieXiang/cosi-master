@@ -1,14 +1,27 @@
 <table class="table table-hover">
     <tr>
-        <th scope="col">#</th>
+        <!-- <th scope="col">#</th> -->
         <th scope="col">Art der Infrastruktur</th>
         <th scope="col">Menge</th>
     </tr>
-    <% _.each(dataObj.layerNames, function(layerName, i){ %>
+    <% _.each(dataObj.layers, function(layer, i){ %>
     <tr class="dashboard-tr">
-        <th scope="row"><%= i + 1 %></th>
-        <td><%= layerName %></td>
-        <td><%= dataObj.features[layerName].length %></td>
+        <!-- <th scope="row"><%= i + 1 %></th> -->
+        <td scope="row"><%= layer.layerName %></td>
+        <td><%= layer.features.length %>
+            <button id="<%= layer.layerName.split(' ')[0] %>" type="button"
+                class="btn btn-outline-secondary open"><span></span></button></td>
+    </tr>
+    <tr id="<%= layer.layerName.split(' ')[0] + '_tr' %>" class="detail">
+        <td colspan="3">
+            <p>
+                <% _.each(layer.features, function(feature){ %>
+                <span class="name-tag district-name" layerId="<%= layer.layerId %>" idSelector="<%= layer.idSelector %>">
+                    <%= feature.getProperties()[layer.idSelector] %>
+                </span>
+                <% }) %>
+            </p>
+        </td>
     </tr>
     <% }) %>
 </table>
