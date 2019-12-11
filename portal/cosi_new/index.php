@@ -16,7 +16,7 @@
 			echo '<link rel="stylesheet" href="https://geofos.fhhnet.stadt.hamburg.de/lgv-config/css/fonts.css">';
 
 			echo '</head>';
-			echo '<body>';
+			echo '<body class="touchscreen">';
 			echo '<div class="lgv-container">';
 			echo '<div id="loader"><img src="../../lgv-config/img/ajax-loader.gif"></div>';
 
