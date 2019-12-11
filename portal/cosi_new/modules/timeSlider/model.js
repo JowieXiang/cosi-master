@@ -40,7 +40,7 @@ const TimeSliderModel = Backbone.Model.extend({
                 snippetType: "slider",
                 values: sliderValues,
                 type: "integer",
-                preselectedValues: sliderValues[1],
+                preselectedValues: sliderValues[0],
                 displayName: "",
                 editableValueBox: false,
                 withLabel: false
@@ -53,8 +53,9 @@ const TimeSliderModel = Backbone.Model.extend({
         this.set("sliderModel", sliderModel);
         this.setMaxYAxisValue(this.get("featuresProperties"), this.get("attribute_prefix"), sliderValues);
         // for the init call
-        this.sliderCallback(undefined, sliderValues[1]);
-        this.trigger("renderGraph", this.get("featuresProperties"), sliderValues[1], this.get("maxYAxisValue"), title);
+        this.sliderCallback(undefined, sliderValues[0]);
+        this.trigger("renderSliderView", sliderModel, title);
+        this.trigger("renderGraph", this.get("featuresProperties"), sliderValues[0], this.get("maxYAxisValue"));
     },
 
     /**

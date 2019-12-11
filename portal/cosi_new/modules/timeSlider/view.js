@@ -41,7 +41,7 @@ const TimeSliderView = Backbone.View.extend({
             glyphicon: "glyphicon-time",
             width: $("#dashboard-containers").width() - 50 + "px",
             scalable: true,
-            focus: true
+            focus: $(window).height() * 0.4
         });
     },
 
@@ -67,7 +67,7 @@ const TimeSliderView = Backbone.View.extend({
         this.$el.find("button > .glyphicon").removeClass("glyphicon-play");
     },
 
-    renderGraph: function (graphData, value, getMaxYAxisValue, title) {
+    renderGraph: function (graphData, value, getMaxYAxisValue) {
         this.$el.find(".time-series-graph").empty();
 
         Radio.trigger("GraphV2", "createGraph", {
@@ -102,8 +102,6 @@ const TimeSliderView = Backbone.View.extend({
             height: $(window).height() * 0.4,
             svgClass: "time-series-graph-svg"
         });
-
-        this.renderSliderView(this.model.get("sliderModel"), title);
     }
 });
 
