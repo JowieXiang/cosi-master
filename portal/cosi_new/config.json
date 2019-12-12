@@ -370,7 +370,55 @@
               "mouseHoverField": [
                 "schulname",
                 "kapitelbezeichnung"
-              ]
+              ],
+              "gfiAttributes": {
+                "schulname": "Name",
+                "schulform": "Schulform",
+                "schultyp": "Schulstandort",
+                "schwerpunktschule": "Schwerpunktschule Inklusion",
+                "adresse_strasse_hausnr": "Straße",
+                "adresse_ort": "Ort",
+                "stadtteil": "Stadtteil",
+                "bezirk": "Bezirk",
+                "schul_telefonnr": "Telefon",
+                "schul_email": "Email",
+                "schulportrait": "Schulportrait",
+                "schul_homepage": "Homepage",
+                "zustaendiges_rebbz": "Zuständiges ReBBZ",
+                "rebbz_homepage": "Homepage des ReBBZ",
+                "offenetuer": "Tag d. offenen Tür",
+                "anzahl_schueler": "Schülerzahl",
+                "anzahl_schueler_gesamt": "Schülerzahl gesamt",
+                "zuegigkeit_kl_1": "Parallelklassen (Kl.1)",
+                "standortkl1": "Standort Klasse 1",
+                "zuegigkeit_kl_5": "Parallelklassen (Kl.5)",
+                "standortkl5": "Standort Klasse 5",
+                "abschluss": "Abschluss",
+                "foerderart": "Förderart",
+                "auszeichnung": "Auszeichnung",
+                "schuelerzeitung": "Schülerzeitung",
+                "schulische_ausrichtung": "Schwerpunkte in den Angeboten",
+                "schulpartnerschaft": "Schulpartnerschaft",
+                "schulinspektion_link": "Schulinspektion",
+                "einzugsgebiet": "Einzugsgebiet",
+                "schulwahl_wohnort": "Schulwahl Wohnort",
+                "fremdsprache": "Fremdsprachen",
+                "fremdsprache_mit_klasse": "Fremdsprachen ab Klassenstufe",
+                "bilingual": "Bilingual",
+                "sprachzertifikat": "Sprachzertifikat",
+                "ganztagsform": "Ganztagsform",
+                "kernzeitbetreuung": "Anteil Kernzeitbetreuung",
+                "ferienbetreuung_anteil": "Anteil Ferienbetreuung",
+                "kernunterricht": "Kernunterricht",
+                "mittagspause": "Mittagspause",
+                "kantine_vorh": "Kantine",
+                "wahlmoeglichkeit_essen": "Wahlmöglichkeit Essen",
+                "vegetarisch": "Vegetarisch",
+                "nutzung_kantine_anteil": "Nutzung Kantine",
+                "kiosk_vorh": "Kiosk",
+                "oberstufenprofil": "Oberstufenprofil",
+                "standortoberstufe": "Standort Oberstufe"
+              }
             }
           ]
         },
@@ -454,6 +502,47 @@
                   "id": "96"
                 }
               ]
+            },
+            {
+              "Titel": "Sozialmonitoring Integrierte Stadtteilentwicklung - Karte Gesamtindex (FHHNET)",
+              "Layer": [
+                {
+                  "id": "1677"
+                },
+                {
+                  "id": "1676"
+                },
+                {
+                  "id": "2097"
+                },
+                {
+                  "id": "2096"
+                },
+                {
+                  "id": "3994"
+                },
+                {
+                  "id": "3993"
+                },
+                {
+                  "id": "7265"
+                },
+                {
+                  "id": "7264"
+                },
+                {
+                  "id": "10655"
+                },
+                {
+                  "id": "10656"
+                },
+                {
+                  "id": "14132"
+                },
+                {
+                  "id": "14133"
+                }
+              ]
             }
           ],
           "Layer": [
@@ -471,6 +560,21 @@
             },
             {
               "id": "5207"
+            },
+            {
+              "id": "2666",
+              "name": "Ausgleichsflächen (Kompensationsverzeichnis gem. BNatSchG) - FHHNET"
+            },
+            {
+              "id": [
+                "10806",
+                "2452",
+                "2453",
+                "2454",
+                "2455",
+                "2456"
+              ],
+              "name": "ALKIS - Flurstücke und Gebäude (schwarz)"
             }
           ]
         }

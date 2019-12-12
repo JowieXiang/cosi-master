@@ -41,6 +41,8 @@ const DashboardWidgetView = Backbone.View.extend({
     attrs: {},
     template: _.template(Template),
     render () {
+        const addScroll = typeof this.attrs.focusOnInit === "number" ? this.attrs.focusOnInit : 0;
+
         this.initializeDOMElement();
         this.$el.append(this.template(this.attrs));
 
@@ -73,7 +75,7 @@ const DashboardWidgetView = Backbone.View.extend({
         Radio.trigger("ContextMenu", "addContextMenu", this.el);
 
         if (this.attrs.focusOnInit) {
-            this.findScrollableParent($(this.parent)).scrollTop(this.el.offsetTop);
+            this.findScrollableParent($(this.parent)).scrollTop(this.el.offsetTop + addScroll);
         }
 
         return this;
