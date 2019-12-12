@@ -25,6 +25,7 @@ const LayerModel = Backbone.Model.extend(/** @lends LayerModel.prototype */{
                 this.trigger("resetView");
             },
             "selectionChanged": function (districts) {
+                this.setDropDownModel(Radio.request("FeaturesLoader", "getAllValuesByScope", Radio.request("SelectDistrict", "getSelector")));
                 this.set("districtFeatures", districts);
             }
         });
@@ -33,10 +34,11 @@ const LayerModel = Backbone.Model.extend(/** @lends LayerModel.prototype */{
                 this.trigger("resetView");
             }
         });
-        this.listenTo(Radio.channel("FeaturesLoader"), {
-            "districtsLoaded": this.updateColorCodeMap
-        });
-        // to do for stadtteil
+        // this.listenTo(Radio.channel("FeaturesLoader"), {
+        //     "districtsLoaded": this.updateColorCodeMap
+        // });
+
+        // load list initially for statgebiet and rerender on scope change
         this.setDropDownModel(Radio.request("FeaturesLoader", "getAllValuesByScope", "statgebiet"));
     },
 
@@ -84,17 +86,17 @@ const LayerModel = Backbone.Model.extend(/** @lends LayerModel.prototype */{
         }
     },
 
-    updateColorCodeMap: function () {
-        const value = this.get("dropDownModel").getSelectedValues().values[0];
+    // updateColorCodeMap: function () {
+    //     const value = this.get("dropDownModel").getSelectedValues().values[0];
 
-        if (value) {
-            const scope = Radio.request("SelectDistrict", "getScope"),
-                statisticsFeatures = Radio.request("FeaturesLoader", "getDistrictsByValue", scope, value);
+    //     if (value) {
+    //         const scope = Radio.request("SelectDistrict", "getScope"),
+    //             statisticsFeatures = Radio.request("FeaturesLoader", "getDistrictsByValue", scope, value);
 
-            this.setStatisticsFeatures(statisticsFeatures);
-            this.styleDistrictFeatures(statisticsFeatures, this.getLastYearAttribute(statisticsFeatures[0].getProperties()));
-        }
-    },
+    //         this.setStatisticsFeatures(statisticsFeatures);
+    //         this.styleDistrictFeatures(statisticsFeatures, this.getLastYearAttribute(statisticsFeatures[0].getProperties()));
+    //     }
+    // },
 
     /**
      * finds the attribute key for the last avaiable year
@@ -127,6 +129,7 @@ const LayerModel = Backbone.Model.extend(/** @lends LayerModel.prototype */{
      */
     styleDistrictFeatures: function (features, attribute) {
         const districtFeatures = Radio.request("SelectDistrict", "getSelectedDistricts"),
+            selector = Radio.request("SelectDistrict", "getSelector"),
             foundDistrictFeatures = [],
             values = features.map(feature => feature.getProperties()[attribute]),
             colorScale = Radio.request("ColorScale", "getColorScaleByValues", values, "interpolateBlues");
@@ -134,7 +137,7 @@ const LayerModel = Backbone.Model.extend(/** @lends LayerModel.prototype */{
         features.forEach(function (feature) {
             // find the equivalent district feature -> to do for stadtteile
             const foundFeature = districtFeatures.find(function (districtFeature) {
-                return feature.get("statgebiet") === districtFeature.get("statgebiet");
+                return feature.get(selector) === districtFeature.get(selector);
             });
 
             foundFeature.setStyle(new Style({

@@ -41,7 +41,6 @@ const FeatureLoaderModel = Backbone.Model.extend({
          */
         this.listenTo(Radio.channel("SelectDistrict"), {
             "selectionChanged": function () {
-                console.log("selectionChanged");
                 const selector = Radio.channel("SelectDistrict", "getSelector"),
                     layerList = _.union(Radio.request("Parser", "getItemsByAttributes", { typ: "WFS", isBaseLayer: false }), Radio.request("Parser", "getItemsByAttributes", { typ: "GeoJSON", isBaseLayer: false })),
                     selectedLayerGroup = layerList.filter(layer => layer.selector === selector);

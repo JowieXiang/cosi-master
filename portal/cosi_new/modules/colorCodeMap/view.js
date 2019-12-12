@@ -14,7 +14,8 @@ const ColorCodeMapView = Backbone.View.extend({
     initialize: function () {
         this.listenTo(this.model, {
             "resetView": this.reset,
-            "setLegend": this.setLegend
+            "setLegend": this.setLegend,
+            "change:dropDownModel": this.renderDropDownView
         });
 
         this.listenTo(Radio.channel("SelectDistrict"), {

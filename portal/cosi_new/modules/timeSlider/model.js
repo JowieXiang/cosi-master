@@ -111,13 +111,14 @@ const TimeSliderModel = Backbone.Model.extend({
      */
     styleDistrictFeaturs: function (features, attribute, max) {
         const districtFeatures = this.getDistrictFeaturesByScope(Radio.request("SelectDistrict", "getScope")),
+            selector = Radio.request("SelectDistrict", "getSelector"),
             foundDistrictFeatures = [],
             colorScale = Radio.request("ColorScale", "getColorScaleByValues", [0, max]);
 
         features.forEach(function (feature) {
             // find the equivalent district feature -> to do for stadtteile
             const foundFeature = districtFeatures.find(function (districtFeature) {
-                return feature.get("statgebiet") === districtFeature.get("statgebiet");
+                return feature.get(selector) === districtFeature.get(selector);
             });
 
             foundFeature.setStyle(new Style({
