@@ -454,6 +454,47 @@
                   "id": "96"
                 }
               ]
+            },
+            {
+              "Titel": "Sozialmonitoring Integrierte Stadtteilentwicklung - Karte Gesamtindex (FHHNET)",
+              "Layer": [
+                {
+                  "id": "1677"
+                },
+                {
+                  "id": "1676"
+                },
+                {
+                  "id": "2097"
+                },
+                {
+                  "id": "2096"
+                },
+                {
+                  "id": "3994"
+                },
+                {
+                  "id": "3993"
+                },
+                {
+                  "id": "7265"
+                },
+                {
+                  "id": "7264"
+                },
+                {
+                  "id": "10655"
+                },
+                {
+                  "id": "10656"
+                },
+                {
+                  "id": "14132"
+                },
+                {
+                  "id": "14133"
+                }
+              ]
             }
           ],
           "Layer": [
@@ -471,7 +512,22 @@
             },
             {
               "id": "5207"
-            }
+            },
+            {
+              "id": "2666",
+              "name": "Ausgleichsflächen (Kompensationsverzeichnis gem. BNatSchG) - FHHNET"
+            },
+            {
+              "id":[
+                 "10806",
+                 "2452",
+                 "2453",
+                 "2454",
+                 "2455",
+                 "2456"
+              ],
+              "name":"ALKIS - Flurstücke und Gebäude (schwarz)"
+           }
           ]
         }
       ]
