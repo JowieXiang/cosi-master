@@ -15,8 +15,7 @@ const TimeSliderView = Backbone.View.extend({
         this.listenTo(this.model, {
             "render": this.render,
             "renderSliderView": this.renderSliderView,
-            "renderGraph": this.renderGraph,
-            "stopRunning": this.setButtonToPlay
+            "renderGraph": this.renderGraph
         });
     },
     id: "time-series",
@@ -37,7 +36,7 @@ const TimeSliderView = Backbone.View.extend({
         this.$el.find(".time-series-slider").prepend(sliderView.render().$el);
         Radio.trigger("Dashboard", "append", this.$el, "#dashboard-containers", {
             id: "time-slider",
-            name: "Zeitreihen Analyse " + title,
+            name: "Zeitstrahl " + title,
             glyphicon: "glyphicon-time"
         });
     },

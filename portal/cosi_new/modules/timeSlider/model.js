@@ -1,5 +1,5 @@
 import SliderModel from "../../../../modules/snippets/slider/model";
-import {Fill, Style} from "ol/style.js";
+import {Fill, Style, Stroke} from "ol/style.js";
 
 const TimeSliderModel = Backbone.Model.extend({
     defaults: {
@@ -11,6 +11,14 @@ const TimeSliderModel = Backbone.Model.extend({
     initialize: function () {
         this.listenTo(this.get("channel"), {
             "create": this.run
+        });
+
+        this.listenTo(Radio.channel("Dashboard"), {
+            "destroyWidgetById": function (id) {
+                if (id === "time-slider" && this.get("districtFeatures")) {
+                    this.unStyleDistrictFeatures(this.get("districtFeatures"));
+                }
+            }
         });
     },
 
@@ -123,13 +131,21 @@ const TimeSliderModel = Backbone.Model.extend({
     },
 
     /**
-     * gives the district features a "null-style"
+     * gives the district features the default style
      * @param {Object[]} features - all styled features
      * @returns {void}
      */
-    unStyleDistrictFeaturs: function (features) {
+    unStyleDistrictFeatures: function (features) {
         features.forEach((feature) => {
-            feature.setStyle(null);
+            feature.setStyle(new Style({
+                fill: new Fill({
+                    color: "rgba(255, 255, 255, 0)"
+                }),
+                stroke: new Stroke({
+                    color: "#3399CC",
+                    width: 5
+                })
+            }));
         });
     },
 
@@ -158,17 +174,18 @@ const TimeSliderModel = Backbone.Model.extend({
     runningTimeSlider: function () {
         const sliderModel = this.get("sliderModel"),
             sliderModelValues = sliderModel.get("values"),
-            sliderModelValue = sliderModel.get("valuesCollection").at(0).get("value"),
-            indexOfValue = sliderModelValues.indexOf(sliderModelValue);
+            sliderModelValue = sliderModel.get("valuesCollection").at(0).get("value");
 
-        if (indexOfValue < sliderModelValues.length - 1 && this.get("isRunning")) {
-            sliderModel.get("valuesCollection").trigger("updateValue", sliderModelValues[indexOfValue + 1]);
-            setTimeout(this.runningTimeSlider.bind(this), 1500);
+        let indexOfValue = sliderModelValues.indexOf(sliderModelValue) + 1;
+
+        // starts from beginning
+        if (indexOfValue === sliderModelValues.length) {
+            indexOfValue = 0;
         }
-        // stop the running
-        else {
-            this.setIsRunning(false);
-            this.trigger("stopRunning");
+
+        if (this.get("isRunning")) {
+            sliderModel.get("valuesCollection").trigger("updateValue", sliderModelValues[indexOfValue]);
+            setTimeout(this.runningTimeSlider.bind(this), 1500);
         }
     },
 
