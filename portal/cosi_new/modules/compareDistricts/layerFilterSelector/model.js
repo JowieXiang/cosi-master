@@ -1,5 +1,5 @@
 import DropdownModel from "../../../../../modules/snippets/dropdown/model";
-import {getLayerList, getLayerWhere} from "masterportalAPI/src/rawLayerList";
+import { getLayerList, getLayerWhere } from "masterportalAPI/src/rawLayerList";
 
 const LayerFilterSelectorModel = Backbone.Model.extend(/** @lends LayerFilterSelectorModel.prototype */{
     defaults: {
@@ -34,10 +34,10 @@ const LayerFilterSelectorModel = Backbone.Model.extend(/** @lends LayerFilterSel
             });
 
         this.setLayerOptions(layerOptions);
-        this.setDropDownModel(Radio.request("FeaturesLoader", "getAllValuesByScope", "statgebiet"));
+        this.setDropDownModel(Radio.request("FeaturesLoader", "getAllValuesByScope", currentSelector));
         this.listenTo(Radio.channel("FeaturesLoader"), {
             "districtsLoaded": function () {
-                this.updateDropDownModel(Radio.request("FeaturesLoader", "getAllValuesByScope", "statgebiet"));
+                this.updateDropDownModel(Radio.request("FeaturesLoader", "getAllValuesByScope", currentSelector));
             }
         }, this);
     },
@@ -79,10 +79,15 @@ const LayerFilterSelectorModel = Backbone.Model.extend(/** @lends LayerFilterSel
         }
     },
     setSelectedLayer: function (value) {
+        /**
+         * This is not stable. better add fields in the mapping.json to avoid hard-coding!
+         */
         const mappingObj = this.get("dropDownModel").attributes.values.filter(item => item.value === value)[0],
-            layerModel = getLayerWhere({featureType: "v_hh_statistik_" + mappingObj.category.toLowerCase()});
+            layerModel = Radio.request("SelectDistrict", "getScope") === "Stadtteile" ?
+                getLayerWhere({ featureType: "v_hh_stadtteil_" + mappingObj.category.toLowerCase() }) :
+                getLayerWhere({ featureType: "v_hh_statistik_" + mappingObj.category.toLowerCase() });
 
-        this.set("selectedLayer", {layerName: layerModel.name, layerId: layerModel.id, layerText: mappingObj});
+        this.set("selectedLayer", { layerName: layerModel.name, layerId: layerModel.id, layerText: mappingObj });
     },
     setLayerOptions: function (value) {
         this.set("layerOptions", value);

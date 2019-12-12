@@ -315,16 +315,16 @@ const ReachabilityFromPointView = Backbone.View.extend({
                  * hard coded id selector for facility layers
                  */
                 if (features[0].getProperties().schul_id) {
-                    idSelector = "schul_id";
+                    idSelector = features[0].getProperties().schulname ? "schulname" : "schul_id";
                 }
                 else if (features[0].getProperties().einrichtung) {
-                    idSelector = "einrichtung";
+                    idSelector = features[0].getProperties().name ? "name" : "einrichtung";
                 }
                 else if (features[0].getProperties().Einrichtungsnummer) {
-                    idSelector = "Einrichtungsnummer";
+                    idSelector = features[0].getProperties().Name_normalisiert ? "Name_normalisiert" : "Einrichtungsnummer";
                 }
                 else if (features[0].getProperties().identnummer) {
-                    idSelector = "identnummer";
+                    idSelector = features[0].getProperties().anlagenname ? "anlagenname" : "identnummer";
                 }
 
                 dataObj.layers.push({
