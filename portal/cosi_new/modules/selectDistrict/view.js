@@ -20,14 +20,6 @@ const SelectDistrictView = Backbone.View.extend({
             "change:isActive": this.render
         });
 
-        // hack as long as no stadtteile are available
-        this.listenTo(this.scopeDropdownView.model, {
-            "change:isOpen": function () {
-                this.$el.find(".dropdown-menu.inner li:nth-child(2)").addClass("disabled");
-                this.$el.find(".dropdown-menu.inner li:nth-child(2)").prop("title", "Stadtteile zurzeit noch nicht verfügbar");
-            }
-        });
-
         if (this.model.get("isActive") === true) {
             this.render(this.model, true);
             Radio.trigger("InfoScreen", "sendData", "The user is 'bob' and the password is 'secret'",

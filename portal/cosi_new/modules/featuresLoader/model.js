@@ -8,7 +8,7 @@ const featuresLoader = Backbone.Model.extend({
         statistischeGebieteUrl: "https://geodienste.hamburg.de/HH_WFS_Statistische_Gebiete_Test",
         statistischeGebiete: [],
         // does not exist yet
-        stadtteileUrl: "",
+        stadtteileUrl: "https://geodienste.hamburg.de/Test_HH_WFS_hamburg_statistik_stadtteile",
         stadtteile: [],
         // store for all features
         featureList: {}
@@ -37,7 +37,7 @@ const featuresLoader = Backbone.Model.extend({
      */
     checkDistrictScope: function (bbox, scope, districtNameList) {
         // to do - nur einmal laden und dann speichern
-        if (scope === "Stadtteile") {
+        if (scope === "Gebiete") {
             this.loadDistricts(bbox, this.get("stadtteileUrl"), "stadtteile", districtNameList);
         }
         else if (scope === "Statistische Gebiete") {
@@ -92,8 +92,7 @@ const featuresLoader = Backbone.Model.extend({
                     })
                     .then(features => {
                         return features.filter((feature) => {
-                            // to do for stadtteile
-                            return districtNameList.includes(feature.get("statgebiet"));
+                            return districtNameList.includes(feature.get("statgebiet")) || districtNameList.includes(feature.get("stadtteil"));
                         });
                     })
                     .catch(function (error) {
@@ -175,7 +174,7 @@ const featuresLoader = Backbone.Model.extend({
      * @returns {ol.Feature[]} the district features
      */
     getDistrictsByScope: function (scope) {
-        if (scope === "Stadtteile") {
+        if (scope === "Gebiete") {
             return this.get("stadtteile");
         }
         return this.get("statistischeGebiete");

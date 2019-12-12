@@ -256,7 +256,7 @@
         },
         {
           "id": "1694",
-          "name": "Stadtteile",
+          "name": "Gebiete",
           "visibility": true,
           "styleId": "green-polygon",
           "mouseHoverField": [

@@ -5,15 +5,14 @@ import SnippetDropdownModel from "../../../../modules/snippets/dropdown/model";
 import GraphicalSelectModel from "../../../../modules/snippets/graphicalselect/model";
 import * as Extent from "ol/extent";
 import * as Polygon from "ol/geom/Polygon";
-import GeoJSON from 'ol/format/GeoJSON';
+import GeoJSON from "ol/format/GeoJSON";
 
 const SelectDistrictModel = Tool.extend(/** @lends SelectDistrictModel.prototype */{
     defaults: _.extend({}, Tool.prototype.defaults, {
         id: "selectDistrict",
         selectedDistricts: [],
         districtLayer: [], // e.g.  {name:  "Statistische Gebiete", selector: "statgebiet", layerIds:[]}
-        // districtLayerNames: ["Statistische Gebiete", "Gebiete"], // replace temporarily to enable loading from URLQuery
-        districtLayerNames: ["Statistische Gebiete"],
+        districtLayerNames: ["Statistische Gebiete", "Gebiete"],
         districtLayerIds: ["6071", "1694"],
         districtLayersLoaded: [],
         buffer: 0,
@@ -277,6 +276,7 @@ const SelectDistrictModel = Tool.extend(/** @lends SelectDistrictModel.prototype
         if (scope && scope !== "" && this.get("districtLayer").length !== 0) {
             this.set("activeSelector", this.get("districtLayer").find(el => el.name === scope).selector);
         }
+        this.resetSelectedDistricts();
         this.toggleScopeLayers();
     },
     getScope: function () {
