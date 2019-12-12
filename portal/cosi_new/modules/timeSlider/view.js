@@ -37,7 +37,10 @@ const TimeSliderView = Backbone.View.extend({
         Radio.trigger("Dashboard", "append", this.$el, "#dashboard-containers", {
             id: "time-slider",
             name: "Zeitstrahl " + title,
-            glyphicon: "glyphicon-time"
+            glyphicon: "glyphicon-time",
+            width: $("#dashboard-containers").width() - 50 + "px",
+            scalable: true,
+            focus: $(window).height() * 0.4
         });
     },
 
@@ -85,6 +88,14 @@ const TimeSliderView = Backbone.View.extend({
                 top: 20,
                 right: 20,
                 bottom: 40
+            },
+            attribution: {
+                x: 0,
+                y: $(window).height() * 0.4,
+                lineHeight: 10,
+                fontSize: "7px",
+                anchor: "start",
+                text: ["Datum: " + new Date().toLocaleDateString("de-DE"), "Quelle: Cockpit für Städtische Infrastruktur (CoSI)"]
             },
             width: $(window).width() * 0.4,
             height: $(window).height() * 0.4,
