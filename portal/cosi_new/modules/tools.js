@@ -43,7 +43,7 @@ const general = {
             glyphicon: "glyphicon-picture",
             districtLayer: [
                 {
-                    name: "Gebiete",
+                    name: "Stadtteile",
                     selector: "stadtteil",
                     id: "1694"
                 },

@@ -37,7 +37,7 @@ const featuresLoader = Backbone.Model.extend({
      */
     checkDistrictScope: function (bbox, scope, districtNameList) {
         // to do - nur einmal laden und dann speichern
-        if (scope === "Gebiete") {
+        if (scope === "Stadtteile") {
             this.loadDistricts(bbox, this.get("stadtteileUrl"), "stadtteile", districtNameList);
         }
         else if (scope === "Statistische Gebiete") {
@@ -174,7 +174,7 @@ const featuresLoader = Backbone.Model.extend({
      * @returns {ol.Feature[]} the district features
      */
     getDistrictsByScope: function (scope) {
-        if (scope === "Gebiete") {
+        if (scope === "Stadtteile") {
             return this.get("stadtteile");
         }
         return this.get("statistischeGebiete");

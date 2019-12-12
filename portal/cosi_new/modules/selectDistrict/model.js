@@ -12,7 +12,7 @@ const SelectDistrictModel = Tool.extend(/** @lends SelectDistrictModel.prototype
         id: "selectDistrict",
         selectedDistricts: [],
         districtLayer: [], // e.g.  {name:  "Statistische Gebiete", selector: "statgebiet", layerIds:[]}
-        districtLayerNames: ["Statistische Gebiete", "Gebiete"],
+        districtLayerNames: ["Statistische Gebiete", "Stadtteile"],
         districtLayerIds: ["6071", "1694"],
         districtLayersLoaded: [],
         buffer: 0,
@@ -284,7 +284,7 @@ const SelectDistrictModel = Tool.extend(/** @lends SelectDistrictModel.prototype
     },
     toggleScopeLayers: function () {
         _.each(this.get("districtLayerNames"), (layerName) => {
-            if (layerName !== "Gebiete") {
+            if (layerName !== "Stadtteile") {
                 const layer = Radio.request("ModelList", "getModelByAttributes", {"name": layerName});
 
                 if (layerName !== this.getScope()) {
