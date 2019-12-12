@@ -16,7 +16,11 @@ const ContextMenuView = Backbone.View.extend({
 
         this.channel.on({
             "addContextMenu": this.addContextMenu,
-            "setActions": this.setActions
+            "setActions": this.setActions,
+            "close": function () {
+                this.$el.addClass("hidden");
+                this.$el.find("#actions").empty();
+            }
         }, this);
 
         window.oncontextmenu = (evt) => {

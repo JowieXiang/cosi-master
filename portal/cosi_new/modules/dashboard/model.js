@@ -39,6 +39,10 @@ const DashboardModel = Tool.extend({
     },
     setIsActive: function (state) {
         this.set("isActive", state);
+
+        if (!state) {
+            Radio.trigger("ContextMenu", "close");
+        }
     }
 });
 
