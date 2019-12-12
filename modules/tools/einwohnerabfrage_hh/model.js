@@ -106,6 +106,7 @@ const EinwohnerabfrageModel = Tool.extend(/** @lends EinwohnerabfrageModel.proto
                     this.setIsActive(true);
                 }
                 if (this.get("isActive") && id === this.id) {
+                    console.log(geoJson);
                     this.makeRequest(geoJson);
                 }
             }

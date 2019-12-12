@@ -320,10 +320,6 @@ async function loadApp () {
                 new LayerSliderView({model: tool});
                 break;
             }
-            case "ageGroupSlider": {
-                new AgeGroupSliderView({model: tool});
-                break;
-            }
             case "virtualCity": {
                 new VirtualcityModel(tool.attributes);
                 break;
