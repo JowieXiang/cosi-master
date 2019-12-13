@@ -13,7 +13,7 @@ const DashboardModel = Tool.extend({
 
     /**
      * @class DasboardModel
-     * @extends Core.ModelList.Tool
+     * @extends Tools
      * @constructs
      * @property
      */

@@ -60,3 +60,9 @@
  * @memberof Tools
  * @description select areas to work with (for better performance)
  */
+
+
+ /**
+ * @namespace FeaturesLoader
+ * @description load features of different layers and store them as a central bank
+ */
