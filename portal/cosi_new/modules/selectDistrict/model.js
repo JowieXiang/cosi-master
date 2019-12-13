@@ -6,6 +6,7 @@ import GraphicalSelectModel from "../../../../modules/snippets/graphicalselect/m
 import * as Extent from "ol/extent";
 import * as Polygon from "ol/geom/Polygon";
 import GeoJSON from "ol/format/GeoJSON";
+import styles from "../../style.json";
 
 const SelectDistrictModel = Tool.extend(/** @lends SelectDistrictModel.prototype */{
     defaults: _.extend({}, Tool.prototype.defaults, {
@@ -40,6 +41,7 @@ const SelectDistrictModel = Tool.extend(/** @lends SelectDistrictModel.prototype
                 width: 5
             })
         }),
+        polygonStyles: {},
         channel: Radio.channel("SelectDistrict"),
         bboxGeometry: null,
         isDrawing: false
@@ -78,6 +80,18 @@ const SelectDistrictModel = Tool.extend(/** @lends SelectDistrictModel.prototype
             isMultiple: false,
             preselectedValues: this.get("districtLayerNames")[0]
         }));
+
+        const stadtteilStyle = styles.find(style => style.layerId === "green-polygon");
+
+        this.get("polygonStyles").stadtteil = new Style({
+            fill: new Fill({
+                color: `rgba(${stadtteilStyle.polygonFillColor[0]}, ${stadtteilStyle.polygonFillColor[1]}, ${stadtteilStyle.polygonFillColor[2]}, ${stadtteilStyle.polygonFillColor[3]})`
+            }),
+            stroke: new Stroke({
+                color: `rgba(${stadtteilStyle.polygonStrokeColor[0]}, ${stadtteilStyle.polygonStrokeColor[1]}, ${stadtteilStyle.polygonStrokeColor[2]}, ${stadtteilStyle.polygonStrokeColor[3]})`,
+                width: stadtteilStyle.polygonStrokeWidth
+            })
+        });
 
         this.listenTo(this, {
             "change:isActive": function (model, value) {
@@ -296,6 +310,20 @@ const SelectDistrictModel = Tool.extend(/** @lends SelectDistrictModel.prototype
                 else {
                     layer.setIsVisibleInMap(true);
                 }
+            }
+            else {
+                const getSource = Promise.resolve(Radio.request("ModelList", "getModelByAttributes", {"name": layerName}).get("layerSource"));
+
+                getSource.then(source => {
+                    source.getFeatures().forEach(feature => {
+                        if (layerName !== this.getScope()) {
+                            feature.setStyle(this.get("polygonStyles").stadtteil);
+                        }
+                        else {
+                            feature.setStyle(this.get("defaultStyle"));
+                        }
+                    });
+                });
             }
         });
     },
