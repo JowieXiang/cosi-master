@@ -83,7 +83,10 @@ const SelectDistrictModel = Tool.extend(/** @lends SelectDistrictModel.prototype
             "change:isActive": function (model, value) {
                 if (value) {
                     this.listen();
-                    this.getScopeFromDropdown();
+
+                    if (this.getScope() === "") {
+                        this.getScopeFromDropdown();
+                    }
                 }
                 else {
                     if (this.get("selectedDistricts").length > 0) {

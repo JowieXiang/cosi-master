@@ -66,6 +66,7 @@ const DashboardTableModel = Tool.extend({
 
         this.listenTo(Radio.channel("SelectDistrict"), {
             "selectionChanged": function () {
+                Radio.trigger("Dashboard", "destroyWidgetById", "dashboard");
                 this.set("sortKey", Radio.request("SelectDistrict", "getSelector"));
             }
         }, this);
@@ -270,7 +271,7 @@ const DashboardTableModel = Tool.extend({
      * @returns {object} the grouped table
      */
     groupTable (table) {
-        const values = Radio.request("FeaturesLoader", "getAllValuesByScope", "statgebiet"),
+        const values = Radio.request("FeaturesLoader", "getAllValuesByScope", Radio.request("SelectDistrict", "getSelector")),
             groups = values.reduce((res, val) => {
                 var match = res.find(el => el.group === val.group);
 
@@ -341,7 +342,6 @@ const DashboardTableModel = Tool.extend({
         }
 
         this.filterTableView();
-        this.prepareRendering();
     },
 
     getValueByAttribute (attr) {
@@ -663,30 +663,14 @@ const DashboardTableModel = Tool.extend({
             }).filter(group => Object.keys(group.values).length > 0) : this.get("tableView");
 
         this.set("filteredTableView", filteredTable);
-        this.prepareExportLink();
+        this.prepareRendering();
     },
     updateFilter: function () {
-        this.get("filterDropdownModel").set("values", Radio.request("FeaturesLoader", "getAllValuesByScope", "statgebiet"));
+        this.get("filterDropdownModel").set("values", Radio.request("FeaturesLoader", "getAllValuesByScope", Radio.request("SelectDistrict", "getSelector")));
     },
     setIsActive: function (state) {
         this.set("isActive", state);
     },
-    // addAttrForCorrelation (attr) {
-    //     if (this.getAttrsForCorrelation().length < 2) {
-    //         this.getAttrsForCorrelation().push(attr);
-    //     }
-    //     else {
-    //         this.set("correlationAttrs", [attr]);
-    //     }
-    //     this.trigger("correlationValuesUpdated");
-    // },
-    // getAttrsForCorrelation () {
-    //     return this.get("correlationAttrs");
-    // },
-    // deleteAttrsForCorrelation () {
-    //     this.set("correlationAttrs", []);
-    //     this.trigger("correlationValuesUpdated");
-    // },
     addAttrForRatio (attr, i) {
         this.getAttrsForRatio()[i] = attr;
         this.trigger("ratioValuesUpdated");

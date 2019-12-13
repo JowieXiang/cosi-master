@@ -7,7 +7,7 @@ const LayerFilterSelectorModel = Backbone.Model.extend(/** @lends LayerFilterSel
         selectedLayer: null, // selected option e.g. {layerName:"",layerId:""}
         urls: {
             "statgebiet": "https://geodienste.hamburg.de/HH_WFS_Statistische_Gebiete_Test",
-            "stadtteile": ""
+            "stadtteile": "https://geodienste.hamburg.de/Test_HH_WFS_hamburg_statistik_stadtteile"
         },
         dropDownModel: {},
         dropDownDisplayName: "Auswahl statistische Daten"

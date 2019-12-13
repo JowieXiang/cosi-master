@@ -1153,7 +1153,6 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
         // calculate covariance
         covariance = evaluate.covar(xArr, yArr);
         pearson = evaluate.computePearsons(xArr, yArr);
-        err = evaluate.standardError(dat, xAttr, yAttr);
 
         return {
             data: dat,

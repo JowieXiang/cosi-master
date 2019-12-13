@@ -2,6 +2,7 @@ const LayerFilterModel = Backbone.Model.extend(/** @lends LayerFilterModel.proto
     defaults: {
         districtInfo: [], // [{key:...,value:..., max: ..., min: ...},{},...]
         layerInfo: {},
+        field: "",
         filter: "" // e.g {filterKey:[lt,ut],filterKey:[lt,ut],filterKey:[lt,ut],...},
     },
     /**
@@ -15,13 +16,12 @@ const LayerFilterModel = Backbone.Model.extend(/** @lends LayerFilterModel.proto
      * @property {object} filter list of lower tolerance and upper tolerance values for all filters in the layer e.g {filterKey:[lt,ut],filterKey:[lt,ut],filterKey:[lt,ut],...},
      */
     initialize: function () {
-        this.initializeFilter();
         this.initializeDistrictInfo();
     },
     initializeFilter: function () {
         const newFilter = {};
 
-        newFilter.jahr_2018 = [0, 0];
+        newFilter[this.get("field")] = [0, 0];
         this.set("filter", JSON.stringify(newFilter));
     },
     initializeDistrictInfo: function () {
@@ -31,24 +31,28 @@ const LayerFilterModel = Backbone.Model.extend(/** @lends LayerFilterModel.proto
                 id: layerId
             }),
             districtInfo = [],
-            values = featureCollection.map(feature => parseFloat(feature.getProperties().jahr_2018)).filter(value => !_.isNaN(value)),
+            field = Radio.request("Timeline", "getLatestFieldFromCollection", featureCollection),
+            values = featureCollection.map(feature => parseFloat(feature.getProperties()[field])).filter(value => !_.isNaN(value)),
             max = parseInt(Math.max(...values), 10),
             min = parseInt(Math.min(...values), 10);
         let refValue = 0,
             newInfo = {};
 
+        this.set("field", field);
+        this.initializeFilter();
+
         if (Radio.request("DistrictSelector", "getSelectedDistrict") !== "Leeren") {
             const districtName = Radio.request("DistrictSelector", "getSelectedDistrict"),
                 refFeature = featureCollection.filter(feature => feature.getProperties()[selector] === districtName)[0];
 
-            refValue = parseInt(refFeature.getProperties().jahr_2018, 10);
+            refValue = parseInt(refFeature.getProperties()[field], 10);
         }
         else {
             refValue = 0;
         }
 
         newInfo = {
-            key: "jahr_2018", value: refValue, max: max, min: min
+            key: field, value: refValue, max: max, min: min
         };
 
         districtInfo.push(newInfo);
@@ -69,12 +73,12 @@ const LayerFilterModel = Backbone.Model.extend(/** @lends LayerFilterModel.proto
             const districtName = Radio.request("DistrictSelector", "getSelectedDistrict"),
                 refFeature = featureCollection.filter(feature => feature.getProperties()[selector] === districtName)[0];
 
-            refValue = parseInt(refFeature.getProperties().jahr_2018, 10);
+            refValue = parseInt(refFeature.getProperties()[this.get("field")], 10);
         }
         else {
             refValue = 0;
         }
-        newDistrictInfo.filter(item => item.key === "jahr_2018")[0].value = refValue;
+        newDistrictInfo.filter(item => item.key === this.get("field"))[0].value = refValue;
         this.set("districtInfo", newDistrictInfo);
     }
 

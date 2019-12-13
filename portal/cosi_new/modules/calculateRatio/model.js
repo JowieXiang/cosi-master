@@ -26,8 +26,8 @@ const CalculateRatioModel = Tool.extend({
         this.listenTo(this, {
             "change:isActive": function (model, isActive) {
                 if (isActive) {
-                    // const scope = Radio.request("SelectDistrict", "getScope");
-                    let demographicValueList = Radio.request("FeaturesLoader", "getAllValuesByScope", "statgebiet");
+                    const scope = Radio.request("SelectDistrict", "getSelector");
+                    let demographicValueList = Radio.request("FeaturesLoader", "getAllValuesByScope", scope);
 
                     demographicValueList = demographicValueList.filter(function (layer) {
                         return layer.valueType === "absolute";

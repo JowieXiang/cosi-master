@@ -15,11 +15,14 @@ const Timeline = Tool.extend({
             "createTimelineTable": function (inputTable) {
                 return this.convertTable(inputTable);
             },
+            "getLatestValue": function (input) {
+                return this.getLatestValue(input);
+            },
             "getLatestFieldFromProperties": function (input) {
                 return this.getLatestField(input);
             },
             "getLatestFieldFromCollection": function (input) {
-                // .. todo
+                return this.getLatestFieldFromCollection(input);
             },
             "fillUpTimelineGaps": function (inputTable, outputType = "Object") {
                 return this.fillUpTimelineGaps(inputTable, outputType);
@@ -51,9 +54,38 @@ const Timeline = Tool.extend({
 
         return timelineTable;
     },
-    getLatestField (properties) {
-        let latestYear = 0,
-            selector;
+
+    getLatestValue (feature) {
+        const properties = feature.getProperties ? feature.getProperties() : feature,
+            selector = this.getLatestField(properties);
+
+        return properties[selector];
+    },
+
+    getLatestFieldFromCollection (collection) {
+        let latestField;
+
+        for (let i = 0; i < collection.length; i++) {
+            latestField = this.getLatestField(collection[i]);
+            if (latestField instanceof Array) {
+                latestField = latestField[0];
+                break;
+            }
+        }
+
+        return latestField;
+    },
+
+    /**
+     * @description returns the selector for the latest entry in properties
+     * @param {*} feature the feature to test, works also if a properties-object is provided
+     * @param {string} currentLatestField the current latest field (optional)
+     * @returns {string} the selector
+     */
+    getLatestField (feature, currentLatestField) {
+        const properties = feature.getProperties ? feature.getProperties() : feature;
+        let latestYear = currentLatestField ? parseFloat(currentLatestField.replace(this.getPrefix(), "")) : 0,
+            selector = currentLatestField;
 
         // find latest year
         for (const prop in properties) {
@@ -65,7 +97,7 @@ const Timeline = Tool.extend({
             }
             // Break if the found date is from last year
             if (latestYear === new Date().getFullYear() - 1) {
-                break;
+                return [selector, true];
             }
         }
 
