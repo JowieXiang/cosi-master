@@ -3,16 +3,35 @@ import {WFS} from "ol/format.js";
 import "whatwg-fetch";
 import {getLayerList, getLayerWhere} from "masterportalAPI/src/rawLayerList";
 
-const featuresLoader = Backbone.Model.extend({
+const featuresLoader = Backbone.Model.extend(/** @lends featuresLoader.prototype */{
     defaults: {
         statistischeGebieteUrl: "https://geodienste.hamburg.de/HH_WFS_Statistische_Gebiete_Test",
         statistischeGebiete: [],
-        // does not exist yet
         stadtteileUrl: "https://geodienste.hamburg.de/Test_HH_WFS_hamburg_statistik_stadtteile",
         stadtteile: [],
-        // store for all features
         featureList: {}
     },
+    /**
+     * @class featuresLoader
+     * @extends Backbone.Model
+     * @memberof FeaturesLoader
+     * @constructs
+     * @property {String} statistischeGebieteUrl="https://geodienste.hamburg.de/HH_WFS_Statistische_Gebiete_Test" WFS url of statistischeGebiete datasets
+     * @property {String} stadtteileUrl="https://geodienste.hamburg.de/Test_HH_WFS_hamburg_statistik_stadtteile" WFS url of stadtteile datasets
+     * @property {object} featureList store for already queried features indexed by attribute value e.g {15634: [Feature,Feature,Feature,...] , 15987: [Feature,Feature,Feature,...],...}
+     * @fires Core#RadioTriggerUtilHideLoader
+     * @fires Core#RadioTriggerUtilShowLoader
+     * @fires Alerting#RadioTriggerAlertAlert
+     * @fires Core#RadioRequestUtilGetProxyURL
+     * @fires Alerting#RadioTriggerAlertAlertRemove
+     * @fires FeaturesLoader#RadioTriggerDistrictsLoaded
+
+     * @listens FeaturesLoader#RadioRequestGetDistrictsByScope
+     * @listens FeaturesLoader#RadioRequestGetDistrictsByValue
+     * @listens FeaturesLoader#RadioRequestGetAllFeaturesByAttribute
+     * @listens FeaturesLoader#RadioRequestGetAllValuesByScope
+     * @listens SelectDistrict#RadioTriggerSelectionChanged
+     */
     initialize: function () {
         const channel = Radio.channel("FeaturesLoader");
 
@@ -236,7 +255,7 @@ const featuresLoader = Backbone.Model.extend({
     },
 
     /**
-     * get all available values by scope
+     * get all mapped data layer infos by scope
      * @param {string} scope - statgebiet | stadtteil
      * @returns {object[]} list of all available values
      */

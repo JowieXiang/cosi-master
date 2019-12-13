@@ -23,7 +23,7 @@ const DashboardTableModel = Tool.extend({
 
     /**
      * @class DasboardTableModel
-     * @extends Core.ModelList.Tool
+     * @extends Tools
      * @constructs
      * @property
      * @listens SelectDistrict#RadioTriggerSelectionChanged
