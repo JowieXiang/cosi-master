@@ -26,6 +26,8 @@ const AdjustParameterModel = SnippetModel.extend({
             "isModified": false
         });
 
+        console.log(this.get("isModified"));
+
     },
     getProperties: function (layerId) {
         const layer = Radio.request("ModelList", "getModelByAttributes", {id: layerId});

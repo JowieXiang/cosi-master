@@ -37,6 +37,8 @@ const Util = Backbone.Model.extend(/** @lends Util.prototype */{
      * @listens Core#RadioRequestUtilConvertArrayOfObjectsToCsv
      * @listens Core#RadioRequestUtilGetPathFromLoader
      * @listens Core#RadioRequestUtilGetMasterPortalVersionNumber
+     * @listens Core#RadioRequestUtilRenameKeys
+     * @listens Core#RadioRequestUtilRenameValues
      * @listens Core#RadioTriggerUtilHideLoader
      * @listens Core#RadioTriggerUtilShowLoader
      * @listens Core#RadioTriggerUtilSetUiStyle
@@ -77,6 +79,7 @@ const Util = Backbone.Model.extend(/** @lends Util.prototype */{
             "convertArrayOfObjectsToCsv": this.convertArrayOfObjectsToCsv,
             "getPathFromLoader": this.getPathFromLoader,
             "renameKeys": this.renameKeys,
+            "renameValues": this.renameValues,
             "pickKeyValuePairs": this.pickKeyValuePairs
         }, this);
 
@@ -512,6 +515,28 @@ const Util = Backbone.Model.extend(/** @lends Util.prototype */{
             return {
                 ...acc,
                 ...{[keysMap[key] || key]: obj[key]}
+            };
+        },
+        {});
+    },
+
+    /**
+     * recursively replaces the names of object values with the values provided.
+     * @param {object} valuesMap - values mapping object
+     * @param {object} obj - the original object
+     * @returns {object} the renamed object
+     */
+    renameValues: function (valuesMap, obj) {
+        return Object.keys(obj).reduce((acc, key) => {
+            if (obj[key].constructor === Object) {
+                return {
+                    ...acc,
+                    ...{[key]: this.renameValues(valuesMap, obj[key])}
+                };
+            }
+            return {
+                ...acc,
+                ...{[key]: valuesMap[obj[key]] || obj[key]}
             };
         },
         {});

@@ -16,6 +16,7 @@ const DashboardTableModel = Tool.extend({
         sortKey: "",
         timelineModel: new TimelineModel(),
         filterDropdownModel: {},
+        customFilters: [],
         scopeLayersLoaded: 0,
         correlationAttrs: [],
         ratioAttrs: []
@@ -154,6 +155,13 @@ const DashboardTableModel = Tool.extend({
                 propertyNames = Object.keys(group.values);
 
             return flatGroup.map((prop, i) => {
+                if (!Array.isArray(Object.values(prop)[0])) {
+                    return {...{
+                        Jahr: "-",
+                        Datensatz: propertyNames[i],
+                        Kategorie: group.group
+                    }, ...prop};
+                }
                 const flatProp = Object.assign({}, prop),
                     years = flatProp.Durchschnitt.map(val => val[0]);
 
@@ -272,6 +280,24 @@ const DashboardTableModel = Tool.extend({
      */
     groupTable (table) {
         const values = Radio.request("FeaturesLoader", "getAllValuesByScope", Radio.request("SelectDistrict", "getSelector")),
+            metaInfo = {
+                group: "Gebietsinformation",
+                values: table.reduce((meta, col) => {
+                    for (const prop in col) {
+                        if (!Array.isArray(col[prop]) && prop !== this.get("sortKey")) {
+                            if (meta[prop]) {
+                                meta[prop][col[this.get("sortKey")]] = col[prop];
+                            }
+                            else {
+                                meta[prop] = {
+                                    [col[this.get("sortKey")]]: col[prop]
+                                };
+                            }
+                        }
+                    }
+                    return meta;
+                }, {})
+            },
             groups = values.reduce((res, val) => {
                 var match = res.find(el => el.group === val.group);
 
@@ -296,7 +322,20 @@ const DashboardTableModel = Tool.extend({
                 return [...res, newGroup];
             }, []);
 
-        return groups;
+        metaInfo.values = Radio.request("Util", "renameKeys", {
+            verwaltungseinheit: "Verwaltungseinheit",
+            bezirk: "Bezirk",
+            statgebiet: "Statistisches Gebiet",
+            stadtteil: "Stadtteil"
+        }, metaInfo.values);
+
+        metaInfo.values = Radio.request("Util", "renameValues", {
+            statgebiet: "Statistisches Gebiet",
+            bezirk: "Bezirk",
+            stadtteil: "Stadtteil"
+        }, metaInfo.values);
+
+        return [metaInfo, ...groups];
     },
 
     /**
@@ -341,7 +380,17 @@ const DashboardTableModel = Tool.extend({
             });
         }
 
+        this.get("customFilters").push({
+            category: `${this.getAttrsForRatio()[0]} / ${this.getAttrsForRatio()[1]}`,
+            group: "Berechnungen",
+            stadtteil: true,
+            statgebiet: true,
+            value: `${this.getAttrsForRatio()[0]} / ${this.getAttrsForRatio()[1]}`,
+            valueType: "relative"
+        });
+
         this.filterTableView();
+        this.trigger("filterUpdated");
     },
 
     getValueByAttribute (attr) {
@@ -474,7 +523,7 @@ const DashboardTableModel = Tool.extend({
             });
         }
 
-        Radio.trigger("Dashboard", "append", graph, "#dashboard-containers", {
+        return Radio.trigger("Dashboard", "append", graph, "#dashboard-containers", {
             id: title,
             name: `${title} (${year})`,
             glyphicon: "glyphicon-stats",
@@ -648,6 +697,10 @@ const DashboardTableModel = Tool.extend({
     filterTableView: function () {
         const filterValues = this.get("filterDropdownModel").getSelectedValues().values,
             filteredTable = filterValues.length > 0 ? this.get("tableView").map(group => {
+                if (group.group === "Gebietsinformation") {
+                    return group;
+                }
+
                 const filteredGroup = {
                     group: group.group,
                     values: {}
@@ -666,7 +719,10 @@ const DashboardTableModel = Tool.extend({
         this.prepareRendering();
     },
     updateFilter: function () {
-        this.get("filterDropdownModel").set("values", Radio.request("FeaturesLoader", "getAllValuesByScope", Radio.request("SelectDistrict", "getSelector")));
+        this.get("filterDropdownModel").set("values", [
+            ...Radio.request("FeaturesLoader", "getAllValuesByScope", Radio.request("SelectDistrict", "getSelector")),
+            ...this.get("customFilters")
+        ]);
     },
     setIsActive: function (state) {
         this.set("isActive", state);

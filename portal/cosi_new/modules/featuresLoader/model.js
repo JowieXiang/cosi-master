@@ -96,10 +96,7 @@ const featuresLoader = Backbone.Model.extend({
                         });
                     })
                     .catch(function (error) {
-                        Radio.trigger("Alert", "alert", {
-                            text: "Datensätze konnten nicht geladen werden. Vermutlich liegt ein Verbindungsproblem zum Server vor. Bestätigen Sie die Auswahl erneut oder laden Sie die CoSI neu.",
-                            kategorie: "alert-warning"
-                        });
+                        this.alertError();
                         console.error(error);
                     }));
             }, this);
@@ -109,9 +106,16 @@ const featuresLoader = Backbone.Model.extend({
                 Radio.trigger("Util", "hideLoader");
                 Radio.trigger("Alert", "alert:remove");
             }).catch(function (error) {
-                // to do
+                this.alertError();
                 console.error(error);
-            });
+            }.bind(this));
+        });
+    },
+
+    alertError: function () {
+        Radio.trigger("Alert", "alert", {
+            text: "Datensätze konnten nicht geladen werden. Vermutlich liegt ein Verbindungsproblem zum Server vor. Bestätigen Sie die Auswahl erneut oder laden Sie die CoSI neu.",
+            kategorie: "alert-warning"
         });
     },
 

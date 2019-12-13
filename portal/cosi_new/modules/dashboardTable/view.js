@@ -17,6 +17,7 @@ const DashboardTableView = Backbone.View.extend({
     initialize: function () {
         this.exportButtonView = new ExportButtonView({model: this.model.get("exportButtonModel")});
         this.exportFilteredButtonView = new ExportButtonView({model: this.model.get("exportFilteredButtonModel")});
+        this.filterDropdownView = new DropdownView({model: this.model.get("filterDropdownModel")});
         this.contextActionsEl = $(this.contextActions());
         this.updateRatioSelection();
 
@@ -42,7 +43,7 @@ const DashboardTableView = Backbone.View.extend({
         if (!Radio.request("InfoScreen", "getIsWindowOpen") || Radio.request("InfoScreen", "getIsInfoScreen")) {
             if (!Radio.request("Dashboard", "getWidgetById", "dashboard") && Radio.request("Dashboard", "dashboardOpen")) {
                 this.$el.html(this.template(attr));
-                this.renderFilter();
+                this.$el.find(".filter-dropdown").html(this.filterDropdownView.render().$el);
 
                 Radio.trigger("Dashboard", "append", this.$el, "#dashboard-containers", {
                     id: "dashboard",
@@ -63,10 +64,7 @@ const DashboardTableView = Backbone.View.extend({
         return this;
     },
     renderFilter () {
-        const dropdownContainer = this.$el.find(".filter-dropdown");
-
-        dropdownContainer.find(".dropdown-container").remove();
-        dropdownContainer.prepend(new DropdownView({model: this.model.get("filterDropdownModel")}).render().$el);
+        this.filterDropdownView.render();
     },
     updateRatioSelection () {
         var selectionText = this.$el.find("span#row-selection");
@@ -151,6 +149,7 @@ const DashboardTableView = Backbone.View.extend({
      * @returns {void}
      */
     resetDropDown: function () {
+        console.log("reset");
         this.model.get("filterDropdownModel").updateSelectedValues([]);
         this.$el.find(".filter-dropdown ul.dropdown-menu > li").removeClass("selected");
     },
