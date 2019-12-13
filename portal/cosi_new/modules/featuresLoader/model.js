@@ -124,6 +124,7 @@ const featuresLoader = Backbone.Model.extend(/** @lends featuresLoader.prototype
                 Radio.trigger("FeaturesLoader", "districtsLoaded", layerList);
                 Radio.trigger("Util", "hideLoader");
                 Radio.trigger("Alert", "alert:remove");
+                console.log(featureList);
             }).catch(function (error) {
                 this.alertError();
                 console.error(error);
