@@ -6,7 +6,6 @@ const LegendModel = Tool.extend(/** @lends LegendModel.prototype */{
         legendParams: [],
         paramsStyleWMS: [],
         paramsStyleWMSArray: [],
-        dynamicLegendStyles: [],
         renderToWindow: false,
         renderToSidebar: false,
         keepOtherToolsOpened: true,
@@ -56,11 +55,7 @@ const LegendModel = Tool.extend(/** @lends LegendModel.prototype */{
             "updateParamsStyleWMS": this.updateParamsStyleWMSArray,
             "resetParamsStyleWMS": this.resetParamsStyleWMSArray
         });
-        this.listenTo(Radio.channel("StyleWFS"), {
-            "addDynamicLegendStyle": function (layerId, legendStyle) {
-                this.updateDynamicLegendStyles(layerId, legendStyle);
-            }
-        });
+
         this.listenTo(this, {
             "change:paramsStyleWMSArray": this.updateLegendFromStyleWMSArray
         });
@@ -388,12 +383,6 @@ const LegendModel = Tool.extend(/** @lends LegendModel.prototype */{
                     name.push(subLegend.name);
                 }, this);
             }
-            else if (styleSubClass === "DYNAMIC") {
-                const dynamicLegend = this.generateDynamicLegend(style, layername);
-                
-                image = dynamicLegend.image;
-                name = dynamicLegend.name;
-            }
             else {
                 subLegend = this.getLegendParamsForPolygons(layername, style);
                 image.push(subLegend.svg);
@@ -532,43 +521,7 @@ const LegendModel = Tool.extend(/** @lends LegendModel.prototype */{
 
         return svg;
     },
-    /**
-     * generate dynamic Legend
-     * @description creates a Legend with name:image pairs from legend values generated though colorScale-Module
-     * @param {Backbone.Model} style Backbone style model from style.json
-     * @param {string} layername name of the layer to find it in dyn. legend data array
-     * @param {string} styleClass geometry type, default: "POLYGON"
-     * @returns {*} returns the legend data required
-     * @todo Add definitions for other geometry than polygons
-     */
-    generateDynamicLegend: function (style, layername, styleClass = "POLYGON") {
-        var name = [],
-            image = [];
 
-        const layerId = Radio.request("ModelList", "getModelByAttributes", {name: layername}).get("id"),
-            dynamicLegendStyle = this.getDynamicLegendStyle(layerId);
-
-        if (dynamicLegendStyle) {
-            const styleFieldValues = dynamicLegendStyle.legendStyle.values.map((val, i) => {
-                return {
-                    "styleFieldValue": val.toFixed(1),
-                    "polygonFillColor": this.colorStringToArray(dynamicLegendStyle.legendStyle.colors[i]),
-                    "polygonStrokeColor": this.colorStringToArray(dynamicLegendStyle.legendStyle.colors[i])
-                };
-            });
-
-            style.set("styleFieldValues", styleFieldValues);
-
-            name = dynamicLegendStyle.legendStyle.values.map(val => val.toFixed(1));
-            image = dynamicLegendStyle.legendStyle.values.map((val, i) => this.createPolygonSVG(style, styleFieldValues[i]));
-
-        }
-
-        return {
-            name: name,
-            image: image
-        };
-    },
     colorStringToArray (colorAsString) {
         let color = colorAsString,
             colorAsArr = [];
@@ -758,25 +711,6 @@ const LegendModel = Tool.extend(/** @lends LegendModel.prototype */{
         name.push(layername);
 
         return [image, name];
-    },
-    updateDynamicLegendStyles (layerId, legendStyle) {
-        if (!this.get("dynamicLegendStyles").find(legend => legend.layerId === layerId)) {
-            this.get("dynamicLegendStyles").push({
-                layerId: layerId,
-                legendStyle: legendStyle
-            });
-        }
-        else {
-            const i = this.get("dynamicLegendStyles").indexOf({layerId: layerId, layerStyle: legendStyle});
-
-            this.get("dynamicLegendStyles")[i] = {
-                layerId: layerId,
-                legendStyle: legendStyle
-            };
-        }
-    },
-    getDynamicLegendStyle: function (layerId) {
-        return this.get("dynamicLegendStyles").find(style => style.layerId === layerId);
     }
 });
 

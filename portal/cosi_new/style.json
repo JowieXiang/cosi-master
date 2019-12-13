@@ -106,23 +106,6 @@
     "polygonStrokeWidth": 3
   },
   {
-    "layerId": "unstyled",
-    "class": "POLYGON",
-    "subClass": "DYNAMIC",
-    "polygonFillColor": [
-      255,
-      255,
-      255,
-      0
-    ],
-    "polygonStrokeColor": [
-      51,
-      153,
-      204,
-      0
-    ]
-  },
-  {
     "layerId": "default",
     "class": "POLYGON",
     "subClass": "SIMPLE",
@@ -514,135 +497,6 @@
     "circleStrokeWidth": 1.5
   },
   {
-    "layerId": "gruenflaechen",
-    "class": "POLYGON",
-    "subClass": "CUSTOM",
-    "polygonStrokeWidth": 2,
-    "styleField": "gruenart",
-    "styleFieldValues": [
-      {
-        "styleFieldValue": "Kleingarten",
-        "polygonFillColor": [
-          160,
-          82,
-          45,
-          0.6
-        ],
-        "polygonStrokeColor": [
-          160,
-          82,
-          45,
-          1
-        ]
-      },
-      {
-        "styleFieldValue": "Dauerkleingarten",
-        "polygonFillColor": [
-          160,
-          82,
-          45,
-          0.6
-        ],
-        "polygonStrokeColor": [
-          160,
-          82,
-          45,
-          1
-        ]
-      },
-      {
-        "styleFieldValue": "Grün an Kleingärten",
-        "polygonFillColor": [
-          160,
-          82,
-          45,
-          0.6
-        ],
-        "polygonStrokeColor": [
-          160,
-          82,
-          45,
-          1
-        ]
-      },
-      {
-        "styleFieldValue": "Parkanlage",
-        "polygonFillColor": [
-          60,
-          179,
-          113,
-          0.6
-        ],
-        "polygonStrokeColor": [
-          60,
-          179,
-          113,
-          1
-        ]
-      },
-      {
-        "styleFieldValue": "Spielplatz",
-        "polygonFillColor": [
-          124,
-          252,
-          0,
-          0.6
-        ],
-        "polygonStrokeColor": [
-          124,
-          252,
-          0,
-          1
-        ]
-      },
-      {
-        "styleFieldValue": "Friedhof",
-        "polygonFillColor": [
-          72,
-          209,
-          204,
-          0.6
-        ],
-        "polygonStrokeColor": [
-          72,
-          209,
-          204,
-          1
-        ]
-      },
-      {
-        "styleFieldValue": "Schutzgrün",
-        "polygonFillColor": [
-          199,
-          21,
-          133,
-          0.6
-        ],
-        "polygonStrokeColor": [
-          199,
-          21,
-          133,
-          1
-        ]
-      },
-      {
-        "styleFieldValue": "anderweitige Nutzung",
-        "polygonFillColor": [
-          106,
-          90,
-          205,
-          0.6
-        ],
-        "polygonStrokeColor": [
-          106,
-          90,
-          205,
-          1
-        ]
-      }
-    ]
-  },
-  {
     "layerId": "1534",
     "class": "POLYGON",
     "subClass": "CUSTOM",
@@ -650,6 +504,7 @@
     "styleFieldValues": [
       {
         "styleFieldValue": "Parkanlage",
+        "legendValue": "Parkanlage",
         "polygonFillColor": [
           112,
           168,
@@ -666,6 +521,7 @@
       },
       {
         "styleFieldValue": "Spielplatz",
+        "legendValue": "Spielplatz",
         "polygonFillColor": [
           230,
           152,
@@ -682,6 +538,7 @@
       },
       {
         "styleFieldValue": "Grün an Kleingärten",
+        "legendValue": "Grün an Kleingärten",
         "polygonFillColor": [
           209,
           255,
@@ -698,6 +555,7 @@
       },
       {
         "styleFieldValue": "Schutzgruen",
+        "legendValue": "Schutzgruen",
         "polygonFillColor": [
           115,
           76,
@@ -714,6 +572,7 @@
       },
       {
         "styleFieldValue": "Dauerkleingarten",
+        "legendValue": "Dauerkleingarten",
         "polygonFillColor": [
           0,
           230,
@@ -730,6 +589,7 @@
       },
       {
         "styleFieldValue": "Kleingarten",
+        "legendValue": "Kleingarten",
         "polygonFillColor": [
           0,
           168,
@@ -746,6 +606,7 @@
       },
       {
         "styleFieldValue": "Friedhof",
+        "legendValue": "Friedhof",
         "polygonFillColor": [
           0,
           115,
@@ -762,6 +623,7 @@
       },
       {
         "styleFieldValue": "anderweitige Nutzung",
+        "legendValue": "anderweitige Nutzung",
         "polygonFillColor": [
           130,
           130,
