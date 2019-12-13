@@ -233,7 +233,7 @@ const VectorStyleModel = Backbone.Model.extend(/** @lends VectorStyleModel.proto
     createLineStyle: function (feature, styleSubClass) {
         var style = this.getDefaultStyle();
 
-        if (styleSubClass === "SIMPLE" || styleSubClass === "DYNAMIC") {
+        if (styleSubClass === "SIMPLE") {
             style = this.createSimpleLineStyle();
         }
         return style;
@@ -270,7 +270,7 @@ const VectorStyleModel = Backbone.Model.extend(/** @lends VectorStyleModel.proto
     createPolygonStyle: function (feature, styleSubClass) {
         var style = this.getDefaultStyle();
 
-        if (styleSubClass === "SIMPLE" || styleSubClass === "DYNAMIC") {
+        if (styleSubClass === "SIMPLE") {
             style = this.createSimplePolygonStyle();
         }
         if (styleSubClass === "CUSTOM") {
@@ -364,7 +364,7 @@ const VectorStyleModel = Backbone.Model.extend(/** @lends VectorStyleModel.proto
     createPointStyle: function (feature, styleSubClass, isClustered) {
         var style = this.getDefaultStyle();
 
-        if (styleSubClass === "SIMPLE" || styleSubClass === "DYNAMIC") {
+        if (styleSubClass === "SIMPLE") {
             style = this.createSimplePointStyle(feature, isClustered);
         }
         else if (styleSubClass === "CUSTOM") {
