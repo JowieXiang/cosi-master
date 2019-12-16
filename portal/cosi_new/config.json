@@ -242,6 +242,7 @@
           "id": "6071",
           "name": "Statistische Gebiete",
           "visibility": true,
+          "styleId": "blue-polygon",
           "mouseHoverField": [
             "statgebiet"
           ],

@@ -66,7 +66,7 @@ const Timeline = Tool.extend({
         let latestField;
 
         for (let i = 0; i < collection.length; i++) {
-            latestField = this.getLatestField(collection[i]);
+            latestField = this.getLatestField(collection[i], latestField);
             if (latestField instanceof Array) {
                 latestField = latestField[0];
                 break;
@@ -96,8 +96,9 @@ const Timeline = Tool.extend({
                 }
             }
             // Break if the found date is from last year
+            // return true as 2nd value if the latest possible year is reached for collection to break the loop
             if (latestYear === new Date().getFullYear() - 1) {
-                return [selector, true];
+                return currentLatestField ? [selector, true] : selector;
             }
         }
 
