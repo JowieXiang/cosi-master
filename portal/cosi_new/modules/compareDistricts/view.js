@@ -9,7 +9,7 @@ import LayerFilterView from "./layerFilter/view";
 import LayerFilterCollection from "./layerFilter/list";
 import InfoTemplate from "text-loader!./info.html";
 
-const CompareDistrictsView = Backbone.View.extend({
+const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsView.prototype */{
     events: {
         "click #add-filter": function () {
             this.checkSelection();
@@ -19,7 +19,19 @@ const CompareDistrictsView = Backbone.View.extend({
         "click #set-selected-district": "changeDistrictSelection",
         "click #show-in-dashboard": "showInDashboard"
     },
-
+    /**
+     * Initialises the QuickHelp
+     * @class CompareDistrictsView
+     * @extends Backbone.View
+     * @memberof Tools.CompareDistricts
+     * @constructs
+     * @deprecated Boolean-Examines if true. Deprecated in Version 3.0 due to dedicated path pass
+     * @listens Tools.CompareDistricts#RadioTriggerCompareDistrictsCloseFilter
+     * @listens Tools.CompareDistricts#RadioTriggerCompareDistrictsSelectRefDistrict
+     * @listens CompareDistrictsModel#changeIsActive
+     * @listens CompareDistrictsModel#changeLayerFilterList
+     * @returns {void}
+     */
     initialize: function () {
         const channel = Radio.channel("CompareDistricts");
 

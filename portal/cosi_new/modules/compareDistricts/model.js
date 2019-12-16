@@ -27,6 +27,8 @@ const CompareDistrictsModel = Tool.extend(/** @lends CompareDistrictsModel.proto
      * @property {Array} comparableFeaturesNames name of comparable districts
      * @property {Array} mapLayerName="compare-district" OpenLayers map layer containing comparable results
      * @property {Feature} refDistrict reference district feature
+     * @fires CompareDistrictsModel#changeIsActive
+     * @fires CompareDistrictsModel#changeLayerFilterList
      */
     initialize: function () {
         this.superInitialize();
