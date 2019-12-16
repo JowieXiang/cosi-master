@@ -18,6 +18,8 @@ import ReachabilitySelectView from "./reachabilitySelect/view";
 import {storageListener, updateFromStorage, setupStorage} from "./storage";
 import CompareDistrictsView from "./compareDistricts/view";
 import RefocusView from "./controls/refocus/view";
+import FilterView from "./filter/view";
+
 import "../cosi.style.less";
 
 /**
@@ -44,6 +46,7 @@ function initializeCosi () {
         CosiStorage.clear();
 
         Radio.trigger("ModelList", "addModelsAndUpdate", Object.values(tools));
+        new FilterView({model: tools.filter});
         new CalculateRatioView({model: tools.calculateRatio});
         new ReachabilitySelectView({model: tools.reachabilitySelect});
         new ReachabilityFromPointView({model: tools.reachabilityFromPoint});
