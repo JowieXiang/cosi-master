@@ -9,7 +9,29 @@ const featuresLoader = Backbone.Model.extend(/** @lends featuresLoader.prototype
         statistischeGebiete: [],
         stadtteileUrl: "https://geodienste.hamburg.de/Test_HH_WFS_hamburg_statistik_stadtteile",
         stadtteile: [],
-        featureList: {}
+        bezirkeUrl: "",
+        bezirke: [],
+        featureList: [],
+        districtAttrMapping: {
+            statistischeGebiete: {
+                attribute: "statistischeGebiete",
+                selector: "statgebiet",
+                url: "https://geodienste.hamburg.de/HH_WFS_Statistische_Gebiete_Test",
+                referenceAttributes: ["stadtteile"]
+            },
+            stadtteile: {
+                attribute: "stadtteile",
+                selector: "stadtteil",
+                url: "https://geodienste.hamburg.de/Test_HH_WFS_hamburg_statistik_stadtteile",
+                referenceAttributes: []
+            },
+            bezirke: {
+                attribute: "bezirke",
+                selector: "bezirk",
+                url: "",
+                referenceAttributes: []
+            }
+        }
     },
     /**
      * @class featuresLoader
@@ -19,6 +41,7 @@ const featuresLoader = Backbone.Model.extend(/** @lends featuresLoader.prototype
      * @property {String} statistischeGebieteUrl="https://geodienste.hamburg.de/HH_WFS_Statistische_Gebiete_Test" WFS url of statistischeGebiete datasets
      * @property {String} stadtteileUrl="https://geodienste.hamburg.de/Test_HH_WFS_hamburg_statistik_stadtteile" WFS url of stadtteile datasets
      * @property {object} featureList store for already queried features indexed by attribute value e.g {15634: [Feature,Feature,Feature,...] , 15987: [Feature,Feature,Feature,...],...}
+     * @property {object} attrMapping maps the relevant strings (url, selector) to each attribute name
      * @fires Core#RadioTriggerUtilHideLoader
      * @fires Core#RadioTriggerUtilShowLoader
      * @fires Alerting#RadioTriggerAlertAlert
@@ -38,8 +61,10 @@ const featuresLoader = Backbone.Model.extend(/** @lends featuresLoader.prototype
         channel.reply({
             "getDistrictsByScope": this.getDistrictsByScope,
             "getDistrictsByValue": this.getDistrictsByValue,
+            "getFeatureList": this.getFeatureList,
             "getAllFeaturesByAttribute": this.getAllFeaturesByAttribute,
-            "getAllValuesByScope": this.getAllValuesByScope
+            "getAllValuesByScope": this.getAllValuesByScope,
+            "getDistrictAttrMapping": this.getDistrictAttrMapping
         }, this);
 
         this.listenTo(Radio.channel("SelectDistrict"), {
@@ -56,11 +81,18 @@ const featuresLoader = Backbone.Model.extend(/** @lends featuresLoader.prototype
      */
     checkDistrictScope: function (bbox, scope, districtNameList) {
         // to do - nur einmal laden und dann speichern
-        if (scope === "Stadtteile") {
-            this.loadDistricts(bbox, this.get("stadtteileUrl"), "stadtteile", districtNameList);
-        }
-        else if (scope === "Statistische Gebiete") {
-            this.loadDistricts(bbox, this.get("statistischeGebieteUrl"), "statistischeGebiete", districtNameList);
+        // if (scope === "Stadtteile") {
+        //     this.loadDistricts(bbox, this.get("stadtteileUrl"), "stadtteile", districtNameList);
+        // }
+        // else if (scope === "Statistische Gebiete") {
+        //     this.loadDistricts(bbox, this.get("statistischeGebieteUrl"), "statistischeGebiete", districtNameList);
+        // }
+
+        if (scope) {
+            const attrMap = this.getDistrictAttrMapping(scope);
+
+            // this.set("featureList", []);
+            this.loadDistricts(bbox, attrMap.url, attrMap.attribute, districtNameList, attrMap.referenceAttributes);
         }
     },
 
@@ -70,9 +102,10 @@ const featuresLoader = Backbone.Model.extend(/** @lends featuresLoader.prototype
      * @param {string} serviceUrl - the wfs url of the districts
      * @param {string} attribute - the model attribute in which the features are stored
      * @param {string[]} districtNameList - a list of the names of the selected districts
+     * @param {string[]} referenceAttributes - the model attribute that will recursively be loaded, ordered from smallest to largest, e.g. ["stadtteile", "bezirke"]
      * @returns {void}
      */
-    loadDistricts: function (bbox, serviceUrl, attribute, districtNameList) {
+    loadDistricts: function (bbox, serviceUrl, attribute, districtNameList, referenceAttributes = []) {
         Radio.trigger("Util", "showLoader");
         Radio.trigger("Alert", "alert", {
             text: "Datensätze werden geladen",
@@ -117,13 +150,28 @@ const featuresLoader = Backbone.Model.extend(/** @lends featuresLoader.prototype
                     .catch(function (error) {
                         this.alertError();
                         console.error(error);
-                    }));
+                    }.bind(this)));
             }, this);
             Promise.all(featurePromiseList).then((featureList) => {
                 this.set(attribute, featureList.reduce((total, feature) => total.concat(feature), []));
-                Radio.trigger("FeaturesLoader", "districtsLoaded", layerList);
+
+                // loading reference Districts recursively
+                if (referenceAttributes.length > 0) {
+                    const selector = this.get("districtAttrMapping")[referenceAttributes[0]].selector,
+                        url = this.get("districtAttrMapping")[referenceAttributes[0]].url,
+                        referenceDistricts = featureList[0].reduce((refDistricts, feature) => {
+                            return refDistricts.includes(feature.get(selector)) ? refDistricts : [...refDistricts, feature.get(selector)];
+                        }, []);
+
+                    // this.set("featureList", [...this.get("featureList"), ...featureList]);
+
+                    return this.loadDistricts(bbox, url, referenceAttributes[0], referenceDistricts, referenceAttributes.splice(1));
+                }
+
                 Radio.trigger("Util", "hideLoader");
                 Radio.trigger("Alert", "alert:remove");
+
+                return Radio.trigger("FeaturesLoader", "districtsLoaded", layerList);
             }).catch(function (error) {
                 this.alertError();
                 console.error(error);
@@ -267,6 +315,28 @@ const featuresLoader = Backbone.Model.extend(/** @lends featuresLoader.prototype
         return MappingJson.filter(obj => {
             return obj[scope] === true;
         });
+    },
+
+    /**
+     * get all features grouped by attribute
+     * @returns {object} the array of all features
+     */
+    getFeatureList: function () {
+        return this.get("featureList");
+    },
+
+    /**
+     * returns the string mapping of the given scope or all
+     * @param {string} attr attribute/scope (optional)
+     * @returns {object} the attrMap
+     */
+    getDistrictAttrMapping: function (attr) {
+        if (attr) {
+            const attribute = attr.replace(/\s/g, "").replace(/^\w/, c => c.toLowerCase());
+
+            return this.get("districtAttrMapping")[attribute];
+        }
+        return this.get("districtAttrMapping");
     }
 
 });

@@ -9,9 +9,17 @@ const DashboardView = Backbone.View.extend({
         "click #help": "showHelp",
         "mousedown .drag-bar": "dragStart",
         "touchstart .drag-bar": "dragStart",
-        "click .tool-name": "dashboardInfo",
         "click #reset-button": "resetWidgets"
     },
+
+    /**
+     * initializes the dashboards View, adds event listeners and handles the Dashboard on the InfoScreen
+     * @class DashboardView
+     * @extends Backbone.View
+     * @memberof Dashboard
+     * @constructs
+     * @listens General#RadioTriggerLoaded
+     */
     initialize: function () {
         this.exportButtonView = new ExportButtonView({model: this.model.get("exportDashboardButton")});
 
@@ -64,6 +72,12 @@ const DashboardView = Backbone.View.extend({
     template: _.template(Template),
     isDragging: false,
     startX: 0,
+
+    /**
+     * append the dashboard to the Sidebar
+     * @fires Dashboard#RadioTriggerDashboardOpen
+     * @returns {Backbone.View} returns this
+     */
     render: async function () {
         var attr = this.model.toJSON();
 
@@ -82,18 +96,33 @@ const DashboardView = Backbone.View.extend({
 
         return this;
     },
-    dashboardInfo () {
-        // console.log(Radio.request("Dashboard", "getChildren"));
-    },
+
+    /**
+     * closes the Dashboard / Sidebar
+     * @returns {void}
+     */
     close: function () {
         this.model.setIsActive(false);
         Radio.trigger("ModelList", "toggleDefaultTool");
     },
+
+    /**
+     * handles the drag Start event to resize the sidebar
+     * @param {*} event the DOM-event
+     * @returns {void}
+     */
     dragStart: function (event) {
         event.preventDefault();
         this.isDragging = true;
         this.$el.find(".drag-bar").addClass("dragging");
     },
+
+    /**
+     * handles the drag move event to resize the sidebar
+     * @param {*} event the DOM-event
+     * @fires Sidebar#RadioTriggerResize
+     * @returns {void}
+     */
     dragMove: function (event) {
         if (this.isDragging) {
             const eventX = event.type === "touchmove" ? event.touches[0].clientX : event.clientX,
@@ -102,16 +131,34 @@ const DashboardView = Backbone.View.extend({
             Radio.trigger("Sidebar", "resize", newWidth);
         }
     },
+
+    /**
+     * handles the drag End event to resize the sidebar
+     * @param {*} event the DOM-event
+     * @returns {void}
+     */
     dragEnd: function () {
         this.isDragging = false;
         this.$el.find(".drag-bar").removeClass("dragging");
     },
+
+    /**
+     * opens the help window
+     * @fires Alert#RadioTriggerAlert
+     * @returns {void}
+     */
     showHelp: function () {
         Radio.trigger("Alert", "alert", {
             text: InfoTemplate,
             kategorie: "alert-info"
         });
     },
+
+    /**
+     * removes all widgets on the dashboard apart from the table
+     * @fires Dashboard#RadioRequestGetChildren
+     * @returns {void}
+     */
     resetWidgets () {
         Radio.request("Dashboard", "getChildren").forEach(widget => {
             if (widget.getId() !== "dashboard") {

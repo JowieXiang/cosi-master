@@ -22,4 +22,15 @@ export function addPolyfills () {
             }
         });
     }
+
+    if (!Array.prototype.flat) {
+        // todo - add depth argument
+        Object.defineProperty(Array.prototype, "flat", {
+            value: function () {
+                return this.reduce((res, item) => {
+                    return item.length ? [...res, ...item.flat()] : [...res, item];
+                }, []);
+            }
+        });
+    }
 }

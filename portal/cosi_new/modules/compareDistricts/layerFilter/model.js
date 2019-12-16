@@ -38,6 +38,8 @@ const LayerFilterModel = Backbone.Model.extend(/** @lends LayerFilterModel.proto
         let refValue = 0,
             newInfo = {};
 
+        console.log(featureCollection);
+
         this.set("field", field);
         this.initializeFilter();
 

@@ -13,6 +13,18 @@ const DashboardWidgetView = Backbone.View.extend({
             evt.stopPropagation();
         }
     },
+
+    /**
+     * initialize a new dashboard widget view
+     * @class DashboardWidgetView
+     * @extends Backbone.View
+     * @memberof Dashboard
+     * @constructs
+     * @param {Backbone.View | $ | d3.selection | string} content the content to render
+     * @param {string} parent the container to append to
+     * @param {*} opts options (optional)
+     * @returns {void}
+     */
     initialize (content, parent, opts = {}) {
         const attrs = opts;
 
@@ -39,6 +51,13 @@ const DashboardWidgetView = Backbone.View.extend({
     content: {},
     attrs: {},
     template: _.template(Template),
+
+    /**
+     * renders the new widget to the parent
+     * interprets type of provided content and adds event listeners
+     * @fires ContextMenu#RadioTriggerAddContextMenu
+     * @returns {Backbone.View} returns this
+     */
     render () {
         const addScroll = typeof this.attrs.focusOnInit === "number" ? this.attrs.focusOnInit : 0;
 
@@ -79,6 +98,12 @@ const DashboardWidgetView = Backbone.View.extend({
 
         return this;
     },
+
+    /**
+     * sets parent DOM-Element for the widget
+     * by given selector
+     * @returns {Backbone.View} returns this
+     */
     initializeDOMElement () {
         const widget = document.createElement("div");
 
@@ -95,19 +120,45 @@ const DashboardWidgetView = Backbone.View.extend({
 
         return this;
     },
+
+    /**
+     * handler for content type Backbone.View
+     * @returns {void}
+     */
     renderView () {
         this.content.setElement(this.$el.find("#content").get(0));
         this.content.render();
     },
+
+    /**
+     * handler for content type $ Jquery Object
+     * @returns {void}
+     */
     render$el () {
         this.$el.find("#content").append(this.content);
     },
+
+    /**
+     * handler for content type plain HTML
+     * @returns {void}
+     */
     renderHtml () {
         this.$el.find("#content").html(this.content);
     },
+
+    /**
+     * handler for content type d3.selection
+     * @returns {void}
+     */
     renderD3 () {
         this.$el.find("#content").html(this.content.node());
     },
+
+    /**
+     * toggles Widget open/closed
+     * @param {*} evt the click event
+     * @returns {void}
+     */
     toggleOpen (evt) {
         evt.stopPropagation();
         this.$el.toggleClass("minimized");
@@ -120,14 +171,32 @@ const DashboardWidgetView = Backbone.View.extend({
             this.el.style.height = isNaN(this.attrs.height) ? this.attrs.height : this.attrs.height + "px";
         }
     },
+
+    /**
+     * removes the widget from the dashboard
+     * @fires Dashboard#RadioTriggerDestroyWidgetById
+     * @returns {void}
+     */
     removeWidget () {
         Radio.trigger("Dashboard", "destroyWidgetById", this.attrs.id);
     },
+
+    /**
+     * handles mouse event to move the widget's position
+     * @param {*} evt the mouse event
+     * @returns {void}
+     */
     moveMouse (evt) {
         if (evt.button === 0) {
             this.moveStart(evt);
         }
     },
+
+    /**
+     * handles the initial event input for moving the widget's position
+     * @param {*} evt the event
+     * @returns {void}
+     */
     moveStart (evt) {
         evt.preventDefault();
         if (evt.target.tagName !== "BUTTON") {
@@ -146,6 +215,12 @@ const DashboardWidgetView = Backbone.View.extend({
             console.log("move");
         }
     },
+
+    /**
+     * handles the initial event input for resizing the widget
+     * @param {*} evt the event
+     * @returns {void}
+     */
     resizeStart (evt) {
         if (evt.button === 0) {
             evt.preventDefault();
@@ -156,6 +231,12 @@ const DashboardWidgetView = Backbone.View.extend({
             console.log("size");
         }
     },
+
+    /**
+     * handles the release of touch / mouse on move / resize
+     * @param {*} evt the DOM event
+     * @returns {void}
+     */
     dragEnd (evt) {
         if (this.moving) {
             evt.preventDefault();
@@ -183,6 +264,12 @@ const DashboardWidgetView = Backbone.View.extend({
         this.moving = false;
         this.$el.removeClass("dragging");
     },
+
+    /**
+     * updates the value on widget move / resize
+     * @param {*} evt the DOM event
+     * @returns {void}
+     */
     drag (evt) {
         const _evt = evt.type === "touchmove" ? evt.changedTouches[0] : evt;
 
@@ -206,9 +293,20 @@ const DashboardWidgetView = Backbone.View.extend({
             });
         }
     },
+
+    /**
+     * gets the widget's ID
+     * @returns {string} ID
+     */
     getId () {
         return this.attrs.id;
     },
+
+    /**
+     * recursively travels up the DOM to find a parent element with scrollable height
+     * @param {$} $el the widget's DOM element
+     * @returns {$} the scrollable parent element
+     */
     findScrollableParent ($el) {
         if ($el.css("overflow-y") === "auto" || $el.css("overflow-y") === "scroll") {
             return $el;
@@ -217,9 +315,6 @@ const DashboardWidgetView = Backbone.View.extend({
             return $el;
         }
         return this.findScrollableParent($el.parent());
-    },
-    zoomToOrigin (evt) {
-        Radio.trigger("ReachabilityFromPoint", "zoomToOrigin", evt);
     }
 });
 

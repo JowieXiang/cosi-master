@@ -10,6 +10,11 @@ const ResultView = Backbone.View.extend({
     model: {},
     template: _.template(ResultTemplate),
     textStyle: new Style({}),
+
+    /**
+     * render the result view for the calculated ratios
+     * @returns {Backbone.View} returns this
+     */
     render: function () {
         this.exportButtonView = new ExportButtonView({model: this.model.get("exportButtonModel")});
 
@@ -69,6 +74,12 @@ const ResultView = Backbone.View.extend({
             }));
         });
     },
+
+    /**
+     * Append the result as new widget to the dashboard
+     * @fires Dashboard#RadioTriggerAppend
+     * @returns {void}
+     */
     pushToDashboard: function () {
         this.$el.find("#push-dashboard-button").empty();
         Radio.trigger("Dashboard", "append", this.$el, "#dashboard-containers", {
