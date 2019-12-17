@@ -1,6 +1,9 @@
 import QueryDetailView from "./query/detailView";
 import QuerySimpleView from "./query/simpleView";
 import Template from "text-loader!./template.html";
+import ResultView from "./query/resultView";
+import ResultModel from "./query/resultModel";
+import "./style.less";
 
 const FilterView = Backbone.View.extend({
     events: {
@@ -33,6 +36,7 @@ const FilterView = Backbone.View.extend({
                 this.model.closeGFI();
             },
             "renderDetailView": this.renderDetailView,
+            "renderResultView": this.renderResultView,
             "add": function () {
                 if (this.model.get("isActive")) {
                     this.render();
@@ -70,24 +74,59 @@ const FilterView = Backbone.View.extend({
     },
 
     renderDetailView: function () {
-        var selectedModel = this.model.get("queryCollection").findWhere({isSelected: true}),
+        var selectedModel = this.model.get("queryCollection").findWhere({ isSelected: true }),
             view;
 
         if (!_.isUndefined(selectedModel)) {
-            view = new QueryDetailView({model: selectedModel});
+            view = new QueryDetailView({ model: selectedModel });
 
             this.model.setDetailView(view);
             this.$el.find(".detail-view-container").html(view.render().$el);
         }
     },
+    renderResultView: function (featureIds, layerId) {
+        const layerModel = Radio.request("ModelList", "getModelByAttributes", { id: layerId }),
+            features = layerModel.get("layer").getSource().getFeatures().filter(f => _.contains(featureIds, f.getId())),
+            resultModel = new ResultModel();
+        let selector1, selector2;
 
+        /**
+         * hard coded selector for different facility layers
+         */
+        if (features[0].getProperties().schul_id) {
+            selector1 = "schulname";
+            selector2 = "schul_id";
+        }
+        else if (features[0].getProperties().einrichtung) {
+            selector1 = "name";
+            selector2 = "einrichtung";
+        }
+        else if (features[0].getProperties().Einrichtungsnummer) {
+            selector1 = "Name_normalisiert";
+            selector2 = "Einrichtungsnummer";
+        }
+        else if (features[0].getProperties().identnummer) {
+            selector1 = "anlagenname";
+            selector2 = "identnummer";
+        }
+
+        resultModel.set("featureIds", featureIds);
+        resultModel.set("features", features);
+        resultModel.set("layerId", layerId);
+        resultModel.set("layerName", layerModel.get("name"));
+        resultModel.set("selector1", selector1);
+        resultModel.set("selector2", selector2);
+
+        this.resultView = new ResultView({ model: resultModel });
+        this.$el.find(".result-view-container").html(this.resultView.render().$el);
+    },
     renderSimpleViews: function () {
         var view,
             queryCollectionModels = this.model.get("queryCollection").models;
 
         if (queryCollectionModels.length > 1) {
             _.each(queryCollectionModels, function (query) {
-                view = new QuerySimpleView({model: query});
+                view = new QuerySimpleView({ model: query });
                 this.$el.find(".simple-views-container").append(view.render().$el);
             }, this);
         }

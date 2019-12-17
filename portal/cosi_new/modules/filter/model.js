@@ -144,9 +144,10 @@ const FilterModel = Tool.extend({
     updateMap: function () {
         // if at least one query is selected zoomToFilteredFeatures, otherwise showAllFeatures
         var allFeatureIds;
-
+        console.log("queryCollection: ", this.get("queryCollection"));
         if (_.contains(this.get("queryCollection").pluck("isSelected"), true)) {
             allFeatureIds = this.groupFeatureIdsByLayer(this.get("queryCollection"));
+            console.log("allFeatureIds: ", allFeatureIds);
 
             _.each(allFeatureIds, function (layerFeatures) {
                 Radio.trigger("ModelList", "showFeaturesById", layerFeatures.layer, layerFeatures.ids);

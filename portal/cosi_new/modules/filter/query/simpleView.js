@@ -1,4 +1,5 @@
 import Template from "text-loader!./templateSimpleView.html";
+import "./style.less";
 
 const QuerySimpleView = Backbone.View.extend({
     events: {

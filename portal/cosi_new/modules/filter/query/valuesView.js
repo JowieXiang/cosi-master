@@ -1,3 +1,5 @@
+import "./style.less";
+
 const QueryValuesView = Backbone.View.extend({
     events: {
         "click": "removeView"

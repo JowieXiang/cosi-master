@@ -1,0 +1,8 @@
+<div class="text">Ergebnis filtern</div>
+<p>
+    <% _.each(features, function(feature){ %>
+    <span class="name-tag district-name" layerId="<%= layerId %>" selector="<%= feature.getProperties()[selector1] ? selector1 : selector2 %>">
+        <%= feature.getProperties()[selector1] ? feature.getProperties()[selector1] : feature.getProperties()[selector2] %>
+    </span>
+    <% }) %>
+</p>
