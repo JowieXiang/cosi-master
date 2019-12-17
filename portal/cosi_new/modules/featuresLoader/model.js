@@ -135,6 +135,7 @@ const featuresLoader = Backbone.Model.extend(/** @lends featuresLoader.prototype
                     // mapping feature kategorie value
                     .then(features => {
                         features.forEach(function (feature) {
+                            feature.unset("geom"); // fallback for accidentially loaded geometries
                             feature.set("kategorie", this.findMappingObjectByCategory(feature.get("kategorie")).value);
                         }, this);
                         if (features.length > 0) {
@@ -230,9 +231,9 @@ const featuresLoader = Backbone.Model.extend(/** @lends featuresLoader.prototype
             `version=${layer.version}&` +
             `typename=${layer.featureType}&`;
 
-        if (propertyNameList) {
-            url += `propertyName=${propertyNameList}&`;
-        }
+        // if (propertyNameList) {
+        //     url += `propertyName=${propertyNameList}&`;
+        // }
         if (bbox) {
             url += `BBOX=${bbox}`;
         }
