@@ -11,6 +11,12 @@ const SelectView = Backbone.View.extend({
         "click .tool-info #help": "showInfo",
         "click #clear": "clearResult"
     },
+
+    /**
+     * initialize the SelectView
+     * @memberof calculateRatio
+     * @returns {void}
+     */
     initialize: function () {
         this.listenTo(this.model, {
             "change:isActive": this.render,
@@ -30,6 +36,13 @@ const SelectView = Backbone.View.extend({
     template: _.template(Template),
     numDropdownView: {},
     denDropdownView: {},
+
+    /**
+     * render the selectView and append Dropdown Views
+     * @param {Backbone.Model} model the model to render
+     * @param {boolean} value the active state
+     * @returns {Backbone.View} returns this
+     */
     render: function (model, value) {
         const attr = this.model.toJSON();
 
@@ -50,21 +63,41 @@ const SelectView = Backbone.View.extend({
 
         return this;
     },
+
+    /**
+     * render the facility dropdown according to active layers
+     * @returns {void}
+     */
     renderFacilityDropDown: function () {
         this.$el.find(".numDropdown .dropdown-container").remove();
         this.numDropdownView = new SnippetDropdownView({model: this.model.get("numDropdownModel")});
         this.$el.find(".numDropdown").append(this.numDropdownView.render().el);
     },
+
+    /**
+     * render the result view
+     * @returns {void}
+     */
     renderResult: function () {
         this.$el.find(".result").html("");
         this.resultView = new ResultView({model: this.model});
         this.$el.find(".result").append(this.resultView.render(false).el);
     },
+
+    /**
+     * render the modifiers for each selected facility type
+     * @returns {void}
+     */
     renderModifiers: function () {
         if (this.model.get("adjustParameterView").model) {
             this.$el.find(".modifiers").html(this.model.get("adjustParameterView").render().el);
         }
     },
+
+    /**
+     * update all texts according to selected values
+     * @returns {void}
+     */
     updateTexts: function () {
         if (this.model.get("denominators").values.length === 0) {
             $("#resolution-input-container").addClass("hidden");
@@ -78,12 +111,28 @@ const SelectView = Backbone.View.extend({
             $("#facilities-info").hide();
         }
     },
+
+    /**
+     * trigger the calculation on model
+     * @returns {void}
+     */
     calculateRatios: function () {
         this.model.getRatiosForSelectedFeatures();
     },
+
+    /**
+     * set the resolution (facility / n * people) for the calculation
+     * @param {*} evt the DOM event from the input field
+     * @returns {void}
+     */
     setResolution: function (evt) {
         this.model.set("resolution", parseInt(evt.target.value, 10));
     },
+
+    /**
+     * show the Infobox for the tool
+     * @returns {void}
+     */
     showInfo: function () {
         Radio.trigger("Alert", "alert:remove");
         Radio.trigger("Alert", "alert", {
@@ -91,6 +140,12 @@ const SelectView = Backbone.View.extend({
             kategorie: "alert-info"
         });
     },
+
+    /**
+     * delete result and polygon styles in map
+     * @fires ColorCodeMap#RadioTriggerReset
+     * @returns {void}
+     */
     clearResult: function () {
         this.resultView.remove();
         this.model.resetResults();

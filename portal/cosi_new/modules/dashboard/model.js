@@ -1,9 +1,8 @@
 import Tool from "../../../../modules/core/modelList/tool/model";
 import ExportButtonModel from "../../../../modules/snippets/exportButton/model";
 
-const DashboardModel = Tool.extend({
+const DashboardModel = Tool.extend({ /** @lends dasboardModel.prototype */
     defaults: _.extend({}, Tool.prototype.defaults, {
-        tableView: [],
         name: "",
         glyphicon: "",
         width: "60%",
@@ -12,12 +11,16 @@ const DashboardModel = Tool.extend({
     }),
 
     /**
-     * @class DasboardModel
-     * @extends Tools
+     * @class DashboardModel
+     * @extends Tool
+     * @memberof Dashboard
      * @constructs
-     * @property
+     * @property {string} width DOM width of dashboard sidebar
+     * @property {boolean} infoScreenOpen retrieved state of 2nd screen from localStorage
+     * @property {Backbone.Model} exportDashboardButton snippet for constructing the PDF-Download
+     * @fires ModelList#RadioTriggerAddAlwaysActiveTool
+     * @listens Dashboard#RadioRequestDashboardOpen
      */
-
     initialize: function () {
         this.superInitialize();
         const channel = Radio.channel("Dashboard");
@@ -37,6 +40,12 @@ const DashboardModel = Tool.extend({
 
         Radio.trigger("ModelList", "addAlwaysActiveTool", this);
     },
+
+    /**
+     * Sets the Dashboard active and removes ContextMenu on deactivate
+     * @param {boolean} state Dashboard active state
+     * @returns {void}
+     */
     setIsActive: function (state) {
         this.set("isActive", state);
 

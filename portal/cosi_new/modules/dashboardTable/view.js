@@ -14,6 +14,16 @@ const DashboardTableView = Backbone.View.extend({
         "click .btn-reset": "resetDropDown",
         "click .toggle-col": "toggleCol"
     },
+
+    /**
+     * initialize the dashboardTableView
+     * add utility buttons and dropdown menus
+     * @class DashboardTableView
+     * @extends Backbone.View
+     * @memberof Dashboard
+     * @constructs
+     * @returns {void}
+     */
     initialize: function () {
         this.exportButtonView = new ExportButtonView({model: this.model.get("exportButtonModel")});
         this.exportFilteredButtonView = new ExportButtonView({model: this.model.get("exportFilteredButtonModel")});
@@ -37,6 +47,13 @@ const DashboardTableView = Backbone.View.extend({
     tableTemplate: _.template(TableTemplate),
     contextActions: _.template(ContextActions),
     contextActionsEl: {},
+
+    /**
+     * @description renders the dashboardTable
+     * appends it to the dashboard widgets if not exists, or updates it
+     * delegates events to the widget
+     * @returns {Backbone.View} returns this
+     */
     render: async function () {
         var attr = this.model.toJSON();
 
@@ -63,9 +80,19 @@ const DashboardTableView = Backbone.View.extend({
 
         return this;
     },
+
+    /**
+     * renders the filter Dropdown
+     * @returns {void}
+     */
     renderFilter () {
         this.filterDropdownView.render();
     },
+
+    /**
+     * updates the view with the currently selected attribute names from the table
+     * @returns {$} JQuery-Selection
+     */
     updateRatioSelection () {
         var selectionText = this.$el.find("span#row-selection");
 
@@ -82,42 +109,46 @@ const DashboardTableView = Backbone.View.extend({
         this.contextActionsEl.find("li#selection span").html("<br />" + this.model.getAttrsForRatio().join(" / "));
         return selectionText.html(`<strong>Auswahl:</strong> ${this.model.getAttrsForRatio()[0] ? this.model.getAttrsForRatio()[0] + " (y)" : ""}${this.model.getAttrsForRatio()[1] ? " / " + this.model.getAttrsForRatio()[1] + " (x)" : ""}`);
     },
+
+    /**
+     * Triggers the zoomToDistrict method on the selectDistrict Module
+     * @param {*} event the DOM event with the target name
+     * @fires SelectDistrict#Radio.TriggerZoomToDistrict
+     * @returns {void}
+     */
     zoomToFeature (event) {
         const districtName = event.target.innerHTML;
 
         Radio.trigger("SelectDistrict", "zoomToDistrict", districtName);
     },
-    createChart (event) {
-        this.clearChart();
 
-        const row = this.$(event.target).closest("tr"),
-            firstValue = row.find("td").first().text();
-
-        if (!isNaN(parseFloat(firstValue)) && !row.find("td").hasClass("timeline-table")) {
-            this.model.createChart([row.find("th.prop").attr("id")], "BarGraph", row.find("th.prop").text());
-        }
-        else if (row.find("td").hasClass("timeline-table")) {
-            this.model.createChart([row.find("th.prop").attr("id")], "Linegraph", row.find("th.prop").text());
-        }
-    },
-    clearChart: function () {
-        this.$el.find(".basic-graph-header").html("");
-        this.$el.find(".dashboard-graph").empty();
-    },
-    createCorrelation () {
-        this.model.createCorrelation();
-        this.model.deleteAttrsForCorrelation();
-    },
+    /**
+     * toggles the timelineTable for a dataset open/closed
+     * @param {*} event the click event
+     * @returns {void}
+     */
     toggleTimelineTable: function (event) {
         event.stopPropagation();
         this.$(event.target).parent(".prop").parent("tr").toggleClass("open");
     },
+
+    /**
+     * toggles a table group open/closed
+     * @param {*} event the click event
+     * @returns {void}
+     */
     toggleGroup: function (event) {
         event.stopPropagation();
         const group = this.$(event.target).closest("thead").attr("id");
 
         this.$el.find(`tbody#${group}`).toggleClass("open");
     },
+
+    /**
+     * toggles a table column open/closed
+     * @param {*} event the click event
+     * @returns {void}
+     */
     toggleCol: function (event) {
         event.stopPropagation();
 
@@ -127,21 +158,6 @@ const DashboardTableView = Backbone.View.extend({
             $(row.children[cellIndex]).toggleClass("minimized");
         });
     },
-    dragStart: function () {
-        this.isDragging = true;
-        this.$el.find(".drag-bar").addClass("dragging");
-    },
-    dragMove: function (event) {
-        if (this.isDragging) {
-            const newWidth = (((window.innerWidth - event.clientX) / window.innerWidth) * 100).toFixed(2) + "%";
-
-            Radio.trigger("Sidebar", "resize", newWidth);
-        }
-    },
-    dragEnd: function () {
-        this.isDragging = false;
-        this.$el.find(".drag-bar").removeClass("dragging");
-    },
 
     /**
      * adds the 'bs-placeholder' class to the dropdown,
@@ -149,10 +165,16 @@ const DashboardTableView = Backbone.View.extend({
      * @returns {void}
      */
     resetDropDown: function () {
-        console.log("reset");
         this.model.get("filterDropdownModel").updateSelectedValues([]);
         this.$el.find(".filter-dropdown ul.dropdown-menu > li").removeClass("selected");
     },
+
+    /**
+     * sets the contextMenu HTML and handles actions
+     * @param {*} event the mouseup event on the table
+     * @fires ContextMenu#RadioTriggerSetActions
+     * @returns {void}
+     */
     contextMenuTable: function (event) {
         const row = this.$(event.target).closest("tr"),
             contextActions = this.contextActionsEl;

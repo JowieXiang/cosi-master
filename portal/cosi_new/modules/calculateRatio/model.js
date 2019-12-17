@@ -4,7 +4,7 @@ import AdjustParameterView from "./adjustParameter/view";
 import ExportButtonModel from "../../../../modules/snippets/exportButton/model";
 import * as Extent from "ol/extent";
 
-const CalculateRatioModel = Tool.extend({
+const CalculateRatioModel = Tool.extend( /** @lends CalculateRatioModel */{
     defaults: _.extend({}, Tool.prototype.defaults, {
         deactivateGFI: true,
         data: {},
@@ -20,6 +20,14 @@ const CalculateRatioModel = Tool.extend({
         adjustParameterView: {},
         exportButtonModel: {}
     }),
+
+    /**
+     * @class CalculateRatioModel
+     * @extends Tool
+     * @memberof CalculateRatio
+     * @constructs
+     * @listens ModelList#RadioTriggerUpdatedSelectedLayerList
+     */
     initialize: function () {
         this.superInitialize();
 
@@ -48,6 +56,11 @@ const CalculateRatioModel = Tool.extend({
         this.setExportButton();
     },
 
+    /**
+     * adds potential facility types to Dropdown
+     * @param {Backbone.Model} layerList the layers from ModelList
+     * @returns {void}
+     */
     updateFacilityLayerList: function (layerList) {
         if (this.get("isActive")) {
             const facilityLayerList = layerList.filter((layer) => {
@@ -58,10 +71,22 @@ const CalculateRatioModel = Tool.extend({
             this.setFacilityDropdownModel(facilityLayerList);
         }
     },
+
+    /**
+     * sets the layerList for facilites as property
+     * @param {Backbone.Model} layerList the layers from ModelList
+     * @returns {void}
+     */
     setFacilityLayerList: function (layerList) {
         this.set("facilityLayerList", layerList);
     },
 
+    /**
+     * sets the Dropdown snippet for the facility types
+     * @param {Backbone.Model} layerList the layers from ModelList
+     * @fires renderFacilityDropDown
+     * @returns {void}
+     */
     setFacilityDropdownModel: function (layerList) {
         const layerNameList = layerList.map(layer => {
             return layer.get("name");
@@ -81,6 +106,11 @@ const CalculateRatioModel = Tool.extend({
         this.trigger("renderFacilityDropDown");
     },
 
+    /**
+     * sets the Dropdown snippet for the demographic groups
+     * @param {Backbone.Model} layerList the layers from ModelList
+     * @returns {void}
+     */
     setDemographicDropdownModel: function (layerList) {
         this.set("denDropdownModel", new SnippetDropdownModel({
             name: "Zielgruppe",
@@ -96,6 +126,10 @@ const CalculateRatioModel = Tool.extend({
         });
     },
 
+    /**
+     * sets the export button with result data
+     * @returns {void}
+     */
     setExportButton: function () {
         this.set("exportButtonModel", new ExportButtonModel({
             tag: "Als CSV herunterladen",
@@ -104,6 +138,12 @@ const CalculateRatioModel = Tool.extend({
             fileExtension: "csv"
         }));
     },
+
+    /**
+     * creates the result object for the demographic/facility ratio for each selected district and total and mean
+     * @fires renderResults
+     * @returns {void}
+     */
     getRatiosForSelectedFeatures: function () {
         this.resetResults();
         this.set("modifier", this.get("adjustParameterView").model.getSelectedOption());
@@ -179,6 +219,14 @@ const CalculateRatioModel = Tool.extend({
         this.get("exportButtonModel").set("rawData", renameResults);
         this.trigger("renderResults");
     },
+
+    /**
+     * calculates the ratio for the given values or returns "n/a"
+     * @param {number} facilities the modified facility value
+     * @param {number} demographics the modified demographics value
+     * @param {string} area the area to calculate the ratio for
+     * @returns {number | string} the calculated ratio
+     */
     calculateRatio (facilities, demographics, area = "allen Unterschungsgebieten") {
         if (demographics >= 0) {
             return (this.get("resolution") * facilities) / demographics;
@@ -186,6 +234,13 @@ const CalculateRatioModel = Tool.extend({
         this.setMessage(`In ${area} ist keine Population der Zielgruppe vorhanden. Daher können keine Ergebnisse angezeigt werden.`);
         return "n/a";
     },
+
+    /**
+     * retrieves the relevant target demographics by district
+     * @param {*} district the feature of the district
+     * @param {*} selector the demographics attribute to retrieve
+     * @returns {number} the target population for the latest year
+     */
     getTargetDemographicsInDistrict: function (district, selector) {
         let targetPopulation = 0;
 
@@ -216,6 +271,12 @@ const CalculateRatioModel = Tool.extend({
 
         return targetPopulation;
     },
+
+    /**
+     * retrieves the relevant facility values by district (based on the coordinates of the facilities)
+     * @param {*} district the feature of the district incl. its geometry
+     * @returns {number} the facility value (e.g. area in sqm)
+     */
     getFacilitiesInDistrict: function (district) {
         const districtGeometry = district.getGeometry();
         let featureCount = 0;
@@ -248,6 +309,11 @@ const CalculateRatioModel = Tool.extend({
 
         return featureCount;
     },
+
+    /**
+     * creates a new modifier view for all selected facility types
+     * @returns {void}
+     */
     createModifier: function () {
         if (this.getNumerators().length > 0) {
             const layer = this.get("facilityLayerList").find((facilityLayer) => {
@@ -257,28 +323,71 @@ const CalculateRatioModel = Tool.extend({
             this.set("adjustParameterView", new AdjustParameterView(layer.get("id"), this.get("modifierInfoText")));
         }
     },
+
+    /**
+     * sets the selected numerators (facilities)
+     * @returns {void}
+     */
     setNumerators: function () {
         this.set("numerators", this.get("numDropdownModel").getSelectedValues());
     },
+
+    /**
+     * sets the selected denominators (demographics)
+     * @returns {void}
+     */
     setDenominators: function () {
         this.set("denominators", this.get("denDropdownModel").getSelectedValues());
     },
+
+    /**
+     * gets the selected numerators (facilities)
+     * @returns {string[]} the selected facility types
+     */
     getNumerators: function () {
         return this.get("numerators").values;
     },
+
+    /**
+     * gets the selected (denominators) demographics
+     * @returns {string[]} the selected demographics
+     */
     getDenominators: function () {
         return this.get("denominators").values;
     },
+
+    /**
+     * sets the results for the district in results object
+     * @param {string} district name/selector 
+     * @param {object} ratio result object
+     * @returns {void}
+     */
     setResultForDistrict: function (district, ratio) {
         this.get("results")[district] = ratio;
     },
+
+    /**
+     * resets the result object and error message
+     * @returns {void}
+     */
     resetResults: function () {
         this.set("results", {});
         this.set("message", "");
     },
+
+    /**
+     * gets the result object
+     * @returns {object} results
+     */
     getResults: function () {
         return this.get("results");
     },
+
+    /**
+     * sets potential error messages to render
+     * @param {string} message the message to display
+     * @returns {void}
+     */
     setMessage: function (message) {
         this.set("message", message);
     }

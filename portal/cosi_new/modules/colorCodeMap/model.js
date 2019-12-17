@@ -34,9 +34,6 @@ const LayerModel = Backbone.Model.extend(/** @lends LayerModel.prototype */{
                 this.trigger("resetView");
             }
         });
-        // this.listenTo(Radio.channel("FeaturesLoader"), {
-        //     "districtsLoaded": this.updateColorCodeMap
-        // });
 
         // load list initially for statgebiet and rerender on scope change
         this.setDropDownModel(Radio.request("FeaturesLoader", "getAllValuesByScope", "statgebiet"));
