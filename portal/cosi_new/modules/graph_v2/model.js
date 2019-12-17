@@ -592,13 +592,20 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
         return select(selector).append("svg")
             .attr("width", "100%")
             .attr("height", "100%")
-            .attr("viewBox", `0 0 ${width + 20} ${height + 20}`)
+            .attr("viewBox", `0 0 ${width + 80} ${height + 60}`)
             .attr("class", svgClass)
             .append("g")
             .attr("class", "graph")
             .attr("transform", "translate(" + left + "," + top + ")");
     },
 
+    /**
+     * Appends the CoSI context menu actions and defines the context actions
+     * @param {*} svg the DOM element
+     * @param {*} graphConfig the graphConfig object
+     * @fires ContextMenu#RadioTriggerSetActions
+     * @returns {void}
+     */
     appendContextMenu: function (svg, graphConfig) {
         const contextActions = $(_.template(ContextActions)()),
             width = graphConfig.width,
@@ -634,6 +641,11 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
         Radio.trigger("ContextMenu", "setActions", contextActions, title, "glyphicon-stats");
     },
 
+    /**
+     * Converts the SVG to a downloadable blob
+     * @param {*} svg the DOM element
+     * @returns {blob} the blob
+     */
     svgToBlob (svg) {
         const dupSvg = svg.cloneNode(true);
 
@@ -643,21 +655,13 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
         {type: "image/svg+xml;charset=utf-8"});
     },
 
-    download (url, filename) {
-        var link = document.createElement("a");
-
-        if (link.download !== undefined) { // feature detection
-            // Browsers that support HTML5 download attribute
-
-            link.setAttribute("href", url);
-            link.setAttribute("download", filename);
-            link.style.visibility = "hidden";
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-    },
-
+    /**
+     * Converts the SVG to a downloadable image/png
+     * @param {blob} blob the downloadable svg as blob
+     * @param {number} width the width in px
+     * @param {number} height the height in px
+     * @returns {blob} the blob
+     */
     svgToPng (blob, width, height) {
         return new Promise((res, rej) => {
             try {
@@ -691,6 +695,27 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
                 rej(console.error(e));
             }
         });
+    },
+
+    /**
+     * executes the download for modern browsers
+     * @param {*} url the created download URL
+     * @param {*} filename the name of the downloaded file
+     * @returns {void}
+     */
+    download (url, filename) {
+        var link = document.createElement("a");
+
+        if (link.download !== undefined) { // feature detection
+            // Browsers that support HTML5 download attribute
+
+            link.setAttribute("href", url);
+            link.setAttribute("download", filename);
+            link.style.visibility = "hidden";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
     },
 
     /**
@@ -738,6 +763,7 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
                 return d.text;
             });
     },
+
     /**
      * Flattens the attributeToShowArray and only returns an array of the attrNames.
      * @param {Object/String[]} attrToShowArray Array of objects or strings.
@@ -756,6 +782,7 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
         });
         return flatAttrToShowArray;
     },
+
     /**
      * Creates the linegraph.
      * @param {Object} graphConfig Graph config.
@@ -803,7 +830,7 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             xAttr = graphConfig.xAttr,
             xAxisLabel = graphConfig.xAxisLabel,
             yAxisLabel = graphConfig.yAxisLabel,
-            refColorScale = Radio.request("ColorScale", "getColorScaleByValues", [0, 1], "interpolateRainbow", graphConfig.attrToShowArray.length),
+            refColorScale = Radio.request("ColorScale", "getColorScaleByValues", [0, 1], "interpolateRainbow", graphConfig.attrToShowArray.length + 1),
             attrToShowArray = graphConfig.attrToShowArray,
             flatAttrToShowArray = this.flattenAttrToShowArray(attrToShowArray),
             margin = graphConfig.margin,
@@ -825,9 +852,6 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             valueLine,
             hasLineLabel = graphConfig.hasLineLabel,
             attribution = graphConfig.attribution || {};
-
-        console.log(refColorScale);
-            
 
         if (_.has(graphConfig, "legendData")) {
             this.appendLegend(svg, graphConfig.legendData);
@@ -1123,6 +1147,13 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
         return svg;
     },
 
+    /**
+     * evaluates the correlation scatterplot and generates meta values
+     * @param {object} data the input data
+     * @param {string} xAttr the x-Axis value
+     * @param {string} yAttr the y-Axis value
+     * @returns {object} the values object
+     */
     evaluateData: function (data, xAttr, yAttr) {
         var dat = data.filter(function (obj) {
                 return obj[yAttr] !== "-" && obj[xAttr] !== "-";
@@ -1160,12 +1191,19 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
         return {
             data: dat,
             stats: [
-                {name: "Pearson Korrelation", val: pearson},
+                {name: "Korrelation", val: pearson},
                 {name: "Kovarianz", val: covariance}
             ]
         };
     },
 
+    /**
+     * creates the d3-line-object for the regression in scatterplot
+     * @param {string} xAttr the xAxis-Value-Key
+     * @param {d3-scale} scaleX the x-Scale function
+     * @param {d3-scale} scaleY the y-Scale function
+     * @returns {d3-line} the line-function
+     */
     createRegressionLine (xAttr, scaleX, scaleY) {
         return line()
             .x(function (d) {
@@ -1176,6 +1214,13 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             });
     },
 
+    /**
+     * appends the regression line to the svg
+     * @param {d3-selection} svg the svg DOM object
+     * @param {object} data the data object
+     * @param {d3-line} d3line the line function
+     * @returns {void}
+     */
     appendRegressionLine (svg, data, d3line) {
         svg.append("g")
             .attr("class", "graph-regression")
@@ -1198,6 +1243,13 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             .attr("fill", "none");
     },
 
+    /**
+     * appends the meta stats to the svg
+     * @param {*} svg the svg DOM element
+     * @param {*} data the data object
+     * @param {*} yAxisLabel the y-Axis-Label for positioning
+     * @returns {void}
+     */
     appendStats (svg, data, yAxisLabel) {
         svg.append("g")
             .attr("class", "graph-legend")
@@ -1259,7 +1311,7 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
         var refValues = data.reduce((res, val) => {
                 return res.includes(val[refAttr]) ? res : [...res, val[refAttr]];
             }, []),
-            refColorScale = Radio.request("ColorScale", "getColorScaleByValues", [0, 1], "interpolateRainbow", refValues.length),
+            refColorScale = Radio.request("ColorScale", "getColorScaleByValues", [0, 1], "interpolateRainbow", refValues.length + 1),
             refColors = _.object(refValues.map((val, i) => [val, refColorScale.legend.colors[i]])),
             yAttributeToShow,
             xAttributeToShow,
@@ -1344,6 +1396,14 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             }, tooltipDiv);
     },
 
+    /**
+     * appends the attribution text to the svg
+     * @param {*} svg the svg DOM element
+     * @param {object} attribution the attribution object
+     * @param {number} height the svg-height
+     * @param {number} margin the svg-object margin
+     * @returns {void}
+     */
     appendAttribution (svg, attribution, height, margin) {
         const attrToAppend = {
             x: attribution.x ? attribution.x : 0,
