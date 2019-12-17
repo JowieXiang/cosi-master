@@ -826,6 +826,9 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             hasLineLabel = graphConfig.hasLineLabel,
             attribution = graphConfig.attribution || {};
 
+        console.log(refColorScale);
+            
+
         if (_.has(graphConfig, "legendData")) {
             this.appendLegend(svg, graphConfig.legendData);
         }

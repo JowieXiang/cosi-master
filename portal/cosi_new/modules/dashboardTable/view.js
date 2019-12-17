@@ -146,6 +146,7 @@ const DashboardTableView = Backbone.View.extend({
 
     /**
      * toggles a table column open/closed
+     * adds the column index to the inactiveColumns Array on model to exclude it from calculations
      * @param {*} event the click event
      * @returns {void}
      */
@@ -153,6 +154,13 @@ const DashboardTableView = Backbone.View.extend({
         event.stopPropagation();
 
         const cellIndex = event.target.parentNode.cellIndex;
+
+        if (this.model.get("inactiveColumns").includes(cellIndex - 2)) {
+            this.model.set("inactiveColumns", this.model.get("inactiveColumns").filter(i => i !== cellIndex - 2));
+        }
+        else {
+            this.model.get("inactiveColumns").push(cellIndex - 2);
+        }
 
         this.el.querySelectorAll("tr").forEach((row) => {
             $(row.children[cellIndex]).toggleClass("minimized");
