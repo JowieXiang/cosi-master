@@ -267,6 +267,7 @@ const SourceModel = QueryModel.extend({
         this.updateSnippets(features, selectedAttributes);
         this.setFeatureIds(featureIds);
         this.trigger("featureIdsChanged", featureIds, this.get("layerId"));
+        this.trigger("renderResultView", featureIds, this.get("layerId"));
     },
 
     sendFeaturesToRemote: function () {

@@ -9,7 +9,12 @@
                                 <th></th>
                         <% } %>
                         <% for (var dist in _.values(group.values)[0]) { %>
-                                <th scope="col" style="text-align:right;" class="district"><span><%= dist %></span><span class="toggle-col glyphicon glyphicon-triangle-right"></span></th>
+                                <th scope="col" 
+                                        style="text-align:right;" 
+                                        class="district <%= filteredTableView[0].values.Anmerkungen[dist] === 'Referenzgebiet' ? 'reference' : '' %>">
+                                        <span class="col-title"><%= dist %></span>
+                                        <span class="toggle-col glyphicon glyphicon-triangle-right"></span>
+                                </th>
                         <% } %>
                         <% if (group.group === "Gebietsinformation") { %>
                                 <th></th>
@@ -46,7 +51,7 @@
                                 <td></td>
                                 <% for (var dist in group.values[val]) { %>
                                         <td>
-                                                <%= group.values[val][dist] %>  
+                                                <span><%= group.values[val][dist] %></span>
                                         </td>
                                 <% } %>
                                 <td></td>

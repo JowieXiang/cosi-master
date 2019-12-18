@@ -378,7 +378,7 @@ const ReachabilityFromPointView = Backbone.View.extend({
         Radio.request("ModelList", "getModelByAttributes", { name: "Erreichbarkeitsanalyse" }).set("isActive", true);
     },
     requestInhabitants: function () {
-        Radio.trigger("GraphicalSelect", "onDrawEnd", "einwohnerabfrage", this.model.get("rawGeoJson"), true);
+        Radio.trigger("GraphicalSelect", "onDrawEnd", this.model.get("rawGeoJson"), "einwohnerabfrage", true);
     },
     /**
      * set search result from the searchbar to origin coordinates

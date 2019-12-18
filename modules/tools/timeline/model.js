@@ -1,6 +1,4 @@
 import Tool from "../../core/modelList/tool/model";
-import {TileLayer, VectorLayer} from "ol/layer";
-import VectorSource from "ol/source/Vector";
 
 const Timeline = Tool.extend({
     defaults: {

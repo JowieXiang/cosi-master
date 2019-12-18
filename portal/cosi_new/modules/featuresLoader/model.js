@@ -81,13 +81,6 @@ const featuresLoader = Backbone.Model.extend(/** @lends featuresLoader.prototype
      */
     checkDistrictScope: function (bbox, scope, districtNameList) {
         // to do - nur einmal laden und dann speichern
-        // if (scope === "Stadtteile") {
-        //     this.loadDistricts(bbox, this.get("stadtteileUrl"), "stadtteile", districtNameList);
-        // }
-        // else if (scope === "Statistische Gebiete") {
-        //     this.loadDistricts(bbox, this.get("statistischeGebieteUrl"), "statistischeGebiete", districtNameList);
-        // }
-
         if (scope) {
             const attrMap = this.getDistrictAttrMapping(scope);
 
@@ -163,8 +156,6 @@ const featuresLoader = Backbone.Model.extend(/** @lends featuresLoader.prototype
                         referenceDistricts = featureList[0].reduce((refDistricts, feature) => {
                             return refDistricts.includes(feature.get(selector)) ? refDistricts : [...refDistricts, feature.get(selector)];
                         }, []);
-
-                    // this.set("featureList", [...this.get("featureList"), ...featureList]);
 
                     return this.loadDistricts(bbox, url, referenceAttributes[0], referenceDistricts, referenceAttributes.splice(1));
                 }
@@ -243,14 +234,16 @@ const featuresLoader = Backbone.Model.extend(/** @lends featuresLoader.prototype
 
     /**
      * returns the district features
-     * @param {string} scope - scope of districts, Stadtteile | Statistische Gebiete
+     * @param {string} scope - scope of districts, Stadtteile | Statistische Gebiete or attribute (e.g.: "Statistische Gebiete" or "statistischeGebiete")
      * @returns {ol.Feature[]} the district features
      */
     getDistrictsByScope: function (scope) {
-        if (scope === "Stadtteile") {
-            return this.get("stadtteile");
-        }
-        return this.get("statistischeGebiete");
+        const scopes = Array.isArray(scope) ? scope : [scope],
+            districts = scopes.reduce((res, attr) => {
+                return [...res, ...this.get(this.unifyString(attr))];
+            }, []);
+
+        return districts;
     },
 
     /**
@@ -334,11 +327,20 @@ const featuresLoader = Backbone.Model.extend(/** @lends featuresLoader.prototype
      */
     getDistrictAttrMapping: function (attr) {
         if (attr) {
-            const attribute = attr.replace(/\s/g, "").replace(/^\w/, c => c.toLowerCase());
+            const attribute = this.unifyString(attr);
 
             return this.get("districtAttrMapping")[attribute];
         }
         return this.get("districtAttrMapping");
+    },
+
+    /**
+     * Compensates for inconstistencies in naming by removing spaces and first capitals
+     * @param {*} str the string / tag to convert
+     * @returns {string} the converted string
+     */
+    unifyString: function (str) {
+        return str.replace(/\s/g, "").replace(/^\w/, c => c.toLowerCase());
     }
 
 });
