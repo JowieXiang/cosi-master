@@ -229,13 +229,14 @@ const featuresLoader = Backbone.Model.extend(/** @lends featuresLoader.prototype
             "service=WFS&" +
             "request=Getfeature&" +
             `version=${layer.version}&` +
-            `typename=${layer.featureType}&`;
+            `typename=de.hh.up:${layer.featureType}&` +
+            "namespace=xmlns(de.hh.up=https://registry.gdi-de.org/id/de.hh.up)";
 
-        // if (propertyNameList) {
-        //     url += `propertyName=${propertyNameList}&`;
-        // }
+        if (propertyNameList) {
+            url += `&propertyName=${propertyNameList}`;
+        }
         if (bbox) {
-            url += `BBOX=${bbox}`;
+            url += `&BBOX=${bbox}`;
         }
         return url;
     },
