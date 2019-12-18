@@ -154,7 +154,7 @@ const DashboardTableView = Backbone.View.extend({
 
         const cellIndex = event.target.parentNode.cellIndex;
 
-        this.el.querySelectorAll("tr").forEach((row) => {
+        this.$el.find("tr").each(function (index, row) {
             $(row.children[cellIndex]).toggleClass("minimized");
         });
     },
