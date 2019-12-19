@@ -139,26 +139,28 @@ const LayerModel = Backbone.Model.extend(/** @lends LayerModel.prototype */{
 
             foundFeature.setStyle(new Style({
                 fill: new Fill({
-                    color: colorScale.scale(feature.getProperties()[attribute]).replace("rgb", "rgba").replace(")", ", 0.8)")
+                    color: this.getRgbArray(colorScale.scale(feature.getProperties()[attribute]), 0.8)
                 }),
                 stroke: new Stroke({
-                    color: colorScale.scale(feature.getProperties()[attribute]),
+                    color: this.getRgbArray(colorScale.scale(feature.getProperties()[attribute])),
                     width: 3
                 }),
                 text: new Text({
                     font: "16px Calibri,sans-serif",
                     fill: new Fill({
-                        color: "#000"
+                        color: [0, 0, 0]
                     }),
                     stroke: new Stroke({
-                        color: "#FFF",
+                        color: [255, 255, 255],
                         width: 3
                     }),
                     text: feature.getProperties()[attribute] ? parseFloat(feature.getProperties()[attribute]).toLocaleString("de-DE") : "Keine Daten"
                 })
             }));
+            foundFeature.set("styleId", feature.getProperties()[attribute] ? parseInt(feature.getProperties()[attribute], 10) : "Keine Daten");
             foundDistrictFeatures.push(foundFeature);
-        });
+        }, this);
+
         this.trigger("setLegend", colorScale.legend);
         this.set("districtFeatures", foundDistrictFeatures);
     },
@@ -170,6 +172,7 @@ const LayerModel = Backbone.Model.extend(/** @lends LayerModel.prototype */{
      */
     unStyleDistrictFeatures: function (features) {
         features.forEach((feature) => {
+            feature.unset("styleId");
             feature.setStyle(new Style({
                 fill: new Fill({
                     color: "rgba(255, 255, 255, 0)"
@@ -194,6 +197,29 @@ const LayerModel = Backbone.Model.extend(/** @lends LayerModel.prototype */{
      */
     setStatisticsFeatures: function (value) {
         this.set("statisticsFeatures", value);
+    },
+
+    /**
+     * gets a color represented as a short array [red, green, blue, alpha]
+     * @param {string} color - rgb string
+     * @param {number} alpha - alpha value
+     * @returns {array} an array of rgb(a) values
+     */
+    getRgbArray: function (color, alpha) {
+        let rgb = [];
+
+        rgb = color.match(/([0-9]+\.?[0-9]*)/g);
+
+        // Ensure all values in rgb are decimal numbers, not strings.
+        for (let i = 0; i < rgb.length; i++) {
+            rgb[i] = parseInt(rgb[i], 10);
+        }
+
+        if (alpha) {
+            rgb.push(alpha);
+        }
+
+        return rgb;
     }
 
 });
