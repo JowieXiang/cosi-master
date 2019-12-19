@@ -3,6 +3,7 @@ import QuerySimpleView from "./query/simpleView";
 import Template from "text-loader!./template.html";
 import ResultView from "./query/resultView";
 import ResultModel from "./query/resultModel";
+import * as Extent from "ol/extent";
 import "./style.less";
 
 const FilterView = Backbone.View.extend({
@@ -109,6 +110,15 @@ const FilterView = Backbone.View.extend({
             selector1 = "anlagenname";
             selector2 = "identnummer";
         }
+
+        // inscribe the coordinate to the feature for rendering to the resultView DOM Element
+        // for zooming to feature by click
+        features.forEach(feature => {
+            const geometry = feature.getGeometry(),
+                coord = geometry.getType() === "Point" ? geometry.getCoordinates().splice(0, 2) : Extent.getCenter(geometry.getExtent());
+
+            feature.set("coord", coord);
+        });
 
         resultModel.set("featureIds", featureIds);
         resultModel.set("features", features);

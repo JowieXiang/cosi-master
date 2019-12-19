@@ -48,6 +48,7 @@ const general = {
             isInitOpen: false,
             allowMultipleQueriesPerLayer: false,
             saveToUrl: false,
+            keepOtherToolsOpened: true,
             predefinedQueries: [
                 {
                     "layerId": "8712",

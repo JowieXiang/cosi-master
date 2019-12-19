@@ -1,6 +1,7 @@
 import Template from "text-loader!./template.html";
 import SnippetDropdownView from "../../../../modules/snippets/dropdown/view";
 import * as Proj from "ol/proj.js";
+import * as Extent from "ol/extent";
 import "./style.less";
 import { Fill, Stroke, Style } from "ol/style.js";
 import GeoJSON from "ol/format/GeoJSON";
@@ -326,6 +327,15 @@ const ReachabilityFromPointView = Backbone.View.extend({
                 else if (features[0].getProperties().identnummer) {
                     idSelector = features[0].getProperties().anlagenname ? "anlagenname" : "identnummer";
                 }
+
+                // inscribe the coordinate to the feature for rendering to the resultView DOM Element
+                // for zooming to feature by click
+                features.forEach(feature => {
+                    const geometry = feature.getGeometry(),
+                        coord = geometry.getType() === "Point" ? geometry.getCoordinates().splice(0, 2) : Extent.getCenter(geometry.getExtent());
+
+                    feature.set("coord", coord);
+                });
 
                 dataObj.layers.push({
                     layerName: layerModel.get("name"),

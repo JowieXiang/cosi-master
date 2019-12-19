@@ -23,11 +23,11 @@ import FilterView from "./filter/view";
 import "../cosi.style.less";
 
 /**
+ * Handles the loading of CoSI custom modules and methodes, incl. some global functions and polyfills
  * @returns {void}
- * @summary that is incredibly unelegant!
+ * @todo refine / refactor CoSI custom structure -> possibly migrate away from Backbone.js, integrate CoSI through and more adaptable frontend within the Masterportal
  */
 function initializeCosi () {
-    // Define CoSI Namespace on window object
     var infoScreenOpen = JSON.parse(window.localStorage.getItem("infoScreenOpen"));
 
     window.CosiStorage = window.localStorage;
@@ -44,6 +44,7 @@ function initializeCosi () {
     // Handle TouchScreen / InfoScreen Loading
     if (!window.location.pathname.includes("infoscreen.html")) {
         CosiStorage.clear();
+        window.name = "TouchScreen";
 
         Radio.trigger("ModelList", "addModelsAndUpdate", Object.values(tools));
         new FilterView({model: tools.filter});
@@ -65,13 +66,7 @@ function initializeCosi () {
         // load dashboard content into infoscreen window
         new InfoScreenView({
             title: "CoSI InfoScreen",
-            children: [dashboard],
-            broadcasts: {
-                SelectDistrict: [
-                    "getScope",
-                    "getSelector"
-                ]
-            }
+            children: [dashboard]
         });
     }
 
@@ -96,6 +91,7 @@ function initializeCosi () {
     Radio.trigger("General", "loaded");
     addInfoButtons();
     addPolyfills();
+    addZoomToCoordListener(".zoom-to-coord");
 }
 
 
@@ -126,6 +122,7 @@ function addInfoButtons () {
         }
     });
 }
+
 /**
  * Adds an div-container to the top-right container and places the id of the control to be rendered.
  * @param {String} id Id of control
@@ -135,6 +132,28 @@ function addInfoButtons () {
 function addRowTR (id) {
     $(".controls-view").find(".control-view-top-right").append("<div class='row controls-row-right hidden-xs' id='" + id + "'></div>");
     return $(".controls-view").find(".control-view-top-right").children().last();
+}
+
+/**
+ * adds an event listener to a class to trigger zoomToCoord ignorant to the view or model
+ * triggers zoom to coord on the remote screen, when a certain class with attribute "coord" is clicked
+ * @param {string} querySelector the querySelector to add the listener to
+ * @returns {void}
+ */
+function addZoomToCoordListener (querySelector) {
+
+    $(document).on("click", querySelector, (evt) => {
+        const coord = evt.target.getAttribute("coord").split(",").map(val => parseFloat(val));
+
+        if (Radio.request("InfoScreen", "getIsInfoScreen")) {
+            Radio.trigger("InfoScreen", "triggerRemote", "MapMarker", "showMarker", [coord]);
+            Radio.trigger("InfoScreen", "triggerRemote", "MapMarker", "setCenter", [coord]);
+        }
+        else {
+            Radio.trigger("MapMarker", "showMarker", coord);
+            Radio.trigger("MapView", "setCenter", coord);
+        }
+    });
 }
 
 export default initializeCosi;

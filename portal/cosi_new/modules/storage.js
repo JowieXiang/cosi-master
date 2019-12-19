@@ -5,7 +5,6 @@
 export function setupStorage () {
     window.addEventListener("storage", function (evt) {
         Radio.trigger("Storage", "updated", evt.key);
-        console.log(evt.key);
     }, false);
 }
 
@@ -24,7 +23,6 @@ export function storageListener (models) {
 
                     if (model.defaults.hasOwnProperty(key)) {
                         model.set(key, parseItem(key));
-                        console.log(model, key, parseItem(key));
                     }
                 }
             }, model);

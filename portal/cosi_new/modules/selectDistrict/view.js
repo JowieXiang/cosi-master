@@ -22,8 +22,6 @@ const SelectDistrictView = Backbone.View.extend({
 
         if (this.model.get("isActive") === true) {
             this.render(this.model, true);
-            Radio.trigger("InfoScreen", "sendData", "The user is 'bob' and the password is 'secret'",
-                "https://localhost:9001/portal/cosi_new/infoscreen.html");
 
         }
     },

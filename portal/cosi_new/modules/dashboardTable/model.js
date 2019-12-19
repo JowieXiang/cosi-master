@@ -451,7 +451,7 @@ const DashboardTableModel = Tool.extend(/** @lends DasboardTableModel.prototype 
     },
 
     /**
-     * @description appends a bar chart to the dashboard widgets
+     * @description appends a bar chart to the dashboard widgets, the data is taken from the selectedAttrs property, NOT from the currently clicked row
      * @param {number} year the year to create the bar graph from
      * @fires Dashboard#RadioTriggerAppend
      * @fires Alert#RadioTriggerAlert
@@ -524,7 +524,7 @@ const DashboardTableModel = Tool.extend(/** @lends DasboardTableModel.prototype 
     },
 
     /**
-     * @description appends a chart to the dashboard widgets
+     * @description appends a line chart to the dashboard widgets
      * @param {string[]} props the array of attributes to visualize
      * @param {string} title the label for the diagram, generated from the clicked row
      * @param {boolean} dynamicAxisStart is the y-Axis scaled?

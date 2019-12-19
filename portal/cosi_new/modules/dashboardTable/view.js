@@ -9,7 +9,6 @@ const DashboardTableView = Backbone.View.extend({
     events: {
         "click .district": "zoomToFeature",
         "pointerup .row": "contextMenuTable",
-        // "click .row": "selectRow",
         "click .select-row": "checkboxSelectRow",
         "click .prop button.open": "toggleTimelineTable",
         "click thead button.open": "toggleGroup",
@@ -121,7 +120,12 @@ const DashboardTableView = Backbone.View.extend({
     zoomToFeature (event) {
         const districtName = event.target.innerHTML;
 
-        Radio.trigger("SelectDistrict", "zoomToDistrict", districtName);
+        if (Radio.request("InfoScreen", "getIsInfoScreen")) {
+            Radio.trigger("InfoScreen", "triggerRemote", "SelectDistrict", "zoomToDistrict", districtName);
+        }
+        else {
+            Radio.trigger("SelectDistrict", "zoomToDistrict", districtName);
+        }
     },
 
     /**
@@ -259,6 +263,12 @@ const DashboardTableView = Backbone.View.extend({
         $(contextActions).find("li#barChart #input-year input").val(new Date().getFullYear() - 1);
     },
 
+    /**
+     * sets the row selection, or adds a row to existing selection, depending on the event
+     * @param {*} event the DOM event
+     * @param {string} _row (optional) the already parsed row name
+     * @returns {void}
+     */
     selectRow (event, _row) {
         const row = _row || this.$(event.target).closest("tr"),
             value = row.find("th.prop").attr("id");
@@ -285,6 +295,11 @@ const DashboardTableView = Backbone.View.extend({
         }
     },
 
+    /**
+     * handles the selection of rows through the checkbox, triggers selectRow
+     * @param {*} event the click event
+     * @returns {void}
+     */
     checkboxSelectRow (event) {
         event.stopPropagation();
         event.preventDefault();

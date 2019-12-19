@@ -16,7 +16,7 @@
         <td colspan="3">
             <p>
                 <% _.each(layer.features, function(feature){ %>
-                <span class="name-tag district-name" layerId="<%= layer.layerId %>" idSelector="<%= layer.idSelector %>">
+                <span class="name-tag district-name zoom-to-coord" coord="<%= feature.get('coord').join(',') %>">
                     <%= feature.getProperties()[layer.idSelector] %>
                 </span>
                 <% }) %>

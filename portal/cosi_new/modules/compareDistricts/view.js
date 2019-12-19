@@ -326,7 +326,12 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
     },
 
     zoomToDistrict: function (evt) {
-        Radio.trigger("SelectDistrict", "zoomToDistrict", evt.target.innerHTML.trim(), false);
+        if (Radio.request("InfoScreen", "getIsInfoScreen")) {
+            Radio.trigger("InfoScreen", "triggerRemote", "SelectDistrict", "zoomToDistrict", [evt.target.innerHTML.trim(), false]);
+        }
+        else {
+            Radio.trigger("SelectDistrict", "zoomToDistrict", evt.target.innerHTML.trim(), false);
+        }
     },
 
     showHelp: function () {
