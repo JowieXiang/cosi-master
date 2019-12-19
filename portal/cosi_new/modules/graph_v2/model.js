@@ -446,7 +446,7 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             textAnchor = _.isUndefined(yAxisLabel.textAnchor) ? "middle" : yAxisLabel.textAnchor,
             fill = _.isUndefined(yAxisLabel.fill) ? "#000" : yAxisLabel.fill,
             fontSize = _.isUndefined(yAxisLabel.fontSize) ? 10 : yAxisLabel.fontSize,
-            label = _.isUndefined(yAxisLabel.label) ? null : [yAxisLabel.label],
+            label = _.isUndefined(yAxisLabel.label) ? null : [yAxisLabel.label].flat(),
             yAxisDraw = yAxis;
 
         yAxisDraw = svg.select(".graph-data").selectAll("yAxisDraw")
@@ -457,15 +457,18 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             .call(yAxisDraw);
 
         if (label) {
-            yAxisDraw.append("text")
+            yAxisDraw.selectAll("yAxisLabel")
+                .data(label)
+                .enter()
+                .append("text")
                 .attr("transform", "rotate(-90)")
                 .attr("x", 0 - (height / 2))
                 .attr("y", 0 - textOffset)
-                .attr("dy", "1em")
+                .attr("dy", (d, i) => (i + 1) * (fontSize * 1.1))
                 .style("text-anchor", textAnchor)
                 .style("fill", fill)
                 .style("font-size", fontSize)
-                .text(label);
+                .text(d => d);
         }
     },
 
@@ -989,38 +992,46 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             .append("g")
             .attr("class", "graph-diagram");
 
-        svg.select(".graph-diagram").selectAll("bars")
+        svg.select(".graph-diagram").selectAll("g")
             .data(dataToAdd)
+            .enter()
+            .append("g")
+            .classed("bar-group", true)
+            .selectAll("bars")
+            .data(d => attrToShowArray.map(attr => ({
+                [xAttr]: d[xAttr],
+                val: d[attr]
+            })))
             .enter()
             .append("rect")
             .attr("class", typeof selector === "string" ? "bar" + selector.split(".")[1] : "bar")
             .attr("fill", function (d) {
-                return Radio.request("ColorScale", "getColorScaleByValues", y.domain(), "interpolateBlues").scale(d[attrToShowArray[0]]); // change to argument based
+                return Radio.request("ColorScale", "getColorScaleByValues", y.domain(), "interpolateBlues").scale(d.val); // change to argument based
             })
-            .attr("x", function (d) {
-                return x(d[xAttr]);
+            .attr("x", function (d, i) {
+                return x(d[xAttr]) + (barWidth / attrToShowArray.length) * i;
             })
             .attr("y", function (d) {
-                return !isNaN(d[attrToShowArray[0]]) ? y(d[attrToShowArray[0]]) : 0;
+                return !isNaN(d.val) ? y(d.val) : 0;
             })
-            .attr("width", barWidth - 1)
+            .attr("width", (barWidth - 1) / attrToShowArray.length)
             .attr("height", function (d) {
-                return !isNaN(d[attrToShowArray[0]]) ? height - y(d[attrToShowArray[0]]) : 0;
+                return !isNaN(d.val) ? height - y(d.val) : 0;
             });
 
         if (tooltipDiv) {
-            svg.selectAll("rect")
+            svg.selectAll(".bar-group").selectAll("rect")
                 .on("mouseover", function () {
                     tooltipDiv.transition()
                         .duration(200)
                         .style("opacity", 0.9);
                 }, tooltipDiv)
-                .on("mousemove", function (d) {
-                    const yAttributeToShow = Number.isInteger(d[attrToShowArray[0]]) ?
-                        parseInt(d[attrToShowArray[0]], 10).toLocaleString("de-DE") :
-                        parseFloat(d[attrToShowArray[0]]).toFixed(2).toLocaleString("de-DE");
+                .on("mousemove", function (d, i) {
+                    const yAttributeToShow = Number.isInteger(parseFloat(d.val)) ?
+                        parseInt(d.val, 10).toLocaleString("de-DE") :
+                        parseFloat(d.val).toFixed(2).toLocaleString("de-DE");
 
-                    tooltipDiv.html(`<strong>${d[xAttr]}:</strong> ${yAttributeToShow}`)
+                    tooltipDiv.html(`<strong>${d[xAttr]} (${attrToShowArray[i]}):</strong> ${yAttributeToShow}`)
                         .attr("style", "background-color: buttonface; border-radius: 4px; text-align: center;")
                         .style("left", (event.clientX - 25) + "px")
                         .style("top", (event.clientY - 35) + "px");

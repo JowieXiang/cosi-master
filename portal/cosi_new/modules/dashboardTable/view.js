@@ -9,6 +9,8 @@ const DashboardTableView = Backbone.View.extend({
     events: {
         "click .district": "zoomToFeature",
         "pointerup .row": "contextMenuTable",
+        // "click .row": "selectRow",
+        "click .select-row": "checkboxSelectRow",
         "click .prop button.open": "toggleTimelineTable",
         "click thead button.open": "toggleGroup",
         "click .btn-reset": "resetDropDown",
@@ -184,27 +186,31 @@ const DashboardTableView = Backbone.View.extend({
      * @returns {void}
      */
     contextMenuTable: function (event) {
+        // return if the checkbox is clicked
+        if (event.target.className === "select-row") {
+            return;
+        }
         const row = this.$(event.target).closest("tr"),
             contextActions = this.contextActionsEl;
 
+        // only change selection on right click, if not more than one item is selected
+        if (!(event.button === 2 && this.model.get("selectedAttrsForCharts").length > 1)) {
+            this.selectRow(event, row);
+        }
+
         // Create Bar Chart
         $(contextActions).find("li#barChart #input-year button").on("click", function () {
-            this.model.createChart([row.find("th.prop").attr("id")],
-                "BarGraph",
-                row.find("th.prop").text(),
-                false,
-                $(contextActions).find("li#barChart #input-year input").val()
-            );
+            this.model.createBarChart($(contextActions).find("li#barChart #input-year input").val());
         }.bind(this));
 
         // Create unscaled Line Chart
         $(contextActions).find("li#lineChart #unscaled").on("click", function () {
-            this.model.createChart([row.find("th.prop").attr("id")], "Linegraph", row.find("th.prop").text());
+            this.model.createLineChart([row.find("th.prop").attr("id")], row.find("th.prop").text());
         }.bind(this));
 
         // Create scaled Line Chart
         $(contextActions).find("li#lineChart #scaled").on("click", function () {
-            this.model.createChart([row.find("th.prop").attr("id")], "Linegraph", row.find("th.prop").text(), true);
+            this.model.createLineChart([row.find("th.prop").attr("id")], row.find("th.prop").text(), true);
         }.bind(this));
 
         // Create Timeline
@@ -251,10 +257,41 @@ const DashboardTableView = Backbone.View.extend({
 
         // Set the current year for all inputs
         $(contextActions).find("li#barChart #input-year input").val(new Date().getFullYear() - 1);
+    },
 
-        // Highlight the selected row
-        row.parent("tbody").parent("table").find("tr").removeClass("selected");
-        row.addClass("selected");
+    selectRow (event, _row) {
+        const row = _row || this.$(event.target).closest("tr"),
+            value = row.find("th.prop").attr("id");
+
+        // Add row to selection if ctrl-Key is pressed, or remove it, if already selected
+        if (event.ctrlKey) {
+            if (this.model.get("selectedAttrsForCharts").includes(value)) {
+                this.model.set("selectedAttrsForCharts", this.model.get("selectedAttrsForCharts").filter(val => val !== value));
+                row.removeClass("selected");
+                row.find(".select-row input").get(0).checked = false;
+            }
+            else {
+                this.model.get("selectedAttrsForCharts").push(value);
+                row.addClass("selected");
+                row.find(".select-row input").get(0).checked = true;
+            }
+        }
+        else {
+            this.model.set("selectedAttrsForCharts", [value]);
+            row.parent("tbody").parent("table").find("tr").removeClass("selected");
+            row.parent("tbody").parent("table").find(".select-row input").prop("checked", false);
+            row.addClass("selected");
+            row.find(".select-row input").get(0).checked = true;
+        }
+    },
+
+    checkboxSelectRow (event) {
+        event.stopPropagation();
+        event.preventDefault();
+
+        event.ctrlKey = true;
+
+        this.selectRow(event);
     }
 });
 
