@@ -1,6 +1,6 @@
 import Template from "text-loader!./template.html";
 import TableTemplate from "text-loader!./tableTemplate.html";
-import ContextActions from "text-loader!./ContextActions.html";
+import ContextActions from "text-loader!./contextActions.html";
 import "./style.less";
 import DropdownView from "../../../../modules/snippets/dropdown/view";
 import ExportButtonView from "../../../../modules/snippets/exportButton/view";
