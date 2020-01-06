@@ -7,7 +7,7 @@ import GeoJSON from "ol/format/GeoJSON";
 import InfoTemplate from "text-loader!./info.html";
 import union from "turf-union";
 
-const ReachabilityInAreaView = Backbone.View.extend({
+const ReachabilityInAreaView = Backbone.View.extend(/** @lends ReachabilityInAreaView.prototype */{
     events: {
         "click #create-isochrones": "createIsochrones",
         "click button#Submit": "checkIfSelected",
@@ -20,6 +20,12 @@ const ReachabilityInAreaView = Backbone.View.extend({
         "click #backward": "toModeSelection",
         "click #clear": "clearMapLayer"
     },
+    /**
+     * @class ReachabilityInAreaView
+     * @extends Backbone.View
+     * @memberof Tools.Reachability.ReachabilityInArea
+     * @constructs
+     */
     initialize: function () {
         this.registerClickListener();
 
@@ -53,6 +59,10 @@ const ReachabilityInAreaView = Backbone.View.extend({
         this.renderLegend();
         return this;
     },
+    /**
+     * render dropdown view
+     * @returns {void}
+     */
     renderDropDownView: function () {
         this.model.setDropDownModel();
         const dropdownView = new SnippetDropdownView({model: this.model.get("dropDownModel")});
