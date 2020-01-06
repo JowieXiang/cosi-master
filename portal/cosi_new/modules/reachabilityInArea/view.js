@@ -25,6 +25,20 @@ const ReachabilityInAreaView = Backbone.View.extend(/** @lends ReachabilityInAre
      * @extends Backbone.View
      * @memberof Tools.Reachability.ReachabilityInArea
      * @constructs
+     * @listens 
+     * @listens Core.ModelList#RadioTriggerModelListUpdatedSelectedLayerList
+     * @listens ReachabilityInAreaModel#changeIsActive
+     * @fires Core#RadioRequestMapGetLayers
+     * @fires Core#RadioRequestMapGetMap
+     * @fires Core#RadioRequestMapCreateLayerIfNotExists
+     * @fires Core#RadioRequestMapGetLayerByName
+     * @fires Alerting#RadioTriggerAlertAlertRemove
+     * @fires Alerting#RadioTriggerAlertAlert
+     * @fires Core#RadioTriggerMapRegisterListener
+     * @fires Core#RadioTriggerMapUnregisterListener
+     * @fires Core.ModelList#RadioRequestModelListGetModelsByAttributes
+     * @fires Core.ModelList#RadioRequestModelListGetModelByAttributes
+     * @fires OpenRouteService#RadioRequestOpenRouteServiceRequestIsochrones
      */
     initialize: function () {
         this.registerClickListener();
@@ -69,6 +83,12 @@ const ReachabilityInAreaView = Backbone.View.extend(/** @lends ReachabilityInAre
 
         this.$el.find("#select-layer").html(dropdownView.render().el);
     },
+
+    /**
+     * set facilityNames in model, trigger renderDropDownView
+     * @param {Object} models layer models of updated selected layer 
+     * @returns {void}
+     */
     setFacilityLayers: function (models) {
         const facilityLayerModels = models.filter(model => model.get("isFacility") === true);
 
@@ -82,12 +102,22 @@ const ReachabilityInAreaView = Backbone.View.extend(/** @lends ReachabilityInAre
         }
         this.renderDropDownView();
     },
+
+    /**
+     * creates the map layer that contains the isochrones 
+     * @returns {void}
+     */
     createMapLayer: function () {
         const newLayer = Radio.request("Map", "createLayerIfNotExists", this.model.get("mapLayerName"));
 
         newLayer.setVisible(true);
         newLayer.setMap(Radio.request("Map", "getMap"));
     },
+
+    /**
+     * clears the map layer that contains the isochrones 
+     * @returns {void}
+     */
     clearMapLayer: function () {
         const mapLayer = Radio.request("Map", "getLayerByName", this.model.get("mapLayerName"));
 
@@ -95,6 +125,11 @@ const ReachabilityInAreaView = Backbone.View.extend(/** @lends ReachabilityInAre
             mapLayer.getSource().clear();
         }
     },
+
+    /**
+     * creates the isochrone features, set the styles, and add them to the map layer
+     * @returns {void}
+     */
     createIsochrones: function () {
         const pathType = this.model.get("pathType"),
             range = this.model.get("range") * 60,
@@ -157,6 +192,12 @@ const ReachabilityInAreaView = Backbone.View.extend(/** @lends ReachabilityInAre
             this.inputReminder();
         }
     },
+
+    /**
+     * style isochrone features
+     * @param {ol.Feature} features isochone features (polygons)
+     * @returns {void}
+     */
     styleFeatures: function (features) {
         for (let i = features.length - 1; i >= 0; i--) {
             features[i].setStyle(new Style({
@@ -193,7 +234,7 @@ const ReachabilityInAreaView = Backbone.View.extend(/** @lends ReachabilityInAre
     /**
      * set pathType value in model
      * @param {object} evt - select change event
-     * @returns {void}\
+     * @returns {void}
      */
     setPathType: function (evt) {
         this.model.set("pathType", evt.target.value);
@@ -242,6 +283,11 @@ const ReachabilityInAreaView = Backbone.View.extend(/** @lends ReachabilityInAre
         });
         return features;
     },
+    
+    /**
+     * shows help window 
+     * @returns {void}
+     */
     showHelp: function () {
         Radio.trigger("Alert", "alert:remove");
         Radio.trigger("Alert", "alert", {
@@ -249,18 +295,32 @@ const ReachabilityInAreaView = Backbone.View.extend(/** @lends ReachabilityInAre
             kategorie: "alert-info"
         });
     },
+
+    /**
+     * clears 'coordinates', 'pathType' and 'range' input 
+     * @returns {void}
+     */
     clearInput: function () {
         this.model.set("coordinates", []);
         this.model.set("pathType", "");
         this.model.set("range", 0);
     },
-    // reminds user to select district before using the ageGroup slider
+
+    /**
+     * reminds user to select district before using the ageGroup slider
+     * @returns {void}
+     */
     inputReminder: function () {
         Radio.trigger("Alert", "alert", {
             text: "<strong>Bitte füllen Sie alle Felder aus.</strong>",
             kategorie: "alert-warning"
         });
     },
+
+    /**
+     * renders isochrone legend
+     * @returns {void}
+     */
     renderLegend: function () {
         const steps = this.model.get("steps"),
             range = this.model.get("range");
@@ -288,22 +348,36 @@ const ReachabilityInAreaView = Backbone.View.extend(/** @lends ReachabilityInAre
             }
         }
     },
+    /**
+     * sets reachabilityInArea inactive and sets reachabilitySelect active
+     * @returns {void}
+     */
     toModeSelection: function () {
         this.model.set("isActive", false);
         Radio.request("ModelList", "getModelByAttributes", {name: "Erreichbarkeitsanalyse"}).set("isActive", true);
     },
 
-    // listen  to click event and trigger setGfiParams
+    /**
+     * listens to click event and triggers selectIsochrone
+     * @returns {void}
+     */
     registerClickListener: function () {
         this.clickListener = Radio.request("Map", "registerListener", "click", this.selectIsochrone.bind(this));
     },
-
+    /**
+     * unlistens to click event on map
+     * @returns {void}
+     */
     unregisterClickListener: function () {
         Radio.trigger("Map", "unregisterListener", this.get("clickEventKey"));
         this.stopListening(Radio.channel("Map"), this.clickEventKey);
     },
 
-    // select isochrone on click
+    /**
+     * sets reachabilityInArea active if user clicked on isochrones
+     * @param {Object} evt click event
+     * @returns {void}
+     */
     selectIsochrone: function (evt) {
         const features = [];
 

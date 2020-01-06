@@ -6,6 +6,7 @@ const SelectModel = Tool.extend(/** @lends SelectModel.prototype */{
         dropDownModel: {},
         modes: ["Erreichbarkeit ab einem Referenzpunkt", "Erreichbarket im Gebiet"]
     }),
+    
     /**
     * @class SelectModel
     * @extends Tool
@@ -13,14 +14,16 @@ const SelectModel = Tool.extend(/** @lends SelectModel.prototype */{
     * @constructs
     * @property {object} dropDownModel dropdown menu model
     * @property {Array} modes=["Erreichbarkeit ab einem Referenzpunkt", "Erreichbarket im Gebiet"] two modes of this function
+    * @fires Core.ModelList#RadioRequestModelListGetModelByAttributes
+    * @listens DropdownModel#ValuesChanged
     */
     initialize: function () {
         this.superInitialize();
     },
     /**
-     * sets the selection list for the time slider
-     * @param {object[]} valueList - available values
-     * @returns {void}
+     * sets the dropdown menu for function selection. User can select between 'reachabilityInArea' and 'reachabilityFromPoint'.
+     * @listens DropdownModel#ValuesChanged
+     * @returns {void} 
      */
     setDropDownModel: function () {
         const dropdownModel = new DropdownModel({
@@ -41,6 +44,11 @@ const SelectModel = Tool.extend(/** @lends SelectModel.prototype */{
         this.set("dropDownModel", dropdownModel);
     },
 
+    /**
+     * sets selected function active
+     * @fires Core.ModelList#RadioRequestModelListGetModelByAttributes
+     * @returns {void}
+     */
     functionSelected: function (valueModel, isSelected) {
         if (isSelected) {
             this.set("isActive", false);

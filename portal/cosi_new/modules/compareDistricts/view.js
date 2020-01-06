@@ -20,17 +20,14 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
         "click #show-in-dashboard": "showInDashboard"
     },
     /**
-     * Initialises the QuickHelp
      * @class CompareDistrictsView
      * @extends Backbone.View
      * @memberof Tools.CompareDistricts
      * @constructs
-     * @deprecated Boolean-Examines if true. Deprecated in Version 3.0 due to dedicated path pass
      * @listens Tools.CompareDistricts#RadioTriggerCompareDistrictsCloseFilter
      * @listens Tools.CompareDistricts#RadioTriggerCompareDistrictsSelectRefDistrict
      * @listens CompareDistrictsModel#changeIsActive
      * @listens CompareDistrictsModel#changeLayerFilterList
-     * @returns {void}
      */
     initialize: function () {
         const channel = Radio.channel("CompareDistricts");

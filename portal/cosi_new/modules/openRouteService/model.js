@@ -1,8 +1,18 @@
-const openRouteService = Backbone.Model.extend({
+const openRouteService = Backbone.Model.extend(/** @lends openRouteService.prototype */{
     defaults: {
         baseUrl: "https://api.openrouteservice.org/v2/isochrones/",
         accessKey: "5b3ce3597851110001cf6248043991d7b17346a38c8d50822087a2c0"
     },
+    /**
+     * @class openRouteService
+     * @extends Backbone.Model
+     * @memberof OpenRouteService
+     * @constructs
+     * @property {String} baseUrl="https://api.openrouteservice.org/v2/isochrones/" OpenRouteService isochrones service base url
+     * @property {String} accessKey="5b3ce3597851110001cf6248043991d7b17346a38c8d50822087a2c0" OpenRouteService access key (temporary)
+     * @listens OpenRouteService#RadioRequestOpenRouteServiceRequestIsochrones
+
+     */
     initialize: function () {
         this.channel = Radio.channel("OpenRoute");
         this.channel.reply({

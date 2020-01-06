@@ -1,4 +1,4 @@
-/** -------------------- FeaturesLoaders -------------------- */
+/** -------------------- FeaturesLoader -------------------- */
 
 /**
  * @event FeaturesLoader#RadioTriggerDistrictsLoaded
@@ -57,3 +57,15 @@
 * @event CompareDistrictsModel#changeLayerFilterList
 * @description trigged when layerFilterList changes
 */
+
+
+/** -------------------- Compare Districts -------------------- */
+
+/**
+ * @event OpenRouteService#RadioTriggerCompareDistrictsCloseFilter
+ * @description sends request to get Isochrone geoJSON
+ * @param {String} pathType - type of transportation
+ * @param {Array} coordinates - coordinates of origins
+ * @param {Array} rangeArray - array of time range values
+ * @example  Radio.request("OpenRoute", "requestIsochrones", pathType, coordinates, rangeArray);
+ */

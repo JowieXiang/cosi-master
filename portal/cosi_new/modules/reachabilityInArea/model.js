@@ -26,13 +26,15 @@ const ReachabilityInAreaModel = Tool.extend(/** @lends ReachabilityInAreaModel.p
     * @property {Array} isochroneFeatures calculation results as openlayer features
     * @property {object} dropDownModel dropdown menu model
     * @property {Array} mapLayerName="reachability-in-area" name of the openlayers layer that contains the result features
+    * @fires Core.ModelList#RadioRequestModelListGetModelByAttributes
+    * @listens DropdownModel#ValuesChanged
     */
     initialize: function () {
         this.superInitialize();
     },
     /**
-     * sets the selection list for the time slider
-     * @param {object[]} valueList - available values
+     * sets selected facility layer
+     * @listens DropdownModel#ValuesChanged  
      * @returns {void}
      */
     setDropDownModel: function () {
@@ -54,7 +56,7 @@ const ReachabilityInAreaModel = Tool.extend(/** @lends ReachabilityInAreaModel.p
         this.set("dropDownModel", dropdownModel);
     },
     /**
-     * display corresponding facility layer
+     * update selected facility coordinates values
      * @param {Backbone.Model} valueModel - the value model which was selected or deselected
      * @param {boolean} isSelected - flag if value model is selected or not
      * @returns {void}

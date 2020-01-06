@@ -66,3 +66,9 @@
  * @namespace FeaturesLoader
  * @description load features of different layers and store them as a central bank
  */
+
+
+ /**
+ * @namespace OpenRouteService
+ * @description OpenRouteService functions. (https://openrouteservice.org/)
+ */

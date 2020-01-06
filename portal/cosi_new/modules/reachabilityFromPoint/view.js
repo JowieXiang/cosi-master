@@ -414,7 +414,11 @@ const ReachabilityFromPointView = Backbone.View.extend({
         this.stopListening(Radio.channel("Map"), this.clickEventKey);
     },
 
-    // select isochrone on click
+    /**
+     * sets reachabilityFromPoint active if user clicked on isochrones
+     * @param {Object} evt click event
+     * @returns {void}
+     */
     selectIsochrone: function (evt) {
         const features = [];
 
