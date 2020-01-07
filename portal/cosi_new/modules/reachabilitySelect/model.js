@@ -6,7 +6,7 @@ const SelectModel = Tool.extend(/** @lends SelectModel.prototype */{
         dropDownModel: {},
         modes: ["Erreichbarkeit ab einem Referenzpunkt", "Erreichbarket im Gebiet"]
     }),
-    
+
     /**
     * @class SelectModel
     * @extends Tool
@@ -23,7 +23,7 @@ const SelectModel = Tool.extend(/** @lends SelectModel.prototype */{
     /**
      * sets the dropdown menu for function selection. User can select between 'reachabilityInArea' and 'reachabilityFromPoint'.
      * @listens DropdownModel#ValuesChanged
-     * @returns {void} 
+     * @returns {void}
      */
     setDropDownModel: function () {
         const dropdownModel = new DropdownModel({
@@ -46,6 +46,8 @@ const SelectModel = Tool.extend(/** @lends SelectModel.prototype */{
 
     /**
      * sets selected function active
+     * @param {Object} valueModel dropdown menu valueModel
+     * @param {boolean} isSelected if dropdown menu has selection
      * @fires Core.ModelList#RadioRequestModelListGetModelByAttributes
      * @returns {void}
      */
