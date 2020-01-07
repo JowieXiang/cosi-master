@@ -289,9 +289,9 @@ const ReachabilityInAreaView = Backbone.View.extend(/** @lends ReachabilityInAre
         });
         return features;
     },
-    
+
     /**
-     * shows help window 
+     * shows help window
      * @returns {void}
      */
     showHelp: function () {
@@ -313,7 +313,7 @@ const ReachabilityInAreaView = Backbone.View.extend(/** @lends ReachabilityInAre
     },
 
     /**
-     * reminds user to select district before using the ageGroup slider
+     * reminds user to set inputs
      * @returns {void}
      */
     inputReminder: function () {
@@ -370,8 +370,9 @@ const ReachabilityInAreaView = Backbone.View.extend(/** @lends ReachabilityInAre
     registerClickListener: function () {
         this.clickListener = Radio.request("Map", "registerListener", "click", this.selectIsochrone.bind(this));
     },
+
     /**
-     * unlistens to click event on map
+     * unlistens to click event on isochrones
      * @returns {void}
      */
     unregisterClickListener: function () {

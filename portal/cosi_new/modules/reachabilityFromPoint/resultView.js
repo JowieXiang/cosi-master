@@ -1,6 +1,16 @@
 import resultTemplate from "text-loader!./resultTemplate.html";
 
-const ReachabilityResultView = Backbone.View.extend({
+const ReachabilityResultView = Backbone.View.extend(/** @lends ReachabilityResultView.prototype */{
+    /**
+     * @class ReachabilityResultView
+     * @extends Backbone.View
+     * @memberof Tools.Reachability.ReachabilityFromPoint
+     * @constructs
+     * @fires MapMarker#RadioTriggerMapMarkerHideMarker
+     * @fires MapMarker#RadioTriggerMapMarkerShowMarker
+     * @fires Core#RadioTriggerMapViewSetCenter
+     * @fires Dashboard#RadioTriggerDashboardAppend
+     */
     events: {
         "click .isochrone-origin": "zoomToOrigin",
         "click #show-in-dashboard": "showInDashboard",
@@ -9,6 +19,11 @@ const ReachabilityResultView = Backbone.View.extend({
     },
     model: {},
     template: _.template(resultTemplate),
+
+    /**
+     * Render to DOM
+     * @return {ReachabilityFromPointView} returns this
+     */
     render: function () {
         const attr = this.model.toJSON();
 
@@ -16,13 +31,26 @@ const ReachabilityResultView = Backbone.View.extend({
         this.delegateEvents();
         return this;
     },
+
+    /**
+     * sets viewport center to the isochrone
+     * @param {object} evt - click event
+     * @fires MapMarker#RadioTriggerMapMarkerShowMarker
+     * @fires Core#RadioTriggerMapViewSetCenter
+     * @return {void}
+     */
     zoomToOrigin: function (evt) {
         const coord = [parseFloat(evt.target.value.split(",")[0].trim()), parseFloat(evt.target.value.split(",")[1].trim())];
 
         Radio.trigger("MapMarker", "showMarker", coord);
         Radio.trigger("MapView", "setCenter", coord);
     },
-    // show results in dashboard
+
+    /**
+     * sends result to dashboard
+     * @fires Dashboard#RadioTriggerDashboardAppend
+     * @return {void}
+     */
     showInDashboard: function () {
         Radio.trigger("Dashboard", "append", this.$el, "#dashboard-containers", {
             id: "reachability",
@@ -30,8 +58,13 @@ const ReachabilityResultView = Backbone.View.extend({
             glyphicon: "glyphicon-road"
         });
     },
+
+    /**
+     * shows facility group table rows
+     * @param {object} evt click event
+     * @return {void}
+     */
     toggleGroup: function (evt) {
-        // evt.stopPropagation();
         const layerName = this.$(evt.target).attr("id"),
             tr = this.$el.find(`#${layerName}_tr`);
 
@@ -41,7 +74,6 @@ const ReachabilityResultView = Backbone.View.extend({
         else {
             tr.hide();
         }
-
     }
 });
 
