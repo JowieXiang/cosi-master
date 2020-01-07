@@ -60,7 +60,7 @@ const ReachabilityFromPointView = Backbone.View.extend(/** @lends ReachabilityFr
     initialize: function () {
 
         this.registerClickListener();
-        this.d (this.model, {
+        this.listenTo(this.model, {
             "change:isActive": function (model, value) {
                 const mapLayer = Radio.request("Map", "getLayerByName", this.model.get("mapLayerName"));
 
