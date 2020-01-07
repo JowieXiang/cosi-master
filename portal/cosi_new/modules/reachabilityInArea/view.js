@@ -25,7 +25,6 @@ const ReachabilityInAreaView = Backbone.View.extend(/** @lends ReachabilityInAre
      * @extends Backbone.View
      * @memberof Tools.Reachability.ReachabilityInArea
      * @constructs
-     * @listens 
      * @listens Core.ModelList#RadioTriggerModelListUpdatedSelectedLayerList
      * @listens ReachabilityInAreaModel#changeIsActive
      * @fires Core#RadioRequestMapGetLayers
@@ -64,6 +63,10 @@ const ReachabilityInAreaView = Backbone.View.extend(/** @lends ReachabilityInAre
     },
     model: {},
     template: _.template(Template),
+    /**
+     * Render to DOM
+     * @return {ReachabilityInAreaView} returns this
+     */
     render: function () {
         var attr = this.model.toJSON();
 
@@ -104,7 +107,7 @@ const ReachabilityInAreaView = Backbone.View.extend(/** @lends ReachabilityInAre
     },
 
     /**
-     * creates the map layer that contains the isochrones 
+     * creates the map layer that contains the isochrones
      * @returns {void}
      */
     createMapLayer: function () {
@@ -128,6 +131,9 @@ const ReachabilityInAreaView = Backbone.View.extend(/** @lends ReachabilityInAre
 
     /**
      * creates the isochrone features, set the styles, and add them to the map layer
+     * @fires Alerting#RadioTriggerAlertAlertRemove
+     * @fires Core#RadioRequestMapGetLayerByName
+     * @fires OpenRouteService#RadioRequestOpenRouteServiceRequestIsochrones
      * @returns {void}
      */
     createIsochrones: function () {
