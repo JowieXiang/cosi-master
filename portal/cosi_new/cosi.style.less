@@ -20,6 +20,18 @@ body {
     min-width       : 30px;
     
     &:hover {
-        background-color: #d3d3d3;
+        background-color		: #d3d3d3;
     }
+}
+
+/* Print Rules for Dashboard */
+
+@media print {
+	body * {
+		visibility				: hidden;
+	}
+
+	#dashboard-print {
+		visibility				: visible;
+	}
 }

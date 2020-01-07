@@ -38,7 +38,8 @@ const DashboardWidgetView = Backbone.View.extend({
             width: attrs.width ? attrs.width : "auto    ",
             height: attrs.height ? attrs.height : "auto",
             scalable: attrs.scalable ? attrs.scalable : false,
-            focusOnInit: attrs.focus || false
+            focusOnInit: attrs.focus || false,
+            noPrint: attrs.noPrint || false
         };
 
         this.render();
@@ -107,7 +108,7 @@ const DashboardWidgetView = Backbone.View.extend({
     initializeDOMElement () {
         const widget = document.createElement("div");
 
-        widget.className = "dashboard-widget";
+        widget.className = this.attrs.noPrint ? "dashboard-widget noprint" : "dashboard-widget";
         widget.id = this.attrs.id;
         // check to prepend or append the widget
         if (this.attrs.append) {
