@@ -58,6 +58,27 @@
 * @description trigged when layerFilterList changes
 */
 
+/**
+* @event LayerFilterCollection#Add
+* @description triggered when new model is added to the LayerfilterList
+*/
+
+/**
+* @event LayerFilterCollection#Destroy
+* @description trigged when model is destroyed in LayerFilterList
+*
+*/
+
+/**
+* @event LayerFilterCollection#Change
+* @description trigged when layerFilterList changes
+*/
+
+/**
+ * @event DistrictSelector#RadioRequestDistrictSelectorGetSelectedDistrict
+ * @description returns selected reference district
+ * @example  Radio.request("DistrictSelector", "getSelectedDistrict");
+ */
 
 /** -------------------- OpenRouteService -------------------- */
 
@@ -82,13 +103,48 @@
 * @description trigged when IsActive changes
 */
 
-/** -------------------- Select Districts -------------------- */
+/** -------------------- Select District -------------------- */
 
 /**
+ * @event Tools.SelectDistrict#RadioTriggerSelectDistrictGetSelector
+ * @description returns current selector
+ * @example  Radio.request("SelectDistrict", "getSelector");
+ */
+
+ 
+/**
+ * @event Tools.SelectDistrict#RadioTriggerSelectDistrictGetDistrictLayer
+ * @description returns 'districtLayer' object
+ * @example  Radio.request("SelectDistrict", "getDistrictLayer");
+ */
+
+ /**
  * @event Tools.SelectDistrict#RadioTriggerSelectDistrictRevertBboxGeometry
- * @description set bbox back to selected districts
+ * @description sets bbox back to selected districts
  * @example  Radio.trigger("SelectDistrict", "revertBboxGeometry");
  */
+
+ /**
+ * @event Tools.SelectDistrict#RadioTriggerSelectDistrictGetScope
+ * @description returns current scope
+ * @example  Radio.request("SelectDistrict", "getScope");
+ */
+
+ /**
+ * @event Tools.SelectDistrict#RadioTriggerZoomToDistrict
+ * @description sets viewport to selected districts
+ * @param {string} districtName names of selected districts
+ * @param {boolean} onlySelected todo
+ * @example  Radio.request("SelectDistrict", "zoomToDistrict");
+ */
+
+ /**
+  * @event Tools.SelectDistrict#RadioRequestSetSelectedDistrictsToFeatures
+  * @description sets features as selected districts
+  * @param {array} features features to be set as selectedDistricts
+  * @example Radio.request("SelectDistrict", "setSelectedDistrictsToFeatures", features);
+  */
+
 
 /** -------------------- Bounding Box Settor -------------------- */
 

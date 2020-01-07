@@ -4,7 +4,7 @@ import ExportButtonModel from "../../../../modules/snippets/exportButton/model";
 import DropdownModel from "../../../../modules/snippets/dropdown/model";
 import TimelineModel from "../../../../modules/tools/timeline/model";
 
-const DashboardTableModel = Tool.extend(/** @lends DasboardTableModel.prototype */ {
+const DashboardTableModel = Tool.extend(/** @lends DashboardTableModel.prototype */ {
     defaults: _.extend({}, Tool.prototype.defaults, {
         tableView: [],
         filteredTableView: [],
@@ -23,7 +23,7 @@ const DashboardTableModel = Tool.extend(/** @lends DasboardTableModel.prototype 
     }),
 
     /**
-     * @class DasboardTableModel
+     * @class DashboardTableModel
      * @extends Tool
      * @memberof Dashboard
      * @constructs

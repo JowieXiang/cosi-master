@@ -2,7 +2,7 @@ import Template from "text-loader!./template.html";
 import {selection} from "d3-selection";
 import "./style.less";
 
-const DashboardWidgetView = Backbone.View.extend({
+const DashboardWidgetView = Backbone.View.extend(/** @lends DashboardWidgetView */{
     events: {
         "click .dashboard-widget-close": "removeWidget",
         "click .win-control.open": "toggleOpen",

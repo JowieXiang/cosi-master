@@ -5,7 +5,7 @@ import "./style.less";
 import DropdownView from "../../../../modules/snippets/dropdown/view";
 import ExportButtonView from "../../../../modules/snippets/exportButton/view";
 
-const DashboardTableView = Backbone.View.extend({
+const DashboardTableView = Backbone.View.extend(/** @lends DashboardTableView.prototype */ {
     events: {
         "click .district": "zoomToFeature",
         "pointerup .row": "contextMenuTable",

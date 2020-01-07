@@ -28,6 +28,19 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
      * @listens Tools.CompareDistricts#RadioTriggerCompareDistrictsSelectRefDistrict
      * @listens CompareDistrictsModel#changeIsActive
      * @listens CompareDistrictsModel#changeLayerFilterList
+     * @listens LayerFilterCollection#Add
+     * @listens LayerFilterCollection#Destroy
+     * @listens LayerFilterCollection#Change
+     * @fires Alerting#RadioTriggerAlertAlertRemove
+     * @fires Alerting#RadioTriggerAlertAlert
+     * @fires DistrictSelector#RadioRequestDistrictSelectorGetSelectedDistrict
+     * @fires Tools.SelectDistrict#RadioTriggerSelectDistrictGetSelector
+     * @fires FeaturesLoader#RadioRequestGetAllFeaturesByAttribute
+     * @fires Core#RadioRequestMapGetLayerByName
+     * @fires Core#RadioRequestMapCreateLayerIfNotExists
+     * @fires Core.ModelList#RadioRequestModelListGetModelByAttributes
+     * @fires Tools.SelectDistrict#RadioTriggerSelectDistrictGetDistrictLayer
+     * 
      */
     initialize: function () {
         const channel = Radio.channel("CompareDistricts");
@@ -158,6 +171,11 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
         });
         this.model.set("layerFilterList", JSON.stringify(newList));
     },
+
+    /**
+     * @fires DistrictSelector#RadioRequestDistrictSelectorGetSelectedDistrict
+     * 
+     */
     setRefDistrict: function () {
         const refDistrictName = Radio.request("DistrictSelector", "getSelectedDistrict"),
             domObj = this.$el.find("#reference-district");
@@ -210,6 +228,10 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
             this.model.set("layerFilterList", JSON.stringify(newList));
         }
     },
+    /**
+     * 
+     * @fires Tools.SelectDistrict#RadioTriggerSelectDistrictGetSelector
+     */
     setCompareFeatures: function (model, value) {
         if (JSON.parse(value).length > 0) {
             const layerFilterList = JSON.parse(value),
@@ -243,6 +265,12 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
             this.clearMapLayer();
         }
     },
+    /**
+     * 
+     * @fires FeaturesLoader#RadioRequestGetAllFeaturesByAttribute
+     * @fires Tools.SelectDistrict#RadioTriggerSelectDistrictGetSelector
+     * 
+     */
     filterOne: function (layerFilter) {
         var filterResults = [],
             intersection = [];
@@ -269,11 +297,23 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
         }
         return filterResults[0];
     },
+    /**
+     * @fires Core#RadioRequestMapGetLayerByName
+     * 
+     */
     clearMapLayer: function () {
         const mapLayer = Radio.request("Map", "getLayerByName", this.model.get("mapLayerName"));
 
         mapLayer.getSource().clear();
     },
+    /**
+     * 
+     * @fires Tools.SelectDistrict#RadioTriggerSelectDistrictGetScope
+     * @fires Core#RadioRequestMapGetLayerByName
+     * @fires Core.ModelList#RadioRequestModelListGetModelByAttributes
+     * @fires Tools.SelectDistrict#RadioTriggerSelectDistrictGetDistrictLayer
+     * 
+     */
     showRefDistrict: function (refDistrictName) {
         /**
          * should add a radio function in the FeatureLoader module!!!
@@ -292,6 +332,10 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
         mapLayer.getSource().addFeature(featureClone);
         this.model.set("refDistrict", refDistrict);
     },
+    /**
+     * 
+     * @fires Core#RadioRequestMapGetLayerByName
+     */
     showComparableDistricts: function (districtFeatures) {
         const mapLayer = Radio.request("Map", "getLayerByName", this.model.get("mapLayerName")),
             cloneCollection = [];
@@ -314,6 +358,10 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
         mapLayer.getSource().addFeatures(cloneCollection);
     },
 
+    /**
+     * 
+     * @fires Core#RadioRequestMapCreateLayerIfNotExists
+     */
     createMapLayer: function (name) {
         const newLayer = Radio.request("Map", "createLayerIfNotExists", name),
             newSource = new VectorSource();
@@ -322,6 +370,13 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
         newLayer.setVisible(false);
     },
 
+    /**
+     * 
+     * @fires Core#RadioRequestMapCreateLayerIfNotExists
+     * @fires InfoScreen#RadioRequestInfoScreenGetIsInfoScreen
+     * @fires InfoScreen#RadioRequestInfoScreenTriggerRemote
+     * 
+     */
     zoomToDistrict: function (evt) {
         if (Radio.request("InfoScreen", "getIsInfoScreen")) {
             Radio.trigger("InfoScreen", "triggerRemote", "SelectDistrict", "zoomToDistrict", [evt.target.innerHTML.trim(), false]);
@@ -330,6 +385,11 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
             Radio.trigger("SelectDistrict", "zoomToDistrict", evt.target.innerHTML.trim(), false);
         }
     },
+    /**
+     * @fires Alerting#RadioTriggerAlertAlert
+     * @fires Alerting#RadioTriggerAlertAlertRemove
+     * 
+     */
 
     showHelp: function () {
         Radio.trigger("Alert", "alert:remove");
@@ -348,6 +408,13 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
             });
         });
     },
+
+    /**
+     * @fires Tools.SelectDistrict#RadioTriggerSelectDistrictGetScope
+     * @fires Core.ModelList#RadioRequestModelListGetModelByAttributes
+     * @fires Tools.SelectDistrict#RadioTriggerSelectDistrictGetDistrictLayer
+     * @fires Tools.SelectDistrict#RadioRequestSetSelectedDistrictsToFeatures
+     */
     changeDistrictSelection: function () {
         const scope = Radio.request("SelectDistrict", "getScope"),
             districtLayer = Radio.request("ModelList", "getModelByAttributes", {"name": scope}),
@@ -360,6 +427,10 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
         }
         Radio.request("SelectDistrict", "setSelectedDistrictsToFeatures", selectedFeatures);
     },
+
+    /**
+     * 
+     */
     showInDashboard: function () {
         const resultsClone = this.$el.find("#results").clone();
 

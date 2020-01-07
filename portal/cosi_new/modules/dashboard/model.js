@@ -1,7 +1,7 @@
 import Tool from "../../../../modules/core/modelList/tool/model";
 import ExportButtonModel from "../../../../modules/snippets/exportButton/model";
 
-const DashboardModel = Tool.extend({ /** @lends dasboardModel.prototype */
+const DashboardModel = Tool.extend(/** @lends DashboardModel.prototype */{
     defaults: _.extend({}, Tool.prototype.defaults, {
         name: "",
         glyphicon: "",

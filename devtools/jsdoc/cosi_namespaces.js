@@ -72,3 +72,9 @@
  * @namespace OpenRouteService
  * @description OpenRouteService functions. (https://openrouteservice.org/)
  */
+
+ 
+ /**
+ * @namespace Dashboard
+ * @description information dashboard
+ */
