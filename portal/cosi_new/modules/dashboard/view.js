@@ -3,7 +3,7 @@ import InfoTemplate from "text-loader!./info.html";
 import ExportButtonView from "../../../../modules/snippets/exportButton/view";
 import "./style.less";
 
-const DashboardView = Backbone.View.extend({
+const DashboardView = Backbone.View.extend(/** @lends DashboardView.prototype */{
     events: {
         "click .close": "close",
         "click #help": "showHelp",

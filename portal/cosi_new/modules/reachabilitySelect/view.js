@@ -8,6 +8,7 @@ const SelectView = Backbone.View.extend(/** @lends SelectView.prototype */{
      * @extends Backbone.View
      * @memberof Tools.Reachability
      * @constructs
+     * @listens SelectModel#ChangeIsActive
      */
     initialize: function () {
         this.listenTo(this.model, {
@@ -19,6 +20,10 @@ const SelectView = Backbone.View.extend(/** @lends SelectView.prototype */{
         });
     },
     template: _.template(template),
+    /**
+     * Render to DOM
+     * @return {SelectView} returns this
+     */
     render: function () {
         var attr = this.model.toJSON();
 
@@ -27,6 +32,10 @@ const SelectView = Backbone.View.extend(/** @lends SelectView.prototype */{
         this.renderDropDownView();
         return this;
     },
+    /**
+     * sets dropdown model and renders dropdown view
+     * @returns {void}
+     */
     renderDropDownView: function () {
         this.model.setDropDownModel();
         const dropdownView = new SnippetDropdownView({model: this.model.get("dropDownModel")});

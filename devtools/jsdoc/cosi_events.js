@@ -58,8 +58,29 @@
 * @description trigged when layerFilterList changes
 */
 
+/**
+* @event LayerFilterCollection#Add
+* @description triggered when new model is added to the LayerfilterList
+*/
 
-/** -------------------- Compare Districts -------------------- */
+/**
+* @event LayerFilterCollection#Destroy
+* @description trigged when model is destroyed in LayerFilterList
+*
+*/
+
+/**
+* @event LayerFilterCollection#Change
+* @description trigged when layerFilterList changes
+*/
+
+/**
+ * @event DistrictSelector#RadioRequestDistrictSelectorGetSelectedDistrict
+ * @description returns selected reference district
+ * @example  Radio.request("DistrictSelector", "getSelectedDistrict");
+ */
+
+/** -------------------- OpenRouteService -------------------- */
 
 /**
  * @event OpenRouteService#RadioTriggerCompareDistrictsCloseFilter
@@ -68,4 +89,69 @@
  * @param {Array} coordinates - coordinates of origins
  * @param {Array} rangeArray - array of time range values
  * @example  Radio.request("OpenRoute", "requestIsochrones", pathType, coordinates, rangeArray);
+ */
+
+/** -------------------- Reachability From Point -------------------- */
+
+/**
+* @event ReachabilityFromPointModel#ChangeCoordinate
+* @description triggered when reference point coordinate changes
+*/
+
+/**
+* @event ReachabilityFromPointModel#ChangeIsActive
+* @description trigged when IsActive changes
+*/
+
+/** -------------------- Select District -------------------- */
+
+/**
+ * @event Tools.SelectDistrict#RadioTriggerSelectDistrictGetSelector
+ * @description returns current selector
+ * @example  Radio.request("SelectDistrict", "getSelector");
+ */
+
+ 
+/**
+ * @event Tools.SelectDistrict#RadioTriggerSelectDistrictGetDistrictLayer
+ * @description returns 'districtLayer' object
+ * @example  Radio.request("SelectDistrict", "getDistrictLayer");
+ */
+
+ /**
+ * @event Tools.SelectDistrict#RadioTriggerSelectDistrictRevertBboxGeometry
+ * @description sets bbox back to selected districts
+ * @example  Radio.trigger("SelectDistrict", "revertBboxGeometry");
+ */
+
+ /**
+ * @event Tools.SelectDistrict#RadioTriggerSelectDistrictGetScope
+ * @description returns current scope
+ * @example  Radio.request("SelectDistrict", "getScope");
+ */
+
+ /**
+ * @event Tools.SelectDistrict#RadioTriggerZoomToDistrict
+ * @description sets viewport to selected districts
+ * @param {string} districtName names of selected districts
+ * @param {boolean} onlySelected todo
+ * @example  Radio.request("SelectDistrict", "zoomToDistrict");
+ */
+
+ /**
+  * @event Tools.SelectDistrict#RadioRequestSetSelectedDistrictsToFeatures
+  * @description sets features as selected districts
+  * @param {array} features features to be set as selectedDistricts
+  * @example Radio.request("SelectDistrict", "setSelectedDistrictsToFeatures", features);
+  */
+
+
+/** -------------------- Bounding Box Settor -------------------- */
+
+/**
+ * @event BboxSettor#RadioTriggerSetBboxGeometryToLayer
+ * sets the bbox geometry for targeted raw layers or exisiting vector layers
+ * @param {Array} itemList - list of target raw layers
+ * @param {GeometryCollection} bboxGeometry - target geometry to be set as bbox
+ * @example  Radio.trigger("BboxSettor", "setBboxGeometryToLayer", itemList, bboxGeometry);
  */

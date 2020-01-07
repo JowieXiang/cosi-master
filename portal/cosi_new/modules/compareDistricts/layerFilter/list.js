@@ -1,8 +1,8 @@
 import LayerFilterModel from "./model";
 
-var LayerFilterList = Backbone.Collection.extend(/** @lends LayerFilterList.prototype */{
+var LayerFilterCollection = Backbone.Collection.extend(/** @lends LayerFilterCollection.prototype */{
     /**
-     * @class LayerFilterList
+     * @class LayerFilterCollection
      * @description list of layer filter models
      * @extends Backbone.Collection
      * @memberof Tools.CompareDistricts.LayerFilter
@@ -11,4 +11,4 @@ var LayerFilterList = Backbone.Collection.extend(/** @lends LayerFilterList.prot
     model: LayerFilterModel
 });
 
-export default LayerFilterList;
+export default LayerFilterCollection;

@@ -9,7 +9,7 @@ import GeometryCollection from "ol/geom/GeometryCollection";
 import InfoTemplate from "text-loader!./info.html";
 import ReachabilityResultView from "./resultView";
 
-const ReachabilityFromPointView = Backbone.View.extend({
+const ReachabilityFromPointView = Backbone.View.extend(/** @lends ReachabilityFromPointView.prototype */{
     events: {
         "click #create-isochrones": "createIsochrones",
         "click button#Submit": "checkIfSelected",
@@ -28,16 +28,38 @@ const ReachabilityFromPointView = Backbone.View.extend({
         },
         "click #show-result": "updateResult",
         "click #hh-request": "requestInhabitants"
-        // "click .isochrone-origin": "zoomToOrigin"
 
     },
+    /**
+     * @class ReachabilityFromPointView
+     * @extends Backbone.View
+     * @memberof Tools.Reachability.ReachabilityFromPoint
+     * @constructs
+     * @listens ReachabilityFromPointModel#ChangeIsActive
+     * @listens ReachabilityFromPointModel#ChangeCoordinate
+     * @fires Alerting#RadioTriggerAlertAlertRemove
+     * @fires Alerting#RadioTriggerAlertAlert
+     * @fires Core.ModelList#RadioRequestModelListGetModelsByAttributes
+     * @fires Core.ModelList#RadioRequestModelListGetModelByAttributes
+     * @fires Core#RadioRequestMapGetLayers
+     * @fires Core#RadioRequestMapGetMap
+     * @fires Core#RadioRequestMapCreateLayerIfNotExists
+     * @fires Core#RadioTriggerMapRegisterListener
+     * @fires Core#RadioTriggerMapUnregisterListener
+     * @fires Core#RadioTriggerMapGetOverlayById
+     * @fires Searchbar#RadioTriggerSearchbarHit
+     * @fires Tools.SelectDistrict#RadioTriggerSelectDistrictRevertBboxGeometry
+     * @fires MapMarker#RadioTriggerMapMarkerHideMarker
+     * @fires MapMarker#RadioTriggerMapMarkerShowMarker
+     * @fires Core.ConfigLoader#RadioRequestParserGetItemsByAttributes
+     * @fires OpenRouteService#RadioRequestOpenRouteServiceRequestIsochrones
+     * @fires BboxSettor#RadioTriggerSetBboxGeometryToLayer
+     * @fires Snippets.GraphicalSelect#featureToGeoJson
+     * @fires Snippets.GraphicalSelect#OnDrawEnd
+     */
     initialize: function () {
-        const channel = Radio.channel("ReachabilityFromPoint");
 
         this.registerClickListener();
-        channel.on({
-            "zoomToOrigin": this.zoomToOrigin
-        }, this);
         this.listenTo(this.model, {
             "change:isActive": function (model, value) {
                 const mapLayer = Radio.request("Map", "getLayerByName", this.model.get("mapLayerName"));
@@ -73,6 +95,10 @@ const ReachabilityFromPointView = Backbone.View.extend({
     },
     model: {},
     template: _.template(Template),
+    /**
+     * Render to DOM
+     * @return {ReachabilityFromPointView} returns this
+     */
     render: function () {
         var attr = this.model.toJSON();
 
@@ -84,11 +110,22 @@ const ReachabilityFromPointView = Backbone.View.extend({
         this.$el.find("#hh-request").hide();
         return this;
     },
+    /**
+     * render dropdown view
+     * @param {object} dropdownModel dropdown model
+     * @returns {void}
+     */
     renderDropDownView: function (dropdownModel) {
         const dropdownView = new SnippetDropdownView({ model: dropdownModel });
 
         this.$el.find("#isochrones-layer").html(dropdownView.render().el);
     },
+
+    /**
+     * creates the map layer that contains the isochrones
+     * @param {string} name map layer name
+     * @returns {void}
+     */
     createMapLayer: function (name) {
         // returns the existing layer if already exists
         const newLayer = Radio.request("Map", "createLayerIfNotExists", name);
@@ -96,6 +133,11 @@ const ReachabilityFromPointView = Backbone.View.extend({
         newLayer.setMap(Radio.request("Map", "getMap"));
         newLayer.setVisible(true);
     },
+
+    /**
+     * clears the map layer that contains the isochrones
+     * @returns {void}
+     */
     clearMapLayer: function () {
         const mapLayer = Radio.request("Map", "getLayerByName", this.model.get("mapLayerName"));
 
@@ -105,18 +147,42 @@ const ReachabilityFromPointView = Backbone.View.extend({
             Radio.trigger("SelectDistrict", "revertBboxGeometry");
         }
     },
+
+    /**
+     * hides 'show in dashboard' button
+     * @returns {void}
+     */
     hideDashboardButton: function () {
         this.$el.find("#show-in-dashboard").hide();
         this.$el.find("#hh-request").hide();
     },
+
+    /**
+     * clears the list of facilities within the isochrones
+     * @returns {void}
+     */
     clearResult: function () {
         this.$el.find("#result").empty();
     },
+
+    /**
+     * clears 'coordinate', 'pathType' and 'range' input
+     * @returns {void}
+     */
     clearInput: function () {
         this.model.set("coordinate", []);
         this.model.set("pathType", "");
         this.model.set("range", 0);
     },
+
+    /**
+     * creates the isochrone features, set the styles, and add them to the map layer
+     * @fires Alerting#RadioTriggerAlertAlertRemove
+     * @fires Core#RadioRequestMapGetLayerByName
+     * @fires OpenRouteService#RadioRequestOpenRouteServiceRequestIsochrones
+     * @fires Snippets.GraphicalSelect#featureToGeoJson
+     * @returns {void}
+     */
     createIsochrones: function () {
         // coordinate has to be in the format of [[lat,lon]] for the request
         const coordinate = [this.model.get("coordinate")],
@@ -155,11 +221,23 @@ const ReachabilityFromPointView = Backbone.View.extend({
             this.inputReminder();
         }
     },
+
+    /**
+     * initializes UI inputs when there is already isochrones on map
+     * @returns {void}
+     */
     initializeUi: function () {
         this.$el.find("#coordinate").val(`${this.model.get("coordinate")[0]},${this.model.get("coordinate")[1]}`);
         this.$el.find("#path-type").val(`${this.model.get("pathType")}`);
         this.$el.find("#range").val(`${this.model.get("range")}`);
     },
+
+    /**
+     * sets facility layers' bbox as the isochrones
+     * @fires Core.ConfigLoader#RadioRequestParserGetItemsByAttributes
+     * @fires BboxSettor#RadioTriggerSetBboxGeometryToLayer
+     * @returns {void}
+     */
     setIsochroneAsBbox: function () {
         const layerlist = _.union(Radio.request("Parser", "getItemsByAttributes", { typ: "WFS", isBaseLayer: false }), Radio.request("Parser", "getItemsByAttributes", { typ: "GeoJSON", isBaseLayer: false })),
             polygonGeometry = this.model.get("isochroneFeatures")[this.model.get("steps") - 1].getGeometry(),
@@ -167,6 +245,13 @@ const ReachabilityFromPointView = Backbone.View.extend({
 
         Radio.trigger("BboxSettor", "setBboxGeometryToLayer", layerlist, geometryCollection);
     },
+
+    /**
+     * style isochrone features
+     * @param {ol.Feature} features isochone features (polygons)
+     * @param {array} coordinate todo
+     * @returns {void}
+     */
     styleFeatures: function (features, coordinate) {
         for (let i = features.length - 1; i >= 0; i--) {
             features[i].setProperties({ coordinate });
@@ -181,22 +266,25 @@ const ReachabilityFromPointView = Backbone.View.extend({
             }));
         }
     },
+
     /**
-     * listen for click events on the map when range input is focused
+     * listen for click events on the map to set reference point coordinates
      * @returns {void}
      */
     registerSetCoordListener: function () {
         this.setCoordListener = Radio.request("Map", "registerListener", "singleclick", this.setCoordinateFromClick.bind(this));
     },
+
     /**
-     * unlisten click events when range input is blurred
+     * unlisten click events
      * @returns {void}
      */
     unregisterSetCoordListener: function () {
         Radio.trigger("Map", "unregisterListener", this.setCoordListener);
     },
+
     /**
-     * set coordinate value in model according to click
+     * sets coordinate value in model according to click
      * @param {object} evt - click-on-map event
      * @returns {void}
      */
@@ -207,20 +295,20 @@ const ReachabilityFromPointView = Backbone.View.extend({
         this.model.set("coordinate", coordinate);
         this.model.set("setBySearch", false);
     },
+
     /**
-     * set coordinate value in model according to input value
+     * sets coordinate value in model according to input value
      * @param {object} evt - change coordinate input event
      * @returns {void}
      */
     setCoordinateFromInput: function (evt) {
-
         const coordinate = [evt.target.value.split(",")[0].trim(), evt.target.value.split(",")[1].trim()];
 
         this.model.set("coordinate", coordinate);
-
     },
+
     /**
-     * rerender coordinate input box
+     * rerenders coordinate input box
      * @param {object} value - coordinate value
      * @returns {void}
      */
@@ -228,18 +316,19 @@ const ReachabilityFromPointView = Backbone.View.extend({
         this.$el.find("#coordinate").val(`${value[0]},${value[1]}`);
         this.$el.find("#coordinate").val(`${value[0]},${value[1]}`);
         this.$el.find("#coordinate").val(`${value[0]},${value[1]}`);
-
     },
+
     /**
-     * set pathType value in model
+     * sets pathType value in model
      * @param {object} evt - select change event
-     * @returns {void}\
+     * @returns {void}
      */
     setPathType: function (evt) {
         this.model.set("pathType", evt.target.value);
     },
+
     /**
-     * set range value in model
+     * sets range value in model
      * @param {object} evt - input change event
      * @returns {void}
      */
@@ -283,6 +372,11 @@ const ReachabilityFromPointView = Backbone.View.extend({
         });
         return features;
     },
+
+    /**
+     * shows help window
+     * @returns {void}
+     */
     showHelp: function () {
         Radio.trigger("Alert", "alert:remove");
         Radio.trigger("Alert", "alert", {
@@ -290,18 +384,33 @@ const ReachabilityFromPointView = Backbone.View.extend({
             kategorie: "alert-info"
         });
     },
+
+    /**
+     * reminds user to set inputs
+     * @returns {void}
+     */
     inputReminder: function () {
         Radio.trigger("Alert", "alert", {
             text: "<strong>Bitte füllen Sie alle Felder aus.</strong>",
             kategorie: "alert-warning"
         });
     },
+
+    /**
+     * reminds user to select facility layers
+     * @returns {void}
+     */
     selectionReminder: function () {
         Radio.trigger("Alert", "alert", {
             text: "<strong>Bitte wählen Sie mindestens ein Thema unter Fachdaten aus, zum Beispiel \"Sportstätten\".</strong>",
             kategorie: "alert-warning"
         });
     },
+
+    /**
+     * updates facilitie's name within the isochrone results
+     * @returns {void}
+     */
     updateResult: function () {
         const visibleLayerModels = Radio.request("ModelList", "getModelsByAttributes", { typ: "WFS", isBaseLayer: false, isSelected: true }),
             dataObj = { layers: [] };
@@ -356,6 +465,11 @@ const ReachabilityFromPointView = Backbone.View.extend({
             this.selectionReminder();
         }
     },
+
+    /**
+     * renders isochrone legend
+     * @returns {void}
+     */
     renderLegend: function () {
         const steps = this.model.get("steps"),
             range = this.model.get("range");
@@ -383,15 +497,26 @@ const ReachabilityFromPointView = Backbone.View.extend({
             }
         }
     },
+
+    /**
+     * sets reachabilityInArea inactive and sets reachabilitySelect active
+     * @returns {void}
+     */
     toModeSelection: function () {
         this.model.set("isActive", false);
         Radio.request("ModelList", "getModelByAttributes", { name: "Erreichbarkeitsanalyse" }).set("isActive", true);
     },
+
+    /**
+     * requests inhabitant calculation function
+     * @returns {void}
+     */
     requestInhabitants: function () {
         Radio.trigger("GraphicalSelect", "onDrawEnd", this.model.get("rawGeoJson"), "einwohnerabfrage", true);
     },
+
     /**
-     * set search result from the searchbar to origin coordinates
+     * sets search result from the searchbar as reference point
      * @returns {void}
      */
     setSearchResultToOrigin: function () {
@@ -404,11 +529,18 @@ const ReachabilityFromPointView = Backbone.View.extend({
         this.model.set("setBySearch", true);
     },
 
-    // listen  to click event and trigger setGfiParams
+    /**
+     * listens to click event and triggers selectIsochrone
+     * @returns {void}
+     */
     registerClickListener: function () {
         this.clickListener = Radio.request("Map", "registerListener", "click", this.selectIsochrone.bind(this));
     },
 
+    /**
+     * unlistens to click event on isochrones
+     * @returns {void}
+     */
     unregisterClickListener: function () {
         Radio.trigger("Map", "unregisterListener", this.get("clickEventKey"));
         this.stopListening(Radio.channel("Map"), this.clickEventKey);
