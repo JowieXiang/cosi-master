@@ -95,6 +95,7 @@ const DashboardWidgetHandler = Backbone.Model.extend(/** @lends DashboardWidgetH
      * @returns {object} the options object
      */
     assignId (opts) {
+        opts.id = opts.id.trim();
         if (this.get("ids").includes(opts.id) || !opts.id) {
             opts.id = Math.max(this.get("ids").filter(id => !isNaN(id))) + 1;
         }

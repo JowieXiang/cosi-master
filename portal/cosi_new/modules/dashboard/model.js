@@ -26,10 +26,10 @@ const DashboardModel = Tool.extend(/** @lends DashboardModel.prototype */{
         const channel = Radio.channel("Dashboard");
 
         this.set("exportDashboardButton", new ExportButtonModel({
-            tag: "Dashboard als PDF speichern",
-            rawData: ".dashboard",
+            tag: "Dashboard als PNG speichern",
+            rawData: "#dashboard-print",
             filename: "CoSI-Dashboard-Export",
-            fileExtension: "pdf"
+            fileExtension: "png"
         }));
 
         channel.reply({

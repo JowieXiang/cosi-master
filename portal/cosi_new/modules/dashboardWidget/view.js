@@ -87,6 +87,8 @@ const DashboardWidgetView = Backbone.View.extend(/** @lends DashboardWidgetView 
 
         this.el.style.width = this.attrs.width || "auto";
         this.el.style.height = this.attrs.height || "auto";
+        this.initWidth = parseFloat(this.el.style.width.replace("px", ""));
+        this.setSvgScale();
 
         window.addEventListener("mouseup", this.dragEnd.bind(this));
         window.addEventListener("mousemove", this.drag.bind(this));
@@ -213,7 +215,6 @@ const DashboardWidgetView = Backbone.View.extend(/** @lends DashboardWidgetView 
             }).addClass("dragging");
 
             this.moving = true;
-            console.log("move");
         }
     },
 
@@ -229,7 +230,6 @@ const DashboardWidgetView = Backbone.View.extend(/** @lends DashboardWidgetView 
             this.$el.addClass("dragging");
 
             this.resizing = true;
-            console.log("size");
         }
     },
 
@@ -286,6 +286,7 @@ const DashboardWidgetView = Backbone.View.extend(/** @lends DashboardWidgetView 
             this.el.style.height = this.attrs.height + "px";
 
             this.dragStartXY = [_evt.clientX, _evt.clientY];
+            this.setSvgScale();
         }
         if (this.moving) {
             this.$el.find(".widget-shadow").css({
@@ -316,6 +317,22 @@ const DashboardWidgetView = Backbone.View.extend(/** @lends DashboardWidgetView 
             return $el;
         }
         return this.findScrollableParent($el.parent());
+    },
+
+    /**
+     * sets an scale factor attribute to svgs for export purposes
+     * workaround when scaling SVGS
+     * @returns {void}
+     */
+    setSvgScale () {
+        if (this.attrs.width !== "auto") {
+            const svg = this.el.querySelector("svg"),
+                currentWidth = isNaN(this.attrs.width) ? parseFloat(this.el.style.width.replace("px", "")) : this.attrs.width;
+
+            if (svg) {
+                svg.setAttribute("scale", currentWidth / this.initWidth);
+            }
+        }
     }
 });
 

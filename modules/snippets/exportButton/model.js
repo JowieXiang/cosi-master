@@ -1,4 +1,5 @@
 import SnippetModel from "../model";
+import html2canvas from "html2canvas";
 
 const ExportButtonModel = SnippetModel.extend({
     defaults: {
@@ -17,7 +18,6 @@ const ExportButtonModel = SnippetModel.extend({
         this.superInitialize();
 
         if (typeof this.get("rawData") === "string") {
-            this.set("data", "printHtml");
             this.trigger("render");
         }
         else {
@@ -43,6 +43,12 @@ const ExportButtonModel = SnippetModel.extend({
             }
         }
     },
+
+    /**
+     * converts the original data to csv and triggers conversion to blob
+     * @param {*} data the original data, taken from constructor if not defined otherwise
+     * @returns {void}
+     */
     convertJsonToCsv: function (data = this.get("rawData")) {
         let dataAsObjArr = data;
 
@@ -60,6 +66,12 @@ const ExportButtonModel = SnippetModel.extend({
         }
 
     },
+
+    /**
+     * converts an object to an array
+     * @param {object} data the input data
+     * @returns {*[]} the converted array
+     */
     refineObject: function (data) {
         const objArr = [];
 
@@ -70,91 +82,74 @@ const ExportButtonModel = SnippetModel.extend({
 
         return objArr;
     },
+
+    /**
+     * generates the filename based on construction paramters and current date
+     * @returns {string} filename
+     */
     generateFilename: function () {
         const date = new Date().toLocaleDateString("en-US", {year: "numeric", month: "numeric", day: "numeric"}),
             filename = `${this.get("filename")}-${date}.${this.get("fileExtension")}`;
 
         return filename;
     },
+
+    /**
+     * triggers the data conversion and button rendering on view
+     * @fires #render
+     * @returns {void}
+     */
     prepareForExport: function () {
         this.convertRawData();
 
         this.trigger("render");
     },
+
+    /**
+     * Converts an arbitrary object to Blob and stores it for download
+     * @param {*} data the object to convert to Blob
+     * @param {string} type the type of the input object
+     * @returns {void}
+     */
     setData: function (data, type) {
         this.set("data", new Blob(["\ufeff", data], {type: type}));
+    },
+
+    /**
+     * converts the specified html element to a canvas and prepares it for download
+     * @fires #download
+     * @returns {void}
+     */
+    htmlToCanvas: function () {
+        const html = document.querySelector(this.get("rawData"));
+
+        // workaround for scaled svgs
+        html.querySelectorAll("svg").forEach((svg) => {
+            const svgScale = parseFloat($(svg).attr("scale")),
+                svgViewBox = $(svg).attr("viewBox"),
+                svgViewBoxArray = svgViewBox.split(" "),
+                scaledViewBox = svgViewBoxArray.map(val => val / svgScale);
+
+            $(svg).attr("viewBox", `${scaledViewBox[0]} ${scaledViewBox[1]} ${scaledViewBox[2]} ${scaledViewBox[3]}`);
+            $(svg).attr("initViewBox", svgViewBox);
+        });
+
+        $(html).find(".noprint").hide();
+
+        html2canvas(html).then((canvas) => {
+            canvas.toBlob((blob) => {
+                this.set("data", blob);
+                this.trigger("download");
+
+                $(html).find(".noprint").show();
+                html.querySelectorAll("svg").forEach((svg) => {
+                    const svgViewBox = $(svg).attr("initViewBox");
+
+                    $(svg).attr("viewBox", svgViewBox);
+                });
+            });
+        });
     }
-    // htmlToBlob: async function (elementTag) {
-    //     return new Promise((res, rej) => {
-    //         var element = document.querySelector(elementTag).cloneNode(true),
-    //             svgs = element.querySelectorAll("svg"),
-    //             preHtml = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Export HTML To Doc</title></head><body>",
-    //             postHtml = "</body></html>";
-
-    //         this.replaceSvgs(svgs)
-    //             .then((canvasArray) => {
-    //                 for (let i = 0; i < canvasArray.length; i++) {
-    //                     svgs[i].parentNode.append(canvasArray[i]);
-    //                     svgs[i].parentNode.removeChild(svgs[i]);
-    //                 }
-
-    //                 const html = preHtml + element.innerHTML + postHtml,
-    //                     blob = new Blob(["\ufeff", html], {
-    //                         type: "application/vnd.ms-word"
-    //                     });
-
-    //                 res(blob);
-    //             });
-    //     });
-    // },
-    // replaceSvgs (svgs) {
-    //     return new Promise(async res => {
-    //         const canvasArray = [];
-
-    //         for (let i = 0; i < svgs.length; i++) {
-    //             this.svgToCanvas(svgs[i]).then(canvas => {
-    //                 canvasArray[i] = canvas;
-    //                 if (i === svgs.length - 1) {
-    //                     res(canvasArray);
-    //                 }
-    //             });
-    //         }
-    //     });
-    // },
-    // svgToCanvas (svg) {
-    //     return new Promise((res, rej) => {
-    //         try {
-    //             const domUrl = window.URL || window.webkitURL || window,
-    //                 blob = new Blob([
-    //                     new XMLSerializer().serializeToString(svg)
-    //                 ], {type: "image/svg+xml;charset=utf-8"}),
-    //                 url = domUrl.createObjectURL(blob),
-    //                 canvas = document.createElement("canvas"),
-    //                 img = new Image(),
-    //                 ctx = canvas.getContext("2d");
-
-    //             canvas.width = svg.outerWidth;
-    //             canvas.height = svg.innerWidth;
-    //             canvas.imageSmoothingEnabled = false;
-
-    //             ctx.font = "sans-serif";
-    //             ctx.fillStyle = "white";
-    //             ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    //             img.onload = () => {
-    //                 ctx.drawImage(img, 20, 20);
-    //                 domUrl.revokeObjectURL(url);
-
-    //                 console.log(canvas);
-    //                 res(canvas);
-    //             };
-    //             img.src = url;
-    //         }
-    //         catch (e) {
-    //             rej(console.error(e));
-    //         }
-    //     });
-    // }
 });
 
 export default ExportButtonModel;
