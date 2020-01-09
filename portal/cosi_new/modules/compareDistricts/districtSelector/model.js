@@ -6,14 +6,20 @@ const DistrictSelectorModel = Backbone.Model.extend(/** @lends DistrictSelectorM
         selectedDistrict: "Leeren", // selected option
         dropDownModel: {}
     },
+
     /**
      * @class DistrictSelectorModel
      * @extends Backbone.Model
      * @memberof Tools.CompareDistricts.DistrictSelector
      * @constructs
      * @property {Array} districtNames list of districtname options
-     * @property {string} selectedDistrict="Leeren" selected districtname
-     * @property {object} dropDownModel dropdown menu model
+     * @property {String} selectedDistrict="Leeren" selected districtname
+     * @property {Object} dropDownModel dropdown menu model
+     * @listens Tools.CompareDistricts#RadioTriggerCompareDistrictsSelectRefDistrict
+     * @listens DropdownModel#ValuesChanged
+     * @fires Tools.SelectDistrict#RadioRequestSelectDistrictGetSelector
+     * @fires Tools.SelectDistrict#RadioRequestSelectDistrictGetSelectedDistricts
+     * @fires Tools.SelectDistrict#RadioRequestSelectDistrictGetScope
      */
     initialize: function () {
         this.initializeDistrictNames();
@@ -42,6 +48,7 @@ const DistrictSelectorModel = Backbone.Model.extend(/** @lends DistrictSelectorM
     /**
       * sets the selection list for the time slider
       * @param {object[]} valueList - available values
+      * @listens DropdownModel#ValuesChanged
       * @returns {void}
       */
     setDropDownModel: function (valueList) {
@@ -61,14 +68,22 @@ const DistrictSelectorModel = Backbone.Model.extend(/** @lends DistrictSelectorM
         }, this);
         this.set("dropDownModel", dropdownModel);
     },
+
+    /**
+     * updates values of dropdown model
+     * @param {Array} valueList dropdown model valueList
+     * @returns {void}
+     */
     updateDropDownModel: function (valueList) {
         this.get("dropDownModel").set("values", valueList);
     },
+
     /**
      * callback function for the "valuesChanged" event in the dropdown model
      * sets the features based on the dropdown selection
      * @param {Backbone.Model} valueModel - the value model which was selected or deselected
      * @param {boolean} isSelected - flag if value model is selected or not
+     * @listens Tools.CompareDistricts#RadioTriggerCompareDistrictsSelectRefDistrict
      * @returns {void}
      */
     dropDownCallback: function (valueModel, isSelected) {

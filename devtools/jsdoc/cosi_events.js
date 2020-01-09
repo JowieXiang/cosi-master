@@ -145,6 +145,11 @@
   * @example Radio.request("SelectDistrict", "setSelectedDistrictsToFeatures", features);
   */
 
+ /**
+ * @event Tools.SelectDistrict#RadioRequestSelectDistrictGetSelectedDistricts
+ * @description gets selected districts
+ * @example Radio.request("SelectDistrict", "getSelectedDistricts");
+ */
 
 /** -------------------- Bounding Box Settor -------------------- */
 

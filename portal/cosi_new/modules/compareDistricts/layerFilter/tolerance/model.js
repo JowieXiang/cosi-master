@@ -1,4 +1,4 @@
-const ToleranceModel = Backbone.Model.extend(/** @lends ToleranceModel */{
+const ToleranceModel = Backbone.Model.extend(/** @lends ToleranceModel.prototype */{
     /**
      * @class ToleranceModel
      * @description upper and lower tolerance of a layer filter
