@@ -68,7 +68,8 @@ const DashboardTableView = Backbone.View.extend(/** @lends DashboardTableView.pr
                     name: "Übersicht",
                     glyphicon: "glyphicon-stats",
                     append: false,
-                    width: "100%"
+                    width: "100%",
+                    noPrint: true
                 });
             }
 

@@ -29,7 +29,7 @@ const TimeSliderModel = Backbone.Model.extend({
      */
     run: function (title) {
         // the used features
-        this.setFeaturesByValueAndScope(title, Radio.request("SelectDistrict", "getScope"));
+        this.setFeaturesByValueAndScope(title.trim(), Radio.request("SelectDistrict", "getScope"));
         // data for the graph
         this.setFeaturesProperties(this.get("features"));
         this.trigger("render");
