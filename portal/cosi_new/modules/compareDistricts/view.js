@@ -11,9 +11,7 @@ import InfoTemplate from "text-loader!./info.html";
 
 const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsView.prototype */{
     events: {
-        "click #add-filter": function () {
-            this.checkSelection();
-        },
+        "click #add-filter": "checkSelection",
         "click .district-name": "zoomToDistrict",
         "click #help": "showHelp",
         "click #set-selected-district": "changeDistrictSelection",
@@ -40,7 +38,8 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
      * @fires Core#RadioRequestMapCreateLayerIfNotExists
      * @fires Core.ModelList#RadioRequestModelListGetModelByAttributes
      * @fires Tools.SelectDistrict#RadioTriggerSelectDistrictGetDistrictLayer
-     * 
+     * @fires Dashboard#RadioTriggerDashboardDestroyWidgetById
+     * @fires Dashboard#RadioTriggerDashboardAppend
      */
     initialize: function () {
         const channel = Radio.channel("CompareDistricts");
@@ -48,7 +47,7 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
         this.listenTo(channel, {
             "closeFilter": this.addLayerOption,
             "selectRefDistrict": function () {
-                this.setRefDistrict();
+                this.renderRefDistrictName();
                 this.updateLayerFilterCollection();
             }
         });
@@ -58,7 +57,7 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
                 this.layerFilterCollection = new LayerFilterCollection();
                 this.listenTo(this.layerFilterCollection, {
                     "add": this.renderLayerFilter,
-                    "destroy": this.modelDestroy,
+                    "destroy": this.removeOneFromLayerFilterList,
                     "change": this.updateLayerFilterList
                 });
                 if (value) {
@@ -74,7 +73,7 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
             },
             "change:layerFilterList": function (model, value) {
                 if (this.model.get("layerFilterList") !== "") {
-                    this.setCompareFeatures(model, value);
+                    this.setComparableFeatures(model, value);
                 }
             }
         });
@@ -82,6 +81,10 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
 
     template: _.template(template),
 
+    /**
+     * Render to DOM
+     * @return {CompareDistrictsView} returns this
+     */
     render: function () {
         var attr;
 
@@ -96,12 +99,24 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
 
         return this;
     },
+
+    /**
+     * reminds user that a layerFilter already exists in the filter stack
+     * @fires Alerting#RadioTriggerAlertAlert
+     * @return {void}
+     */
     duplicateFilterReminder: function () {
         Radio.trigger("Alert", "alert", {
-            text: "<strong>The layerfilter already exist in the filter stack.</strong>",
+            text: "<strong>The layerfilter already exists in the filter stack.</strong>",
             kategorie: "alert-warning"
         });
     },
+
+    /**
+     * reminds user to select a filter
+     * @fires Alerting#RadioTriggerAlertAlert
+     * @return {void}
+     */
     // reminds user to select district before using the ageGroup slider
     selectFilterReminder: function () {
         Radio.trigger("Alert", "alert", {
@@ -109,11 +124,21 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
             kategorie: "alert-warning"
         });
     },
+
+    /**
+     * updates layerFilterCollection
+     * @return {void}
+     */
     updateLayerFilterCollection: function () {
         this.layerFilterCollection.each(function (layerFilter) {
             layerFilter.updateRefDistrictValue();
         });
     },
+
+    /**
+     * initializes districtSelector and layerFilterSelector and adds them to DOM
+     * @return {void}
+     */
     createSelectors: function () {
         this.$el.find("#district-selector-container").empty();
         this.districtSelector = new DistrictSelectorView();
@@ -122,6 +147,12 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
         this.layerFilterSelector = new LayerFilterSelectorView({model: new LayerFilterSelectorModel()});
         this.$el.find("#layerfilter-selector-container").append(this.layerFilterSelector.render().el);
     },
+
+    /**
+     * updates layerFilterCollection
+     * @fires Alerting#RadioTriggerAlertAlertRemove
+     * @return {void}
+     */
     checkSelection: function () {
         const IdList = this.model.get("layerFilterList") !== "" ? JSON.parse(this.model.get("layerFilterList")).map(item => item.layerId) : [],
             newFilter = this.layerFilterSelector.getSelectedLayer();
@@ -138,6 +169,11 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
             this.layerFilterSelector.resetDropDown();
         }
     },
+
+    /**
+     * initializes a new filterModel and add it to the layerFilterCollection and 
+     * @return {void}
+     */
     addFilterModel: function () {
         const layerInfo = this.layerFilterSelector.getSelectedLayer(),
             layerFilterModel = new LayerFilterModel({layerInfo: layerInfo});
@@ -145,6 +181,12 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
         this.addOneToLayerFilterList(layerFilterModel);
         this.layerFilterCollection.add(layerFilterModel);
     },
+
+    /**
+     * adds one option to layerOptions and rerenders layerFilterSelector
+     * @param {Object} layerInfo layerInfo value
+     * @return {void}
+     */
     addLayerOption: function (layerInfo) {
         const newOptions = this.layerFilterSelector.getLayerOptions();
 
@@ -152,16 +194,23 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
         this.layerFilterSelector.setLayerOptions(newOptions);
         this.layerFilterSelector.render();
     },
+
+    /**
+     * renders a layerFilter
+     * @param {Object} model layerFilter model
+     * @return {void}
+     */
     renderLayerFilter: function (model) {
         const layerFilterView = new LayerFilterView({model: model});
 
         this.$el.find("#layerfilter-container").append(layerFilterView.render().el);
     },
 
-    modelDestroy: function (model) {
-        this.removeOneFromLayerFilterList(model);
-    },
-
+    /**
+     * removes one layerFilter from layerFilterList
+     * @param {Object} model layerFilter model to be removed
+     * @return {void}
+     */
     removeOneFromLayerFilterList: function (model) {
         const layerId = model.get("layerInfo").layerId;
         var newList = JSON.parse(this.model.get("layerFilterList"));
@@ -173,10 +222,11 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
     },
 
     /**
+     * renders reference district's name
      * @fires DistrictSelector#RadioRequestDistrictSelectorGetSelectedDistrict
-     * 
+     * @returns {void}
      */
-    setRefDistrict: function () {
+    renderRefDistrictName: function () {
         const refDistrictName = Radio.request("DistrictSelector", "getSelectedDistrict"),
             domObj = this.$el.find("#reference-district");
 
@@ -191,7 +241,13 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
             this.model.set("refDistrict", null);
         }
     },
-    setCompareResults: function (comparableDistricts) {
+
+    /**
+     * renders compare results
+     * @param {Array} comparableDistricts list of comparableDistrict names
+     * @returns {void}
+     */
+    renderCompareResults: function (comparableDistricts) {
         let domString = "<p>";
 
         this.$el.find("#compare-results").empty();
@@ -206,6 +262,12 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
             this.$el.find("#show-in-dashboard").show();
         }
     },
+
+    /**
+     * renders compare results
+     * @param {Object} model adds one entry into layerFilterList
+     * @returns {void}
+     */
     addOneToLayerFilterList: function (model) {
         const newItem = {layerId: model.get("layerInfo").layerId, filter: model.get("filter"), districtInfo: model.get("districtInfo")},
             newList = this.model.get("layerFilterList") === "" ? [] : JSON.parse(this.model.get("layerFilterList"));
@@ -214,6 +276,11 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
         this.model.set("layerFilterList", JSON.stringify(newList));
     },
 
+    /**
+     * updates layerFilterList when one layerFilter model changes
+     * @param {Object} model the changed layerFilter model
+     * @returns {void}
+     */
     updateLayerFilterList: function (model) {
         if (this.model.get("layerFilterList") !== "") {
             const newList = JSON.parse(this.model.get("layerFilterList")),
@@ -228,11 +295,15 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
             this.model.set("layerFilterList", JSON.stringify(newList));
         }
     },
+
     /**
-     * 
+     * calculates comparable features
+     * @param {Object} model this.model
+     * @param {String} value layerFilterList value
      * @fires Tools.SelectDistrict#RadioTriggerSelectDistrictGetSelector
+     * @returns {void}
      */
-    setCompareFeatures: function (model, value) {
+    setComparableFeatures: function (model, value) {
         if (JSON.parse(value).length > 0) {
             const layerFilterList = JSON.parse(value),
                 selector = Radio.request("SelectDistrict", "getSelector"),
@@ -250,10 +321,10 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
                 intersection = _.intersection(...resultNames);
                 comparableFeatures = results[0].filter(feature => _.contains(intersection, feature.getProperties()[selector]));
                 this.model.set("comparableFeaturesNames", intersection);
-                this.setCompareResults(intersection);
+                this.renderCompareResults(intersection);
             }
             else {
-                this.setCompareResults(resultNames.flat());
+                this.renderCompareResults(resultNames.flat());
                 this.model.set("comparableFeaturesNames", resultNames.flat());
             }
             this.showComparableDistricts(comparableFeatures);
@@ -265,11 +336,13 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
             this.clearMapLayer();
         }
     },
+
     /**
-     * 
+     * runs all districts through one layerFilter
+     * @param {Object} layerFilter the layerFilter to filter through
      * @fires FeaturesLoader#RadioRequestGetAllFeaturesByAttribute
      * @fires Tools.SelectDistrict#RadioTriggerSelectDistrictGetSelector
-     * 
+     * @returns {Array} filter results
      */
     filterOne: function (layerFilter) {
         var filterResults = [],
@@ -297,9 +370,11 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
         }
         return filterResults[0];
     },
+
     /**
+     * clears the map layer containing comparable features
      * @fires Core#RadioRequestMapGetLayerByName
-     * 
+     * @returns {void}
      */
     clearMapLayer: function () {
         const mapLayer = Radio.request("Map", "getLayerByName", this.model.get("mapLayerName"));
@@ -307,12 +382,13 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
         mapLayer.getSource().clear();
     },
     /**
-     * 
+     * shows reference district in map
+     * @param {String} refDistrictName name of the reference district
      * @fires Tools.SelectDistrict#RadioTriggerSelectDistrictGetScope
      * @fires Core#RadioRequestMapGetLayerByName
      * @fires Core.ModelList#RadioRequestModelListGetModelByAttributes
      * @fires Tools.SelectDistrict#RadioTriggerSelectDistrictGetDistrictLayer
-     * 
+     * @returns {void}
      */
     showRefDistrict: function (refDistrictName) {
         /**
@@ -333,8 +409,10 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
         this.model.set("refDistrict", refDistrict);
     },
     /**
-     * 
+     * shows comparable districts in map
+     * @param {ol.Feature} districtFeatures comparable district features
      * @fires Core#RadioRequestMapGetLayerByName
+     * @returns {void}
      */
     showComparableDistricts: function (districtFeatures) {
         const mapLayer = Radio.request("Map", "getLayerByName", this.model.get("mapLayerName")),
@@ -359,8 +437,10 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
     },
 
     /**
-     * 
+     * creats map layer
+     * @param {String} name map layer name
      * @fires Core#RadioRequestMapCreateLayerIfNotExists
+     * @returns {void}
      */
     createMapLayer: function (name) {
         const newLayer = Radio.request("Map", "createLayerIfNotExists", name),
@@ -371,11 +451,12 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
     },
 
     /**
-     * 
+     * sets viewport to a district clicked on
+     * @param {Object} evt click event
      * @fires Core#RadioRequestMapCreateLayerIfNotExists
      * @fires InfoScreen#RadioRequestInfoScreenGetIsInfoScreen
      * @fires InfoScreen#RadioRequestInfoScreenTriggerRemote
-     * 
+     * @returns {void}
      */
     zoomToDistrict: function (evt) {
         if (Radio.request("InfoScreen", "getIsInfoScreen")) {
@@ -386,11 +467,11 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
         }
     },
     /**
+     * shows help window
      * @fires Alerting#RadioTriggerAlertAlert
      * @fires Alerting#RadioTriggerAlertAlertRemove
-     * 
+     * @returns {void}
      */
-
     showHelp: function () {
         Radio.trigger("Alert", "alert:remove");
         Radio.trigger("Alert", "alert", {
@@ -410,10 +491,12 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
     },
 
     /**
+     * sets selectedDistricts to comparable districts
      * @fires Tools.SelectDistrict#RadioTriggerSelectDistrictGetScope
      * @fires Core.ModelList#RadioRequestModelListGetModelByAttributes
      * @fires Tools.SelectDistrict#RadioTriggerSelectDistrictGetDistrictLayer
      * @fires Tools.SelectDistrict#RadioRequestSetSelectedDistrictsToFeatures
+     * @returns {void}
      */
     changeDistrictSelection: function () {
         const scope = Radio.request("SelectDistrict", "getScope"),
@@ -429,7 +512,10 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
     },
 
     /**
-     * 
+     * shows compare results in Dashboard
+     * @fires Dashboard#RadioTriggerDashboardDestroyWidgetById
+     * @fires Dashboard#RadioTriggerDashboardAppend
+     * @return {void}
      */
     showInDashboard: function () {
         const resultsClone = this.$el.find("#results").clone();
