@@ -5,12 +5,22 @@ import ToleranceModel from "./tolerance/model";
 import ToleranceView from "./tolerance/view";
 
 
-const LayerFilterView = Backbone.View.extend({
+const LayerFilterView = Backbone.View.extend(/** @lends LayerFilterView.prototype */{
     events: {
         "click .close": "destroySelf",
         "change .reference-value-input": "updateRefInputValue"
     },
 
+    /**
+     * @class LayerFilterView
+     * @extends Backbone.Model
+     * @memberof Tools.CompareDistricts.LayerFilter
+     * @constructs
+     * @fires DistrictSelector#RadioRequestDistrictSelectorGetSelectedDistrict
+     * @fires Tools.Timeline#RadioRequestTimelineGetLatestFieldFromCollection
+     * @fires FeaturesLoader#RadioRequestGetAllFeaturesByAttribute
+     * @fires Tools.SelectDistrict#RadioTriggerSelectDistrictGetSelector
+     */
     initialize: function () {
         this.toleranceCollection = new ToleranceCollection();
         this.listenTo(this.toleranceCollection, {
@@ -21,21 +31,26 @@ const LayerFilterView = Backbone.View.extend({
         this.listenTo(this.model, {
             "change:districtInfo": this.render
         });
-
     },
 
     tagName: "div",
     className: "",
-    // model: new FilterSelectorModel(),
     template: _.template(template),
 
+    /**
+     * Render to DOM
+     * @return {LayerFilterView} returns this
+     */
     render: function () {
         this.$el.html(this.template(this.model.toJSON()));
-
         this.renderToleranceViews();
         return this;
     },
 
+    /**
+     * renders tolerance values
+     * @returns {void}
+     */
     renderToleranceViews: function () {
         const filterData = JSON.parse(this.model.get("filter"));
 
@@ -53,6 +68,12 @@ const LayerFilterView = Backbone.View.extend({
             this.$el.find("#" + filterKey + "-td").append(toleranceView.render().el);
         });
     },
+
+    /**
+     * destroys this layerFilter
+     * @fires Tools.CompareDistricts#RadioTriggerCompareDistrictsCloseFilter
+     * @returns {void}
+     */
     destroySelf: function () {
         const newLayerInfo = this.model.get("layerInfo");
 
@@ -62,6 +83,12 @@ const LayerFilterView = Backbone.View.extend({
         this.remove();
         this.model.destroy();
     },
+
+    /**
+     * updates value of the layerFilter
+     * @param {Object} toleranceModel tolerance model containing upper and lower tolerance
+     * @returns {void}
+     */
     updateLayerFilter: function (toleranceModel) {
         const key = toleranceModel.get("key"),
             newFilter = JSON.parse(this.model.get("filter"));
@@ -69,6 +96,12 @@ const LayerFilterView = Backbone.View.extend({
         newFilter[key] = [toleranceModel.get("lowerTolerance"), toleranceModel.get("upperTolerance")];
         this.model.set("filter", JSON.stringify(newFilter));
     },
+
+    /**
+     * updates value of the layerFilter
+     * @param {Object} e input event
+     * @returns {void}
+     */
     updateRefInputValue: function (e) {
         var key = $(e.currentTarget).attr("id");
         // deep copying districtInfo array

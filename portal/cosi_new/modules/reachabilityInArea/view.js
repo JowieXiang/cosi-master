@@ -63,6 +63,7 @@ const ReachabilityInAreaView = Backbone.View.extend(/** @lends ReachabilityInAre
     },
     model: {},
     template: _.template(Template),
+
     /**
      * Render to DOM
      * @return {ReachabilityInAreaView} returns this

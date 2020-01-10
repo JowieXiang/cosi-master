@@ -12,6 +12,7 @@ const LayerFilterSelectorModel = Backbone.Model.extend(/** @lends LayerFilterSel
         dropDownModel: {},
         dropDownDisplayName: "Auswahl statistische Daten"
     },
+
     /**
      * @class LayerFilterSelectorModel
      * @extends Backbone.Model
@@ -21,6 +22,7 @@ const LayerFilterSelectorModel = Backbone.Model.extend(/** @lends LayerFilterSel
      * @property {string} selectedDistrict="Leeren" selected districtname
      * @property {object} urls={"statgebiet": "https://geodienste.hamburg.de/HH_WFS_Statistische_Gebiete_Test", "stadtteile": ""} mapping of district scopes and urls
      * @property {object} dropDownModel dropdown menu model
+     * @property {String} dropDownDisplayName="Auswahl statistische Daten"
      */
     initialize: function () {
         const currentSelector = Radio.request("SelectDistrict", "getSelector"),
@@ -41,6 +43,7 @@ const LayerFilterSelectorModel = Backbone.Model.extend(/** @lends LayerFilterSel
             }
         }, this);
     },
+
     /**
       * sets the selection list for the layer filters
       * @param {object[]} valueList - available values
