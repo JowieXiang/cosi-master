@@ -7,6 +7,7 @@ const MouseHoverPopupView = Backbone.View.extend(/** @lends MouseHoverPopupView.
      * @memberof MouseHover
      * @constructs
      * @classdesc Shows an ol.overlay with configured informations about the hovered feature on the map. It's always disabled on touch devices because they usually don't have a mouse to trigger a hover event.
+     * @param {Object} config Configuration from Config.js.
      * @fires Util#RadioRequestUtilIsAny
      * @listens MouseHover#render
      * @listens MouseHover#destroy

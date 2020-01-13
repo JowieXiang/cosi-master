@@ -6,8 +6,8 @@ import MapView from "./mapView";
 import ObliqueMap from "./obliqueMap";
 import OLCesium from "olcs/OLCesium.js";
 import VectorSynchronizer from "olcs/VectorSynchronizer.js";
-import FixedOverlaySynchronizer from "./3dUtils/FixedOverlaySynchronizer.js";
-import WMSRasterSynchronizer from "./3dUtils/WMSRasterSynchronizer.js";
+import FixedOverlaySynchronizer from "./3dUtils/fixedOverlaySynchronizer.js";
+import WMSRasterSynchronizer from "./3dUtils/wmsRasterSynchronizer.js";
 import {transform, get} from "ol/proj.js";
 import moment from "moment";
 import {register} from "ol/proj/proj4.js";
@@ -185,6 +185,8 @@ const map = Backbone.Model.extend(/** @lends map.prototype */{
         if (!_.isUndefined(Radio.request("ParametricURL", "getZoomToExtent"))) {
             this.zoomToExtent(Radio.request("ParametricURL", "getZoomToExtent"));
         }
+
+        this.showMouseMoveText();
 
         Radio.trigger("Map", "isReady", "gfi", false);
         if (Config.startingMap3D) {
@@ -514,7 +516,9 @@ const map = Backbone.Model.extend(/** @lends map.prototype */{
             this.setMap3d(this.createMap3d());
             this.handle3DEvents();
             this.setCesiumSceneDefaults();
-            this.setCameraParameter(cameraParameter);
+            if (cameraParameter) {
+                this.setCameraParameter(cameraParameter);
+            }
             camera = this.getMap3d().getCesiumScene().camera;
             camera.changed.addEventListener(this.reactToCameraChanged, this);
         }
@@ -789,11 +793,11 @@ const map = Backbone.Model.extend(/** @lends map.prototype */{
      * @returns {void}
      */
     zoomToExtent: function (extent, options) {
-        var extentToUse = extent;
+        let extentToUse = extent;
+        const projectionGiven = Radio.request("ParametricURL", "getProjectionFromUrl");
 
-        if (!_.isUndefined(this.get("projectionFromParamUrl"))) {
-            const projectionGiven = this.get("projectionFromParamUrl"),
-                leftBottom = extent.slice(0, 2),
+        if (typeof projectionGiven !== "undefined") {
+            const leftBottom = extent.slice(0, 2),
                 topRight = extent.slice(2, 4),
                 transformedLeftBottom = transformToMapProjection(this.get("map"), projectionGiven, leftBottom),
                 transformedTopRight = transformToMapProjection(this.get("map"), projectionGiven, topRight);
@@ -942,6 +946,28 @@ const map = Backbone.Model.extend(/** @lends map.prototype */{
      */
     getOverlayById: function (id) {
         return this.get("map").getOverlayById(id);
+    },
+
+    /** This function allows the hover text to be hovered so that the text could be copied
+     * a new class "hoverText" will be inserted by mouseover and removed by mouseout
+     * @returns {void}
+     */
+    showMouseMoveText: function () {
+    // Firefox & Safari.
+        $(".ol-overlaycontainer-stopevent").on("mousemove, touchmove, pointermove", function () {
+            const overlayContainer = $(this).find(".ol-overlay-container.ol-selectable"),
+                tooltip = overlayContainer.find(".tooltip");
+
+            overlayContainer.mouseover(function () {
+                overlayContainer.addClass("hoverText");
+            });
+
+            tooltip.mouseout(function () {
+                if (overlayContainer.hasClass("hoverText")) {
+                    overlayContainer.removeClass("hoverText");
+                }
+            });
+        });
     },
 
     /**
