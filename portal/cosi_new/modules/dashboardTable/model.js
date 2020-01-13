@@ -182,38 +182,42 @@ const DashboardTableModel = Tool.extend(/** @lends DashboardTableModel.prototype
      * @returns {object} the flattened table Object-Array
      */
     flattenTable (data) {
-        const flatData = data.map(group => {
-            const flatGroup = Object.values(Object.assign({}, group.values)),
-                propertyNames = Object.keys(group.values);
+        if (Array.prototype.flat) {
+            const flatData = data.map(group => {
+                const flatGroup = Object.values(Object.assign({}, group.values)),
+                    propertyNames = Object.keys(group.values);
 
-            return flatGroup.map((prop, i) => {
-                if (!Array.isArray(Object.values(prop)[0])) {
-                    return {...{
-                        Jahr: "-",
-                        Datensatz: propertyNames[i],
-                        Kategorie: group.group
-                    }, ...prop};
-                }
-                const flatProp = Object.assign({}, prop),
-                    years = flatProp.Durchschnitt.map(val => val[0]);
-
-                return years.map((year, j) => {
-                    const flatYear = Object.assign({}, flatProp);
-
-                    for (const district in flatYear) {
-                        flatYear[district] = flatYear[district][j][1];
+                return flatGroup.map((prop, i) => {
+                    if (!Array.isArray(Object.values(prop)[0])) {
+                        return {...{
+                            Jahr: "-",
+                            Datensatz: propertyNames[i],
+                            Kategorie: group.group
+                        }, ...prop};
                     }
+                    const flatProp = Object.assign({}, prop),
+                        years = flatProp.Durchschnitt.map(val => val[0]);
 
-                    return {...{
-                        Jahr: year,
-                        Datensatz: propertyNames[i],
-                        Kategorie: group.group
-                    }, ...flatYear};
+                    return years.map((year, j) => {
+                        const flatYear = Object.assign({}, flatProp);
+
+                        for (const district in flatYear) {
+                            flatYear[district] = flatYear[district][j][1];
+                        }
+
+                        return {...{
+                            Jahr: year,
+                            Datensatz: propertyNames[i],
+                            Kategorie: group.group
+                        }, ...flatYear};
+                    });
                 });
-            });
-        }).flat();
+            }).flat(Infinity);
 
-        return flatData;
+            return flatData;
+        }
+
+        return data;
     },
 
     /**

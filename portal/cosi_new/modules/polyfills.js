@@ -27,8 +27,11 @@ export function addPolyfills () {
         // todo - add depth argument
         Object.defineProperty(Array.prototype, "flat", {
             value: function () {
-                return this.reduce((res, item) => {
-                    return item.length ? [...res, ...item.flat()] : [...res, item];
+                if (this.length === 0) {
+                    return this;
+                }
+                return this.reduce(function (res, item) {
+                    return Array.isArray(item) ? [...res, ...item.flat()] : [...res, item];
                 }, []);
             }
         });
