@@ -16,8 +16,8 @@ const RefocusView = Backbone.View.extend(/** @lends RefocusView.prototype */{
         }, this);
     },
     /**
-     * @member RefocusTemplate
-     * @description Template used for the Refocus Buttons
+     * @member Refocus
+     * @description 
      * @memberof Controls.Refocus
      */
     template: _.template(RefocusTemplate),

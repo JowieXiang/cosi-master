@@ -1,6 +1,6 @@
 import Tool from "../../../../../modules/core/modelList/tool/model";
 
-const InfoScreenHandler = Tool.extend({
+const InfoScreenHandler = Tool.extend(/** @lends InfoScreenHandler.prototype */{
     defaults: _.extend({}, Tool.prototype.defaults, {
         id: "infoScreen",
         name: "Zweites Fenster öffnen",

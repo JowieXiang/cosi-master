@@ -24,7 +24,7 @@ const CalculateRatioModel = Tool.extend( /** @lends CalculateRatioModel */{
     /**
      * @class CalculateRatioModel
      * @extends Tool
-     * @memberof CalculateRatio
+     * @memberof Tools.CalculateRatio
      * @constructs
      * @listens ModelList#RadioTriggerUpdatedSelectedLayerList
      */
