@@ -3,7 +3,7 @@ import InfoTemplate from "text-loader!./info.html";
 import "./style.less";
 import SnippetDropdownView from "../../../../modules/snippets/dropdown/view";
 
-const SelectDistrictView = Backbone.View.extend({
+const SelectDistrictView = Backbone.View.extend(/** @lends SelectDistrictView.prototype */{
     events: {
         "click button#Submit": "checkIfSelected",
         "click button#Reset": "reset",
@@ -11,6 +11,14 @@ const SelectDistrictView = Backbone.View.extend({
         "click button#Draw": "toggleDrawSelection",
         "change input#buffer": "setBuffer"
     },
+
+    /**
+     * @class SelectDistrictView
+     * @extends Backbone.View
+     * @memberof Tools.SelectDistrict
+     * @constructs
+     * @listens Tools.SelectDistrict#ChangeIsActive
+     */
     initialize: function () {
         this.scopeDropdownView = new SnippetDropdownView({
             model: this.model.get("scopeDropdownModel")
@@ -22,13 +30,16 @@ const SelectDistrictView = Backbone.View.extend({
 
         if (this.model.get("isActive") === true) {
             this.render(this.model, true);
-
         }
     },
-    model: {},
-    scopeDropdownView: {},
     template: _.template(Template),
 
+    /**
+     * renders this tool into the tool window
+     * @param {Backbone.model} model - select district model
+     * @param {boolean} value - flag for this tool if it is active
+     * @return {Backbone.View} this view
+     */
     render: function (model, value) {
         var attr = this.model.toJSON();
 
@@ -41,39 +52,52 @@ const SelectDistrictView = Backbone.View.extend({
         return this;
     },
 
-    getSelectedDistricts: function () {
-        return this.model.getSelectedDistricts();
-    },
+    /**
+     * checks if districts are selected. if not a reminder is displayed.
+     * @returns {void}
+     */
     checkIfSelected: function () {
         if (this.model.get("selectedDistricts").length === 0) {
-            this.selectDistrictReminder();
-            this.toggleIsActive();
+            Radio.trigger("Alert", "alert", {
+                text: "<strong>Warnung: Sie haben noch keine Gebiete ausgewählt. Es werden keine Datensätze geladen. <br /> Sie können trotzdem Fachdaten-Ebenen für die gesamte Stadt anzeigen lassen und Gebiete nach Parametern ermitteln.</strong>",
+                kategorie: "alert-warning"
+            });
         }
-        else {
-            this.toggleIsActive();
-        }
-    },
-    toggleIsActive: function () {
         this.model.toggleIsActive();
     },
+
+    /**
+     * calls the toggleDrawSelection function in the model
+     * @returns {void}
+     */
     toggleDrawSelection: function () {
         this.model.toggleDrawSelection();
     },
-    selectDistrictReminder: function () {
-        Radio.trigger("Alert", "alert", {
-            text: "<strong>Warnung: Sie haben noch keine Gebiete ausgewählt. Es werden keine Datensätze geladen. <br /> Sie können trotzdem Fachdaten-Ebenen für die gesamte Stadt anzeigen lassen und Gebiete nach Parametern ermitteln.</strong>",
-            kategorie: "alert-warning"
-        });
-    },
+
+    /**
+     * calls the resetSelectedDistricts function in the model
+     * @returns {void}
+     */
     reset () {
         this.model.resetSelectedDistricts();
     },
+
+    /**
+     * shows the help for this tool
+     * @returns {void}
+     */
     showHelp: function () {
         Radio.trigger("Alert", "alert", {
             text: InfoTemplate,
             kategorie: "alert-info"
         });
     },
+
+    /**
+     * sets a buffer around the districts
+     * @param {jQuery.Event} evt - change event on input#buffer
+     * @returns {void}
+     */
     setBuffer: function (evt) {
         this.model.set("buffer", parseInt(evt.target.value, 10));
     }

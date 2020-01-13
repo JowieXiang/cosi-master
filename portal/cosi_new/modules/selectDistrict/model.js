@@ -6,7 +6,6 @@ import GraphicalSelectModel from "../../../../modules/snippets/graphicalselect/m
 import * as Extent from "ol/extent";
 import * as Polygon from "ol/geom/Polygon";
 import GeoJSON from "ol/format/GeoJSON";
-import styles from "../../style.json";
 
 const SelectDistrictModel = Tool.extend(/** @lends SelectDistrictModel.prototype */{
     defaults: _.extend({}, Tool.prototype.defaults, {
@@ -41,7 +40,6 @@ const SelectDistrictModel = Tool.extend(/** @lends SelectDistrictModel.prototype
                 width: 5
             })
         }),
-        polygonStyles: {},
         channel: Radio.channel("SelectDistrict"),
         bboxGeometry: null,
         isDrawing: false
@@ -80,18 +78,6 @@ const SelectDistrictModel = Tool.extend(/** @lends SelectDistrictModel.prototype
             isMultiple: false,
             preselectedValues: this.get("districtLayerNames")[0]
         }));
-
-        const stadtteilStyle = styles.find(style => style.layerId === "green-polygon");
-
-        this.get("polygonStyles").stadtteil = new Style({
-            fill: new Fill({
-                color: `rgba(${stadtteilStyle.polygonFillColor[0]}, ${stadtteilStyle.polygonFillColor[1]}, ${stadtteilStyle.polygonFillColor[2]}, ${stadtteilStyle.polygonFillColor[3]})`
-            }),
-            stroke: new Stroke({
-                color: `rgba(${stadtteilStyle.polygonStrokeColor[0]}, ${stadtteilStyle.polygonStrokeColor[1]}, ${stadtteilStyle.polygonStrokeColor[2]}, ${stadtteilStyle.polygonStrokeColor[3]})`,
-                width: stadtteilStyle.polygonStrokeWidth
-            })
-        });
 
         this.listenTo(this, {
             "change:isActive": function (model, value) {
@@ -179,7 +165,12 @@ const SelectDistrictModel = Tool.extend(/** @lends SelectDistrictModel.prototype
         this.stopListening(Radio.channel("Map"), "clickedWindowPosition");
     },
 
-    // select districts on click
+
+    /**
+     * selects or deselects the districts on click and sets their style
+     * @param {MapBrowserPointerEvent} evt - click on the map
+     * @returns {void}
+     */
     select: function (evt) {
         const districtLayer = Radio.request("ModelList", "getModelByAttributes", {"name": this.getScope()}),
             features = Radio.request("Map", "getFeaturesAtPixel", evt.map.getEventPixel(evt.originalEvent), {
@@ -206,6 +197,12 @@ const SelectDistrictModel = Tool.extend(/** @lends SelectDistrictModel.prototype
         }
 
     },
+
+    /**
+     * selects all features in the given extent
+     * @param {GeoJSON} geoJson - a GeoJSON of type polygon
+     * @returns {void}
+     */
     boxSelect: function (geoJson) {
         const extent = new GeoJSON().readGeometry(geoJson).getExtent(),
             layerSource = Radio.request("ModelList", "getModelByAttributes", {"name": this.getScope()}).get("layerSource");
@@ -220,6 +217,7 @@ const SelectDistrictModel = Tool.extend(/** @lends SelectDistrictModel.prototype
             this.toggleDrawSelection();
         }, 500);
     },
+
     pushSelectedDistrict: function (feature) {
         this.set({
             "selectedDistricts": this.get("selectedDistricts").concat(feature)
@@ -301,8 +299,9 @@ const SelectDistrictModel = Tool.extend(/** @lends SelectDistrictModel.prototype
     },
     toggleScopeLayers: function () {
         _.each(this.get("districtLayerNames"), (layerName) => {
+            const layer = Radio.request("ModelList", "getModelByAttributes", {"name": layerName});
+
             if (layerName !== "Stadtteile") {
-                const layer = Radio.request("ModelList", "getModelByAttributes", {"name": layerName});
 
                 if (layerName !== this.getScope()) {
                     layer.setIsVisibleInMap(false);
@@ -312,12 +311,12 @@ const SelectDistrictModel = Tool.extend(/** @lends SelectDistrictModel.prototype
                 }
             }
             else {
-                const getSource = Promise.resolve(Radio.request("ModelList", "getModelByAttributes", {"name": layerName}).get("layerSource"));
+                const getSource = Promise.resolve(layer.get("layerSource"));
 
                 getSource.then(source => {
                     source.getFeatures().forEach(feature => {
                         if (layerName !== this.getScope()) {
-                            feature.setStyle(this.get("polygonStyles").stadtteil);
+                            feature.setStyle(layer.get("layer").getStyle());
                         }
                         else {
                             feature.setStyle(this.get("defaultStyle"));
@@ -433,12 +432,7 @@ const SelectDistrictModel = Tool.extend(/** @lends SelectDistrictModel.prototype
     getBuffer: function () {
         return this.get("buffer");
     },
-    getSelectedStyle: function () {
-        return this.get("selectedStyle");
-    },
-    getDeselectedStyle: function () {
-        return this.get("deselectedStyle");
-    },
+
     getDistrictLayer: function () {
         return this.get("districtLayer");
     },
