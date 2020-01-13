@@ -28,7 +28,7 @@
 */
 
 /**
-* @event FeaturesLoader#RadioRequestGetAllValuesByScope
+* @event FeaturesLoader#RadioRequestFeaturesLoaderGetAllValuesByScope
 * @description get all mapped data layer infos by scope
 * @param {string} scope - scope of districts, "Stadtteile" or "Statistische Gebiete"
 * @example Radio.request("FeaturesLoader", "getAllValuesByScope", scope)
@@ -111,7 +111,7 @@
  * @example  Radio.request("SelectDistrict", "getSelector");
  */
 
- 
+
 /**
  * @event Tools.SelectDistrict#RadioTriggerSelectDistrictGetDistrictLayer
  * @description returns 'districtLayer' object
@@ -145,6 +145,11 @@
   * @example Radio.request("SelectDistrict", "setSelectedDistrictsToFeatures", features);
   */
 
+ /**
+ * @event Tools.SelectDistrict#RadioRequestSelectDistrictGetSelectedDistricts
+ * @description gets selected districts
+ * @example Radio.request("SelectDistrict", "getSelectedDistricts");
+ */
 
 /** -------------------- Bounding Box Settor -------------------- */
 
@@ -155,3 +160,30 @@
  * @param {GeometryCollection} bboxGeometry - target geometry to be set as bbox
  * @example  Radio.trigger("BboxSettor", "setBboxGeometryToLayer", itemList, bboxGeometry);
  */
+
+/**
+ * @event Dashboard#RadioTriggerDashboardDestroyWidgetById
+ * @description destroys widget by Id
+ * @param {String} id id of widget
+ * @example Radio.trigger("Dashboard", "destroyWidgetById", id);
+ */
+
+/** -------------------- Dashboard -------------------- */
+
+/**
+ * @event Dashboard#RadioTriggerDashboardAppend
+ * @description appends a new widget to the dashboard
+ * @param {Backbone.View | object | string} child the child object to append
+ * @param {string} parent the container-selector to append to, defaults to ".info-screen-children"
+ * @param {object} opts appending options (optional)
+ * @param {boolean} cullButtons remove buttons when appending html to InfoScreen, defaults to false (optional)
+ * @example Radio.trigger("Dashboard", "append", child, parent = ".info-screen-children", opts, cullButtons = false);
+ */
+
+/**
+ * @event Dashboard#RadioTriggerDashboardDestroyWidgetById
+ * @description removes a widget from the dashboard by ID
+ * @param {String} id the ID of the widget to remove
+ * @example Radio.trigger("Dashboard", "destroyWidgetById", id);
+ */
+

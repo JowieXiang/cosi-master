@@ -12,6 +12,7 @@ const LayerFilterSelectorModel = Backbone.Model.extend(/** @lends LayerFilterSel
         dropDownModel: {},
         dropDownDisplayName: "Auswahl statistische Daten"
     },
+
     /**
      * @class LayerFilterSelectorModel
      * @extends Backbone.Model
@@ -21,6 +22,10 @@ const LayerFilterSelectorModel = Backbone.Model.extend(/** @lends LayerFilterSel
      * @property {string} selectedDistrict="Leeren" selected districtname
      * @property {object} urls={"statgebiet": "https://geodienste.hamburg.de/HH_WFS_Statistische_Gebiete_Test", "stadtteile": ""} mapping of district scopes and urls
      * @property {object} dropDownModel dropdown menu model
+     * @property {String} dropDownDisplayName="Auswahl statistische Daten"
+     * @fires FeaturesLoader#RadioRequestFeaturesLoaderGetAllValuesByScope
+     * @fires Tools.SelectDistrict#RadioTriggerSelectDistrictGetSelector
+     * @listens DropdownModel#ValuesChanged
      */
     initialize: function () {
         const currentSelector = Radio.request("SelectDistrict", "getSelector"),
@@ -41,9 +46,11 @@ const LayerFilterSelectorModel = Backbone.Model.extend(/** @lends LayerFilterSel
             }
         }, this);
     },
+
     /**
       * sets the selection list for the layer filters
       * @param {object[]} valueList - available values
+      * @listens DropdownModel#ValuesChanged
       * @returns {void}
       */
     setDropDownModel: function (valueList) {
@@ -63,9 +70,16 @@ const LayerFilterSelectorModel = Backbone.Model.extend(/** @lends LayerFilterSel
         }, this);
         this.set("dropDownModel", dropdownModel);
     },
+
+    /**
+     * updates values of dropdown model
+     * @param {Array} valueList dropdown model valueList
+     * @returns {void}
+     */
     updateDropDownModel: function (valueList) {
         this.get("dropDownModel").set("values", valueList);
     },
+
     /**
      * callback function for the "valuesChanged" event in the dropdown model
      * sets the features based on the dropdown selection
@@ -78,6 +92,13 @@ const LayerFilterSelectorModel = Backbone.Model.extend(/** @lends LayerFilterSel
             this.setSelectedLayer(valueModel.get("value"));
         }
     },
+
+    /**
+     * sets selectedLayer value (not stable)
+     * @fires Tools.SelectDistrict#RadioTriggerSelectDistrictGetScope
+     * @param {String} value selected option
+     * @returns {void}
+     */
     setSelectedLayer: function (value) {
         /**
          * This is not stable. better add fields in the mapping.json to avoid hard-coding!
@@ -89,16 +110,31 @@ const LayerFilterSelectorModel = Backbone.Model.extend(/** @lends LayerFilterSel
 
         this.set("selectedLayer", { layerName: layerModel.name, layerId: layerModel.id, layerText: mappingObj });
     },
+
+    /**
+     * sets layerOptions value
+     * @param {Array} value array of options
+     * @returns {void}
+     */
     setLayerOptions: function (value) {
         this.set("layerOptions", value);
     },
+
+    /**
+     * gets selectedLayer value
+     * @returns {void}
+     */
     getSelectedLayer: function () {
         return this.get("selectedLayer");
     },
+
+    /**
+     * gets layerOptions value
+     * @returns {void}
+     */
     getLayerOptions: function () {
         return this.get("layerOptions");
     }
-
 });
 
 export default LayerFilterSelectorModel;

@@ -95,6 +95,7 @@ const ReachabilityFromPointView = Backbone.View.extend(/** @lends ReachabilityFr
     },
     model: {},
     template: _.template(Template),
+
     /**
      * Render to DOM
      * @return {ReachabilityFromPointView} returns this
@@ -110,6 +111,7 @@ const ReachabilityFromPointView = Backbone.View.extend(/** @lends ReachabilityFr
         this.$el.find("#hh-request").hide();
         return this;
     },
+
     /**
      * render dropdown view
      * @param {object} dropdownModel dropdown model

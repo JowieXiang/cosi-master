@@ -357,13 +357,11 @@
               "Titel": "Bebauungspläne",
               "Layer": [
                 {
-                  "id": "1625",
-                  "styleId": "1625",
+                  "id": "1561",
                   "name": "Festgestellte Bebauungspläne (PLIS)"
                 },
                 {
-                  "id": "1626",
-                  "styleId": "1626",
+                  "id": "1562",
                   "name": "Bebauungspläne im Verfahren"
                 },
                 {
