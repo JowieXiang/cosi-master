@@ -2,7 +2,7 @@ import Template from "text-loader!./template.html";
 import InfoScreenModel from "./model";
 import "./style.less";
 
-const InfoScreenView = Backbone.View.extend({
+const InfoScreenView = Backbone.View.extend(/** @lends InfoScreenView.prototype */{
     events: {
         "click #title": "renderContent"
     },

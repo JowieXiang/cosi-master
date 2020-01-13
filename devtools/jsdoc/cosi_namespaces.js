@@ -32,6 +32,11 @@
  */
 
 /**
+* @namespace ColorCodeMap
+* @description renders map features in the manner of color-code according to feature values
+*/
+
+/**
 * @namespace LayerFilterSelector
 * @memberof Tools.CompareDistricts
 * @description selector of data layer to filter districts through
@@ -61,6 +66,16 @@
  * @description select areas to work with (for better performance)
  */
 
+ /**
+ * @namespace CalculateRatio
+ * @memberof Tools
+ * @description todo
+ */
+
+/**
+ * @namespace InfoScreen
+ * @description Constructs the infoScreen on the 2nd screen and manages communication with the main screen
+ */
 
  /**
  * @namespace FeaturesLoader
@@ -73,7 +88,6 @@
  * @description OpenRouteService functions. (https://openrouteservice.org/)
  */
 
- 
  /**
  * @namespace Dashboard
  * @description information dashboard

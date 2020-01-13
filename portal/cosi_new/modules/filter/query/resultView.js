@@ -14,9 +14,18 @@ const ResultView = Backbone.View.extend({
         this.delegateEvents();
         return this;
     },
-    // show results in dashboard
+    
+    /**
+     * shows compare results in Dashboard
+     * @fires Dashboard#RadioTriggerDashboardDestroyWidgetById
+     * @fires Dashboard#RadioTriggerDashboardAppend
+     * @return {void}
+     */
     showInDashboard: function () {
-        Radio.trigger("Dashboard", "append", this.$el, "#dashboard-containers", {
+        const resultsClone = this.$el.find("#results").clone();
+
+        Radio.trigger("Dashboard", "destroyWidgetById", "filter");
+        Radio.trigger("Dashboard", "append", resultsClone, "#dashboard-containers", {
             id: "filter",
             name: "Filter",
             glyphicon: "glyphicon-filter"
