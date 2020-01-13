@@ -326,8 +326,8 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
                 this.renderCompareResults(intersection);
             }
             else {
-                this.renderCompareResults(resultNames.flat());
-                this.model.set("comparableFeaturesNames", resultNames.flat());
+                this.renderCompareResults(resultNames.reduce((acc, val) => acc.concat(val), [])); // arr.reduce((acc, val) => acc.concat(val), []) serves same function as arr.flat()
+                this.model.set("comparableFeaturesNames", resultNames.reduce((acc, val) => acc.concat(val), [])); // arr.reduce((acc, val) => acc.concat(val), []) serves same function as arr.flat()
             }
             this.showComparableDistricts(comparableFeatures);
         }
