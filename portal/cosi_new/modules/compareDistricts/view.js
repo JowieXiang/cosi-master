@@ -106,6 +106,7 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
      * @return {void}
      */
     duplicateFilterReminder: function () {
+        Radio.trigger("Alert", "alert:remove");
         Radio.trigger("Alert", "alert", {
             text: "<strong>The layerfilter already exists in the filter stack.</strong>",
             kategorie: "alert-warning"
@@ -119,6 +120,7 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
      */
     // reminds user to select district before using the ageGroup slider
     selectFilterReminder: function () {
+        Radio.trigger("Alert", "alert:remove");
         Radio.trigger("Alert", "alert", {
             text: "<strong>Bitte wählen Sie das Thema, welches zum Drop Down Menü hinzugefügt werden sollte.</strong>",
             kategorie: "alert-warning"
@@ -324,8 +326,8 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
                 this.renderCompareResults(intersection);
             }
             else {
-                this.renderCompareResults(resultNames.flat());
-                this.model.set("comparableFeaturesNames", resultNames.flat());
+                this.renderCompareResults(resultNames.reduce((acc, val) => acc.concat(val), [])); // arr.reduce((acc, val) => acc.concat(val), []) serves same function as arr.flat()
+                this.model.set("comparableFeaturesNames", resultNames.reduce((acc, val) => acc.concat(val), [])); // arr.reduce((acc, val) => acc.concat(val), []) serves same function as arr.flat()
             }
             this.showComparableDistricts(comparableFeatures);
         }

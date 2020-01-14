@@ -1,4 +1,4 @@
-const InfoScreenModel = Backbone.Model.extend(/** @lends InfoScreenModel */{
+const InfoScreenModel = Backbone.Model.extend(/** @lends InfoScreenModel.prototype */{
     defaults: {
         id: "infoScreen",
         name: "CoSI Infoscreen",

@@ -30,6 +30,10 @@ import "../cosi.style.less";
 function initializeCosi () {
     var infoScreenOpen = JSON.parse(window.localStorage.getItem("infoScreenOpen"));
 
+    // check if browser is IE or Edge for InfoScreen to assign localStorage to opener
+    if (window.StyleMedia && window.location.pathname.includes("infoscreen.html")) {
+        window.localStorage = window.opener.localStorage;
+    }
     window.CosiStorage = window.localStorage;
 
     const dashboard = new DashboardView({model: general.dashboard});

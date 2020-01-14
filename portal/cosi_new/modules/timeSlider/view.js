@@ -67,8 +67,6 @@ const TimeSliderView = Backbone.View.extend({
     },
 
     renderGraph: function (graphData, value, getMaxYAxisValue) {
-        this.$el.find(".time-series-graph").empty();
-
         Radio.trigger("GraphV2", "createGraph", {
             graphType: "BarGraph",
             selector: ".time-series-graph",
@@ -99,8 +97,12 @@ const TimeSliderView = Backbone.View.extend({
             },
             width: $(window).width() * 0.4,
             height: $(window).height() * 0.4,
-            svgClass: "time-series-graph-svg"
+            svgClass: `time-series-graph-svg jahr-${value}`
         });
+
+        if (this.$el.find(".time-series-graph-svg").length > 1) {
+            this.$el.find(".time-series-graph-svg").first().remove();
+        }
     }
 });
 
