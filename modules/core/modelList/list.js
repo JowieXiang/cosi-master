@@ -49,7 +49,7 @@ import Viewpoint from "./viewpoint/model";
 import ColorScale from "../../tools/colorScale/model";
 // import WsClientInput from "../../tools/wsClientInput/model";
 import Timeline from "../../tools/timeline/model";
-import VirtualCityModel from "../../tools/virtualcity/model";
+import VirtualCityModel from "../../tools/virtualCity/model";
 
 const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
     /**
