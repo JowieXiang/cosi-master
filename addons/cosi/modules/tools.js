@@ -26,8 +26,7 @@ const general = {
             id: "dashboardTable"
         }),
         dashboard: new Dashboard({
-            parentId: "root",
-            type: "tool",
+            // type: "tool",
             name: "Dashboard",
             id: "dashboard",
             glyphicon: "glyphicon-dashboard",
@@ -39,8 +38,7 @@ const general = {
     tools = !window.location.pathname.includes("infoscreen.html") ? {
         filter: new Filter({
             id: "filter",
-            parentId: "tools",
-            type: "tool",
+            // type: "tool",
             name: "Filter",
             glyphicon: "glyphicon-filter",
             deactivateGFI: false,
@@ -139,8 +137,7 @@ const general = {
         }),
         selectDistrict: new SelectDistrict({
             id: "selectDistrict",
-            parentId: "root",
-            type: "tool",
+            // type: "tool",
             name: "Gebiet auswählen",
             glyphicon: "glyphicon-picture",
             districtLayer: [
