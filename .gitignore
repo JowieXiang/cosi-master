@@ -10,7 +10,6 @@
 /jsdoc
 /nbproject/private/
 
-addons/*
 !addons/readme.txt
 
 bowerupdate.log
