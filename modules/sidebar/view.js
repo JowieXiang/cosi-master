@@ -19,11 +19,11 @@ const SidebarView = Backbone.View.extend(/** @lends SidebarView.prototype */{
         this.listenTo(this.model, {
             "change:isVisible": this.toggle,
             "change:isMobile": this.toggleClass,
+            "change:width": this.setWidth,
             "addContent": this.addContent,
             "resize": function () {
                 this.toggle(this.model, true);
-            },
-            "setWidth": this.setWidth
+            }
         });
         $("#map").after(this.$el);
     },
@@ -48,10 +48,12 @@ const SidebarView = Backbone.View.extend(/** @lends SidebarView.prototype */{
 
     /**
      * Sets the width.
+     * @param {Backbone.Model} model - The sidebar model.
      * @param {String} width Width
      * @returns {void}
      */
-    setWidth: function (width) {
+    setWidth: function (model, width) {
+        console.info(width);
         this.$el.css("width", width);
     },
     /**

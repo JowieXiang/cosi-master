@@ -129,10 +129,6 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
             },
             "toggleDefaultTool": this.toggleDefaultTool,
             "refreshLightTree": this.refreshLightTree,
-            "addModelsAndUpdate": function (models) {
-                this.add(models);
-                this.updateLayerView();
-            },
             "addAlwaysActiveTool": this.addAlwaysActiveTool
         }, this);
 

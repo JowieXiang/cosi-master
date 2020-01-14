@@ -39,14 +39,20 @@ function initializeCosi () {
     new GraphModel();
     new TimeSliderView();
 
-    Radio.trigger("ModelList", "addModelsAndUpdate", Object.values(general));
-
+    // Radio.trigger("ModelList", "addModelsAndUpdate", Object.values(general));
+    general.forEach(function (gen) {
+        Radio.trigger("ModelList", "replaceModelById", gen.id, gen);
+    });
     // Handle TouchScreen / InfoScreen Loading
     if (!window.location.pathname.includes("infoscreen.html")) {
         CosiStorage.clear();
         window.name = "TouchScreen";
 
-        Radio.trigger("ModelList", "addModelsAndUpdate", Object.values(tools));
+        tools.forEach(function (tool) {
+            Radio.trigger("ModelList", "replaceModelById", tool.id, tool);
+        });
+        Radio.trigger("ModelList", "replaceModelById", tools.infoScreenHandler);
+        // Radio.trigger("ModelList", "addModelsAndUpdate", Object.values(tools));
         new FilterView({model: tools.filter});
         new CalculateRatioView({model: tools.calculateRatio});
         new ReachabilitySelectView({model: tools.reachabilitySelect});

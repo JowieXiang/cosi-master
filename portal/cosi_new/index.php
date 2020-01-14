@@ -12,7 +12,7 @@
 			echo '<title>CoSI</title>';
 
 
-			echo '<link rel="stylesheet" href="./css/style.css">';
+			echo '<link rel="stylesheet" href="./css/masterportal.css">';
 			echo '<link rel="stylesheet" href="https://geofos.fhhnet.stadt.hamburg.de/lgv-config/css/fonts.css">';
 
 			echo '</head>';

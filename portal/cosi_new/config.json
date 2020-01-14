@@ -67,20 +67,41 @@
             "name": "Einwohnerabfrage",
             "glyphicon": "glyphicon-user"
           },
+          "reachabilitySelect": {
+            "name": "Erreichbarkeitsanalyse",
+            "glyphicon": "glyphicon-road"
+          },
+          "filter": {
+            "name": "Filter",
+            "glyphicon": "glyphicon-filter"
+          },
           "measure": {
             "name": "Strecke / Fläche messen",
             "glyphicon": "glyphicon-resize-full"
-          },
-          "wsClientInput": {
-            "name": "Worksession erstellen",
-            "glyphicon": "glyphicon-picture",
-            "isVisibleInMenu": false
           },
           "gfi": {
             "name": "Informationen abfragen",
             "glyphicon": "glyphicon-info-sign",
             "isActive": false,
             "isVisibleInMenu": false
+          },
+          "compareDistricts": {
+            "name": "Vergleichbare Gebiete ermitteln",
+            "glyphicon": "glyphicon glyphicon-random"
+          },
+          "calculateRatio": {
+            "name": "Versorgungsanalyse",
+            "glyphicon": "glyphicon-tasks"
+          },
+          "reachability": {
+            "isVisibleInMenu": false,
+            "name": "Erreichbarkeit ab einem Referenzpunkt",
+            "glyphicon": "glyphicon-road"
+          },
+          "reachabilityInArea": {
+            "name": "Erreichbarket im Gebiet",
+            "isVisibleInMenu": false,
+            "glyphicon": "glyphicon-time"
           }
         }
       },
@@ -114,12 +135,28 @@
                 }
               ]
             }
-          ]
+          ],
+          "saveSelectionCosi": {
+            "name": "Sitzung speichern",
+            "glyphicon": "glyphicon-copy"
+          },
+          "infoScreen": {
+            "name": "Zweites Fenster öffnen",
+            "glyphicon": "glyphicon-new-window"
+          }
         }
       },
       "legend": {
         "name": "Legende",
         "glyphicon": "glyphicon-book"
+      },
+      "dashboard": {
+        "name": "Dashboard",
+        "glyphicon": "glyphicon-dashboard"
+      },
+      "selectDistrict": {
+        "name": "Gebiet auswählen",
+        "glyphicon": "glyphicon-picture"
       }
     },
     "controls": {
