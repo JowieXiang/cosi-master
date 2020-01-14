@@ -46,5 +46,6 @@ const Config = {
     clickCounter: {},
     remoteInterface: {
         postMessageUrl: "https://localhost:9001/portal/cosi_new/infoscreen.html"
-    }
+    },
+    addons: ["cosi"]
 };

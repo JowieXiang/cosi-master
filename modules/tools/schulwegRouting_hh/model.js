@@ -291,7 +291,6 @@ const SchulwegRouting = Tool.extend(/** @lends SchulwegRouting.prototype */{
             requestObj = this.setObjectAttribute(requestObj, "SchuelerHausnr", "integer", parseInt(address.houseNumber, 10));
             requestObj = this.setObjectAttribute(requestObj, "SchuelerZusatz", "string", address.houseNumberSupplement);
             requestObj = this.setObjectAttribute(requestObj, "RouteAusgeben", "boolean", 1);
-            requestObj = this.setObjectAttribute(requestObj, "tm_tag", "string", "fast");
 
             this.sendRequest(requestObj);
         }

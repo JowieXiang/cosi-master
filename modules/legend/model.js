@@ -9,7 +9,12 @@ const LegendModel = Tool.extend(/** @lends LegendModel.prototype */{
         renderToWindow: false,
         renderToSidebar: false,
         keepOtherToolsOpened: true,
-        glyphicon: "glyphicon-book"
+        glyphicon: "glyphicon-book",
+        rotationAngle: 0,
+        startX: 0,
+        startY: 0,
+        windowLeft: 0,
+        windowTop: 0
     }),
 
     /**
@@ -166,13 +171,14 @@ const LegendModel = Tool.extend(/** @lends LegendModel.prototype */{
     * @returns {void}
     */
     setLayerList: function () {
-        var modelList = Radio.request("ModelList", "getModelsByAttributes", {isVisibleInMap: true}),
-            sortedModelList = _.sortBy(modelList, layer => layer.get("name")),
+        const modelList = Radio.request("ModelList", "getModelsByAttributes", {isVisibleInMap: true}),
+            sortedModelList = modelList.sort((layerA, layerB) => layerB.get("selectionIDX") - layerA.get("selectionIDX")),
             visibleLayer = sortedModelList.filter(layer => layer.get("legendURL") !== "ignore"),
             tempArray = [];
 
-        _.each(visibleLayer, function (layer) {
-            var layerSources = layer.get("layerSource"); // Array oder undefined
+
+        visibleLayer.forEach(layer => {
+            const layerSources = layer.get("layerSource"); // Array oder undefined
 
             tempArray.push(this.getLegendDefinition(layer.get("name"), layer.get("typ"), layer.get("legendURL"), layer.get("styleId"), layerSources));
         }, this);
@@ -711,6 +717,38 @@ const LegendModel = Tool.extend(/** @lends LegendModel.prototype */{
         name.push(layername);
 
         return [image, name];
+    },
+    /**
+    * Sets the left position of the legend window in touchmove
+    * @param {Number} value Left position
+    * @returns {void}
+    */
+    setWindowLeft: function (value) {
+        this.set("windowLeft", value);
+    },
+    /**
+    * Sets the top position of the legend window in touchmove
+    * @param {Number} value Top position
+    * @returns {void}
+    */
+    setWindowTop: function (value) {
+        this.set("windowTop", value);
+    },
+    /**
+    * Sets the Start X value of the legend window in touchmove
+    * @param {Number} value Start X position
+    * @returns {void}
+    */
+    setStartX: function (value) {
+        this.set("startX", value);
+    },
+    /**
+    * Sets the Start Y value of the legend window in touchmove
+    * @param {Number} value Start Y position
+    * @returns {void}
+    */
+    setStartY: function (value) {
+        this.set("startY", value);
     }
 });
 

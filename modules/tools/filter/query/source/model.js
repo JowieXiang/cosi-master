@@ -78,7 +78,7 @@ const SourceModel = QueryModel.extend({
                         this.setIsInitialLoad(false);
 
                         if (!this.get("isAutoRefreshing")) {
-                            this.stopListening(Radio.channel("Layer"), "featuresLoaded");
+                            this.stopListening(Radio.channel("VectorLayer"), "featuresLoaded");
                         }
                     }
                 }

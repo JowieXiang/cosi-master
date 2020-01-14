@@ -51,16 +51,20 @@ const Tool = Item.extend(/** @lends Tool.prototype */{
 
         this.listenTo(this, {
             "change:isActive": function (model, value) {
-                var gfiModel = model.collection.findWhere({id: "gfi"}),
-                    activeTools = [];
+                const gfiModel = model.collection ? model.collection.findWhere({id: "gfi"}) : undefined;
+                let activeTools = [];
 
                 if (value) {
+
+                    if (model.get("keepOtherToolsOpened") !== true) {
+                        if (this.collection) {
+                            this.collection.setActiveToolsToFalse(model);
+                        }
+                    }
+
                     if (model.get("renderToWindow")) {
                         Radio.trigger("Window", "showTool", model);
                         Radio.trigger("Window", "setIsVisible", true);
-                    }
-                    if (model.get("keepOtherToolsOpened") !== true) {
-                        this.collection.setActiveToolsToFalse(model);
                     }
 
                     if (gfiModel) {
@@ -72,9 +76,9 @@ const Tool = Item.extend(/** @lends Tool.prototype */{
                     if (model.get("renderToWindow")) {
                         Radio.trigger("Window", "setIsVisible", false);
                     }
-                    activeTools = model.collection.where({isActive: true});
+                    activeTools = model.collection ? model.collection.where({isActive: true}) : undefined;
 
-                    if (activeTools.length === 0) {
+                    if (activeTools && activeTools.length === 0) {
                         model.collection.toggleDefaultTool();
                     }
                 }

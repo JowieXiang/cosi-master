@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<div class="isochrones">
+    <form class="form-horizontal">
+        <div class="form-group">
+            <label class="col-sm-3">Referenzpunkt</label>
+            <div class="col-sm-9">
+                <input class="form-control input-sm" title="Referenzpunkt" id="coordinate" type="text" min="0">
+                </input>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3">Verkehrsmittel</label>
+            <div class="col-sm-9">
+                <select class="form-control input-sm" title="Transportmittel" id="path-type">
+                    <option selected value="Leeren"> -Leeren- </option>
+                    <option value="driving-car">Auto</option>
+                    <option value="cycling-regular">Rad</option>
+                    <option value="cycling-electric">Rad (elektrisch)</option>
+                    <option value="foot-walking">Gehen</option>
+                    <option value="wheelchair">Rollstuhl</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3">Zeit (in min)</label>
+            <div class="col-sm-3">
+                <input class="form-control input-sm" title="Zeit (in min)" id="range" type="number" min="0">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-3 col-sm-5">
+                <button type="button" class="btn btn-lgv-grey" id="create-isochrones">
+                    Berechnen
+                </button>
+            </div>
+            <div class="col-sm-1">
+                <div id="help">
+                    <span class="glyphicon glyphicon-question-sign"></span>
+                </div>
+            </div>
+            <div class="col-sm-1">
+                <div id="backward" title="go back to mode selection">
+                    <span class="glyphicon glyphicon-arrow-left"></span>
+                </div>
+            </div>
+            <div class="col-sm-1">
+                <div id="clear" title="clear current result">
+                    <span class="glyphicon glyphicon-trash"></span>
+                </div>
+            </div>
+        </div>
+    </form>
+    <hr>
+    <h5><strong>Legende - Zeit (in min): </strong></h5>
+    <div id="legend">
+    </div>
+    <br />
+    <button type="button" class="btn btn-lgv-grey measure-delete" id="show-result">
+        <span class="glyphicon glyphicon-th-list"></span>Einrichtungsabdeckung
+    </button>
+    <div id="result"></div>
+
+    <button class="btn btn-lgv-grey measure-delete" id="hh-request">
+        <span class="glyphicon glyphicon-user"></span>Einwohnerabfrage für den Bereich
+    </button>
+</div>
