@@ -1,3 +1,4 @@
 {
-  "cosi": "modules/loader.js"
+  "cosi": "modules/loader.js",
+  "einwohnerabfrage": "selectView.js"
 }
