@@ -47,8 +47,6 @@ import LayerSliderModel from "../../tools/layerSlider/model";
 import GFI from "../../tools/gfi/model";
 import Viewpoint from "./viewpoint/model";
 import ColorScale from "../../tools/colorScale/model";
-// import WsClientInput from "../../tools/wsClientInput/model";
-import Timeline from "../../tools/timeline/model";
 import VirtualCityModel from "../../tools/virtualCity/model";
 
 const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
@@ -317,9 +315,6 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
             }
             else if (attrs.id === "colorScale") {
                 return new ColorScale(attrs, options);
-            }
-            else if (attrs.id === "timeline") {
-                return new Timeline(attrs, options);
             }
             /**
              * layerslider

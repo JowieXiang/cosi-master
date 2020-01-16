@@ -8,6 +8,7 @@ import LayerFilterModel from "./layerFilter/model";
 import LayerFilterView from "./layerFilter/view";
 import LayerFilterCollection from "./layerFilter/list";
 import InfoTemplate from "text-loader!./info.html";
+import paramsTemplate from "text-loader!./paramsTemplate.html";
 
 const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsView.prototype */{
     events: {
@@ -24,6 +25,7 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
      * @constructs
      * @listens Tools.CompareDistricts#RadioTriggerCompareDistrictsCloseFilter
      * @listens Tools.CompareDistricts#RadioTriggerCompareDistrictsSelectRefDistrict
+     * @listens Tools.CompareDistricts#RadioTriggerCompareDistrictsChangeRefValue
      * @listens CompareDistrictsModel#changeIsActive
      * @listens CompareDistrictsModel#changeLayerFilterList
      * @listens LayerFilterCollection#Add
@@ -49,6 +51,10 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
             "selectRefDistrict": function () {
                 this.renderRefDistrictName();
                 this.updateLayerFilterCollection();
+            },
+            "changeRefValue": function () {
+                // empty refDistrict when refValue changes
+                this.$el.find("#reference-district").empty();
             }
         });
         this.listenTo(this.model, {
@@ -80,6 +86,7 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
     },
 
     template: _.template(template),
+    paramsTemplate: _.template(paramsTemplate),
 
     /**
      * Render to DOM
@@ -146,7 +153,7 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
         this.districtSelector = new DistrictSelectorView();
         this.$el.find("#district-selector-container").append(this.districtSelector.render().el);
 
-        this.layerFilterSelector = new LayerFilterSelectorView({model: new LayerFilterSelectorModel()});
+        this.layerFilterSelector = new LayerFilterSelectorView({ model: new LayerFilterSelectorModel() });
         this.$el.find("#layerfilter-selector-container").append(this.layerFilterSelector.render().el);
     },
 
@@ -178,7 +185,7 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
      */
     addFilterModel: function () {
         const layerInfo = this.layerFilterSelector.getSelectedLayer(),
-            layerFilterModel = new LayerFilterModel({layerInfo: layerInfo});
+            layerFilterModel = new LayerFilterModel({ layerInfo: layerInfo });
 
         this.addOneToLayerFilterList(layerFilterModel);
         this.layerFilterCollection.add(layerFilterModel);
@@ -203,7 +210,7 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
      * @return {void}
      */
     renderLayerFilter: function (model) {
-        const layerFilterView = new LayerFilterView({model: model});
+        const layerFilterView = new LayerFilterView({ model: model });
 
         this.$el.find("#layerfilter-container").append(layerFilterView.render().el);
     },
@@ -242,17 +249,31 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
             domObj.empty();
             this.model.set("refDistrict", null);
         }
+        this.districtSelector.resetDropDown();
     },
+    /**
+     * renders filter parameters: Jahr, Referenzwert, Toleranz
+     * @returns {void}
+     */
+    renderParams: function () {
+        this.$el.find("#params").empty();
+        const layerFilterList = [];
 
+        this.layerFilterCollection.each(function (model) {
+            layerFilterList.push(model);
+        });
+        this.$el.find("#params").append(this.paramsTemplate({ layerFilterList: layerFilterList }));
+    },
     /**
      * renders compare results
      * @param {Array} comparableDistricts list of comparableDistrict names
      * @returns {void}
      */
     renderCompareResults: function (comparableDistricts) {
+        this.$el.find("#compare-results").empty();
+
         let domString = "<p>";
 
-        this.$el.find("#compare-results").empty();
         _.each(comparableDistricts, district => {
             domString += `<span class="name-tag district-name">${district} </span>`;
         });
@@ -271,7 +292,7 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
      * @returns {void}
      */
     addOneToLayerFilterList: function (model) {
-        const newItem = {layerId: model.get("layerInfo").layerId, filter: model.get("filter"), districtInfo: model.get("districtInfo")},
+        const newItem = { layerId: model.get("layerInfo").layerId, filter: model.get("filter"), districtInfo: model.get("districtInfo") },
             newList = this.model.get("layerFilterList") === "" ? [] : JSON.parse(this.model.get("layerFilterList"));
 
         newList.push(newItem);
@@ -324,15 +345,18 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
                 comparableFeatures = results[0].filter(feature => _.contains(intersection, feature.getProperties()[selector]));
                 this.model.set("comparableFeaturesNames", intersection);
                 this.renderCompareResults(intersection);
+                this.renderParams();
             }
             else {
                 this.renderCompareResults(resultNames.reduce((acc, val) => acc.concat(val), [])); // arr.reduce((acc, val) => acc.concat(val), []) serves same function as arr.flat()
+                this.renderParams();
                 this.model.set("comparableFeaturesNames", resultNames.reduce((acc, val) => acc.concat(val), [])); // arr.reduce((acc, val) => acc.concat(val), []) serves same function as arr.flat()
             }
             this.showComparableDistricts(comparableFeatures);
         }
         else {
             this.$el.find("#compare-results").empty();
+            this.$el.find("#params").empty();
             this.$el.find("#show-in-dashboard").hide();
             this.$el.find("#set-selected-district").hide();
             this.clearMapLayer();
@@ -398,7 +422,7 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
          */
         const mapLayer = Radio.request("Map", "getLayerByName", this.model.get("mapLayerName")),
             scope = Radio.request("SelectDistrict", "getScope"),
-            districtLayer = Radio.request("ModelList", "getModelByAttributes", {"name": scope}),
+            districtLayer = Radio.request("ModelList", "getModelByAttributes", { "name": scope }),
             selector = Radio.request("SelectDistrict", "getDistrictLayer").filter(item => item.name === scope)[0].selector,
             featureCollection = districtLayer.get("layer").getSource().getFeatures(),
             refDistrict = featureCollection.filter(feature => feature.getProperties()[selector] === refDistrictName)[0],
@@ -502,7 +526,7 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
      */
     changeDistrictSelection: function () {
         const scope = Radio.request("SelectDistrict", "getScope"),
-            districtLayer = Radio.request("ModelList", "getModelByAttributes", {"name": scope}),
+            districtLayer = Radio.request("ModelList", "getModelByAttributes", { "name": scope }),
             selector = Radio.request("SelectDistrict", "getDistrictLayer").filter(item => item.name === scope)[0].selector,
             featureCollection = districtLayer.get("layer").getSource().getFeatures(),
             selectedFeatures = featureCollection.filter(feature => _.contains(this.model.get("comparableFeaturesNames"), feature.getProperties()[selector]));

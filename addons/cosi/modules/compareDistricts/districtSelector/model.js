@@ -4,7 +4,8 @@ const DistrictSelectorModel = Backbone.Model.extend(/** @lends DistrictSelectorM
     defaults: {
         districtNames: [], // all select options (vector layers in the map)
         selectedDistrict: "Leeren", // selected option
-        dropDownModel: {}
+        dropDownModel: {},
+        dropDownDisplayName: "Referenzgebiet"
     },
 
     /**
