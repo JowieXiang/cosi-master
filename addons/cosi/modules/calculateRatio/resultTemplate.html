@@ -16,9 +16,7 @@ else { %>
                 <% } %>
                 <th scope="col"><%= denominators.values.join(', ') %></th>
                 <th scope="col"><%= modifier[0] %> / Bezugsgröße</th>
-                <% if (isModified) { %>
-                    <th scope="col">Unter- / Überversorgung</th>
-                <% } %>
+                <th scope="col">Unter- / Überversorgung (%)</th>
             </tr>
             <% for (var district in results) { %>
                 <tr>
@@ -30,9 +28,7 @@ else { %>
                     <% } %>
                     <td><%= results[district].demographics.toLocaleString('de-DE') %></td>
                     <td><%= results[district].ratio.toLocaleString('de-DE') %></td>
-                    <% if (isModified) { %>
-                        <td><%= results[district].coverage.toLocaleString('de-DE') %></td>
-                    <% } %>
+                    <td><%= results[district].coverage.toLocaleString('de-DE') %> %</td>
                 </tr>
             <% } %>
         </table>

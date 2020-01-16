@@ -171,13 +171,13 @@ const CalculateRatioModel = Tool.extend( /** @lends CalculateRatioModel */{
                 // calculate Ratio for district
                 ratio = this.calculateRatio(facilities, demographics, district.getProperties()[selector]);
                 this.setResultForDistrict(district.getProperties()[selector], {
-                    ratio: ratio,
-                    capacity: facilities * this.get("modifier")[1],
-                    demand: demographics / this.get("modifier")[1],
-                    coverage: ratio * this.get("modifier")[1],
-                    facilities: facilities,
-                    demographics: demographics,
-                    f: this.get("modifier")[1]
+                    ratio: ratio, // the simple ratio between target group and facility value
+                    capacity: facilities * this.get("modifier")[1], // number of people the given facility property can accomodate
+                    demand: demographics / this.get("modifier")[1], // necessary facility value to accomodate all people of the target group
+                    coverage: Math.round(ratio * this.get("modifier")[1] * 100 * this.get("resolution")), // percentage of demand met, modified by resolution (e.g. calc per 1000 ppl)
+                    facilities: facilities, // facility value (e.g. sqm)
+                    demographics: demographics, // target group
+                    f: this.get("modifier")[1] // modifier "f"
                 });
             });
             // Calculate total value and add it to results
@@ -186,7 +186,7 @@ const CalculateRatioModel = Tool.extend( /** @lends CalculateRatioModel */{
                 ratio: totalRatio,
                 capacity: totalFacilities * this.get("modifier")[1],
                 demand: totalDemographics / this.get("modifier")[1],
-                coverage: totalRatio * this.get("modifier")[1],
+                coverage: Math.round(totalRatio * this.get("modifier")[1] * 100 * this.get("resolution")),
                 facilities: totalFacilities,
                 demographics: totalDemographics,
                 f: this.get("modifier")[1]
@@ -195,7 +195,7 @@ const CalculateRatioModel = Tool.extend( /** @lends CalculateRatioModel */{
                 ratio: totalRatio / selectedDistricts.length,
                 capacity: (totalFacilities * this.get("modifier")[1]) / selectedDistricts.length,
                 demand: totalDemographics / this.get("modifier")[1] / selectedDistricts.length,
-                coverage: (totalRatio * this.get("modifier")[1]) / selectedDistricts.length,
+                coverage: Math.round((totalRatio * this.get("modifier")[1] * 100 * this.get("resolution")) / selectedDistricts.length),
                 facilities: totalFacilities / selectedDistricts.length,
                 demographics: totalDemographics / selectedDistricts.length,
                 f: this.get("modifier")[1]
@@ -208,7 +208,7 @@ const CalculateRatioModel = Tool.extend( /** @lends CalculateRatioModel */{
         Object.keys(this.getResults()).forEach(function (objectKey) {
             renameResults[objectKey] = Radio.request("Util", "renameKeys", {
                 ratio: "Verhältnis",
-                coverage: "Abdeckung",
+                coverage: "Abdeckung (%)",
                 facilities: `${this.getNumerators()[0]} (${this.get("modifier")[0]})`,
                 demographics: this.getDenominators().join(", "),
                 demand: "Bedarf (Soll)",
@@ -229,7 +229,7 @@ const CalculateRatioModel = Tool.extend( /** @lends CalculateRatioModel */{
      */
     calculateRatio (facilities, demographics, area = "allen Unterschungsgebieten") {
         if (demographics >= 0) {
-            return (this.get("resolution") * facilities) / demographics;
+            return facilities / demographics;
         }
         this.setMessage(`In ${area} ist keine Population der Zielgruppe vorhanden. Daher können keine Ergebnisse angezeigt werden.`);
         return "n/a";

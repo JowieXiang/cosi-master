@@ -26,8 +26,7 @@ const ResultView = Backbone.View.extend({
         this.$el.html(this.template(attr));
         this.$el.find("#export-button").append(this.exportButtonView.render().el);
 
-        console.log(results);
-        if (results !== {}) {
+        if (_.allKeys(results).length > 0) {
             this.createTextLabels(results);
         }
 
@@ -70,7 +69,7 @@ const ResultView = Backbone.View.extend({
                         color: "#000",
                         width: 2
                     }),
-                    text: results[feature.getProperties()[selector]].coverage.toFixed(2)
+                    text: results[feature.getProperties()[selector]].coverage + "%"
                 })
             }));
         });

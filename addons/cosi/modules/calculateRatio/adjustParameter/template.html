@@ -17,7 +17,7 @@
         <tr>
             <td>
                 <select class="form-control custom-select" id="parameter-select">
-                    <option value="selectedOption[0]"><%= selectedOption[0] === "count" ? "Anzahl" : selectedOption[0] %></option>
+                    <option value="<%= selectedOption[0] %>"><%= selectedOption[0] === "count" ? "Anzahl" : selectedOption[0] %></option>
                     <% _.each(numericalValues, function (value) { %>
                         <option value="<%= value %>"><%= value %></option>
                     <% }) %>

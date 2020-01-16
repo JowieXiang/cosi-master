@@ -126,6 +126,10 @@ const SelectView = Backbone.View.extend({
      * @returns {void}
      */
     setResolution: function (evt) {
+        if (!evt.target.value || evt.target.value === "0") {
+            evt.target.value = 1;
+        }
+
         this.model.set("resolution", parseInt(evt.target.value, 10));
     },
 

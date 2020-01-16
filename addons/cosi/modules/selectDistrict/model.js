@@ -76,7 +76,8 @@ const SelectDistrictModel = Tool.extend(/** @lends SelectDistrictModel.prototype
             values: this.get("districtLayerNames"),
             snippetType: "dropdown",
             isMultiple: false,
-            preselectedValues: this.get("districtLayerNames")[0]
+            preselectedValues: this.get("districtLayerNames")[0],
+            boxSelectMode: 0
         }));
 
         this.listenTo(this, {
@@ -153,6 +154,19 @@ const SelectDistrictModel = Tool.extend(/** @lends SelectDistrictModel.prototype
             "revertBboxGeometry": this.revertBboxGeometry,
             "setMapViewToBbox": this.setMapViewToBbox
         }, this);
+
+        // add keyboard events for different selection modes
+        // todo
+        window.addEventListener("keydown", (evt) => {
+            if (evt.ctrlKey) {
+                this.set("boxSelectMode", 1);
+            }
+        });
+        window.addEventListener("keyup", (evt) => {
+            if (!evt.ctrlKey) {
+                this.set("boxSelectMode", 0);
+            }
+        });
     },
 
     // listen  to click event and trigger setGfiParams
@@ -207,10 +221,22 @@ const SelectDistrictModel = Tool.extend(/** @lends SelectDistrictModel.prototype
         const extent = new GeoJSON().readGeometry(geoJson).getExtent(),
             layerSource = Radio.request("ModelList", "getModelByAttributes", {"name": this.getScope()}).get("layerSource");
 
-        this.resetSelectedDistricts();
         layerSource.forEachFeatureIntersectingExtent(extent, (feature) => {
-            this.pushSelectedDistrict(feature);
-            feature.setStyle(this.get("selectedStyle"));
+            switch (this.get("boxSelectMode")) {
+                case 1:
+                    // to do, check how the ctrlKey interferes with the OL drawInteraction... it blocks the click event
+                    if (this.get("selectedDistricts").map(district => district.get(this.getSelector())).includes(feature.get(this.getSelector()))) {
+                        this.removeSelectedDistrict(feature, this.getSelectedDistricts());
+                        feature.setStyle(this.get("defaultStyle"));
+                    }
+                    break;
+                default:
+                    if (!this.get("selectedDistricts").map(district => district.get(this.getSelector())).includes(feature.get(this.getSelector()))) {
+                        this.pushSelectedDistrict(feature);
+                        feature.setStyle(this.get("selectedStyle"));
+                    }
+                    break;
+            }
         });
 
         setTimeout(() => {
@@ -223,11 +249,13 @@ const SelectDistrictModel = Tool.extend(/** @lends SelectDistrictModel.prototype
             "selectedDistricts": this.get("selectedDistricts").concat(feature)
         });
     },
-    setFeaturesByScopeAndIds (scope, ids, buffer) {
+    async setFeaturesByScopeAndIds (scope, ids, buffer) {
         this.setBuffer(buffer);
         this.setScope(scope);
         const layer = Radio.request("ModelList", "getModelByAttributes", {name: scope}),
-            features = layer.get("layerSource").getFeatures().filter(feature => ids.includes(feature.getProperties()[this.getSelector()]));
+            source = layer.get("layerSource"),
+            allFeatures = await this.getFeaturesAsync(source),
+            features = allFeatures.filter(feature => ids.includes(feature.get(this.getSelector())));
 
         if (features && features.length !== 0) {
             this.set("selectedDistricts", features);
@@ -236,6 +264,29 @@ const SelectDistrictModel = Tool.extend(/** @lends SelectDistrictModel.prototype
             }, this);
             this.toggleIsActive();
         }
+    },
+
+    /**
+     * @description trys to get the features of a source asynchronously in intervals until it finds any results or exceeds the set number of iterations
+     * @param {ol.VectorSource} source layerSource to get Features from
+     * @param {number} interval time between trys in milliseconds
+     * @param {number} iterations number of iterations
+     * @returns {Promise<ol.Feature>} the promise that resolves the features
+     */
+    getFeaturesAsync (source, interval = 500, iterations = 10) {
+        return new Promise(res => {
+            let iteration = 0,
+                features = [];
+            const loop = setInterval(() => {
+                features = source.getFeatures();
+
+                iteration += 1;
+                if (features.length > 0 || iteration >= iterations) {
+                    clearInterval(loop);
+                    res(features);
+                }
+            }, interval);
+        });
     },
 
     /**
@@ -435,7 +486,6 @@ const SelectDistrictModel = Tool.extend(/** @lends SelectDistrictModel.prototype
     },
     getUrlQuery () {
         const query = window.location.search.split("&").filter(q => q.includes("scope") || q.includes("selectedDistricts") || q.includes("buffer"));
-        console.log(query);
 
         if (query.length > 0) {
             this.set("urlQuery", [
