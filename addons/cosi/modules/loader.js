@@ -53,7 +53,6 @@ function initializeCosi () {
         window.name = "TouchScreen";
 
         Object.values(tools).forEach(function (tool) {
-            console.info(tool.get("id"));
             Radio.trigger("ModelList", "replaceModelById", tool.get("id"), tool);
         });
         // Radio.trigger("ModelList", "addModelsAndUpdate", Object.values(tools));

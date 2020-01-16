@@ -219,9 +219,13 @@ const WFSLayer = Layer.extend(/** @lends WFSLayer.prototype */{
 
         if (!_.isUndefined(stylelistmodel)) {
             this.setStyle(function (feature) {
-                isClusterfeature = _.isObject(feature.get("features")) === true;
+                // in manchen Fällen war feature undefined und in "this" geschrieben.
+                // konnte nicht nachvollziehen, wann das so ist.
+                const feat = feature !== undefined ? feature : this;
 
-                return stylelistmodel.createStyle(feature, isClusterfeature);
+                isClusterfeature = _.isObject(feat.get("features")) === true;
+
+                return stylelistmodel.createStyle(feat, isClusterfeature);
             });
         }
 

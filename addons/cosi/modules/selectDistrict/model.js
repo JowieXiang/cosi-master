@@ -187,11 +187,13 @@ const SelectDistrictModel = Tool.extend(/** @lends SelectDistrictModel.prototype
             // if already selected remove district from selectedDistricts
             if (isFeatureSelected) {
                 this.removeSelectedDistrict(features[0], this.getSelectedDistricts());
+                features[0].unset("styleId");
                 features[0].setStyle(this.get("defaultStyle"));
             }
             // push selected district to selectedDistricts
             else {
                 this.pushSelectedDistrict(features[0]);
+                features[0].set("styleId", features[0].getId());
                 features[0].setStyle(this.get("selectedStyle"));
             }
         }
@@ -210,6 +212,7 @@ const SelectDistrictModel = Tool.extend(/** @lends SelectDistrictModel.prototype
         this.resetSelectedDistricts();
         layerSource.forEachFeatureIntersectingExtent(extent, (feature) => {
             this.pushSelectedDistrict(feature);
+            features[0].set("styleId", features[0].getId());
             feature.setStyle(this.get("selectedStyle"));
         });
 
@@ -232,6 +235,7 @@ const SelectDistrictModel = Tool.extend(/** @lends SelectDistrictModel.prototype
         if (features && features.length !== 0) {
             this.set("selectedDistricts", features);
             features.forEach(function (feature) {
+                feature.set("styleId", features[0].getId());
                 feature.setStyle(this.get("selectedStyle"));
             }, this);
             this.toggleIsActive();
@@ -255,6 +259,7 @@ const SelectDistrictModel = Tool.extend(/** @lends SelectDistrictModel.prototype
 
     resetSelectedDistricts: function () {
         _.each(this.get("selectedDistricts"), function (feature) {
+            feature.unset("styleId");
             feature.setStyle(this.get("defaultStyle"));
         }, this);
         this.set("selectedDistricts", []);
@@ -472,6 +477,7 @@ const SelectDistrictModel = Tool.extend(/** @lends SelectDistrictModel.prototype
         this.resetSelectedDistricts();
         this.set("selectedDistricts", features);
         _.each(features, feature => {
+            feature.set("styleId", feature.getId());
             feature.setStyle(that.get("selectedStyle"));
         });
         // reset bboxGeometry
