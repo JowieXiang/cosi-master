@@ -15,7 +15,6 @@ import ReachabilitySelect from "./reachabilitySelect/model";
 import CompareDistricts from "./compareDistricts/model";
 import Filter from "./filter/model";
 
-
 new FeaturesLoader();
 new BboxSettor();
 new OpenRouteService();

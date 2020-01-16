@@ -85,6 +85,10 @@
             "isActive": false,
             "isVisibleInMenu": false
           },
+          "kmlimport":{
+            "name":"KML Import Zeichnungen",
+            "glyphicon":"glyphicon-import"
+         },
           "compareDistricts": {
             "name": "Vergleichbare Gebiete ermitteln",
             "glyphicon": "glyphicon glyphicon-random"
@@ -102,6 +106,10 @@
             "name": "Erreichbarket im Gebiet",
             "isVisibleInMenu": false,
             "glyphicon": "glyphicon-time"
+          },
+          "draw": {
+            "name": "Zeichnen / Schreiben",
+            "glyphicon": "glyphicon-pencil"
           }
         }
       },
@@ -139,6 +147,10 @@
           "saveSelectionCosi": {
             "name": "Sitzung speichern",
             "glyphicon": "glyphicon-copy"
+          },
+          "addWMS":{
+            "name":"WMS hinzufügen",
+            "glyphicon":"glyphicon-plus"
           },
           "infoScreen": {
             "name": "Zweites Fenster öffnen",

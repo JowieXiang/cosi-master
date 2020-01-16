@@ -1,4 +1,4 @@
-import Tool from "../../core/modelList/tool/model";
+import Tool from "../../../../modules/core/modelList/tool/model";
 
 const Timeline = Tool.extend({
     defaults: {

@@ -2,7 +2,7 @@
 import Tool from "../../../../modules/core/modelList/tool/model";
 import ExportButtonModel from "../../../../modules/snippets/exportButton/model";
 import DropdownModel from "../../../../modules/snippets/dropdown/model";
-import TimelineModel from "../../../../modules/tools/timeline/model";
+import TimelineModel from "../timeline/model";
 
 const DashboardTableModel = Tool.extend(/** @lends DashboardTableModel.prototype */ {
     defaults: _.extend({}, Tool.prototype.defaults, {
