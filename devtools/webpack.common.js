@@ -94,7 +94,7 @@ module.exports = function () {
                 },
                 // take all files ending with ".js" but not with ".test.js".
                 {
-                    test: /\[^\.test\]\.js$/,
+                    test: /\.js$/,
                     use: {
                         loader: "babel-loader",
                         options: {

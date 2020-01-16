@@ -47,5 +47,5 @@ const Config = {
     remoteInterface: {
         postMessageUrl: "https://localhost:9001/portal/cosi_new/infoscreen.html"
     },
-    addons: ["cosi"]
+    addons: ["cosi", "einwohnerabfrage"]
 };
