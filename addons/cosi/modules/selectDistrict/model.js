@@ -212,7 +212,7 @@ const SelectDistrictModel = Tool.extend(/** @lends SelectDistrictModel.prototype
         this.resetSelectedDistricts();
         layerSource.forEachFeatureIntersectingExtent(extent, (feature) => {
             this.pushSelectedDistrict(feature);
-            features[0].set("styleId", features[0].getId());
+            feature.set("styleId", feature.getId());
             feature.setStyle(this.get("selectedStyle"));
         });
 
