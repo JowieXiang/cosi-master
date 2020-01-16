@@ -53,9 +53,17 @@ const DistrictSelectorView = Backbone.View.extend(/** @lends DistrictSelectorVie
      */
     getSelectedDistrict: function () {
         return this.model.get("selectedDistrict");
+    },
+
+    /**
+     * resets dropdown model and view
+     * @returns {void}
+     */
+    resetDropDown: function () {
+        this.model.get("dropDownModel").deselectValueModels();
+        this.model.get("dropDownModel").setDisplayName(this.model.get("dropDownDisplayName"));
+        this.model.get("dropDownModel").trigger("render");
     }
-
-
 });
 
 export default DistrictSelectorView;

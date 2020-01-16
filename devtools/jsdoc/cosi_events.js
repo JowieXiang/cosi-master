@@ -49,6 +49,12 @@
  */
 
 /**
+ * @event Tools.CompareDistricts#RadioTriggerCompareDistrictsChangeRefValue
+ * @description trigged when reference value input changes
+ * @example  Radio.trigger("CompareDistricts", "changeRefValue");
+ */
+
+/**
 * @event CompareDistrictsModel#changeIsActive
 * @description trigged when isActive changes
 */
