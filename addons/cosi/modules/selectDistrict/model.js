@@ -253,7 +253,7 @@ const SelectDistrictModel = Tool.extend(/** @lends SelectDistrictModel.prototype
     },
     async setFeaturesByScopeAndIds (scope, ids, buffer) {
         this.setBuffer(buffer);
-        this.setScope(scope);
+        this.setScope(scope, true);
         const layer = Radio.request("ModelList", "getModelByAttributes", {name: scope}),
             source = layer.get("layerSource"),
             allFeatures = await this.getFeaturesAsync(source),
@@ -341,10 +341,13 @@ const SelectDistrictModel = Tool.extend(/** @lends SelectDistrictModel.prototype
             this.setScope(scope);
         }
     },
-    setScope: function (scope) {
+    setScope: function (scope, fromUrl = false) {
         this.set("activeScope", scope);
         if (scope && scope !== "" && this.get("districtLayer").length !== 0) {
             this.set("activeSelector", this.get("districtLayer").find(el => el.name === scope).selector);
+            if (fromUrl) {
+                this.get("scopeDropdownModel").updateSelectedValues(scope);
+            }
         }
         this.resetSelectedDistricts();
         this.toggleScopeLayers();

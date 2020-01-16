@@ -173,8 +173,7 @@ const general = {
             type: "tool",
             id: "calculateRatio",
             name: "Versorgungsanalyse",
-            glyphicon: "glyphicon-tasks",
-            modifierInfoText: "<h3>Gewichtung:</h3><p>Hiermit können Sie eine beliebige Gewichtung für die Berechnung der Angebots/Zielgruppen-Verhältnisse festlegen um die Deckung der Nachfrage zu überprüfen.<br />z.B.: 'Wieviele Qudaratmeter pädagogische Fläche benötigt ein Kitakind?'<br /></p><p><strong>Der eingegebene Wert entspricht keinem offiziellen, rechtlich bindenden Schlüssel, sonder dient rein der explorativen Analyse.</strong></p>"
+            glyphicon: "glyphicon-tasks"
         }),
         reachabilitySelect: new ReachabilitySelect({
             id: "reachabilitySelect",

@@ -18,7 +18,14 @@ const CalculateRatioModel = Tool.extend( /** @lends CalculateRatioModel */{
         denDropdownModel: {},
         message: "",
         adjustParameterView: {},
-        exportButtonModel: {}
+        exportButtonModel: {},
+        modifierInfoText: "<h3>Parameter wählen:</h3>" +
+            "<p>Hier können Sie zwischen allen verfügbaren Feldern des Einrichtungstyps wählen (z.B. absolute Anzahl, Fläche in m², Schulplätze, etc.)<br />" +
+            "Die wählbaren Werte können vom Administrator festgelegt werden. Sollte keine Festlegung erfolgt sein, werden alle numerischen Werte angeboten.<br /></p>" +
+            "<h4>Faktor (F):</h4>" +
+            "<p>Hiermit können Sie eine beliebige Gewichtung für die Berechnung der Angebots/Zielgruppen-Verhältnisse festlegen um die Deckung der Nachfrage zu überprüfen.<br />" +
+            "z.B.: 'Wieviele Qudaratmeter pädagogische Fläche benötigt ein Kitakind?'<br /></p>" +
+            "<p><strong>Der eingegebene Wert entspricht keinem offiziellen, rechtlich bindenden Schlüssel, sonder dient rein der explorativen Analyse.</strong></p>"
     }),
 
     /**
