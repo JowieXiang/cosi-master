@@ -465,6 +465,7 @@ function loadApp () {
 
                     // addons are initialized with 'new Tool(attrs, options);', that produces a rudimental model. Now the model must be replaced in modellist:
                     if (addon.model) {
+                        console.log(addon.model);
                         Radio.trigger("ModelList", "replaceModelById", addon.model.id, addon.model);
                     }
                 }).catch(error => {

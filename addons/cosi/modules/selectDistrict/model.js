@@ -2,7 +2,7 @@ import {Fill, Stroke, Style} from "ol/style.js";
 import GeometryCollection from "ol/geom/GeometryCollection";
 import Tool from "../../../../modules/core/modelList/tool/model";
 import SnippetDropdownModel from "../../../../modules/snippets/dropdown/model";
-import GraphicalSelectModel from "../../../../modules/snippets/graphicalselect/model";
+import GraphicalSelectModel from "../../../../modules/snippets/graphicalSelect/model";
 import * as Extent from "ol/extent";
 import * as Polygon from "ol/geom/Polygon";
 import GeoJSON from "ol/format/GeoJSON";
@@ -117,7 +117,7 @@ const SelectDistrictModel = Tool.extend(/** @lends SelectDistrictModel.prototype
                         this.setBboxGeometry(null);
                     }
                     this.unlisten();
-                    CosiStorage.setItem("sortKey", this.get("activeSelector"));
+                    window.localStorage.setItem("sortKey", this.get("activeSelector"));
                 }
             }
         });
@@ -128,7 +128,7 @@ const SelectDistrictModel = Tool.extend(/** @lends SelectDistrictModel.prototype
 
         this.listenTo(Radio.channel("VectorLayer"), "featuresLoaded", function (id) {
             if (!this.get("isReady")) {
-                this.checkDistrictLayersLoaded(id);
+                this.checkDistrictLayersLoaded();
             }
         });
 
@@ -326,16 +326,13 @@ const SelectDistrictModel = Tool.extend(/** @lends SelectDistrictModel.prototype
             }
         });
     },
-    checkDistrictLayersLoaded: function (id) {
-        const name = Radio.request("ModelList", "getModelByAttributes", {"id": id}).get("name");
+    checkDistrictLayersLoaded: function () {
+        const districtLayerNames = this.get("districtLayerNames"),
+            districtLayersLoaded = Radio.request("ModelList", "getModelsByAttributes", {type: "layer"})
+                .map(layer => layer.get("name"))
+                .filter(layerName => districtLayerNames.includes(layerName));
 
-        if (this.get("districtLayerNames").includes(name)) {
-            if (!this.get("districtLayersLoaded").includes(name)) {
-                this.get("districtLayersLoaded").push(name);
-            }
-        }
-
-        if (_.isEqual(this.get("districtLayerNames").sort(), this.get("districtLayersLoaded").sort())) {
+        if (_.isEqual(districtLayerNames.sort(), districtLayersLoaded.sort())) {
             this.setIsActive(true);
             this.set("isReady", true);
 
@@ -438,6 +435,7 @@ const SelectDistrictModel = Tool.extend(/** @lends SelectDistrictModel.prototype
     },
     getUrlQuery () {
         const query = window.location.search.split("&").filter(q => q.includes("scope") || q.includes("selectedDistricts") || q.includes("buffer"));
+        console.log(query);
 
         if (query.length > 0) {
             this.set("urlQuery", [

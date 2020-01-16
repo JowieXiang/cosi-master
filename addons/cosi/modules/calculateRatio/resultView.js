@@ -26,6 +26,7 @@ const ResultView = Backbone.View.extend({
         this.$el.html(this.template(attr));
         this.$el.find("#export-button").append(this.exportButtonView.render().el);
 
+        console.log(results);
         if (results !== {}) {
             this.createTextLabels(results);
         }
