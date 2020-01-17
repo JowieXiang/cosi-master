@@ -173,7 +173,7 @@ const featuresLoader = Backbone.Model.extend(/** @lends featuresLoader.prototype
 
     alertError: function () {
         Radio.trigger("Alert", "alert", {
-            text: "Datensätze konnten nicht geladen werden. Vermutlich liegt ein Verbindungsproblem zum Server vor. Bestätigen Sie die Auswahl erneut oder laden Sie die CoSI neu.",
+            text: "Datensätze konnten nicht geladen werden. Vermutlich liegt ein Verbindungsproblem zum Server vor. Bestätigen Sie die Auswahl erneut oder laden Sie CoSI neu.",
             kategorie: "alert-warning"
         });
     },

@@ -72,7 +72,7 @@ const DashboardWidgetHandler = Backbone.Model.extend(/** @lends DashboardWidgetH
 
         // send Widget to InfoScreen if infoScreenOpen
         if (Radio.request("InfoScreen", "getIsWindowOpen")) {
-            CosiStorage.setItem("rawDashboardWidget", JSON.stringify({
+            window.localStorage.setItem("rawDashboardWidget", JSON.stringify({
                 child: this.convertChildToHtml(_child),
                 parent,
                 opts

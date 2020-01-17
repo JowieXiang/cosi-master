@@ -147,8 +147,8 @@ const DashboardTableModel = Tool.extend(/** @lends DashboardTableModel.prototype
         this.set("tableView", this.groupTable(this.get("unsortedTable")));
 
         // writes the table data to local storage for the 2nd screen
-        CosiStorage.setItem("tableView", JSON.stringify(this.get("tableView")));
-        CosiStorage.setItem("unsortedTable", JSON.stringify(this.get("unsortedTable")));
+        window.localStorage.setItem("tableView", JSON.stringify(this.get("tableView")));
+        window.localStorage.setItem("unsortedTable", JSON.stringify(this.get("unsortedTable")));
     },
 
     /**

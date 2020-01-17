@@ -1,6 +1,6 @@
 import SnippetModel from "../../../../../modules/snippets/model";
 
-const AdjustParameterModel = SnippetModel.extend( /** @lends AdjustParameterModel */{
+const AdjustParameterModel = SnippetModel.extend(/** @lends AdjustParameterModel */{
     defaults: {
         layerName: "",
         layer: {},

@@ -26,7 +26,7 @@ const InfoScreenModel = Backbone.Model.extend(/** @lends InfoScreenModel.prototy
             this.set(attr, opts[attr]);
         }
 
-        CosiStorage.setItem("infoScreenOpen", JSON.stringify(true));
+        window.localStorage.setItem("infoScreenOpen", JSON.stringify(true));
         window.addEventListener("beforeunload", this.callClosed.bind(this), false);
         window.addEventListener("message", this.triggerFromRemote);
 
@@ -116,7 +116,7 @@ const InfoScreenModel = Backbone.Model.extend(/** @lends InfoScreenModel.prototy
      * @returns {void}
      */
     callClosed () {
-        CosiStorage.setItem("infoScreenOpen", JSON.stringify(false));
+        window.localStorage.setItem("infoScreenOpen", JSON.stringify(false));
     },
 
     /**
