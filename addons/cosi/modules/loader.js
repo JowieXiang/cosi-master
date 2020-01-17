@@ -31,8 +31,9 @@ function initializeCosi () {
     var infoScreenOpen = JSON.parse(window.localStorage.getItem("infoScreenOpen"));
 
     // check if browser is IE or Edge for InfoScreen to assign localStorage to opener
+    // to do
     if (window.StyleMedia && window.location.pathname.includes("infoscreen.html")) {
-        window.localStorage = window.opener.localStorage;
+        // ..
     }
     window.CosiStorage = window.localStorage;
 
@@ -49,7 +50,7 @@ function initializeCosi () {
     });
     // Handle TouchScreen / InfoScreen Loading
     if (!window.location.pathname.includes("infoscreen.html")) {
-        CosiStorage.clear();
+        window.localStorage.clear();
         window.name = "TouchScreen";
 
         Object.values(tools).forEach(function (tool) {
@@ -93,7 +94,7 @@ function initializeCosi () {
     ]);
 
     if (!window.location.pathname.includes("infoscreen.html")) {
-        CosiStorage.setItem("infoScreenOpen", JSON.stringify(infoScreenOpen));
+        window.localStorage.setItem("infoScreenOpen", JSON.stringify(infoScreenOpen));
         tools.selectDistrict.set("isActive", true);
     }
 

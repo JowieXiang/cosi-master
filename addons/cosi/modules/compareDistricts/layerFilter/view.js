@@ -100,6 +100,7 @@ const LayerFilterView = Backbone.View.extend(/** @lends LayerFilterView.prototyp
     /**
      * updates value of the layerFilter
      * @param {Object} e input event
+     * @fires Tools.CompareDistricts#RadioTriggerCompareDistrictsChangeRefValue
      * @returns {void}
      */
     updateRefInputValue: function (e) {
@@ -114,6 +115,7 @@ const LayerFilterView = Backbone.View.extend(/** @lends LayerFilterView.prototyp
             }
         });
         this.model.set("districtInfo", newInfo);
+        Radio.trigger("CompareDistricts", "changeRefValue");
     }
 
 });

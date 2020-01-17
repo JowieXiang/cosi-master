@@ -3,7 +3,7 @@
 <table class="table">
     <thead>
         <tr>
-            <th scope="col" id="param-label">Parameter wählen</th>
+            <th scope="col" id="param-label" title="Parameter wählen, s. Info">Parameter wählen</th>
             <th class="modifier <%= isModified ? '' : 'hidden' %>" scope="col" id="modifier-label">Faktor (F)</th>
             <!-- <th class="modifier hidden" scope="col" id="operator-label">Operator</th> -->
             <th>
@@ -17,7 +17,7 @@
         <tr>
             <td>
                 <select class="form-control custom-select" id="parameter-select">
-                    <option value="selectedOption[0]"><%= selectedOption[0] === "count" ? "Anzahl" : selectedOption[0] %></option>
+                    <option value="<%= selectedOption[0] %>"><%= selectedOption[0] === "count" ? "Anzahl" : selectedOption[0] %></option>
                     <% _.each(numericalValues, function (value) { %>
                         <option value="<%= value %>"><%= value %></option>
                     <% }) %>

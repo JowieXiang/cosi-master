@@ -25,8 +25,7 @@ const general = {
             id: "dashboardTable"
         }),
         dashboard: new Dashboard({
-            parentId: "root",
-            type: "tool",
+            // type: "tool",
             name: "Dashboard",
             id: "dashboard",
             glyphicon: "glyphicon-dashboard",
@@ -38,8 +37,7 @@ const general = {
     tools = !window.location.pathname.includes("infoscreen.html") ? {
         filter: new Filter({
             id: "filter",
-            parentId: "tools",
-            type: "tool",
+            // type: "tool",
             name: "Filter",
             glyphicon: "glyphicon-filter",
             deactivateGFI: false,
@@ -138,8 +136,7 @@ const general = {
         }),
         selectDistrict: new SelectDistrict({
             id: "selectDistrict",
-            parentId: "root",
-            type: "tool",
+            // type: "tool",
             name: "Gebiet auswählen",
             glyphicon: "glyphicon-picture",
             districtLayer: [
@@ -176,8 +173,7 @@ const general = {
             type: "tool",
             id: "calculateRatio",
             name: "Versorgungsanalyse",
-            glyphicon: "glyphicon-tasks",
-            modifierInfoText: "<h3>Gewichtung:</h3><p>Hiermit können Sie eine beliebige Gewichtung für die Berechnung der Angebots/Zielgruppen-Verhältnisse festlegen um die Deckung der Nachfrage zu überprüfen.<br />z.B.: 'Wieviele Qudaratmeter pädagogische Fläche benötigt ein Kitakind?'<br /></p><p><strong>Der eingegebene Wert entspricht keinem offiziellen, rechtlich bindenden Schlüssel, sonder dient rein der explorativen Analyse.</strong></p>"
+            glyphicon: "glyphicon-tasks"
         }),
         reachabilitySelect: new ReachabilitySelect({
             id: "reachabilitySelect",

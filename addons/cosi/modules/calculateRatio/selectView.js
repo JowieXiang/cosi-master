@@ -9,7 +9,8 @@ const SelectView = Backbone.View.extend({
         "click #submit": "calculateRatios",
         "change #resolution-input": "setResolution",
         "click .tool-info #help": "showInfo",
-        "click #clear": "clearResult"
+        "click #clear": "clearResult",
+        "click #help-resolution": "showInfoResolution"
     },
 
     /**
@@ -126,6 +127,10 @@ const SelectView = Backbone.View.extend({
      * @returns {void}
      */
     setResolution: function (evt) {
+        if (!evt.target.value || evt.target.value === "0") {
+            evt.target.value = 1;
+        }
+
         this.model.set("resolution", parseInt(evt.target.value, 10));
     },
 
@@ -134,9 +139,22 @@ const SelectView = Backbone.View.extend({
      * @returns {void}
      */
     showInfo: function () {
-        Radio.trigger("Alert", "alert:remove");
         Radio.trigger("Alert", "alert", {
             text: InfoTemplate,
+            kategorie: "alert-info"
+        });
+    },
+
+    /**
+     * show the Infobox for the resolution setter
+     * @returns {void}
+     */
+    showInfoResolution: function () {
+        Radio.trigger("Alert", "alert", {
+            text: "<h4>Maßstab:</h4>" +
+                "<p>Legen Sie hier fest in welchem <strong>Maßstab</strong> die Versorgungsabdeckung ermittelt werden soll:<br />" +
+                "So wird z.B. unter Umständen nur 1 Sportstätte für ca. 1000 EW benötigt. <br />" +
+                "Bei einem Wert von 2 Sportstätten und 2500 EW im Gebiet ergäbe sich damit eine Abdeckung von 80%.</p>",
             kategorie: "alert-info"
         });
     },

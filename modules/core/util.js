@@ -258,7 +258,7 @@ const Util = Backbone.Model.extend(/** @lends Util.prototype */{
                 text: "Inhalt wurde in die Zwischenablage kopiert.",
                 kategorie: "alert-info",
                 position: "top-center",
-                animation: 2000
+                fadeOut: 5000
             });
         }
         catch (e) {

@@ -57,6 +57,7 @@ const ReachabilityResultView = Backbone.View.extend(/** @lends ReachabilityResul
             name: "Erreichbarkeit ab einem Referenzpunkt",
             glyphicon: "glyphicon-road"
         });
+        this.$el.find("#dashboard-container").empty();
     },
 
     /**

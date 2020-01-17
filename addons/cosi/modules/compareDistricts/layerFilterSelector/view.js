@@ -33,7 +33,7 @@ const LayerFilterSelectorView = Backbone.View.extend(/** @lends LayerFilterSelec
      * @returns {void}
      */
     renderDropDownView: function (dropdownModel) {
-        const dropdownView = new SnippetDropdownView({model: dropdownModel}),
+        const dropdownView = new SnippetDropdownView({ model: dropdownModel }),
             dropdownObj = dropdownView.render().el;
 
         this.$el.append(dropdownObj);
@@ -90,6 +90,7 @@ const LayerFilterSelectorView = Backbone.View.extend(/** @lends LayerFilterSelec
         this.model.get("dropDownModel").deselectValueModels();
         this.model.get("dropDownModel").setDisplayName(this.model.get("dropDownDisplayName"));
         this.model.get("dropDownModel").trigger("render");
+        this.model.set("selectedLayer", null);
     }
 });
 
