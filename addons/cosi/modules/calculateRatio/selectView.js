@@ -139,6 +139,7 @@ const SelectView = Backbone.View.extend({
      * @returns {void}
      */
     showInfo: function () {
+        Radio.trigger("Alert", "alert:remove");
         Radio.trigger("Alert", "alert", {
             text: InfoTemplate,
             kategorie: "alert-info"
