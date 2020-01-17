@@ -7,8 +7,6 @@ const DashboardView = Backbone.View.extend(/** @lends DashboardView.prototype */
     events: {
         "click .close": "close",
         "click #help": "showHelp",
-        "mousedown .drag-bar": "dragStart",
-        "touchstart .drag-bar": "dragStart",
         "click #reset-button": "resetWidgets"
     },
 
@@ -39,19 +37,6 @@ const DashboardView = Backbone.View.extend(/** @lends DashboardView.prototype */
             this.render();
         }
 
-        window.addEventListener("mouseup", () => {
-            this.dragEnd();
-        });
-        window.addEventListener("mousemove", (event) => {
-            this.dragMove(event);
-        });
-        window.addEventListener("touchend", () => {
-            this.dragEnd();
-        });
-        window.addEventListener("touchmove", (event) => {
-            this.dragMove(event);
-        });
-
         this.listenTo(Radio.channel("General"), {
             "loaded": function () {
                 if (Radio.request("InfoScreen", "getIsInfoScreen")) {
@@ -63,6 +48,8 @@ const DashboardView = Backbone.View.extend(/** @lends DashboardView.prototype */
                 }
             }
         }, this);
+
+        this.listenTo(Radio.channel("Sidebar"), "updated", this.checkSidebarState);
     },
     id: "dashboard-view",
     className: "dashboard",
@@ -84,7 +71,7 @@ const DashboardView = Backbone.View.extend(/** @lends DashboardView.prototype */
         this.$el.html(this.template(attr));
         this.$el.find("#print-button").html(this.exportButtonView.render().el);
 
-        Radio.trigger("Sidebar", "append", this.$el);
+        Radio.trigger("Sidebar", "append", this.$el, true);
         Radio.trigger("Sidebar", "toggle", true, this.model.get("width"));
 
         Radio.request("Dashboard", "getChildren").forEach(widget => {
@@ -104,42 +91,6 @@ const DashboardView = Backbone.View.extend(/** @lends DashboardView.prototype */
     close: function () {
         this.model.setIsActive(false);
         Radio.trigger("ModelList", "toggleDefaultTool");
-    },
-
-    /**
-     * handles the drag Start event to resize the sidebar
-     * @param {*} event the DOM-event
-     * @returns {void}
-     */
-    dragStart: function (event) {
-        event.preventDefault();
-        this.isDragging = true;
-        this.$el.find(".drag-bar").addClass("dragging");
-    },
-
-    /**
-     * handles the drag move event to resize the sidebar
-     * @param {*} event the DOM-event
-     * @fires Sidebar#RadioTriggerResize
-     * @returns {void}
-     */
-    dragMove: function (event) {
-        if (this.isDragging) {
-            const eventX = event.type === "touchmove" ? event.touches[0].clientX : event.clientX,
-                newWidth = (((window.innerWidth - eventX) / window.innerWidth) * 100).toFixed(2) + "%";
-
-            Radio.trigger("Sidebar", "resize", newWidth);
-        }
-    },
-
-    /**
-     * handles the drag End event to resize the sidebar
-     * @param {*} event the DOM-event
-     * @returns {void}
-     */
-    dragEnd: function () {
-        this.isDragging = false;
-        this.$el.find(".drag-bar").removeClass("dragging");
     },
 
     /**
@@ -165,6 +116,17 @@ const DashboardView = Backbone.View.extend(/** @lends DashboardView.prototype */
                 widget.removeWidget();
             }
         });
+    },
+
+    /**
+     * checks if another module is opened to the sidebar
+     * @param {string} className the element className active on sidebar
+     * @returns {void}
+     */
+    checkSidebarState: function (className) {
+        if (this.className !== className) {
+            this.close();
+        }
     }
 });
 

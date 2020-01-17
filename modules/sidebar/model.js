@@ -37,11 +37,13 @@ const SidebarModel = Backbone.Model.extend(/** @lends SidebarModel.prototype */{
     /**
      * passes a DOM element to the view
      * @param {DOM} element - from a tool view
+     * @param {boolean} dragable - is the sidebar resizeable? default = false
      * @returns {void}
      * @fires Sidebar#addContent
      */
-    addContent: function (element) {
-        this.trigger("addContent", element);
+    addContent: function (element, dragable = false) {
+        this.trigger("addContent", element, dragable);
+        Radio.trigger("Sidebar", "updated", $(element).attr("class"));
     },
     /**
      * Setter for "isMobile".
@@ -59,13 +61,13 @@ const SidebarModel = Backbone.Model.extend(/** @lends SidebarModel.prototype */{
      * @returns {void}
      */
     toggle: function (isVisible, width) {
-        console.info(width);
         if (width !== undefined) {
             this.setWidth(width);
         }
         else {
             this.setWidth("30%");
         }
+        this.trigger("resize");
         this.setIsVisible(isVisible);
     },
     /**
