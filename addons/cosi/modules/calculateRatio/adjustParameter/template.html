@@ -23,7 +23,13 @@
                     <% }) %>
                 </select>
             </td>
-            <td class="modifier <%= isModified ? '' : 'hidden' %>" title="Hier können Sie auswählen, wieviel des Parameters pro Person gebraucht wird."><input class="form-control" type="number" value="<%= initValue %>" placeholder="<%= initValue.toFixed(2) %>" id="modifier-input" step="<%= step %>"></td>
+            <td class="modifier <%= isModified ? '' : 'hidden' %>" title="Hier können Sie auswählen, wieviel des Parameters pro Person gebraucht wird.">
+                <% if (!isMS) { %>
+                    <input class="form-control" type="number" value="<%= initValue %>" placeholder="<%= initValue.toFixed(2) %>" id="modifier-input" step="<%= step %>">
+                <% } else { %>
+                    <input class="form-control" type="text" value="<%= initValue %>" placeholder="<%= initValue.toFixed(2) %>" id="modifier-input">
+                <% } %>
+            </td>
             <td class="hidden">
                 <select class="form-control" id="operator" title="Rechenoperator für die Gewichtung wählen">
                     <option value="/" title="Dividieren - Bsp.: '1 Schüler braucht 5qm Sportplatzfläche'">/</option>

@@ -34,6 +34,10 @@ const AdjustParameterView = Backbone.View.extend({
     render: function () {
         var attrs = this.model.toJSON();
 
+        attrs.isMS = window.StyleMedia;
+
+        console.log(window.StyleMedia);
+
         this.$el.html(this.template(attrs));
         this.delegateEvents();
 
@@ -54,7 +58,8 @@ const AdjustParameterView = Backbone.View.extend({
      * @returns {void}
      */
     setModifier: function () {
-        const modValue = this.$el.find("#operator").val() === "/" ? 1 / parseFloat(this.$el.find("#modifier-input").val()) : parseFloat(this.$el.find("#modifier-input").val());
+        const inputValue = parseFloat(this.$el.find("#modifier-input").val().replace(/[ ]*,[ ]*|[ ]+/g, ".")),
+            modValue = this.$el.find("#operator").val() === "/" ? 1 / inputValue : inputValue;
 
         this.model.set("selectedOption", [
             this.$el.find("#parameter-select").val(),
