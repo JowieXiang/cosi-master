@@ -1,7 +1,13 @@
 import Template from "text-loader!./templateSimpleView.html";
 import "./style.less";
 
-const QuerySimpleView = Backbone.View.extend({
+const QuerySimpleView = Backbone.View.extend(/** @lends QuerySimpleView.prototype */{
+    /**
+     * @class QuerySimpleView
+     * @extends Backbone.View
+     * @memberof Tools.Filter.Query
+     * @constructs
+     */
     events: {
         "click": "selectModel"
     },
@@ -32,7 +38,6 @@ const QuerySimpleView = Backbone.View.extend({
         var attr = this.model.toJSON();
 
         this.$el.html(this.template(attr));
-
         return this;
     },
 

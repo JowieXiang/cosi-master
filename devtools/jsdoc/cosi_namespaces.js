@@ -90,5 +90,6 @@
 
  /**
  * @namespace Dashboard
+ * @memberof Tools
  * @description information dashboard
  */

@@ -25,7 +25,7 @@ const DashboardTableModel = Tool.extend(/** @lends DashboardTableModel.prototype
     /**
      * @class DashboardTableModel
      * @extends Tool
-     * @memberof Dashboard
+     * @memberof Tools.Dashboard
      * @constructs
      * @property {object} tableView
      * @property {object} filteredTableView

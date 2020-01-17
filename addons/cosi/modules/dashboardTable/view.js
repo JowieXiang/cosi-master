@@ -21,7 +21,7 @@ const DashboardTableView = Backbone.View.extend(/** @lends DashboardTableView.pr
      * add utility buttons and dropdown menus
      * @class DashboardTableView
      * @extends Backbone.View
-     * @memberof Dashboard
+     * @memberof Tools.Dashboard
      * @constructs
      * @returns {void}
      */

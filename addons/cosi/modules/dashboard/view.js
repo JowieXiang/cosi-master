@@ -16,7 +16,7 @@ const DashboardView = Backbone.View.extend(/** @lends DashboardView.prototype */
      * initializes the dashboards View, adds event listeners and handles the Dashboard on the InfoScreen
      * @class DashboardView
      * @extends Backbone.View
-     * @memberof Dashboard
+     * @memberof Tools.Dashboard
      * @constructs
      * @listens General#RadioTriggerLoaded
      */
