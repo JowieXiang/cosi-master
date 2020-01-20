@@ -977,6 +977,8 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
      * @returns {void}
      */
     drawBars: function (svg, dataToAdd, x, y, height, selector, barWidth, xAttr, attrToShowArray, tooltipDiv) {
+        const refColorScale = Radio.request("ColorScale", "getColorScaleByValues", [0, 1], "interpolateRainbow", attrToShowArray.length + 1);
+
         svg.append("g")
             .attr("class", "graph-data")
             .attr("transform", function () {
@@ -998,15 +1000,20 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
             .append("g")
             .classed("bar-group", true)
             .selectAll("bars")
-            .data(d => attrToShowArray.map(attr => ({
-                [xAttr]: d[xAttr],
-                val: d[attr]
-            })))
+            .data(d => {
+                return attrToShowArray.map(attr => ({
+                    [xAttr]: d[xAttr],
+                    val: d[attr]
+                }));
+            })
             .enter()
             .append("rect")
             .attr("class", typeof selector === "string" ? "bar" + selector.split(".")[1] : "bar")
-            .attr("fill", function (d) {
-                return Radio.request("ColorScale", "getColorScaleByValues", y.domain(), "interpolateBlues").scale(d.val); // change to argument based
+            .attr("fill", function (d, i) {
+                if (attrToShowArray.length <= 1) {
+                    return Radio.request("ColorScale", "getColorScaleByValues", y.domain(), "interpolateBlues").scale(d.val); // change to argument based
+                }
+                return refColorScale.legend.colors[i];
             })
             .attr("x", function (d, i) {
                 return x(d[xAttr]) + (barWidth / attrToShowArray.length) * i;
@@ -1056,7 +1063,7 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
     },
 
     /**
-     * Creates the linegraph.
+     * Creates the scatterplot.
      * @param {Object} graphConfig Graph config.
      * @param {String} graphConfig.selector Class for SVG to be appended to.
      * @param {String} graphConfig.scaleTypeX Type of x-axis.

@@ -1,6 +1,12 @@
 import SidebarModel from "./model";
+import Template from "text-loader!./template.html";
 
 const SidebarView = Backbone.View.extend(/** @lends SidebarView.prototype */{
+    events: {
+        "mousedown .drag-bar": "dragStart",
+        "touchstart .drag-bar": "dragStart",
+    },
+
     /**
      * @class SidebarView
      * @extends Backbone.View
@@ -25,8 +31,12 @@ const SidebarView = Backbone.View.extend(/** @lends SidebarView.prototype */{
                 this.toggle(this.model, true);
             }
         });
+
+        this.addEventListeners();
+
         $("#map").after(this.$el);
     },
+    template: _.template(Template),
     /**
      * Creates the class name.
      * @returns {string} ClassName
@@ -37,13 +47,36 @@ const SidebarView = Backbone.View.extend(/** @lends SidebarView.prototype */{
         }
         return "sidebar";
     },
+
+    /**
+     * adds the eventListeners to the window Object
+     * responsible for handling the drag Events on Keyboard and Touch
+     * @returns {void}
+     */
+    addEventListeners: function () {
+        window.addEventListener("mouseup", () => {
+            this.dragEnd();
+        });
+        window.addEventListener("mousemove", (event) => {
+            this.dragMove(event);
+        });
+        window.addEventListener("touchend", () => {
+            this.dragEnd();
+        });
+        window.addEventListener("touchmove", (event) => {
+            this.dragMove(event);
+        });
+    },
+
     /**
      * Add HTML content to this sidebar
      * @param {HTML} element Element from a tool view
+     * @param {boolean} dragable is the sidebar resizeable?
      * @returns {void}
      */
-    addContent: function (element) {
-        this.$el.html(element);
+    addContent: function (element, dragable) {
+        this.$el.html(this.template({dragable}));
+        this.$el.find(".content").html(element);
     },
 
     /**
@@ -53,7 +86,6 @@ const SidebarView = Backbone.View.extend(/** @lends SidebarView.prototype */{
      * @returns {void}
      */
     setWidth: function (model, width) {
-        console.info(width);
         this.$el.css("width", width);
     },
     /**
@@ -103,6 +135,43 @@ const SidebarView = Backbone.View.extend(/** @lends SidebarView.prototype */{
         else {
             $("#map").css("width", "100%");
         }
+    },
+
+    /**
+     * handles the drag Start event to resize the sidebar
+     * @param {*} event the DOM-event
+     * @returns {void}
+     */
+    dragStart: function (event) {
+        event.preventDefault();
+        this.isDragging = true;
+        this.$el.find(".drag-bar").addClass("dragging");
+    },
+
+    /**
+     * handles the drag move event to resize the sidebar
+     * @param {*} event the DOM-event
+     * @fires Sidebar#RadioTriggerResize
+     * @returns {void}
+     */
+    dragMove: function (event) {
+        if (this.isDragging) {
+            const eventX = event.type === "touchmove" ? event.touches[0].clientX : event.clientX,
+                newWidth = (((window.innerWidth - eventX) / window.innerWidth) * 100).toFixed(2) + "%";
+
+            // Radio.trigger("Sidebar", "resize", newWidth);
+            this.model.resize(newWidth);
+        }
+    },
+
+    /**
+     * handles the drag End event to resize the sidebar
+     * @param {*} event the DOM-event
+     * @returns {void}
+     */
+    dragEnd: function () {
+        this.isDragging = false;
+        this.$el.find(".drag-bar").removeClass("dragging");
     },
 
     /**
