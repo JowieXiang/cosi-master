@@ -4,7 +4,7 @@ import AdjustParameterView from "./adjustParameter/view";
 import ExportButtonModel from "../../../../modules/snippets/exportButton/model";
 import * as Extent from "ol/extent";
 
-const CalculateRatioModel = Tool.extend( /** @lends CalculateRatioModel */{
+const CalculateRatioModel = Tool.extend(/** @lends CalculateRatioModel.prototype */{
     defaults: _.extend({}, Tool.prototype.defaults, {
         deactivateGFI: true,
         data: {},

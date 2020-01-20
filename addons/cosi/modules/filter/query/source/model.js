@@ -2,11 +2,17 @@ import QueryModel from "../model";
 import {intersects} from "ol/extent.js";
 import {getLayerWhere} from "masterportalAPI/src/rawLayerList";
 
-const SourceModel = QueryModel.extend({
+const SourceModel = QueryModel.extend(/** @lends SourceModel.prototype*/{
     defaults: {
         isAutoRefreshing: false,
         isInitialLoad: true
     },
+    /**
+     * @class SourceModel
+     * @extends QueryModel
+     * @memberof Tools.Filter.Query.Source
+     * @constructs
+     */
     initializeFunction: function () {
         var modelList = Radio.request("ModelList", "getModelByAttributes", {id: this.get("layerId")});
 

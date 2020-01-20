@@ -3,7 +3,7 @@ import Template from "text-loader!./template.html";
 import "bootstrap-select";
 import "./style.less";
 
-const AdjustParameterView = Backbone.View.extend({
+const AdjustParameterView = Backbone.View.extend(/** @lends AdjustParameterView.prototype */{
     events: {
         "change #parameter-select": "setModifier",
         "change #modifier-input": "setModifier",
@@ -13,10 +13,12 @@ const AdjustParameterView = Backbone.View.extend({
     },
 
     /**
-     * initialize the AdjustParameterView
-     * @param {string} layerId the ID of the layer to modify
-     * @param {*} infoText the text to show on btn click
-     * @returns {void}
+     * @class AdjustParameterView
+     * @extends Backbone.View
+     * @memberof Tools.CalculateRatio.AdjustParameter
+     * @constructs
+     * @param {string} layerId ID of the layer to modify
+     * @param {string} infoText info text to display on btn click
      */
     initialize: function (layerId, infoText = null) {
         if (layerId) {

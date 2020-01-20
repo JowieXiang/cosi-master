@@ -1,6 +1,13 @@
 import SourceModel from "./model";
 
-const GeoJsonQueryModel = SourceModel.extend({
+const GeoJsonQueryModel = SourceModel.extend(/** @lends GeoJsonQueryModel.prototype*/{
+
+    /**
+     * @class GeoJsonQueryModel
+     * @extends SourceModel
+     * @memberof Tools.Filter.Query.Source
+     * @constructs
+     */
     initialize: function () {
         this.initializeFunction();
     },

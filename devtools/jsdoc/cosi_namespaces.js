@@ -73,6 +73,12 @@
  */
 
 /**
+ * @namespace AdjustParameter
+ * @memberof Tools.CalculateRatio
+ * @description todo
+ */
+
+/**
  * @namespace InfoScreen
  * @description Constructs the infoScreen on the 2nd screen and manages communication with the main screen
  */
@@ -92,4 +98,10 @@
  * @namespace Dashboard
  * @memberof Tools
  * @description information dashboard
+ */
+
+ /**
+ * @namespace SaveSelection
+ * @memberof Tools
+ * @description saves session selection as URL
  */

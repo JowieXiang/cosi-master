@@ -7,14 +7,14 @@ import * as d3 from "d3-array";
 import evaluate from "./eval";
 import ContextActions from "text-loader!./contextActions.html";
 
-const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModel.prototype */{
+const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModelV2.prototype */{
     defaults: {
         maxValue: 0,
         minValue: 0
     },
 
     /**
-     * @class GraphModel
+     * @class GraphModelV2
      * @memberOf Tools.Graph
      * @constructs
      * @extends Backbone.Model
