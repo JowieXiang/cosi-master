@@ -72,10 +72,14 @@ const DashboardTableView = Backbone.View.extend(/** @lends DashboardTableView.pr
                     noPrint: true
                 });
             }
+            else if (window.detectMS()) {
+                this.$el.html(this.template(attr));
+            }
 
             this.$el.find(".table").html(this.tableTemplate(attr));
             this.$el.find("#export-button").html(this.exportButtonView.render().el);
             this.$el.find("#export-button-filtered").html(this.exportFilteredButtonView.render().el);
+            // console.log("table", this.tableTemplate(attr));
         }
 
         this.delegateEvents();

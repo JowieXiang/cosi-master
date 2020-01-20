@@ -36,4 +36,34 @@ export function addPolyfills () {
             }
         });
     }
+
+    /**
+    * detect IE & Edge
+    * @returns {number | boolean} version of IE or false, if browser is not Internet Explorer
+    */
+    window.detectMS = function () {
+        var ua = window.navigator.userAgent,
+            msie = ua.indexOf("MSIE "),
+            trident = ua.indexOf("Trident/"),
+            edge = ua.indexOf("Edge/");
+
+        if (msie > 0) {
+            // IE 10 or older => return version number
+            return parseInt(ua.substring(msie + 5, ua.indexOf(".", msie)), 10);
+        }
+
+        if (trident > 0) {
+            // IE 11 => return version number
+            return parseInt(ua.substring(ua.indexOf("rv:") + 3, ua.indexOf(".", ua.indexOf("rv:"))), 10);
+        }
+
+        if (edge > 0) {
+            // Edge (IE 12+) => return version number
+            return parseInt(ua.substring(edge + 5, ua.indexOf(".", edge)), 10);
+        }
+
+        // other browser
+        return false;
+    }
+
 }
