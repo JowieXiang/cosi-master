@@ -36,8 +36,6 @@ const AdjustParameterView = Backbone.View.extend({
 
         attrs.isMS = window.StyleMedia;
 
-        console.log(window.StyleMedia);
-
         this.$el.html(this.template(attrs));
         this.delegateEvents();
 

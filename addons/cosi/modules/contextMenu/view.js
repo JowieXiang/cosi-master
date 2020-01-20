@@ -7,6 +7,13 @@ const ContextMenuView = Backbone.View.extend({
         "click #actions": "closeContextMenu",
         "click #actions input": function (evt) {
             evt.stopPropagation();
+        },
+        "click #actions .info": function (evt) {
+            evt.stopPropagation();
+            Radio.trigger("Alert", "alert", {
+                text: evt.target.getAttribute("title"),
+                kategorie: "alert-info"
+            });
         }
     },
     initialize () {

@@ -100,12 +100,16 @@ const EinwohnerabfrageModel = Tool.extend(/** @lends EinwohnerabfrageModel.proto
         this.on("change:isActive", this.handleCswRequests, this);
         this.setDropDownSnippet(new GraphicalSelectModel({id: this.id}));
         this.listenTo(Radio.channel("GraphicalSelect"), {
-            "onDrawEnd": function (geoJson) {
-                if (this.get("isActive")) {
+            "onDrawEnd": function (geoJson, id, setActive = false) {
+                if (setActive) {
+                    this.collection.setActiveToolsToFalse(this);
+                    this.setIsActive(true);
+                }
+                if (this.get("isActive") && id === this.id) {
                     this.makeRequest(geoJson);
                 }
             }
-        });
+        }, this);
 
         this.setMetaDataLink(Radio.request("RestReader", "getServiceById", this.get("populationReqServiceId")).get("url"));
     },

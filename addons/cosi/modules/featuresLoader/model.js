@@ -253,7 +253,6 @@ const featuresLoader = Backbone.Model.extend(/** @lends featuresLoader.prototype
      * @returns {ol.Feature[]} the district features
      */
     getDistrictsByValue: function (scope, value) {
-        console.log(this.getDistrictsByScope(scope));
         return this.getDistrictsByScope(scope).filter(function (feature) {
             return feature.getProperties().kategorie === value;
         });
