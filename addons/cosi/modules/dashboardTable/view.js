@@ -4,6 +4,7 @@ import ContextActions from "text-loader!./contextActions.html";
 import "./style.less";
 import DropdownView from "../../../../modules/snippets/dropdown/view";
 import ExportButtonView from "../../../../modules/snippets/exportButton/view";
+import storageListener from "../storage";
 
 const DashboardTableView = Backbone.View.extend(/** @lends DashboardTableView.prototype */ {
     events: {
@@ -37,6 +38,11 @@ const DashboardTableView = Backbone.View.extend(/** @lends DashboardTableView.pr
             "ratioValuesUpdated": this.updateRatioSelection,
             "filterUpdated": this.renderFilter
         });
+
+        // workaround for IE
+        this.listenTo(Radio.channel("Dashboard"), {
+            "dashboardClose": this.storeEl
+        });
     },
     id: "dashboard-table",
     className: "dashboard-table",
@@ -48,6 +54,7 @@ const DashboardTableView = Backbone.View.extend(/** @lends DashboardTableView.pr
     tableTemplate: _.template(TableTemplate),
     contextActions: _.template(ContextActions),
     contextActionsEl: {},
+    elBackup: null,
 
     /**
      * @description renders the dashboardTable
@@ -72,14 +79,16 @@ const DashboardTableView = Backbone.View.extend(/** @lends DashboardTableView.pr
                     noPrint: true
                 });
             }
-            else if (window.detectMS()) {
-                this.$el.html(this.template(attr));
+            // fill in the old element if exists on IE
+            else if (window.detectMS() && window.detectMS() <= 11) {
+                if (this.elBackup) {
+                    this.$el.html(this.elBackup);
+                }
             }
 
             this.$el.find(".table").html(this.tableTemplate(attr));
             this.$el.find("#export-button").html(this.exportButtonView.render().el);
             this.$el.find("#export-button-filtered").html(this.exportFilteredButtonView.render().el);
-            // console.log("table", this.tableTemplate(attr));
         }
 
         this.delegateEvents();
@@ -312,6 +321,18 @@ const DashboardTableView = Backbone.View.extend(/** @lends DashboardTableView.pr
         event.ctrlKey = true;
 
         this.selectRow(event);
+    },
+
+    /**
+     * workaround for IE, storing the Element for later use
+     * @returns {void}
+     */
+    storeEl () {
+        const isMs = window.detectMS();
+
+        if (isMs && isMs <= 11) {
+            this.elBackup = this.$el.html();
+        }
     }
 });
 

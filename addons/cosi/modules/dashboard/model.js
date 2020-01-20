@@ -51,6 +51,10 @@ const DashboardModel = Tool.extend(/** @lends DashboardModel.prototype */{
 
         if (!state) {
             Radio.trigger("ContextMenu", "close");
+            Radio.trigger("Dashboard", "dashboardClose");
+        }
+        else {
+            Radio.trigger("Dashboard", "dashboardOpen");
         }
     }
 });

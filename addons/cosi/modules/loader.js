@@ -35,7 +35,6 @@ function initializeCosi () {
     if (window.styleMedia && window.location.pathname.includes("infoscreen.html")) {
         // ..
     }
-    // window.CosiStorage = window.localStorage;
 
     const dashboard = new DashboardView({model: general.dashboard});
 
