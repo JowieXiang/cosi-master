@@ -121,7 +121,7 @@ const ToolView = Backbone.View.extend(/** @lends ToolView.prototype */{
             }
             if (!this.model.get("isActive")) {
                 // active the tool if it is not active
-                // deactivate all other modules as long as the tool is not set to "keepOtherToolsOpen"
+                // deactivate all other modules as long as the tool is not set to "keepOpen"
                 this.model.collection.setActiveToolsToFalse(this.model);
                 this.model.setIsActive(true);
             }

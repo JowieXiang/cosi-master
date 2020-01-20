@@ -30,7 +30,7 @@ const general = {
             id: "dashboard",
             glyphicon: "glyphicon-dashboard",
             renderToWindow: false,
-            keepOtherToolsOpened: true
+            keepOpen: true
         }),
         dashboardWidgetHandler: new DashboardWidgetHandler()
     },
@@ -45,7 +45,7 @@ const general = {
             isInitOpen: false,
             allowMultipleQueriesPerLayer: false,
             saveToUrl: false,
-            keepOtherToolsOpened: true,
+            keepOpen: true,
             predefinedQueries: [
                 {
                     "layerId": "8712",
@@ -166,14 +166,16 @@ const general = {
             parentId: "tools",
             type: "tool",
             name: "Vergleichbare Gebiete ermitteln",
-            glyphicon: "glyphicon glyphicon-random"
+            glyphicon: "glyphicon glyphicon-random",
+            resizableWindow: true
         }),
         calculateRatio: new CalculateRatio({
             parentId: "tools",
             type: "tool",
             id: "calculateRatio",
             name: "Versorgungsanalyse",
-            glyphicon: "glyphicon-tasks"
+            glyphicon: "glyphicon-tasks",
+            resizableWindow: true
         }),
         reachabilitySelect: new ReachabilitySelect({
             id: "reachabilitySelect",
@@ -188,7 +190,8 @@ const general = {
             type: "tool",
             isVisibleInMenu: false,
             name: "Erreichbarkeit ab einem Referenzpunkt",
-            glyphicon: "glyphicon-road"
+            glyphicon: "glyphicon-road",
+            resizableWindow: true
         }),
         reachabilityInArea: new ReachabilityInArea({
             id: "reachabilityInArea",
@@ -196,7 +199,8 @@ const general = {
             type: "tool",
             name: "Erreichbarket im Gebiet",
             isVisibleInMenu: false,
-            glyphicon: "glyphicon-time"
+            glyphicon: "glyphicon-time",
+            resizableWindow: true
         }),
         colorCodeMap: new ColorCodeMap(),
         saveSelectionCosi: new SaveSelectionCosi({
