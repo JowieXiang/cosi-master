@@ -872,6 +872,9 @@ Liste aller konfigurierbaren Werkzeuge. Jedes Werkzeug erbt von **[tool](#markdo
 |glyphicon|nein|String||CSS Klasse des Glyphicons, das vor dem Toolnamen im Menu angezeigt wird.|false|
 |onlyDesktop|nein|Boolean|false|Flag ob das Werkzeug nur im Desktop Modus sichtbar sein soll.|false|
 |isVisibleInMenu|nein|Boolean|true|Flag ob das Tool unter Werkzeuge angezeigt wird.|false|
+|renderToWindow|nein|Boolean|true|Flag ob das Tool beim Anklicken im frei schwebenden Fenster dargestellt werden soll.|false|
+|resizableWindow|nein|Boolean|false|Flag ob das Tool-Fenster vergrößer-/verkleinerbar ist.|false|
+|keepOpen|nein|Boolean|false|Flag ob das Tool parallel zu anderen Tools geöffnet bleibt.|false|
 
 **Beispiel eines Tools**
 ```

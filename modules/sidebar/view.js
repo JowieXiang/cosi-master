@@ -146,6 +146,7 @@ const SidebarView = Backbone.View.extend(/** @lends SidebarView.prototype */{
         event.preventDefault();
         this.isDragging = true;
         this.$el.find(".drag-bar").addClass("dragging");
+        document.body.style.cursor = "grabbing";
     },
 
     /**
@@ -172,6 +173,7 @@ const SidebarView = Backbone.View.extend(/** @lends SidebarView.prototype */{
     dragEnd: function () {
         this.isDragging = false;
         this.$el.find(".drag-bar").removeClass("dragging");
+        document.body.style.cursor = "";
     },
 
     /**

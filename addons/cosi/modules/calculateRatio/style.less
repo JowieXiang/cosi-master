@@ -35,13 +35,24 @@
         }
     }
 
-    #export-button, #push-dashboard-button {
-        display: inline-block;
+    .result-buttons {
+        margin-top: 5px;
+
+        #export-button, #push-dashboard-button {
+            display: inline-block;
+            .measure-delete {
+                margin-bottom: 0;
+            }
+        }
     }
     
     .result {
         .heading {
             margin-top:20px;
+        }
+
+        .table th {
+            border-bottom: 1px solid #ddd;
         }
     }
 }
