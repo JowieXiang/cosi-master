@@ -185,6 +185,9 @@ const TimeSliderModel = Backbone.Model.extend({
         // starts from beginning
         if (indexOfValue === sliderModelValues.length) {
             indexOfValue = 0;
+            this.setIsRunning(false);
+            sliderModel.get("valuesCollection").trigger("updateValue", sliderModelValues[indexOfValue]);
+            this.trigger("setButtonToPlay");
         }
 
         if (this.get("isRunning")) {
