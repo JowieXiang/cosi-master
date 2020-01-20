@@ -21,7 +21,10 @@ const WindowView = Backbone.View.extend(/** @lends WindowView.prototype */{
         "click .glyphicon-remove": "hide",
         "touchmove .title": "touchMoveWindow",
         "touchstart .title": "touchStartWindow",
-        "touchend .title": "touchMoveEnd"
+        "touchend .title": "touchMoveEnd",
+        "pointerdown .glyphicon-triangle-right": "resizeWindowStart",
+        "pointermove .glyphicon-triangle-right": "resizeWindowMove",
+        "pointerup .glyphicon-triangle-right": "resizeWindowEnd"
     },
 
     /**

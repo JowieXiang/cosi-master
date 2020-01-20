@@ -85,6 +85,19 @@
     background-color: @background_color_1;
     max-height: 72vh
 }
+.win-footer {
+    border-top: 1px solid rgb(229, 229, 229);
+    text-align: right;
+    padding: 5px 5px 0 0;
+    >.glyphicon-triangle-right {
+        transform: rotate(45deg);
+        opacity: 0.6;
+        &:hover {
+            opacity: 0.9;
+            cursor: grab;
+        }
+    }
+}
 .table-tool-win-all{
     font-family: @font_family_2;
     border-radius: 12px;

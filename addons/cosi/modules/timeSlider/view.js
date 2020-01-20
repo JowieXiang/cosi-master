@@ -15,7 +15,8 @@ const TimeSliderView = Backbone.View.extend({
         this.listenTo(this.model, {
             "render": this.render,
             "renderSliderView": this.renderSliderView,
-            "renderGraph": this.renderGraph
+            "renderGraph": this.renderGraph,
+            "setButtonToPlay": this.setButtonToPlay
         });
     },
     id: "time-series",
