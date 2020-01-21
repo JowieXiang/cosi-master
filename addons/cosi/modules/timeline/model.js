@@ -103,26 +103,38 @@ const Timeline = Tool.extend({
         return selector;
     },
     fillUpTimelineGaps (inputTable, outputType = "Object") {
-        for (const prop in inputTable[0]) {
-            if (inputTable[0][prop] instanceof Object) {
-                const range = inputTable
-                    .map(col => col[prop])
-                    .map(timeline => timeline ? Object.keys(timeline) : [])
-                    .reduce((allYears, yearsOfCol) => [...allYears, ...yearsOfCol], [])
-                    .reduce((years, year) => {
-                        years[year] = "-";
-                        return years;
-                    }, {});
+        inputTable.reduce((props, col) => {
+            return [...props, ...Object.keys(col)].reduce((unique, prop) => {
+                return unique.includes(prop) ? unique : [...unique, prop];
+            });
+        }, [])
+            .forEach((prop) => {
+                const checkPropType = this.checkPropType(prop, inputTable);
 
-                inputTable.forEach(col => {
-                    if (col[prop] instanceof Object) {
-                        col[prop] = outputType === "Array" ? _.pairs({...range, ...col[prop]}).reverse() : {...range, ...col[prop]};
-                    }
-                });
-            }
-        }
+                if (checkPropType === "object") {
+                    const range = inputTable
+                        .map(col => col[prop])
+                        .map(timeline => timeline ? Object.keys(timeline) : [])
+                        .reduce((allYears, yearsOfCol) => [...allYears, ...yearsOfCol], [])
+                        .reduce((years, year) => {
+                            years[year] = "-";
+                            return years;
+                        }, {});
+
+                    inputTable.forEach(col => {
+                        if (col[prop] instanceof Object || !col[prop]) {
+                            col[prop] = outputType === "Array" ? _.pairs({...range, ...col[prop]}).reverse() : {...range, ...col[prop]};
+                        }
+                    });
+                }
+            });
 
         return inputTable;
+    },
+    checkPropType (prop, table, startIndex = 0) {
+        return typeof table[startIndex][prop] === "object" || startIndex === table.length - 1 ?
+            typeof table[startIndex][prop] :
+            this.checkPropType(prop, table, startIndex + 1);
     },
     getSignifier () {
         return this.get("timelineSignifier");

@@ -110,10 +110,18 @@ const DashboardTableModel = Tool.extend(/** @lends DashboardTableModel.prototype
      */
     updateTable: function (features) {
         const table = features.reduce((newTable, feature) => {
-            const properties = feature.getProperties(),
-                // dirty fix for data inconsistencies
-                selector = properties.verwaltungseinheit === "stadtteile" ? "stadtteil" : properties.verwaltungseinheit || this.get("sortKey"),
-                distCol = newTable.findIndex(col => col[selector] === properties[selector] && col.verwaltungseinheit === properties.verwaltungseinheit);
+            var properties = feature.getProperties(),
+                selector = properties.verwaltungseinheit || this.get("sortKey");
+
+            // dirty fix for data inconsistencies
+            if (selector === "stadtteile") {
+                selector = "stadtteil";
+            }
+            if (selector === "bezirke") {
+                selector = "bezirk";
+            }
+
+            const distCol = newTable.findIndex(col => col[selector] === properties[selector] && col.verwaltungseinheit === properties.verwaltungseinheit);
 
             if (distCol !== -1) {
                 newTable[distCol] = {...newTable[distCol], ...Radio.request("Timeline", "createTimelineTable", [properties])[0]};
@@ -202,7 +210,12 @@ const DashboardTableModel = Tool.extend(/** @lends DashboardTableModel.prototype
                         const flatYear = Object.assign({}, flatProp);
 
                         for (const district in flatYear) {
-                            flatYear[district] = flatYear[district][j][1];
+                            if (flatYear[district]) {
+                                flatYear[district] = flatYear[district][j][1];
+                            }
+                            else {
+                                flatYear[district] = "-";
+                            }
                         }
 
                         return {...{
@@ -371,7 +384,7 @@ const DashboardTableModel = Tool.extend(/** @lends DashboardTableModel.prototype
 
         metaInfo.values = Radio.request("Util", "renameValues", {
             statgebiet: "Statistisches Gebiet",
-            bezirk: "Bezirk",
+            bezirke: "Bezirk",
             stadtteile: "Stadtteil"
         }, metaInfo.values);
 
@@ -408,27 +421,27 @@ const DashboardTableModel = Tool.extend(/** @lends DashboardTableModel.prototype
             }
             const match = this.get("unsortedTable").find(distCol => distCol[this.get("sortKey")] === col);
 
-            match[`${this.getAttrsForRatio()[0]} / ${this.getAttrsForRatio()[1]}`] = ratio[col];
+            match[`(${this.getAttrsForRatio()[0]} / ${this.getAttrsForRatio()[1]})`] = ratio[col];
         }
 
         if (calcGroup) {
-            calcGroup.values[`${this.getAttrsForRatio()[0]} / ${this.getAttrsForRatio()[1]}`] = ratio;
+            calcGroup.values[`(${this.getAttrsForRatio()[0]} / ${this.getAttrsForRatio()[1]})`] = ratio;
         }
         else {
             tableView.push({
                 group: "Berechnungen",
                 values: {
-                    [`${this.getAttrsForRatio()[0]} / ${this.getAttrsForRatio()[1]}`]: ratio
+                    [`(${this.getAttrsForRatio()[0]} / ${this.getAttrsForRatio()[1]})`]: ratio
                 }
             });
         }
 
         this.get("customFilters").push({
-            category: `${this.getAttrsForRatio()[0]} / ${this.getAttrsForRatio()[1]}`,
+            category: `(${this.getAttrsForRatio()[0]} / ${this.getAttrsForRatio()[1]})`,
             group: "Berechnungen",
             stadtteil: true,
             statgebiet: true,
-            value: `${this.getAttrsForRatio()[0]} / ${this.getAttrsForRatio()[1]}`,
+            value: `(${this.getAttrsForRatio()[0]} / ${this.getAttrsForRatio()[1]})`,
             valueType: "relative"
         });
 

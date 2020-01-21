@@ -528,11 +528,13 @@ const Util = Backbone.Model.extend(/** @lends Util.prototype */{
      */
     renameValues: function (valuesMap, obj) {
         return Object.keys(obj).reduce((acc, key) => {
-            if (obj[key].constructor === Object) {
-                return {
-                    ...acc,
-                    ...{[key]: this.renameValues(valuesMap, obj[key])}
-                };
+            if (obj[key]) {
+                if (obj[key].constructor === Object) {
+                    return {
+                        ...acc,
+                        ...{[key]: this.renameValues(valuesMap, obj[key])}
+                    };
+                }
             }
             return {
                 ...acc,

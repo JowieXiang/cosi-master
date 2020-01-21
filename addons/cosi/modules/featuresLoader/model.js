@@ -23,12 +23,12 @@ const featuresLoader = Backbone.Model.extend(/** @lends featuresLoader.prototype
                 attribute: "stadtteile",
                 selector: "stadtteil",
                 url: "https://geodienste.hamburg.de/Test_HH_WFS_hamburg_statistik_stadtteile",
-                referenceAttributes: []
+                referenceAttributes: ["bezirke"]
             },
             bezirke: {
                 attribute: "bezirke",
                 selector: "bezirk",
-                url: "",
+                url: "https://geodienste.hamburg.de/Test_HH_WFS_hamburg_statistik_bezirke",
                 referenceAttributes: []
             }
         }
@@ -95,10 +95,11 @@ const featuresLoader = Backbone.Model.extend(/** @lends featuresLoader.prototype
      * @param {string} serviceUrl - the wfs url of the districts
      * @param {string} attribute - the model attribute in which the features are stored
      * @param {string[]} districtNameList - a list of the names of the selected districts
-     * @param {string[]} referenceAttributes - the model attribute that will recursively be loaded, ordered from smallest to largest, e.g. ["stadtteile", "bezirke"]
+     * @param {string[]} referenceAttributes=[] - the model attribute that will recursively be loaded, ordered from smallest to largest, e.g. ["stadtteile", "bezirke"]
+     * @param {string[]} subDistrictNameList=undefined - the district names on the lower level to avoid naming conflicts
      * @returns {void}
      */
-    loadDistricts: function (bbox, serviceUrl, attribute, districtNameList, referenceAttributes = []) {
+    loadDistricts: function (bbox, serviceUrl, attribute, districtNameList, referenceAttributes = [], subDistrictNameList = undefined) {
         Radio.trigger("Util", "showLoader");
         Radio.trigger("Alert", "alert", {
             text: "Datensätze werden geladen",
@@ -138,7 +139,20 @@ const featuresLoader = Backbone.Model.extend(/** @lends featuresLoader.prototype
                     })
                     .then(features => {
                         return features.filter((feature) => {
-                            return districtNameList.includes(feature.get("statgebiet")) || districtNameList.includes(feature.get("stadtteil"));
+                            const attr = this.getDistrictAttrMapping(attribute).selector;
+
+                            if (districtNameList.includes(feature.get(attr))) {
+                                // rename feature name for reference levels to avoid naming conflict
+                                if (subDistrictNameList) {
+                                    const districtName = feature.get(attr);
+
+                                    if (subDistrictNameList.includes(districtName)) {
+                                        feature.set(attr, `${districtName} (${attr.charAt(0).toUpperCase() + attr.slice(1)})`);
+                                    }
+                                }
+                                return true;
+                            }
+                            return false;
                         });
                     })
                     .catch(function (error) {
@@ -157,7 +171,9 @@ const featuresLoader = Backbone.Model.extend(/** @lends featuresLoader.prototype
                             return refDistricts.includes(feature.get(selector)) ? refDistricts : [...refDistricts, feature.get(selector)];
                         }, []);
 
-                    return this.loadDistricts(bbox, url, referenceAttributes[0], referenceDistricts, referenceAttributes.splice(1));
+                    // trigger the method recursion
+                    // passing an undefined bbox if the scope is "bezirke", loading the entire city for all above levels
+                    return this.loadDistricts(referenceAttributes[0] === "bezirke" ? undefined : bbox, url, referenceAttributes[0], referenceDistricts, referenceAttributes.splice(1), districtNameList);
                 }
 
                 Radio.trigger("Util", "hideLoader");

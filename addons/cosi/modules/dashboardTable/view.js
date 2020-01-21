@@ -121,7 +121,7 @@ const DashboardTableView = Backbone.View.extend(/** @lends DashboardTableView.pr
             this.contextActionsEl.find("li.calculate").removeClass("inactive");
         }
 
-        this.contextActionsEl.find("li#selection span").html("<br />" + this.model.getAttrsForRatio().join(" / "));
+        this.contextActionsEl.find("li#selection span").html("<br />(" + this.model.getAttrsForRatio().join(" / ") + ")");
         return selectionText.html(`<strong>Auswahl:</strong> ${this.model.getAttrsForRatio()[0] ? this.model.getAttrsForRatio()[0] + " (y)" : ""}${this.model.getAttrsForRatio()[1] ? " / " + this.model.getAttrsForRatio()[1] + " (x)" : ""}`);
     },
 
