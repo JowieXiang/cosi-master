@@ -13,7 +13,7 @@ const DashboardModel = Tool.extend(/** @lends DashboardModel.prototype */{
     /**
      * @class DashboardModel
      * @extends Tool
-     * @memberof Dashboard
+     * @memberof Tools.Dashboard
      * @constructs
      * @property {string} width DOM width of dashboard sidebar
      * @property {boolean} infoScreenOpen retrieved state of 2nd screen from localStorage

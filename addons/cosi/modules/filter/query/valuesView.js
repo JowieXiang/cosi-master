@@ -1,6 +1,12 @@
 import "./style.less";
 
-const QueryValuesView = Backbone.View.extend({
+const QueryValuesView = Backbone.View.extend(/** @lends QueryValuesView.prototype */{
+    /**
+     * @class QueryValuesView
+     * @extends Backbone.View
+     * @memberof Tools.Filter.Query
+     * @constructs
+     */
     events: {
         "click": "removeView"
     },
@@ -36,7 +42,6 @@ const QueryValuesView = Backbone.View.extend({
         else {
             html = this.model.get("value") + "<span class='remove'>&#x274C;</span>";
         }
-
         this.$el.html(html);
         return this;
     },

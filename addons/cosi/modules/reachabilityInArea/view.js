@@ -2,7 +2,7 @@ import Template from "text-loader!./template.html";
 import SnippetDropdownView from "../../../../modules/snippets/dropdown/view";
 import * as Proj from "ol/proj.js";
 import "./style.less";
-import {Fill, Stroke, Style} from "ol/style.js";
+import { Fill, Stroke, Style } from "ol/style.js";
 import GeoJSON from "ol/format/GeoJSON";
 import InfoTemplate from "text-loader!./info.html";
 import union from "turf-union";
@@ -48,18 +48,28 @@ const ReachabilityInAreaView = Backbone.View.extend(/** @lends ReachabilityInAre
             }
         });
 
+        this.listenTo(Radio.channel("ModelList"), {
+            "updatedSelectedLayerList": function (models) {
+                this.setFacilityLayers(models);
+            }
+        });
+
         this.listenTo(this.model, {
             "change:isActive": function (model, value) {
                 if (value) {
+                    this.unregisterClickListener();
                     this.render(model, value);
                     this.createMapLayer(this.model.get("mapLayerName"));
                 }
                 else {
+                    this.registerClickListener();
                     this.clearInput();
                     Radio.trigger("Alert", "alert:remove");
                 }
             }
         });
+
+
     },
     model: {},
     template: _.template(Template),
@@ -83,7 +93,7 @@ const ReachabilityInAreaView = Backbone.View.extend(/** @lends ReachabilityInAre
      */
     renderDropDownView: function () {
         this.model.setDropDownModel();
-        const dropdownView = new SnippetDropdownView({model: this.model.get("dropDownModel")});
+        const dropdownView = new SnippetDropdownView({ model: this.model.get("dropDownModel") });
 
         this.$el.find("#select-layer").html(dropdownView.render().el);
     },
@@ -198,8 +208,20 @@ const ReachabilityInAreaView = Backbone.View.extend(/** @lends ReachabilityInAre
         else {
             this.inputReminder();
         }
+        this.addSelectDistrictlistener();
     },
-
+    addSelectDistrictlistener: function () {
+        this.listenTo(Radio.request("ModelList", "getModelByAttributes", { name: "Gebiet auswählen" }), {
+            "change:isActive": function (model, value) {
+                if (value) {
+                    this.unregisterClickListener();
+                }
+                else {
+                    this.registerClickListener();
+                }
+            }
+        });
+    },
     /**
      * style isochrone features
      * @param {ol.Feature} features isochone features (polygons)
@@ -361,7 +383,7 @@ const ReachabilityInAreaView = Backbone.View.extend(/** @lends ReachabilityInAre
      */
     toModeSelection: function () {
         this.model.set("isActive", false);
-        Radio.request("ModelList", "getModelByAttributes", {name: "Erreichbarkeitsanalyse"}).set("isActive", true);
+        Radio.request("ModelList", "getModelByAttributes", { name: "Erreichbarkeitsanalyse" }).set("isActive", true);
     },
 
     /**
@@ -377,8 +399,7 @@ const ReachabilityInAreaView = Backbone.View.extend(/** @lends ReachabilityInAre
      * @returns {void}
      */
     unregisterClickListener: function () {
-        Radio.trigger("Map", "unregisterListener", this.get("clickEventKey"));
-        this.stopListening(Radio.channel("Map"), this.clickEventKey);
+        Radio.trigger("Map", "unregisterListener", this.clickListener);
     },
 
     /**
@@ -394,7 +415,7 @@ const ReachabilityInAreaView = Backbone.View.extend(/** @lends ReachabilityInAre
         });
         //  check "featureType" for the isochrone layer
         if (_.contains(features.map(feature => feature.getProperties().featureType), this.model.get("featureType"))) {
-            const modelList = Radio.request("ModelList", "getModelsByAttributes", {isActive: true});
+            const modelList = Radio.request("ModelList", "getModelsByAttributes", { isActive: true });
 
             _.each(modelList, model => {
                 if (model.get("isActive")) {

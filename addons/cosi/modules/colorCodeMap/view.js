@@ -3,7 +3,7 @@ import template from "text-loader!./template.html";
 import SnippetDropdownView from "../../../../modules/snippets/dropdown/view";
 import InfoTemplate from "text-loader!./info.html";
 
-const ColorCodeMapView = Backbone.View.extend({
+const ColorCodeMapView = Backbone.View.extend(/** @lends ColorCodeMapView.prototype */{
     events: {
         "click .btn-reset": function () {
             this.reset();
@@ -11,6 +11,12 @@ const ColorCodeMapView = Backbone.View.extend({
         "click .btn-prev-next": "prevNext",
         "click #legend-help": "showHelp"
     },
+    /**
+     * @class ColorCodeMapView
+     * @extends Backbone.Model
+     * @memberof ColorCodeMap
+     * @constructs
+     */
     initialize: function () {
         this.listenTo(this.model, {
             "resetView": this.reset,

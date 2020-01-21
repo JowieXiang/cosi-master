@@ -12,7 +12,7 @@ const DashboardWidgetHandler = Backbone.Model.extend(/** @lends DashboardWidgetH
     /**
      * @class DashboardWidgetHandler
      * @extends Backbone.Model
-     * @memberof Dashboard
+     * @memberof Tools.Dashboard
      * @constructs
      * @param {object} attrs the attributes set in tools.js
      * @listens Dashboard#RadioTriggerAppend

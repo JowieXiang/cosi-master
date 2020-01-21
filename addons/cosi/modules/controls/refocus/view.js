@@ -5,7 +5,12 @@ const RefocusView = Backbone.View.extend(/** @lends RefocusView.prototype */{
     events: {
         "click .glyphicon": "refocus"
     },
-
+    /**
+     * @class RefocusView
+     * @extends ackbone.View
+     * @memberof Controls.Refocus
+     * @constructs
+     */
     initialize: function () {
         var channel = Radio.channel("Map");
 
@@ -15,11 +20,6 @@ const RefocusView = Backbone.View.extend(/** @lends RefocusView.prototype */{
             "change": this.mapChange
         }, this);
     },
-    /**
-     * @member Refocus
-     * @description 
-     * @memberof Controls.Refocus
-     */
     template: _.template(RefocusTemplate),
 
     /**

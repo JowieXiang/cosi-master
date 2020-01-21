@@ -1,6 +1,6 @@
 import SnippetModel from "../../../../../modules/snippets/model";
 
-const AdjustParameterModel = SnippetModel.extend(/** @lends AdjustParameterModel */{
+const AdjustParameterModel = SnippetModel.extend(/** @lends AdjustParameterModel.prototype */{
     defaults: {
         layerName: "",
         layer: {},
@@ -13,9 +13,9 @@ const AdjustParameterModel = SnippetModel.extend(/** @lends AdjustParameterModel
     },
 
     /**
-     * @class AdjustParameterView
+     * @class AdjustParameterModel
      * @extends SnippetModel
-     * @memberof AdjustParameter
+     * @memberof Tools.CalculateRatio.AdjustParameter
      * @constructs
      * @param {string} layerId ID of the layer to modify
      * @param {string} infoText info text to display on btn click
