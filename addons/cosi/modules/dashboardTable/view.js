@@ -187,6 +187,18 @@ const DashboardTableView = Backbone.View.extend(/** @lends DashboardTableView.pr
         });
     },
 
+    moveCol: function (event) {
+        const cellIndex = event.target.parentNode.cellIndex - 2,
+            direction = event.target.className;
+
+        this.model.changeTableOrder(cellIndex, direction);
+        // arr.sort((a, b) => {
+        //     if (a[0] === "v2" && b[0] === "v1") {
+        //         return -1;
+        //     }
+        // });
+    },
+
     /**
      * adds the 'bs-placeholder' class to the dropdown,
      * sets the placeholder text and unstyle the district features
