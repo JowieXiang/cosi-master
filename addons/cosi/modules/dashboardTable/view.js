@@ -14,7 +14,8 @@ const DashboardTableView = Backbone.View.extend(/** @lends DashboardTableView.pr
         "click .prop button.open": "toggleTimelineTable",
         "click thead button.open": "toggleGroup",
         "click .btn-reset": "resetDropDown",
-        "click .toggle-col": "toggleCol"
+        "click .toggle-col": "toggleCol",
+        "click .move span": "moveCol"
     },
 
     /**
@@ -188,15 +189,12 @@ const DashboardTableView = Backbone.View.extend(/** @lends DashboardTableView.pr
     },
 
     moveCol: function (event) {
-        const cellIndex = event.target.parentNode.cellIndex - 2,
-            direction = event.target.className;
+        const cellIndex = event.target.parentNode.parentNode.cellIndex - 2,
+            direction = event.target.className.includes("move-left") ? 0 : 1;
+
+        console.log(cellIndex, direction);
 
         this.model.changeTableOrder(cellIndex, direction);
-        // arr.sort((a, b) => {
-        //     if (a[0] === "v2" && b[0] === "v1") {
-        //         return -1;
-        //     }
-        // });
     },
 
     /**
