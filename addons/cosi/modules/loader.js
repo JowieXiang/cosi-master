@@ -32,10 +32,9 @@ function initializeCosi () {
 
     // check if browser is IE or Edge for InfoScreen to assign localStorage to opener
     // to do
-    if (window.StyleMedia && window.location.pathname.includes("infoscreen.html")) {
+    if (window.styleMedia && window.location.pathname.includes("infoscreen.html")) {
         // ..
     }
-    // window.CosiStorage = window.localStorage;
 
     const dashboard = new DashboardView({model: general.dashboard});
 
