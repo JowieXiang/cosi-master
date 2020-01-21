@@ -188,11 +188,14 @@ const DashboardTableView = Backbone.View.extend(/** @lends DashboardTableView.pr
         });
     },
 
+    /**
+     * triggers the reordering of table columns by index and direction
+     * @param {Event} event the click event
+     * @returns {void}
+     */
     moveCol: function (event) {
         const cellIndex = event.target.parentNode.parentNode.cellIndex - 2,
             direction = event.target.className.includes("move-left") ? 0 : 1;
-
-        console.log(cellIndex, direction);
 
         this.model.changeTableOrder(cellIndex, direction);
     },

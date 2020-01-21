@@ -852,8 +852,6 @@ const DashboardTableModel = Tool.extend(/** @lends DashboardTableModel.prototype
             return 1;
         }));
 
-        console.log(this.get("unsortedTable"));
-
         this.filterTableView();
     },
 

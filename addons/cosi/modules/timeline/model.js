@@ -102,6 +102,13 @@ const Timeline = Tool.extend({
 
         return selector;
     },
+
+    /**
+     * fills missing values in table columns by year
+     * @param {*} inputTable the original table
+     * @param {*} outputType="Object" output type, "Object" or "Array"
+     * @returns {Object} the result Object or Object[]
+     */
     fillUpTimelineGaps (inputTable, outputType = "Object") {
         inputTable.reduce((props, col) => {
             return [...props, ...Object.keys(col)].reduce((unique, prop) => {
@@ -131,6 +138,14 @@ const Timeline = Tool.extend({
 
         return inputTable;
     },
+
+    /**
+     * recursively checks the property type in each column, returns "object" if at least 1 column is an object, i.e. has nested values
+     * @param {*} prop the property to check
+     * @param {*} table the dataset to check in
+     * @param {*} startIndex=0 the index at which to start the loop
+     * @returns {String} the property data type
+     */
     checkPropType (prop, table, startIndex = 0) {
         return typeof table[startIndex][prop] === "object" || startIndex === table.length - 1 ?
             typeof table[startIndex][prop] :
