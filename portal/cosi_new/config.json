@@ -497,13 +497,21 @@
               ]
             },
             {
-              "Titel": "Paul Daten",
+              "Titel": "Potenzialflächendatenbank PAUL - FHHNET",
               "Layer": [
                 {
                   "id": "1170"
                 },
                 {
                   "id": "1171"
+                }
+              ]
+            },
+            {
+              "Titel": "Gesundheit",
+              "Layer": [
+                {
+                  "id": "1731"
                 }
               ]
             }
