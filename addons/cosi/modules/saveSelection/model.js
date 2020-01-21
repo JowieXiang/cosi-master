@@ -1,13 +1,20 @@
-import SaveSelection from "../../../../modules/tools/saveSelection/model";
+import SaveSelectionModel from "../../../../modules/tools/saveSelection/model";
 
-const SaveSelectionCosi = SaveSelection.extend({
-    defaults: _.extend({}, SaveSelection.prototype.defaults, {
+const SaveSelectionCosiModel = SaveSelectionModel.extend(/** @lends SaveSelectionCosiModel.prototype */{
+    defaults: _.extend({}, SaveSelectionModel.prototype.defaults, {
         id: "saveSelectionCosi",
         name: "Sitzung speichern",
         selectedDistrictIds: [],
         scope: "",
         buffer: 0
     }),
+    /**
+     * @class SaveSelectionCosiModel
+     * @extends SaveSelectionModel
+     * @memberof Tools.SaveSelectionCosi
+     * @constructs
+     */
+
     initialize: function (options) {
         this.listenTo(this, {
             "change:isActive": function (model, value) {
@@ -19,7 +26,7 @@ const SaveSelectionCosi = SaveSelection.extend({
 
         this.constructor.__super__.initialize.apply(this, options);
     },
-    setSelectedDistrictIdsAndScope (selectedDistricts, scope, buffer) {
+    setSelectedDistrictIdsAndScope(selectedDistricts, scope, buffer) {
         this.set("selectedDistrictIds", selectedDistricts.map(dist => dist.get(scope.selector)));
         this.set("scope", scope.scope);
         this.set("buffer", buffer);
@@ -30,4 +37,4 @@ const SaveSelectionCosi = SaveSelection.extend({
     }
 });
 
-export default SaveSelectionCosi;
+export default SaveSelectionCosiModel;

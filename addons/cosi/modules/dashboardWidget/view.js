@@ -18,7 +18,7 @@ const DashboardWidgetView = Backbone.View.extend(/** @lends DashboardWidgetView 
      * initialize a new dashboard widget view
      * @class DashboardWidgetView
      * @extends Backbone.View
-     * @memberof Dashboard
+     * @memberof Tools.Dashboard
      * @constructs
      * @param {Backbone.View | $ | d3.selection | string} content the content to render
      * @param {string} parent the container to append to

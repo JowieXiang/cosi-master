@@ -3,7 +3,13 @@ import {Fill, Stroke, Style, Text} from "ol/style.js";
 import ExportButtonView from "../../../../modules/snippets/exportButton/view";
 
 
-const ResultView = Backbone.View.extend({
+const ResultView = Backbone.View.extend(/** @lends ResultView.prototype */{
+
+    /**
+     * @class ResultView
+     * @extends Backbone.View
+     * @memberof Tools.CalculateRatio
+     */
     events: {
         "click #push-dashboard": "pushToDashboard"
     },

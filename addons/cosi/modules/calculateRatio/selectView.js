@@ -4,7 +4,7 @@ import ResultView from "./resultView";
 import InfoTemplate from "text-loader!./info.html";
 import "./style.less";
 
-const SelectView = Backbone.View.extend({
+const SelectView = Backbone.View.extend(/** @lends SelectView.prototype */{
     events: {
         "click #submit": "calculateRatios",
         "change #resolution-input": "setResolution",
@@ -14,9 +14,9 @@ const SelectView = Backbone.View.extend({
     },
 
     /**
-     * initialize the SelectView
-     * @memberof calculateRatio
-     * @returns {void}
+     * @class SelectView
+     * @extends Backbone.View
+     * @memberof Tools.CalculateRatio
      */
     initialize: function () {
         this.listenTo(this.model, {

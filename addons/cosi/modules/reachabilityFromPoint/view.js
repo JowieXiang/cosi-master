@@ -60,12 +60,13 @@ const ReachabilityFromPointView = Backbone.View.extend(/** @lends ReachabilityFr
     initialize: function () {
 
         this.registerClickListener();
+
         this.listenTo(this.model, {
             "change:isActive": function (model, value) {
                 const mapLayer = Radio.request("Map", "getLayerByName", this.model.get("mapLayerName"));
 
                 if (value) {
-                    this.registerSetCoordListener();
+                    this.unregisterClickListener();
                     this.render(model, value);
                     this.createMapLayer(this.model.get("mapLayerName"));
                     if (this.model.get("isochroneFeatures").length > 0) {
@@ -75,9 +76,11 @@ const ReachabilityFromPointView = Backbone.View.extend(/** @lends ReachabilityFr
                     this.listenTo(Radio.channel("Searchbar"), {
                         "hit": this.setSearchResultToOrigin
                     });
+                    this.registerSetCoordListener();
                 }
                 else {
                     this.unregisterSetCoordListener();
+                    this.registerClickListener();
                     Radio.trigger("SelectDistrict", "revertBboxGeometry");
                     Radio.trigger("Alert", "alert:remove");
                     if (mapLayer.getSource().getFeatures().length === 0) {
@@ -222,8 +225,21 @@ const ReachabilityFromPointView = Backbone.View.extend(/** @lends ReachabilityFr
         else {
             this.inputReminder();
         }
+        this.addSelectDistrictlistener();
     },
-
+    addSelectDistrictlistener: function () {
+        this.listenTo(Radio.request("ModelList", "getModelByAttributes", { name: "Gebiet auswählen" }), {
+            "change:isActive": function (model, value) {
+                if (value) {
+                    console.log("unregis");
+                    this.unregisterClickListener();
+                }
+                else {
+                    this.registerClickListener();
+                }
+            }
+        });
+    },
     /**
      * initializes UI inputs when there is already isochrones on map
      * @returns {void}
@@ -291,6 +307,7 @@ const ReachabilityFromPointView = Backbone.View.extend(/** @lends ReachabilityFr
      * @returns {void}
      */
     setCoordinateFromClick: function (evt) {
+        console.log("setcoor");
         const coordinate = Proj.transform(evt.coordinate, "EPSG:25832", "EPSG:4326");
 
         Radio.trigger("MapMarker", "showMarker", evt.coordinate);
@@ -544,8 +561,7 @@ const ReachabilityFromPointView = Backbone.View.extend(/** @lends ReachabilityFr
      * @returns {void}
      */
     unregisterClickListener: function () {
-        Radio.trigger("Map", "unregisterListener", this.get("clickEventKey"));
-        this.stopListening(Radio.channel("Map"), this.clickEventKey);
+        Radio.trigger("Map", "unregisterListener", this.clickListener);
     },
 
     /**

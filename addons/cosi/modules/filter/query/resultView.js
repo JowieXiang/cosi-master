@@ -1,7 +1,13 @@
 import resultTemplate from "text-loader!./resultTemplate.html";
 import "./style.less";
 
-const ResultView = Backbone.View.extend({
+const ResultView = Backbone.View.extend(/** @lends ResultView.prototype */{
+    /**
+     * @class ResultView
+     * @extends Backbone.View
+     * @memberof Tools.Filter.Query
+     * @constructs
+     */
     events: {
         "click #show-in-dashboard": "showInDashboard"
     },
@@ -14,7 +20,7 @@ const ResultView = Backbone.View.extend({
         this.delegateEvents();
         return this;
     },
-    
+
     /**
      * shows compare results in Dashboard
      * @fires Dashboard#RadioTriggerDashboardDestroyWidgetById
