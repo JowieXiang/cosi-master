@@ -103,7 +103,7 @@
             "glyphicon": "glyphicon-road"
           },
           "reachabilityInArea": {
-            "name": "Erreichbarket im Gebiet",
+            "name": "Erreichbarkeit im Gebiet",
             "isVisibleInMenu": false,
             "glyphicon": "glyphicon-time"
           },

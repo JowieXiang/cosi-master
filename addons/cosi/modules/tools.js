@@ -197,7 +197,7 @@ const general = {
             id: "reachabilityInArea",
             parentId: "tools",
             type: "tool",
-            name: "Erreichbarket im Gebiet",
+            name: "Erreichbarkeit im Gebiet",
             isVisibleInMenu: false,
             glyphicon: "glyphicon-time",
             resizableWindow: true
