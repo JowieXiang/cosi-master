@@ -103,7 +103,7 @@
             "glyphicon": "glyphicon-road"
           },
           "reachabilityInArea": {
-            "name": "Erreichbarket im Gebiet",
+            "name": "Erreichbarkeit im Gebiet",
             "isVisibleInMenu": false,
             "glyphicon": "glyphicon-time"
           },
@@ -497,13 +497,21 @@
               ]
             },
             {
-              "Titel": "Paul Daten",
+              "Titel": "Potenzialflächendatenbank PAUL - FHHNET",
               "Layer": [
                 {
                   "id": "1170"
                 },
                 {
                   "id": "1171"
+                }
+              ]
+            },
+            {
+              "Titel": "Gesundheit",
+              "Layer": [
+                {
+                  "id": "1731"
                 }
               ]
             }

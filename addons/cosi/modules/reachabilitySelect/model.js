@@ -4,7 +4,7 @@ import DropdownModel from "../../../../modules/snippets/dropdown/model";
 const SelectModel = Tool.extend(/** @lends SelectModel.prototype */{
     defaults: _.extend({}, Tool.prototype.defaults, {
         dropDownModel: {},
-        modes: ["Erreichbarkeit ab einem Referenzpunkt", "Erreichbarket im Gebiet"]
+        modes: ["Erreichbarkeit ab einem Referenzpunkt", "Erreichbarkeit im Gebiet"]
     }),
 
     /**
@@ -13,7 +13,7 @@ const SelectModel = Tool.extend(/** @lends SelectModel.prototype */{
     * @memberof Tools.Reachability
     * @constructs
     * @property {object} dropDownModel dropdown menu model
-    * @property {Array} modes=["Erreichbarkeit ab einem Referenzpunkt", "Erreichbarket im Gebiet"] two modes of this function
+    * @property {Array} modes=["Erreichbarkeit ab einem Referenzpunkt", "Erreichbarkeit im Gebiet"] two modes of this function
     * @fires Core.ModelList#RadioRequestModelListGetModelByAttributes
     * @listens DropdownModel#ValuesChanged
     */
