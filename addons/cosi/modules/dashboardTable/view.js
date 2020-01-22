@@ -14,7 +14,8 @@ const DashboardTableView = Backbone.View.extend(/** @lends DashboardTableView.pr
         "click .prop button.open": "toggleTimelineTable",
         "click thead button.open": "toggleGroup",
         "click .btn-reset": "resetDropDown",
-        "click .toggle-col": "toggleCol"
+        "click .toggle-col": "toggleCol",
+        "click .move span": "moveCol"
     },
 
     /**
@@ -121,7 +122,7 @@ const DashboardTableView = Backbone.View.extend(/** @lends DashboardTableView.pr
             this.contextActionsEl.find("li.calculate").removeClass("inactive");
         }
 
-        this.contextActionsEl.find("li#selection span").html("<br />" + this.model.getAttrsForRatio().join(" / "));
+        this.contextActionsEl.find("li#selection span").html("<br />(" + this.model.getAttrsForRatio().join(" / ") + ")");
         return selectionText.html(`<strong>Auswahl:</strong> ${this.model.getAttrsForRatio()[0] ? this.model.getAttrsForRatio()[0] + " (y)" : ""}${this.model.getAttrsForRatio()[1] ? " / " + this.model.getAttrsForRatio()[1] + " (x)" : ""}`);
     },
 
@@ -185,6 +186,18 @@ const DashboardTableView = Backbone.View.extend(/** @lends DashboardTableView.pr
         this.$el.find("tr").each(function (index, row) {
             $(row.children[cellIndex]).toggleClass("minimized");
         });
+    },
+
+    /**
+     * triggers the reordering of table columns by index and direction
+     * @param {Event} event the click event
+     * @returns {void}
+     */
+    moveCol: function (event) {
+        const cellIndex = event.target.parentNode.parentNode.cellIndex - 2,
+            direction = event.target.className.includes("move-left") ? 0 : 1;
+
+        this.model.changeTableOrder(cellIndex, direction);
     },
 
     /**

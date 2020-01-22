@@ -30,9 +30,11 @@ import "../cosi.style.less";
 function initializeCosi () {
     var infoScreenOpen = JSON.parse(window.localStorage.getItem("infoScreenOpen"));
 
+    addPolyfills();
+
     // check if browser is IE or Edge for InfoScreen to assign localStorage to opener
     // to do
-    if (window.styleMedia && window.location.pathname.includes("infoscreen.html")) {
+    if (window.detectMS() && window.location.pathname.includes("infoscreen.html")) {
         // ..
     }
 
@@ -99,7 +101,6 @@ function initializeCosi () {
 
     Radio.trigger("General", "loaded");
     addInfoButtons();
-    addPolyfills();
     addZoomToCoordListener(".zoom-to-coord");
 }
 
