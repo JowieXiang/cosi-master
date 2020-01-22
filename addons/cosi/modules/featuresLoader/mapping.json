@@ -465,7 +465,7 @@
   },
   {
     "category": "ver_anteil_pkw_schadstoffkl_4_bis_6_gruene_plakette_proz",
-    "value": "Anteil der PKW mit Schadstoffklasse 4 is 6",
+    "value": "Anteil der PKW mit Schadstoffklasse 4 bis 6",
     "group": "Verkehr",
     "statgebiet": true,
     "stadtteil":true,
