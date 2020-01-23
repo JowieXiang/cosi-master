@@ -13,7 +13,7 @@ const ReachabilityInAreaModel = Tool.extend(/** @lends ReachabilityInAreaModel.p
         isochroneFeatures: [], // isochrone features
         dropDownModel: {},
         mapLayerName: "reachability-in-area",
-        featureType: "Erreichbarket im Gebiet" // used for targeting the features within the layer
+        featureType: "Erreichbarkeit im Gebiet" // used for targeting the features within the layer
     }),
     /**
     * @class ReachabilityInAreaModel
@@ -36,7 +36,7 @@ const ReachabilityInAreaModel = Tool.extend(/** @lends ReachabilityInAreaModel.p
     },
     /**
      * sets selected facility layer
-     * @listens DropdownModel#ValuesChanged  
+     * @listens DropdownModel#ValuesChanged
      * @returns {void}
      */
     setDropDownModel: function () {

@@ -82,6 +82,7 @@
             th, td {
                 width: auto;
                 position: relative;
+                border-right: 1px solid rgb(229, 229, 229);
                 &.prop {
                     font-weight: 300;
                 }
@@ -96,14 +97,27 @@
                 }
                 &:hover {
                     background: rgb(199, 199, 199);
-                }
-                &:last-child, &:nth-last-child(2) {
-                    background: rgb(253, 253, 253);
+                    .move {
+                        visibility: visible;
+                    }
                 }
                 &.minimized {
                     width: 8px;
                     *:not(.toggle-col) {
                         display: none;
+                    }
+                }
+                .move {
+                    visibility: hidden;
+                    position: absolute;
+                    top: 0;
+                    left: 5px;
+                    span {
+                        color: lightgrey;
+                        &:hover {
+                            color:darkblue;
+                            cursor: pointer;
+                        }
                     }
                 }
                 .toggle-col {

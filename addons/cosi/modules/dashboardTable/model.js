@@ -110,10 +110,18 @@ const DashboardTableModel = Tool.extend(/** @lends DashboardTableModel.prototype
      */
     updateTable: function (features) {
         const table = features.reduce((newTable, feature) => {
-            const properties = feature.getProperties(),
-                // dirty fix for data inconsistencies
-                selector = properties.verwaltungseinheit === "stadtteile" ? "stadtteil" : properties.verwaltungseinheit || this.get("sortKey"),
-                distCol = newTable.findIndex(col => col[selector] === properties[selector] && col.verwaltungseinheit === properties.verwaltungseinheit);
+            var properties = feature.getProperties(),
+                selector = properties.verwaltungseinheit || this.get("sortKey");
+
+            // dirty fix for data inconsistencies
+            if (selector === "stadtteile") {
+                selector = "stadtteil";
+            }
+            if (selector === "bezirke") {
+                selector = "bezirk";
+            }
+
+            const distCol = newTable.findIndex(col => col[selector] === properties[selector] && col.verwaltungseinheit === properties.verwaltungseinheit);
 
             if (distCol !== -1) {
                 newTable[distCol] = {...newTable[distCol], ...Radio.request("Timeline", "createTimelineTable", [properties])[0]};
@@ -125,10 +133,6 @@ const DashboardTableModel = Tool.extend(/** @lends DashboardTableModel.prototype
                 properties[this.get("sortKey")] = properties[selector];
                 properties.notes = "Referenzgebiet";
             }
-            else {
-                properties.notes = "-";
-            }
-            properties.bezirk = properties.bezirk ? properties.bezirk : "-";
 
             return [...newTable, Radio.request("Timeline", "createTimelineTable", [properties])[0]];
         }, []).sort((a, b) => {
@@ -140,6 +144,7 @@ const DashboardTableModel = Tool.extend(/** @lends DashboardTableModel.prototype
 
         // Fill up gaps in the data due to data inconsistencies
         // Add total and mean values and filter table for excluded properties
+        this.set("columnNames", [...table.map(col => col[this.get("sortKey")]), "Gesamt", "Durchschnitt"]);
         this.set("unsortedTable", this.calculateTotalAndMean(Radio.request("Timeline", "fillUpTimelineGaps", table, "Array")));
 
         // group table according to mapping.json
@@ -202,7 +207,12 @@ const DashboardTableModel = Tool.extend(/** @lends DashboardTableModel.prototype
                         const flatYear = Object.assign({}, flatProp);
 
                         for (const district in flatYear) {
-                            flatYear[district] = flatYear[district][j][1];
+                            if (flatYear[district]) {
+                                flatYear[district] = flatYear[district][j][1];
+                            }
+                            else {
+                                flatYear[district] = "-";
+                            }
                         }
 
                         return {...{
@@ -229,7 +239,16 @@ const DashboardTableModel = Tool.extend(/** @lends DashboardTableModel.prototype
         if (table) {
             const properties = _.allKeys(table[0]);
 
-            table.push({[this.get("sortKey")]: "Gesamt"}, {[this.get("sortKey")]: "Durchschnitt"});
+            table.push(
+                {
+                    [this.get("sortKey")]: "Gesamt",
+                    notes: "Berechnung aus Auswahl"
+                },
+                {
+                    [this.get("sortKey")]: "Durchschnitt",
+                    notes: "Berechnung aus Auswahl"
+                }
+            );
             _.each(properties, (prop) => {
                 if (prop !== this.get("sortKey")) {
 
@@ -371,11 +390,20 @@ const DashboardTableModel = Tool.extend(/** @lends DashboardTableModel.prototype
 
         metaInfo.values = Radio.request("Util", "renameValues", {
             statgebiet: "Statistisches Gebiet",
-            bezirk: "Bezirk",
+            bezirke: "Bezirk",
             stadtteile: "Stadtteil"
         }, metaInfo.values);
 
-        return [metaInfo, ...groups];
+        return [metaInfo, ...groups].map(group => {
+            for (const prop in group.values) {
+                this.get("columnNames").forEach(name => {
+                    if (!Object.keys(group.values[prop]).includes(name)) {
+                        group.values[prop][name] = "-";
+                    }
+                });
+            }
+            return group;
+        }, this);
     },
 
     /**
@@ -408,27 +436,27 @@ const DashboardTableModel = Tool.extend(/** @lends DashboardTableModel.prototype
             }
             const match = this.get("unsortedTable").find(distCol => distCol[this.get("sortKey")] === col);
 
-            match[`${this.getAttrsForRatio()[0]} / ${this.getAttrsForRatio()[1]}`] = ratio[col];
+            match[`(${this.getAttrsForRatio()[0]} / ${this.getAttrsForRatio()[1]})`] = ratio[col];
         }
 
         if (calcGroup) {
-            calcGroup.values[`${this.getAttrsForRatio()[0]} / ${this.getAttrsForRatio()[1]}`] = ratio;
+            calcGroup.values[`(${this.getAttrsForRatio()[0]} / ${this.getAttrsForRatio()[1]})`] = ratio;
         }
         else {
             tableView.push({
                 group: "Berechnungen",
                 values: {
-                    [`${this.getAttrsForRatio()[0]} / ${this.getAttrsForRatio()[1]}`]: ratio
+                    [`(${this.getAttrsForRatio()[0]} / ${this.getAttrsForRatio()[1]})`]: ratio
                 }
             });
         }
 
         this.get("customFilters").push({
-            category: `${this.getAttrsForRatio()[0]} / ${this.getAttrsForRatio()[1]}`,
+            category: `(${this.getAttrsForRatio()[0]} / ${this.getAttrsForRatio()[1]})`,
             group: "Berechnungen",
             stadtteil: true,
             statgebiet: true,
-            value: `${this.getAttrsForRatio()[0]} / ${this.getAttrsForRatio()[1]}`,
+            value: `(${this.getAttrsForRatio()[0]} / ${this.getAttrsForRatio()[1]})`,
             valueType: "relative"
         });
 
@@ -786,6 +814,45 @@ const DashboardTableModel = Tool.extend(/** @lends DashboardTableModel.prototype
         if (extent) {
             Radio.trigger("Map", "zoomToExtent", extent, {padding: [20, 20, 20, 20]});
         }
+    },
+
+    /**
+     * reorder the table by swapping column positions by index
+     * @param {*} index the column to move
+     * @param {*} direction 0 or 1 depending on whether to move left (0) or right (1)
+     * @returns {void}
+     */
+    changeTableOrder: function (index, direction) {
+        const data = this.get("tableView"),
+            rawData = this.get("unsortedTable");
+
+        this.set("tableView", data.map(group => {
+            for (const prop in group.values) {
+                const obj = group.values[prop],
+                    arr = _.pairs(obj),
+                    result = _.object(arr.sort((a, b) => {
+                        if (index - 1 + direction >= 0 && index + direction <= arr.length - 1) {
+                            if (a[0] === arr[index + direction][0] && b[0] === arr[index - 1 + direction][0]) {
+                                return -1;
+                            }
+                        }
+                        return 1;
+                    }));
+
+                group.values[prop] = result;
+            }
+
+            return group;
+        }));
+
+        this.set("unsortedTable", rawData.sort((a, b) => {
+            if (a[this.get("sortKey")] === rawData[index + direction][this.get("sortKey")] && b[this.get("sortKey")] === rawData[index - 1 + direction][this.get("sortKey")]) {
+                return -1;
+            }
+            return 1;
+        }));
+
+        this.filterTableView();
     },
 
     /**

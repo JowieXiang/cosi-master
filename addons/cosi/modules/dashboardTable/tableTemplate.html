@@ -4,7 +4,14 @@
                 <tr>
                         <th scope="col"><span><%= group.group %></span><button type="button" class="btn btn-outline-secondary open"><span></span></th>
                         <% if (group.group !== "Gebietsinformation") { %>
-                                <th scope="col" class="years"><span>Jahr</span><span class="toggle-col glyphicon glyphicon-triangle-right"></span></th>
+                                <th scope="col" class="years">
+                                        <span>Jahr</span>
+                                        <div class="move">
+                                                <span class="move-left glyphicon glyphicon-chevron-left" title="Spalte nach links verschieben"></span>
+                                                <span class="move-right glyphicon glyphicon-chevron-right" title="Spalte nach rechts verschieben"></span>
+                                        </div>
+                                        <span class="toggle-col glyphicon glyphicon-triangle-right"></span>
+                                </th>
                         <% } else { %>
                                 <th></th>
                         <% } %>
@@ -14,12 +21,12 @@
                                         class="district <%= filteredTableView[0].values.Anmerkungen[dist] === 'Referenzgebiet' ? 'reference' : '' %>"
                                         title="Über das Symbol in der Ecke Spalte ausblenden. Ausgeblendete Spalten werden bei Berechnungen ignoriert.">
                                         <span class="col-title"><%= dist %></span>
+                                        <div class="move">
+                                                <span class="move-left glyphicon glyphicon-chevron-left" title="Spalte nach links verschieben"></span>
+                                                <span class="move-right glyphicon glyphicon-chevron-right" title="Spalte nach rechts verschieben"></span>
+                                        </div>
                                         <span class="toggle-col glyphicon glyphicon-triangle-right"></span>
                                 </th>
-                        <% } %>
-                        <% if (group.group === "Gebietsinformation") { %>
-                                <th></th>
-                                <th></th>
                         <% } %>
                 </tr>
         </thead>
@@ -59,8 +66,6 @@
                                                 <span><%= group.values[val][dist] %></span>
                                         </td>
                                 <% } %>
-                                <td></td>
-                                <td></td>
                         <% } %>
                 </tr>
         <% } %>
