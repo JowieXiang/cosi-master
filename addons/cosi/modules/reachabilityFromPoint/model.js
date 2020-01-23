@@ -6,6 +6,7 @@ const ReachabilityFromPointModel = Tool.extend(/** @lends ReachabilityFromPointM
     defaults: _.extend({}, Tool.prototype.defaults, {
         coordinate: [],
         pathType: "",
+        rangeType: "",
         range: 0,
         steps: 3, // step of subIsochrones
         isochroneFeatures: [], // isochrone features
@@ -22,6 +23,7 @@ const ReachabilityFromPointModel = Tool.extend(/** @lends ReachabilityFromPointM
     * @constructs
     * @property {Array} coordinate origin coordinate (in "EPSG:4326")
     * @property {string} pathType type of transportation
+    * @property {string} rangeType type of range ("time" or "distance")
     * @property {number} range time of traveling (in seconds)
     * @property {number} steps how many times to subdivide the time of traveling
     * @property {Array} isochroneFeatures calculation results as openlayer features
