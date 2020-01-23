@@ -827,8 +827,6 @@ const DashboardTableModel = Tool.extend(/** @lends DashboardTableModel.prototype
             rawData = this.get("unsortedTable"),
             i = index - 1 + direction,
             j = index + direction;
-            // browser = window.identifyBrowser(), // the functional logic of Array.prototype.sort depends on the browser used.
-            // browserModifier = browser === "firefox" ? -1 : 0;
 
         if (index + direction > 0 && index + direction < rawData.length) {
             this.set("tableView", data.map(group => {
@@ -836,25 +834,16 @@ const DashboardTableModel = Tool.extend(/** @lends DashboardTableModel.prototype
                     const obj = group.values[prop],
                         arr = _.pairs(obj);
 
-                    group.values[prop] = _.object(this.swapPlaces(arr, i, j));
+                    group.values[prop] = _.object(arr.swap(i, j));
                 }
 
                 return group;
-            }, this));
+            }));
 
-            this.set("unsortedTable", this.swapPlaces(rawData, i, j));
+            this.set("unsortedTable", rawData.swap(i, j));
 
             this.filterTableView();
         }
-    },
-
-    swapPlaces: function (arr, i, j) {
-        const itemLow = arr[i],
-            itemHigh = arr[j],
-            arrLow = i > 0 ? arr.slice(0, i) : [],
-            arrHigh = j < arr.length - 1 ? arr.slice(j + 1) : [];
-
-        return [...arrLow, itemHigh, itemLow, ...arrHigh];
     },
 
     /**

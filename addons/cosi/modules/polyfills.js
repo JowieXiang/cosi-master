@@ -37,6 +37,26 @@ export function addPolyfills () {
         });
     }
 
+    // todo - swap not neighboring values
+    Object.defineProperty(Array.prototype, "swap", {
+        value: function (i, j) {
+            var itemLow = this[i],
+                itemHigh = this[j],
+                arrLow = i > 0 ? this.slice(0, i) : [],
+                arrHigh = j < this.length - 1 ? this.slice(j + 1) : [];
+
+            try {
+                if (Math.abs(i - j) !== 1) {
+                    throw new RangeError("The indices to swap must me neighbors");
+                }
+                return [...arrLow, itemHigh, itemLow, ...arrHigh];
+            }
+            catch (e) {
+                return console.error(e);
+            }
+        }
+    });
+
     /**
     * detect IE & Edge
     * @returns {number | boolean} version of IE or false, if browser is not Internet Explorer
