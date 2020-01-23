@@ -58,7 +58,7 @@ const ColorScale = Backbone.Model.extend({
             legend.colors = this.createLegendValues(scale, legend.values);
             if (_undefineds.length > 0) {
                 legend.values.push("Keine Daten");
-                legend.colors.push("rbg(0,0,0)");
+                legend.colors.push("rgb(99,99,99)");
             }
         }
 
@@ -71,10 +71,10 @@ const ColorScale = Backbone.Model.extend({
         }
         else if (values.length === _undefineds.length) {
             scale = function () {
-                return "#000000";
+                return "rgb(99,99,99)";
             };
             legend.values.push("Keine Daten");
-            legend.colors.push("rbg(0,0,0)");
+            legend.colors.push("rgb(99,99,99)");
         }
 
         return {scale, legend};
