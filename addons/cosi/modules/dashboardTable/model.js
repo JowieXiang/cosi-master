@@ -824,35 +824,37 @@ const DashboardTableModel = Tool.extend(/** @lends DashboardTableModel.prototype
      */
     changeTableOrder: function (index, direction) {
         const data = this.get("tableView"),
-            rawData = this.get("unsortedTable");
+            rawData = this.get("unsortedTable"),
+            i = index - 1 + direction,
+            j = index + direction;
+            // browser = window.identifyBrowser(), // the functional logic of Array.prototype.sort depends on the browser used.
+            // browserModifier = browser === "firefox" ? -1 : 0;
 
-        this.set("tableView", data.map(group => {
-            for (const prop in group.values) {
-                const obj = group.values[prop],
-                    arr = _.pairs(obj),
-                    result = _.object(arr.sort((a, b) => {
-                        if (index - 1 + direction >= 0 && index + direction <= arr.length - 1) {
-                            if (a[0] === arr[index + direction][0] && b[0] === arr[index - 1 + direction][0]) {
-                                return -1;
-                            }
-                        }
-                        return 1;
-                    }));
+        if (index + direction > 0 && index + direction < rawData.length) {
+            this.set("tableView", data.map(group => {
+                for (const prop in group.values) {
+                    const obj = group.values[prop],
+                        arr = _.pairs(obj);
 
-                group.values[prop] = result;
-            }
+                    group.values[prop] = _.object(this.swapPlaces(arr, i, j));
+                }
 
-            return group;
-        }));
+                return group;
+            }, this));
 
-        this.set("unsortedTable", rawData.sort((a, b) => {
-            if (a[this.get("sortKey")] === rawData[index + direction][this.get("sortKey")] && b[this.get("sortKey")] === rawData[index - 1 + direction][this.get("sortKey")]) {
-                return -1;
-            }
-            return 1;
-        }));
+            this.set("unsortedTable", this.swapPlaces(rawData, i, j));
 
-        this.filterTableView();
+            this.filterTableView();
+        }
+    },
+
+    swapPlaces: function (arr, i, j) {
+        const itemLow = arr[i],
+            itemHigh = arr[j],
+            arrLow = i > 0 ? arr.slice(0, i) : [],
+            arrHigh = j < arr.length - 1 ? arr.slice(j + 1) : [];
+
+        return [...arrLow, itemHigh, itemLow, ...arrHigh];
     },
 
     /**

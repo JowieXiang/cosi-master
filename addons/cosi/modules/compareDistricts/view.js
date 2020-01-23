@@ -550,7 +550,8 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
         Radio.trigger("Dashboard", "append", resultsClone, "#dashboard-containers", {
             id: "compareDistricts",
             name: "Vergleichbare Gebiete ermitteln",
-            glyphicon: "glyphicon glyphicon-random"
+            glyphicon: "glyphicon glyphicon-random",
+            scalable: true
         });
     }
 });

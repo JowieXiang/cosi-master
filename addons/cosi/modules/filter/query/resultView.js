@@ -34,7 +34,8 @@ const ResultView = Backbone.View.extend(/** @lends ResultView.prototype */{
         Radio.trigger("Dashboard", "append", resultsClone, "#dashboard-containers", {
             id: "filter",
             name: "Filter",
-            glyphicon: "glyphicon-filter"
+            glyphicon: "glyphicon-filter",
+            scalable: true
         });
     }
 });

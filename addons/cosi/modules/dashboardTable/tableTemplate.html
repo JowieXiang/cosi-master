@@ -32,8 +32,8 @@
         </thead>
         <tbody id="<%= group.group.replace(/\s/g, '') %>" class="<%= group.group === 'Berechnungen' || group.group === 'Gebietsinformation' ? 'open' : '' %>">
         <% for (var val in group.values) { %>
-                <tr class="row">
-                        <% if (Array.isArray(_.values(group.values[val])[0])) { %>
+                <% if (Array.isArray(_.values(group.values[val])[0])) { %>
+                        <tr class="row has-context">
                                 <th class="prop" scope="row" title="<%= val %> - Für Aktionen rechtsklicken" id="<%= val %>">
                                         <span class="select-row"><input type="checkbox" style="pointer-events: none;" title="Mehrere Spalten für gruppierte Balkendiagramme auswählen."></span>
                                         <span class="prop-name"><%= val %></span>
@@ -58,7 +58,9 @@
                                         </ul>
                                 </td>
                                 <% } %>
-                        <% } else { %>
+                        </tr>
+                <% } else { %>
+                        <tr class="row">
                                 <th class="prop" scope="row" title="<%= val %>" id="<%= val %>"><span class="prop-name"><%= val %></span></th>
                                 <td></td>
                                 <% for (var dist in group.values[val]) { %>
@@ -66,8 +68,8 @@
                                                 <span><%= group.values[val][dist] %></span>
                                         </td>
                                 <% } %>
-                        <% } %>
-                </tr>
+                        </tr>
+                <% } %>
         <% } %>
         </tbody>
 <% }) %>

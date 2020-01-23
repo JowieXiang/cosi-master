@@ -87,34 +87,36 @@ const ContextMenuView = Backbone.View.extend({
         }
     },
     openContextMenu (evt) {
-        this.$el.removeClass("hidden");
+        if (this.$el.find("#actions").html().trim()) {
+            this.$el.removeClass("hidden");
 
-        const _evt = evt.type === "touchend" ? evt.changedTouches[0] : evt;
+            const _evt = evt.type === "touchend" ? evt.changedTouches[0] : evt;
 
-        if (_evt.clientY + this.el.clientHeight < window.innerHeight) {
-            this.$el.css({
-                "top": _evt.clientY,
-                "bottom": "auto"
-            });
-        }
-        else {
-            this.$el.css({
-                "top": "auto",
-                "bottom": window.innerHeight - _evt.clientY
-            });
-        }
+            if (_evt.clientY + this.el.clientHeight < window.innerHeight) {
+                this.$el.css({
+                    "top": _evt.clientY,
+                    "bottom": "auto"
+                });
+            }
+            else {
+                this.$el.css({
+                    "top": "auto",
+                    "bottom": window.innerHeight - _evt.clientY
+                });
+            }
 
-        if (_evt.clientX + this.el.clientWidth < window.innerWidth) {
-            this.$el.css({
-                "left": _evt.clientX,
-                "right": "auto"
-            });
-        }
-        else {
-            this.$el.css({
-                "left": "auto",
-                "right": window.innerWidth - _evt.clientX
-            });
+            if (_evt.clientX + this.el.clientWidth < window.innerWidth) {
+                this.$el.css({
+                    "left": _evt.clientX,
+                    "right": "auto"
+                });
+            }
+            else {
+                this.$el.css({
+                    "left": "auto",
+                    "right": window.innerWidth - _evt.clientX
+                });
+            }
         }
     },
     closeContextMenu (evt) {
