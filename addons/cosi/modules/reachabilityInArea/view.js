@@ -100,7 +100,7 @@ const ReachabilityInAreaView = Backbone.View.extend(/** @lends ReachabilityInAre
 
     /**
      * set facilityNames in model, trigger renderDropDownView
-     * @param {Object} models layer models of updated selected layer 
+     * @param {Object} models layer models of updated selected layer
      * @returns {void}
      */
     setFacilityLayers: function (models) {
@@ -129,7 +129,7 @@ const ReachabilityInAreaView = Backbone.View.extend(/** @lends ReachabilityInAre
     },
 
     /**
-     * clears the map layer that contains the isochrones 
+     * clears the map layer that contains the isochrones
      * @returns {void}
      */
     clearMapLayer: function () {
@@ -326,7 +326,7 @@ const ReachabilityInAreaView = Backbone.View.extend(/** @lends ReachabilityInAre
     },
 
     /**
-     * clears 'coordinates', 'pathType' and 'range' input 
+     * clears 'coordinates', 'pathType' and 'range' input
      * @returns {void}
      */
     clearInput: function () {
@@ -382,7 +382,6 @@ const ReachabilityInAreaView = Backbone.View.extend(/** @lends ReachabilityInAre
      * @returns {void}
      */
     toModeSelection: function () {
-        this.model.set("isActive", false);
         Radio.request("ModelList", "getModelByAttributes", { name: "Erreichbarkeitsanalyse" }).set("isActive", true);
     },
 

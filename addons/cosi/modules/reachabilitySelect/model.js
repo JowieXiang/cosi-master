@@ -52,10 +52,7 @@ const SelectModel = Tool.extend(/** @lends SelectModel.prototype */{
      * @returns {void}
      */
     functionSelected: function (valueModel, isSelected) {
-        if (isSelected) {
-            this.set("isActive", false);
-            Radio.request("ModelList", "getModelByAttributes", {name: valueModel.get("value")}).set("isActive", true);
-        }
+        Radio.request("ModelList", "getModelByAttributes", {name: valueModel.get("value")}).set("isActive", isSelected);
     }
 });
 

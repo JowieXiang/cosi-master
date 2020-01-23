@@ -3,7 +3,7 @@ import SnippetDropdownView from "../../../../modules/snippets/dropdown/view";
 import * as Proj from "ol/proj.js";
 import * as Extent from "ol/extent";
 import "./style.less";
-import { Fill, Stroke, Style } from "ol/style.js";
+import {Fill, Stroke, Style} from "ol/style.js";
 import GeoJSON from "ol/format/GeoJSON";
 import GeometryCollection from "ol/geom/GeometryCollection";
 import InfoTemplate from "text-loader!./info.html";
@@ -121,7 +121,7 @@ const ReachabilityFromPointView = Backbone.View.extend(/** @lends ReachabilityFr
      * @returns {void}
      */
     renderDropDownView: function (dropdownModel) {
-        const dropdownView = new SnippetDropdownView({ model: dropdownModel });
+        const dropdownView = new SnippetDropdownView({model: dropdownModel});
 
         this.$el.find("#isochrones-layer").html(dropdownView.render().el);
     },
@@ -228,10 +228,9 @@ const ReachabilityFromPointView = Backbone.View.extend(/** @lends ReachabilityFr
         this.addSelectDistrictlistener();
     },
     addSelectDistrictlistener: function () {
-        this.listenTo(Radio.request("ModelList", "getModelByAttributes", { name: "Gebiet auswählen" }), {
+        this.listenTo(Radio.request("ModelList", "getModelByAttributes", {name: "Gebiet auswählen"}), {
             "change:isActive": function (model, value) {
                 if (value) {
-                    console.log("unregis");
                     this.unregisterClickListener();
                 }
                 else {
@@ -257,7 +256,7 @@ const ReachabilityFromPointView = Backbone.View.extend(/** @lends ReachabilityFr
      * @returns {void}
      */
     setIsochroneAsBbox: function () {
-        const layerlist = _.union(Radio.request("Parser", "getItemsByAttributes", { typ: "WFS", isBaseLayer: false }), Radio.request("Parser", "getItemsByAttributes", { typ: "GeoJSON", isBaseLayer: false })),
+        const layerlist = _.union(Radio.request("Parser", "getItemsByAttributes", {typ: "WFS", isBaseLayer: false}), Radio.request("Parser", "getItemsByAttributes", {typ: "GeoJSON", isBaseLayer: false})),
             polygonGeometry = this.model.get("isochroneFeatures")[this.model.get("steps") - 1].getGeometry(),
             geometryCollection = new GeometryCollection([polygonGeometry]);
 
@@ -272,7 +271,7 @@ const ReachabilityFromPointView = Backbone.View.extend(/** @lends ReachabilityFr
      */
     styleFeatures: function (features, coordinate) {
         for (let i = features.length - 1; i >= 0; i--) {
-            features[i].setProperties({ coordinate });
+            features[i].setProperties({coordinate});
             features[i].setStyle(new Style({
                 fill: new Fill({
                     color: `rgba(${200 - 100 * i}, ${100 * i}, 3, ${0.05 * i + 0.1})`
@@ -307,7 +306,6 @@ const ReachabilityFromPointView = Backbone.View.extend(/** @lends ReachabilityFr
      * @returns {void}
      */
     setCoordinateFromClick: function (evt) {
-        console.log("setcoor");
         const coordinate = Proj.transform(evt.coordinate, "EPSG:25832", "EPSG:4326");
 
         Radio.trigger("MapMarker", "showMarker", evt.coordinate);
@@ -431,8 +429,8 @@ const ReachabilityFromPointView = Backbone.View.extend(/** @lends ReachabilityFr
      * @returns {void}
      */
     updateResult: function () {
-        const visibleLayerModels = Radio.request("ModelList", "getModelsByAttributes", { typ: "WFS", isBaseLayer: false, isSelected: true }),
-            dataObj = { layers: [] };
+        const visibleLayerModels = Radio.request("ModelList", "getModelsByAttributes", {typ: "WFS", isBaseLayer: false, isSelected: true}),
+            dataObj = {layers: []};
 
         if (visibleLayerModels.length > 0) {
             Radio.trigger("Alert", "alert:remove");
@@ -476,7 +474,7 @@ const ReachabilityFromPointView = Backbone.View.extend(/** @lends ReachabilityFr
 
             this.model.set("dataObj", dataObj);
 
-            this.resultView = new ReachabilityResultView({ model: this.model });
+            this.resultView = new ReachabilityResultView({model: this.model});
             this.$el.find("#result").html(this.resultView.render().$el);
             this.$el.find("#show-in-dashboard").show();
         }
@@ -522,8 +520,7 @@ const ReachabilityFromPointView = Backbone.View.extend(/** @lends ReachabilityFr
      * @returns {void}
      */
     toModeSelection: function () {
-        this.model.set("isActive", false);
-        Radio.request("ModelList", "getModelByAttributes", { name: "Erreichbarkeitsanalyse" }).set("isActive", true);
+        Radio.request("ModelList", "getModelByAttributes", {name: "Erreichbarkeitsanalyse"}).set("isActive", true);
     },
 
     /**
@@ -577,7 +574,7 @@ const ReachabilityFromPointView = Backbone.View.extend(/** @lends ReachabilityFr
         });
         //  check "featureType" for the isochrone layer
         if (_.contains(features.map(feature => feature.getProperties().featureType), this.model.get("featureType"))) {
-            const modelList = Radio.request("ModelList", "getModelsByAttributes", { isActive: true });
+            const modelList = Radio.request("ModelList", "getModelsByAttributes", {isActive: true});
 
             _.each(modelList, model => {
                 if (model.get("isActive")) {
