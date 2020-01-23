@@ -327,7 +327,8 @@ const ReachabilityInAreaView = Backbone.View.extend(/** @lends ReachabilityInAre
         Radio.trigger("Alert", "alert:remove");
         Radio.trigger("Alert", "alert", {
             text: InfoTemplate,
-            kategorie: "alert-info"
+            kategorie: "alert-info",
+            position: "center-center"
         });
     },
 

@@ -124,7 +124,8 @@ const ColorCodeMapView = Backbone.View.extend(/** @lends ColorCodeMapView.protot
         Radio.trigger("Alert", "alert:remove");
         Radio.trigger("Alert", "alert", {
             text: InfoTemplate,
-            kategorie: "alert-info"
+            kategorie: "alert-info",
+            position: "top-center"
         });
     }
 });
