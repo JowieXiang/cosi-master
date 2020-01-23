@@ -167,6 +167,11 @@ const SelectDistrictModel = Tool.extend(/** @lends SelectDistrictModel.prototype
                 this.set("boxSelectMode", 0);
             }
         });
+
+        // check for loaded Layers if loading this module occurs after the layerList
+        if (!this.get("isReady")) {
+            this.checkDistrictLayersLoaded();
+        }
     },
 
     // listen  to click event and trigger setGfiParams

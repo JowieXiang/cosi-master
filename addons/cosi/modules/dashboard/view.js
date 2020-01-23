@@ -19,7 +19,8 @@ const DashboardView = Backbone.View.extend(/** @lends DashboardView.prototype */
      * @listens General#RadioTriggerLoaded
      */
     initialize: function () {
-        this.exportButtonView = new ExportButtonView({model: this.model.get("exportDashboardButton")});
+        // Export Button für das Dashboard wieder hinzufügen, sobald eine Lösung gefunden wurde
+        // this.exportButtonView = new ExportButtonView({model: this.model.get("exportDashboardButton")});
 
         this.listenTo(this.model, {
             "change:isActive": function (model, isActive) {
@@ -69,7 +70,8 @@ const DashboardView = Backbone.View.extend(/** @lends DashboardView.prototype */
         var attr = this.model.toJSON();
 
         this.$el.html(this.template(attr));
-        this.$el.find("#print-button").html(this.exportButtonView.render().el);
+        // Export Button für das Dashboard wieder hinzufügen, sobald eine Lösung gefunden wurde
+        // this.$el.find("#print-button").html(this.exportButtonView.render().el);
 
         Radio.trigger("Sidebar", "append", this.$el, true);
         Radio.trigger("Sidebar", "toggle", true, this.model.get("width"));
@@ -101,7 +103,8 @@ const DashboardView = Backbone.View.extend(/** @lends DashboardView.prototype */
     showHelp: function () {
         Radio.trigger("Alert", "alert", {
             text: InfoTemplate,
-            kategorie: "alert-info"
+            kategorie: "alert-info",
+            position: "center-center"
         });
     },
 

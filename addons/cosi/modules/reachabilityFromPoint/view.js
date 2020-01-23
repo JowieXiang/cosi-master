@@ -409,7 +409,8 @@ const ReachabilityFromPointView = Backbone.View.extend(/** @lends ReachabilityFr
         Radio.trigger("Alert", "alert:remove");
         Radio.trigger("Alert", "alert", {
             text: InfoTemplate,
-            kategorie: "alert-info"
+            kategorie: "alert-info",
+            position: "center-center"
         });
     },
 

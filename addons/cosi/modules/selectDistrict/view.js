@@ -59,7 +59,7 @@ const SelectDistrictView = Backbone.View.extend(/** @lends SelectDistrictView.pr
     checkIfSelected: function () {
         if (this.model.get("selectedDistricts").length === 0) {
             Radio.trigger("Alert", "alert", {
-                text: "<strong>Warnung: Sie haben noch keine Gebiete ausgewählt. Es werden keine Datensätze geladen. <br /> Sie können trotzdem Fachdaten-Ebenen für die gesamte Stadt anzeigen lassen und Gebiete nach Parametern ermitteln.</strong>",
+                text: "<strong>Warnung: Sie haben noch keine Gebiete ausgewählt. Es werden keine Datensätze geladen.</strong> <br /> Sie können trotzdem Fachdaten-Ebenen für die gesamte Stadt anzeigen lassen und Gebiete nach Parametern ermitteln.",
                 kategorie: "alert-warning"
             });
         }

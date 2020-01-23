@@ -58,6 +58,14 @@ const ReachabilityInAreaView = Backbone.View.extend(/** @lends ReachabilityInAre
         this.listenTo(this.model, {
             "change:isActive": function (model, value) {
                 if (value) {
+                    if (Radio.request("SelectDistrict", "getSelectedDistricts").length === 0) {
+                        Radio.trigger("Alert", "alert", {
+                            text: "<strong>Warnung: Sie haben noch keine Gebiete ausgewählt.</strong>" +
+                                "<br /> Sie können trotzdem die Erreichbarkeit von Einrichtungen für das gesamte Stadtgebiet ermitteln ermitteln.<br />" +
+                                "Bitte beachten Sie jedoch, dass dafür viel Rechenleistung benötigt und große Datenmengen gesendet werden.",
+                            kategorie: "alert-warning"
+                        });
+                    }
                     this.unregisterClickListener();
                     this.render(model, value);
                     this.createMapLayer(this.model.get("mapLayerName"));
@@ -69,8 +77,6 @@ const ReachabilityInAreaView = Backbone.View.extend(/** @lends ReachabilityInAre
                 }
             }
         });
-
-
     },
     model: {},
     template: _.template(Template),
@@ -331,7 +337,8 @@ const ReachabilityInAreaView = Backbone.View.extend(/** @lends ReachabilityInAre
         Radio.trigger("Alert", "alert:remove");
         Radio.trigger("Alert", "alert", {
             text: InfoTemplate,
-            kategorie: "alert-info"
+            kategorie: "alert-info",
+            position: "center-center"
         });
     },
 

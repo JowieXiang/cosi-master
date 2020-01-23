@@ -9,7 +9,7 @@ import storageListener from "../storage";
 const DashboardTableView = Backbone.View.extend(/** @lends DashboardTableView.prototype */ {
     events: {
         "click .district": "zoomToFeature",
-        "pointerup .row": "contextMenuTable",
+        "pointerup tr.has-context": "contextMenuTable",
         "click .select-row": "checkboxSelectRow",
         "click .prop button.open": "toggleTimelineTable",
         "click thead button.open": "toggleGroup",
@@ -90,6 +90,9 @@ const DashboardTableView = Backbone.View.extend(/** @lends DashboardTableView.pr
             this.$el.find(".table").html(this.tableTemplate(attr));
             this.$el.find("#export-button").html(this.exportButtonView.render().el);
             this.$el.find("#export-button-filtered").html(this.exportFilteredButtonView.render().el);
+
+            // reset the collapsed columns
+            this.model.set("inactiveColumns", []);
         }
 
         this.delegateEvents();

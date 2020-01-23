@@ -824,35 +824,26 @@ const DashboardTableModel = Tool.extend(/** @lends DashboardTableModel.prototype
      */
     changeTableOrder: function (index, direction) {
         const data = this.get("tableView"),
-            rawData = this.get("unsortedTable");
+            rawData = this.get("unsortedTable"),
+            i = index - 1 + direction,
+            j = index + direction;
 
-        this.set("tableView", data.map(group => {
-            for (const prop in group.values) {
-                const obj = group.values[prop],
-                    arr = _.pairs(obj),
-                    result = _.object(arr.sort((a, b) => {
-                        if (index - 1 + direction >= 0 && index + direction <= arr.length - 1) {
-                            if (a[0] === arr[index + direction][0] && b[0] === arr[index - 1 + direction][0]) {
-                                return -1;
-                            }
-                        }
-                        return 1;
-                    }));
+        if (index + direction > 0 && index + direction < rawData.length) {
+            this.set("tableView", data.map(group => {
+                for (const prop in group.values) {
+                    const obj = group.values[prop],
+                        arr = _.pairs(obj);
 
-                group.values[prop] = result;
-            }
+                    group.values[prop] = _.object(arr.swap(i, j));
+                }
 
-            return group;
-        }));
+                return group;
+            }));
 
-        this.set("unsortedTable", rawData.sort((a, b) => {
-            if (a[this.get("sortKey")] === rawData[index + direction][this.get("sortKey")] && b[this.get("sortKey")] === rawData[index - 1 + direction][this.get("sortKey")]) {
-                return -1;
-            }
-            return 1;
-        }));
+            this.set("unsortedTable", rawData.swap(i, j));
 
-        this.filterTableView();
+            this.filterTableView();
+        }
     },
 
     /**
