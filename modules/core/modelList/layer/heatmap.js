@@ -129,9 +129,8 @@ const HeatmapLayer = Layer.extend(/** @lends HeatmapLayer.prototype */{
             weight: function (feature) {
                 if (!_.isUndefined(feature.get("calculatedWeight"))) {
                     return feature.get("calculatedWeight");
-                } else {
-                    return feature.get("normalizeWeightForHeatmap");
                 }
+                return feature.get("normalizeWeightForHeatmap");
             },
             gfiAttributes: this.get("gfiAttributes"),
             blur: this.get("blur"),
@@ -191,7 +190,7 @@ const HeatmapLayer = Layer.extend(/** @lends HeatmapLayer.prototype */{
      * @returns {void}
      */
     createLegendURL: function () {
-        console.info("legendURL for heatmap not yet implemented");
+        // console.info("legendURL for heatmap not yet implemented");
     },
 
     /**

@@ -63,7 +63,7 @@ const ReachabilityInAreaModel = Tool.extend(/** @lends ReachabilityInAreaModel.p
      */
     setCoordinates: function (valueModel, isSelected) {
         if (isSelected) {
-            const selectedLayerModel = Radio.request("ModelList", "getModelByAttributes", { name: valueModel.get("value") });
+            const selectedLayerModel = Radio.request("ModelList", "getModelByAttributes", {name: valueModel.get("value")});
 
             if (selectedLayerModel) {
                 let coordinates = [];

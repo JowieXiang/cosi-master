@@ -26,7 +26,7 @@ const SaveSelectionCosiModel = SaveSelectionModel.extend(/** @lends SaveSelectio
 
         this.constructor.__super__.initialize.apply(this, options);
     },
-    setSelectedDistrictIdsAndScope(selectedDistricts, scope, buffer) {
+    setSelectedDistrictIdsAndScope: function (selectedDistricts, scope, buffer) {
         this.set("selectedDistrictIds", selectedDistricts.map(dist => dist.get(scope.selector)));
         this.set("scope", scope.scope);
         this.set("buffer", buffer);

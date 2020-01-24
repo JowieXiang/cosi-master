@@ -365,7 +365,7 @@ const CalculateRatioModel = Tool.extend(/** @lends CalculateRatioModel.prototype
 
     /**
      * sets the results for the district in results object
-     * @param {string} district name/selector 
+     * @param {string} district name/selector
      * @param {object} ratio result object
      * @returns {void}
      */

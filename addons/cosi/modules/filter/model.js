@@ -117,7 +117,7 @@ const FilterModel = Tool.extend(/** @lends FilterModel.prototype */{
                 }
                 // update query weil andere features
                 else if (this.isModelInQueryCollection(layerId, queryCollection)) {
-                    const oldQuery = queryCollection.findWhere({ layerId: layerId.toString() }),
+                    const oldQuery = queryCollection.findWhere({layerId: layerId.toString()}),
                         newQuery = predefinedQueries.find(function (query) {
                             return query.layerId === layerId;
                         });
@@ -149,7 +149,7 @@ const FilterModel = Tool.extend(/** @lends FilterModel.prototype */{
      * @returns {void}
      */
     activateDefaultQuery: function () {
-        var defaultQuery = this.get("queryCollection").findWhere({ isDefault: true });
+        var defaultQuery = this.get("queryCollection").findWhere({isDefault: true});
 
         if (!_.isUndefined(defaultQuery)) {
             defaultQuery.setIsActive(true);
@@ -267,7 +267,7 @@ const FilterModel = Tool.extend(/** @lends FilterModel.prototype */{
                     ruleList.push(_.omit(snippet.getSelectedValues(), "type"));
                 }
             });
-            filterObjects.push({ name: query.get("name"), isSelected: query.get("isSelected"), rules: ruleList });
+            filterObjects.push({name: query.get("name"), isSelected: query.get("isSelected"), rules: ruleList});
         });
         if (this.get("saveToUrl")) {
             Radio.trigger("ParametricURL", "updateQueryStringParam", "filter", JSON.stringify(filterObjects));
@@ -339,7 +339,7 @@ const FilterModel = Tool.extend(/** @lends FilterModel.prototype */{
         _.each(queries, function (query) {
             oneQuery = query;
             if (!_.isUndefined(queryObjects)) {
-                queryObject = _.findWhere(queryObjects, { name: oneQuery.name });
+                queryObject = _.findWhere(queryObjects, {name: oneQuery.name});
                 oneQuery = _.extend(oneQuery, queryObject);
             }
             this.createQuery(oneQuery);
@@ -352,7 +352,7 @@ const FilterModel = Tool.extend(/** @lends FilterModel.prototype */{
      * @return {void}
      */
     createQuery: function (model) {
-        var layer = Radio.request("ModelList", "getModelByAttributes", { id: model.layerId }),
+        var layer = Radio.request("ModelList", "getModelByAttributes", {id: model.layerId}),
             query;
 
         if (!_.isUndefined(layer) && layer.has("layer")) {
@@ -422,13 +422,13 @@ const FilterModel = Tool.extend(/** @lends FilterModel.prototype */{
      * @return {void}
      */
     collapseOpenSnippet: function () {
-        var selectedQuery = this.get("queryCollection").findWhere({ isSelected: true }),
+        var selectedQuery = this.get("queryCollection").findWhere({isSelected: true}),
             snippetCollection,
             openSnippet;
 
         if (!_.isUndefined(selectedQuery)) {
             snippetCollection = selectedQuery.get("snippetCollection");
-            openSnippet = snippetCollection.findWhere({ isOpen: true });
+            openSnippet = snippetCollection.findWhere({isOpen: true});
             if (!_.isUndefined(openSnippet)) {
                 openSnippet.setIsOpen(false);
             }
@@ -442,7 +442,7 @@ const FilterModel = Tool.extend(/** @lends FilterModel.prototype */{
      * @returns {Boolean} returns true or false
      */
     isModelInQueryCollection: function (layerId, queryCollection) {
-        var searchQuery = queryCollection.findWhere({ layerId: layerId.toString() });
+        var searchQuery = queryCollection.findWhere({layerId: layerId.toString()});
 
         return !_.isUndefined(searchQuery);
     },
@@ -464,7 +464,7 @@ const FilterModel = Tool.extend(/** @lends FilterModel.prototype */{
      * @returns {void}
      */
     checkVisibleQueries: function () {
-        const visibleQueries = this.get("queryCollection").where({ isLayerVisible: true });
+        const visibleQueries = this.get("queryCollection").where({isLayerVisible: true});
 
         if (visibleQueries.length === 1) {
             this.get("queryCollection").forEach(function (query) {

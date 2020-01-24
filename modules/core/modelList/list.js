@@ -5,7 +5,6 @@ import GeoJSONLayer from "./layer/geojson";
 import GROUPLayer from "./layer/group";
 import SensorLayer from "./layer/sensor";
 import HeatmapLayer from "./layer/heatmap";
-import OSMLayer from "./layer/osm";
 import TerrainLayer from "./layer/terrain";
 import EntitiesLayer from "./layer/entities";
 import TileSetLayer from "./layer/tileset";

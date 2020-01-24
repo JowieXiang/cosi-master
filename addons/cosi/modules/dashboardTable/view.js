@@ -4,7 +4,6 @@ import ContextActions from "text-loader!./contextActions.html";
 import "./style.less";
 import DropdownView from "../../../../modules/snippets/dropdown/view";
 import ExportButtonView from "../../../../modules/snippets/exportButton/view";
-import storageListener from "../storage";
 
 const DashboardTableView = Backbone.View.extend(/** @lends DashboardTableView.prototype */ {
     events: {

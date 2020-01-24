@@ -70,7 +70,7 @@ const ExportButtonModel = SnippetModel.extend({
     /**
      * converts an object to an array
      * @param {object} data the input data
-     * @returns {*[]} the converted array
+     * @returns {[]} the converted array
      */
     refineObject: function (data) {
         const objArr = [];

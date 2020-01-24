@@ -64,6 +64,6 @@ export function addPolyfills () {
 
         // other browser
         return false;
-    }
+    };
 
 }

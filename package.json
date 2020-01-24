@@ -97,5 +97,10 @@
     "webpack-visualizer-plugin": "^0.1.11",
     "whatwg-fetch": "^3.0.0",
     "xmlserializer": "^0.6.1"
+  },
+  "husky": {
+    "hooks": {
+      "pre-push": "npm run test && npm run buildJsDoc && eslint --max-warnings 0 \"./**/*.js\""
+    }
   }
 }

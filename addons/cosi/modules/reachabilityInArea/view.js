@@ -2,7 +2,7 @@ import Template from "text-loader!./template.html";
 import SnippetDropdownView from "../../../../modules/snippets/dropdown/view";
 import * as Proj from "ol/proj.js";
 import "./style.less";
-import { Fill, Stroke, Style } from "ol/style.js";
+import {Fill, Stroke, Style} from "ol/style.js";
 import GeoJSON from "ol/format/GeoJSON";
 import InfoTemplate from "text-loader!./info.html";
 import union from "turf-union";
@@ -93,7 +93,7 @@ const ReachabilityInAreaView = Backbone.View.extend(/** @lends ReachabilityInAre
      */
     renderDropDownView: function () {
         this.model.setDropDownModel();
-        const dropdownView = new SnippetDropdownView({ model: this.model.get("dropDownModel") });
+        const dropdownView = new SnippetDropdownView({model: this.model.get("dropDownModel")});
 
         this.$el.find("#select-layer").html(dropdownView.render().el);
     },
@@ -211,7 +211,7 @@ const ReachabilityInAreaView = Backbone.View.extend(/** @lends ReachabilityInAre
         this.addSelectDistrictlistener();
     },
     addSelectDistrictlistener: function () {
-        this.listenTo(Radio.request("ModelList", "getModelByAttributes", { name: "Gebiet auswählen" }), {
+        this.listenTo(Radio.request("ModelList", "getModelByAttributes", {name: "Gebiet auswählen"}), {
             "change:isActive": function (model, value) {
                 if (value) {
                     this.unregisterClickListener();
@@ -382,7 +382,7 @@ const ReachabilityInAreaView = Backbone.View.extend(/** @lends ReachabilityInAre
      * @returns {void}
      */
     toModeSelection: function () {
-        Radio.request("ModelList", "getModelByAttributes", { name: "Erreichbarkeitsanalyse" }).set("isActive", true);
+        Radio.request("ModelList", "getModelByAttributes", {name: "Erreichbarkeitsanalyse"}).set("isActive", true);
     },
 
     /**
@@ -414,7 +414,7 @@ const ReachabilityInAreaView = Backbone.View.extend(/** @lends ReachabilityInAre
         });
         //  check "featureType" for the isochrone layer
         if (_.contains(features.map(feature => feature.getProperties().featureType), this.model.get("featureType"))) {
-            const modelList = Radio.request("ModelList", "getModelsByAttributes", { isActive: true });
+            const modelList = Radio.request("ModelList", "getModelsByAttributes", {isActive: true});
 
             _.each(modelList, model => {
                 if (model.get("isActive")) {

@@ -1,5 +1,5 @@
 import Tool from "../../../../modules/core/modelList/tool/model";
-import { Fill, Stroke, Style } from "ol/style.js";
+import {Fill, Stroke, Style} from "ol/style.js";
 
 const CompareDistrictsModel = Tool.extend(/** @lends CompareDistrictsModel.prototype */{
     defaults: _.extend({}, Tool.prototype.defaults, {

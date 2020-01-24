@@ -19,7 +19,7 @@ const GFI = Tool.extend(/** @lends GFI.prototype */{
         // uiStyle DEFAULT | TABLE | SIMPLE
         uiStyle: "DEFAULT",
         // ol.Overlay für attached
-        overlay: new Overlay({ element: undefined }),
+        overlay: new Overlay({element: undefined}),
         // desktop/attached/view.js | desktop/detached/view.js | mobile/view.js
         currentView: undefined,
         // Koordinate für das attached Popover und den Marker
@@ -215,7 +215,7 @@ const GFI = Tool.extend(/** @lends GFI.prototype */{
         else {
             CurrentView = DesktopDetachedView;
         }
-        this.setCurrentView(new CurrentView({ model: this }));
+        this.setCurrentView(new CurrentView({model: this}));
     },
 
     /**
@@ -225,7 +225,7 @@ const GFI = Tool.extend(/** @lends GFI.prototype */{
      * @return {void}
      */
     setGfiParams: function (evt) {
-        var visibleLayerList = Radio.request("ModelList", "getModelsByAttributes", { isVisibleInMap: true, isOutOfRange: false }),
+        var visibleLayerList = Radio.request("ModelList", "getModelsByAttributes", {isVisibleInMap: true, isOutOfRange: false}),
             gfiParamsList = this.getGFIParamsList(visibleLayerList),
             visibleWMSLayerList = gfiParamsList.wmsLayerList,
             visibleVectorLayerList = gfiParamsList.vectorLayerList,

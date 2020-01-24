@@ -91,11 +91,11 @@ const FilterView = Backbone.View.extend(/** @lends FilterView.prototype */{
      * @returns {void}
      */
     renderDetailView: function () {
-        var selectedModel = this.model.get("queryCollection").findWhere({ isSelected: true }),
+        var selectedModel = this.model.get("queryCollection").findWhere({isSelected: true}),
             view;
 
         if (!_.isUndefined(selectedModel)) {
-            view = new QueryDetailView({ model: selectedModel });
+            view = new QueryDetailView({model: selectedModel});
 
             this.model.setDetailView(view);
             this.$el.find(".detail-view-container").html(view.render().$el);
@@ -109,7 +109,7 @@ const FilterView = Backbone.View.extend(/** @lends FilterView.prototype */{
      * @returns {void}
      */
     renderResultView: function (featureIds, layerId) {
-        const layerModel = Radio.request("ModelList", "getModelByAttributes", { id: layerId }),
+        const layerModel = Radio.request("ModelList", "getModelByAttributes", {id: layerId}),
             features = layerModel.get("layer").getSource().getFeatures().filter(f => _.contains(featureIds, f.getId())),
             resultModel = new ResultModel();
         let selector1, selector2;
@@ -150,7 +150,7 @@ const FilterView = Backbone.View.extend(/** @lends FilterView.prototype */{
         resultModel.set("selector1", selector1);
         resultModel.set("selector2", selector2);
 
-        this.resultView = new ResultView({ model: resultModel });
+        this.resultView = new ResultView({model: resultModel});
         this.$el.find(".result-view-container").html(this.resultView.render().$el);
     },
 
@@ -164,7 +164,7 @@ const FilterView = Backbone.View.extend(/** @lends FilterView.prototype */{
 
         if (queryCollectionModels.length > 1) {
             _.each(queryCollectionModels, function (query) {
-                view = new QuerySimpleView({ model: query });
+                view = new QuerySimpleView({model: query});
                 this.$el.find(".simple-views-container").append(view.render().$el);
             }, this);
         }
