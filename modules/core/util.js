@@ -410,7 +410,11 @@ const Util = Backbone.Model.extend(/** @lends Util.prototype */{
                 return url;
             }
 
-            result = url.replace(protocol, "").replace(":" + port, "");
+            if (port) {
+                result = url.replace(":" + port, "");
+            }
+
+            result = url.replace(protocol, "");
             // www und www2 usw. raus
             // hostname = result.replace(/www\d?\./, "");
             hostname = parser.hostname.split(".").join("_");
