@@ -5,11 +5,8 @@ import {getLayerList, getLayerWhere} from "masterportalAPI/src/rawLayerList";
 
 const featuresLoader = Backbone.Model.extend(/** @lends featuresLoader.prototype */{
     defaults: {
-        // statistischeGebieteUrl: "https://geodienste.hamburg.de/HH_WFS_Statistische_Gebiete_Test",
         statistischeGebiete: [],
-        // stadtteileUrl: "https://geodienste.hamburg.de/Test_HH_WFS_hamburg_statistik_stadtteile",
         stadtteile: [],
-        // bezirkeUrl: "",
         bezirke: [],
         featureList: [],
         districtAttrMapping: {
@@ -245,6 +242,7 @@ const featuresLoader = Backbone.Model.extend(/** @lends featuresLoader.prototype
         if (bbox) {
             url += `&BBOX=${bbox}`;
         }
+
         return url;
     },
 
