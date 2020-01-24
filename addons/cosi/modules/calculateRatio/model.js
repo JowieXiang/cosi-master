@@ -24,7 +24,7 @@ const CalculateRatioModel = Tool.extend(/** @lends CalculateRatioModel.prototype
             "Die wählbaren Werte können vom Administrator festgelegt werden. Sollte keine Festlegung erfolgt sein, werden alle numerischen Werte angeboten.<br /></p>" +
             "<h4>Faktor (F):</h4>" +
             "<p>Hiermit können Sie eine beliebige Gewichtung für die Berechnung der Angebots/Zielgruppen-Verhältnisse festlegen um die Deckung der Nachfrage zu überprüfen.<br />" +
-            "z.B.: 'Wieviele Qudaratmeter pädagogische Fläche benötigt ein Kitakind?'<br /></p>" +
+            "z.B.: 'Wieviele Quadratmeter pädagogische Fläche benötigt ein Kitakind?'<br /></p>" +
             "<p><strong>Der eingegebene Wert entspricht keinem offiziellen, rechtlich bindenden Schlüssel, sonder dient rein der explorativen Analyse.</strong></p>"
     }),
 
