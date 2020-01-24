@@ -15,6 +15,7 @@ const ReachabilityFromPointView = Backbone.View.extend(/** @lends ReachabilityFr
         "click button#Submit": "checkIfSelected",
         "change #coordinate": "setCoordinateFromInput",
         "change #path-type": "setPathType",
+        "change #range-type": "setRangeType",
         "change #range": function (e) {
             this.setRange(e);
             this.renderLegend(e);
@@ -177,6 +178,7 @@ const ReachabilityFromPointView = Backbone.View.extend(/** @lends ReachabilityFr
     clearInput: function () {
         this.model.set("coordinate", []);
         this.model.set("pathType", "");
+        this.model.set("rangeType", "");
         this.model.set("range", 0);
     },
 
@@ -192,10 +194,11 @@ const ReachabilityFromPointView = Backbone.View.extend(/** @lends ReachabilityFr
         // coordinate has to be in the format of [[lat,lon]] for the request
         const coordinate = [this.model.get("coordinate")],
             pathType = this.model.get("pathType"),
-            range = this.model.get("range") * 60;
+            rangeType = this.model.get("rangeType"),
+            range = rangeType === "time" ? this.model.get("range") * 60 : this.model.get("range");
 
-        if (coordinate.length > 0 && pathType !== "" && range !== 0) {
-            Radio.request("OpenRoute", "requestIsochrones", pathType, coordinate, [range * 0.33, range * 0.67, range])
+        if (coordinate.length > 0 && pathType !== "" && rangeType !== "" && range !== 0) {
+            Radio.request("OpenRoute", "requestIsochrones", pathType, coordinate, rangeType, [range * 0.33, range * 0.67, range])
                 .then(res => {
                     // reverse JSON object sequence to render the isochrones in the correct order
                     const mapLayer = Radio.request("Map", "getLayerByName", this.model.get("mapLayerName")),
@@ -246,6 +249,7 @@ const ReachabilityFromPointView = Backbone.View.extend(/** @lends ReachabilityFr
     initializeUi: function () {
         this.$el.find("#coordinate").val(`${this.model.get("coordinate")[0]},${this.model.get("coordinate")[1]}`);
         this.$el.find("#path-type").val(`${this.model.get("pathType")}`);
+        this.$el.find("#range-type").val(`${this.model.get("rangeType")}`);
         this.$el.find("#range").val(`${this.model.get("range")}`);
     },
 
@@ -343,7 +347,14 @@ const ReachabilityFromPointView = Backbone.View.extend(/** @lends ReachabilityFr
     setPathType: function (evt) {
         this.model.set("pathType", evt.target.value);
     },
-
+    /**
+     * sets rangeType value in model
+     * @param {object} evt - select change event
+     * @returns {void}
+     */
+    setRangeType: function (evt) {
+        this.model.set("rangeType", evt.target.value);
+    },
     /**
      * sets range value in model
      * @param {object} evt - input change event
@@ -398,7 +409,8 @@ const ReachabilityFromPointView = Backbone.View.extend(/** @lends ReachabilityFr
         Radio.trigger("Alert", "alert:remove");
         Radio.trigger("Alert", "alert", {
             text: InfoTemplate,
-            kategorie: "alert-info"
+            kategorie: "alert-info",
+            position: "center-center"
         });
     },
 

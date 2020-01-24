@@ -12,6 +12,7 @@ const ReachabilityInAreaView = Backbone.View.extend(/** @lends ReachabilityInAre
         "click #create-isochrones": "createIsochrones",
         "click button#Submit": "checkIfSelected",
         "change #path-type": "setPathType",
+        "change #range-type": "setRangeType",
         "change #range": function (e) {
             this.setRange(e);
             this.renderLegend(e);
@@ -57,6 +58,14 @@ const ReachabilityInAreaView = Backbone.View.extend(/** @lends ReachabilityInAre
         this.listenTo(this.model, {
             "change:isActive": function (model, value) {
                 if (value) {
+                    if (Radio.request("SelectDistrict", "getSelectedDistricts").length === 0) {
+                        Radio.trigger("Alert", "alert", {
+                            text: "<strong>Warnung: Sie haben noch keine Gebiete ausgewählt.</strong>" +
+                                "<br /> Sie können trotzdem die Erreichbarkeit von Einrichtungen für das gesamte Stadtgebiet ermitteln ermitteln.<br />" +
+                                "Bitte beachten Sie jedoch, dass dafür viel Rechenleistung benötigt und große Datenmengen gesendet werden.",
+                            kategorie: "alert-warning"
+                        });
+                    }
                     this.unregisterClickListener();
                     this.render(model, value);
                     this.createMapLayer(this.model.get("mapLayerName"));
@@ -68,8 +77,6 @@ const ReachabilityInAreaView = Backbone.View.extend(/** @lends ReachabilityInAre
                 }
             }
         });
-
-
     },
     model: {},
     template: _.template(Template),
@@ -149,11 +156,12 @@ const ReachabilityInAreaView = Backbone.View.extend(/** @lends ReachabilityInAre
      */
     createIsochrones: function () {
         const pathType = this.model.get("pathType"),
-            range = this.model.get("range") * 60,
+            rangeType = this.model.get("rangeType"),
+            range = rangeType === "time" ? this.model.get("range") * 60 : this.model.get("range"),
             coordinatesList = [],
             promiseList = [];
 
-        if (this.model.get("coordinates").length > 0 && pathType !== "" && range !== 0) {
+        if (this.model.get("coordinates").length > 0 && pathType !== "" && rangeType !== "" && range !== 0) {
             Radio.trigger("Alert", "alert:remove");
             // group coordinates into groups of 5
             for (let i = 0; i < this.model.get("coordinates").length; i += 5) {
@@ -163,7 +171,7 @@ const ReachabilityInAreaView = Backbone.View.extend(/** @lends ReachabilityInAre
             }
             // each group of 5 coordinates
             _.each(coordinatesList, coordinates => {
-                promiseList.push(Radio.request("OpenRoute", "requestIsochrones", pathType, coordinates, [range, range * 0.67, range * 0.33])
+                promiseList.push(Radio.request("OpenRoute", "requestIsochrones", pathType, coordinates, rangeType, [range, range * 0.67, range * 0.33])
                     .then(res => {
                         // reverse JSON object sequence to render the isochrones in the correct order
                         // this reversion is intended for centrifugal isochrones (when range.length is larger than 1)
@@ -269,6 +277,14 @@ const ReachabilityInAreaView = Backbone.View.extend(/** @lends ReachabilityInAre
         this.model.set("pathType", evt.target.value);
     },
     /**
+     * sets rangeType value in model
+     * @param {object} evt - select change event
+     * @returns {void}
+     */
+    setRangeType: function (evt) {
+        this.model.set("rangeType", evt.target.value);
+    },
+    /**
      * set range value in model
      * @param {object} evt - input change event
      * @returns {void}
@@ -321,7 +337,8 @@ const ReachabilityInAreaView = Backbone.View.extend(/** @lends ReachabilityInAre
         Radio.trigger("Alert", "alert:remove");
         Radio.trigger("Alert", "alert", {
             text: InfoTemplate,
-            kategorie: "alert-info"
+            kategorie: "alert-info",
+            position: "center-center"
         });
     },
 
@@ -332,6 +349,7 @@ const ReachabilityInAreaView = Backbone.View.extend(/** @lends ReachabilityInAre
     clearInput: function () {
         this.model.set("coordinates", []);
         this.model.set("pathType", "");
+        this.model.set("rangeType", "");
         this.model.set("range", 0);
     },
 
