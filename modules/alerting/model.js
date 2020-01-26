@@ -41,34 +41,16 @@ const AlertingModel = Backbone.Model.extend(/** @lends AlertingModel.prototype *
      * @returns {void}
      */
     setParams: function (val) {
-        if (_.isString(val)) {
-            this.setId(_.uniqueId());
-            this.setMessage(val);
-        }
-        else if (_.isObject(val)) {
-            this.setMessage(val.text);
-            if (_.has(val, "id") === true) {
-                this.setId(String(val.id));
-            }
-            else {
-                this.setId(_.uniqueId());
-            }
-            if (_.has(val, "kategorie") === true) {
-                this.setCategory(val.kategorie);
-            }
-            if (_.has(val, "dismissable") === true) {
-                this.setIsDismissable(val.dismissable);
-            }
-            if (_.has(val, "confirmable") === true) {
-                this.setIsConfirmable(val.confirmable);
-            }
-            if (_.has(val, "position") === true) {
-                this.setPosition(val.position);
-            }
-            if (_.has(val, "fadeOut") === true) {
-                this.setFadeOut(val.fadeOut);
-            }
-        }
+        var attrs = _.isObject(val) ? val : {text: val};
+
+        this.setMessage(attrs.text);
+        this.setId(attrs.id ? String(attrs.id) : _.uniqueId());
+        this.setCategory(attrs.kategorie || "alert-info");
+        this.setIsDismissable(attrs.dismissable || true);
+        this.setIsConfirmable(attrs.confirmable || false);
+        this.setPosition(attrs.position || "top-center");
+        this.setFadeOut(attrs.fadeOut || null);
+
         if (_.isString(this.get("message"))) {
             this.trigger("addMessage", this.get("message"));
         }

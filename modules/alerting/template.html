@@ -7,9 +7,11 @@
 <% } else { %>
     <div id="<%= id %>" class="alert <%= category %>" role="alert">
 <% } %>
+<div class="message">
     <p>
         <%= message %>
     </p>
+</div>
 <% if(isConfirmable) {%>
     <button type="button" class="btn btn-primary alert-confirm" data-dismiss="alert" aria-label="Close">OK
     </button>
