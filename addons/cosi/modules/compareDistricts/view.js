@@ -129,7 +129,7 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
     selectFilterReminder: function () {
         Radio.trigger("Alert", "alert:remove");
         Radio.trigger("Alert", "alert", {
-            text: "<strong>Bitte wählen Sie das Thema, welches zum Drop Down Menü hinzugefügt werden sollte.</strong>",
+            text: "<strong>Bitte wählen Sie aus dem drop-down Menü der Statistischen Daten den Datensatz, welches Sie zum Vergleich verwenden möchten.</strong>",
             kategorie: "alert-warning"
         });
     },
