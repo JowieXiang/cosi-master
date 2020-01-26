@@ -15,7 +15,8 @@ const CompareDistrictsModel = Tool.extend(/** @lends CompareDistrictsModel.proto
                 width: 3
             })
         }),
-        refDistrict: null
+        refDistrict: null,
+        selectorField: "verwaltungseinheit" //
     }),
     /**
      * @class CompareDistrictsModel
@@ -27,6 +28,7 @@ const CompareDistrictsModel = Tool.extend(/** @lends CompareDistrictsModel.proto
      * @property {Array} mapLayerName="compare-district" OpenLayers map layer containing comparable results
      * @property {ol.style} selectedStyle =new Style({fill: new Fill({color: [8, 119, 95, 0.3]}),stroke: new Stroke({color: [8, 119, 95, 0.3],width: 3})}),refDistrict: null}) highlighted style of selected districts
      * @property {Feature} refDistrict reference district feature
+     * @property {String} selectorField="verwaltungseinheit" stadtile data is included in the same dataset with a verwaltungseinheit value as "stadtile"
      */
     initialize: function () {
         this.superInitialize();

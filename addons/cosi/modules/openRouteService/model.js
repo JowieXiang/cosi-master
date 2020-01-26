@@ -31,13 +31,13 @@ const openRouteService = Backbone.Model.extend(/** @lends openRouteService.proto
         var that = this;
 
         return new Promise(function (resolve, reject) {
-            console.log(rangeType);
+            // console.log(rangeType);
             // const body = '{"locations":[[9.9937,53.5511],[9.9937,53.5511]],"range":[300,200]}',
             const queryBody = `{"locations":${JSON.stringify(coordinates)},"range_type":"${rangeType}", "range":${JSON.stringify(rangeArray)}}`,
                 url = that.get("baseUrl") + pathType.trim();
             var xhr = new XMLHttpRequest();
 
-            console.log("query: ", queryBody);
+            // console.log("query: ", queryBody);
             xhr.open("POST", url);
             xhr.setRequestHeader("Accept", "application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8");
             xhr.setRequestHeader("Content-Type", "application/json");
