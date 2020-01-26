@@ -115,7 +115,7 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
     duplicateFilterReminder: function () {
         Radio.trigger("Alert", "alert:remove");
         Radio.trigger("Alert", "alert", {
-            text: "<strong>The layerfilter already exists in the filter stack.</strong>",
+            text: "<strong>Dieser Datensatz wurde bereits ausgewählt.</strong>",
             kategorie: "alert-warning"
         });
     },
