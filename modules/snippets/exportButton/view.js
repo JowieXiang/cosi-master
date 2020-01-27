@@ -2,9 +2,6 @@ import Template from "text-loader!./template.html";
 // import JsPDF from "jspdf";
 
 const ExportButtonView = Backbone.View.extend({
-    events: {
-        "click .btn": "export"
-    },
     initialize: function () {
         this.listenTo(this.model, {
             "render": this.render,
@@ -18,12 +15,12 @@ const ExportButtonView = Backbone.View.extend({
         const attrs = this.model.toJSON();
 
         this.$el.html(this.template(attrs));
+        this.el.querySelector(".btn").addEventListener("pointerup", this.export.bind(this));
         this.delegateEvents();
 
         return this;
     },
     export: function () {
-        console.log("dl");
         if (typeof this.model.get("rawData") === "string") {
             this.model.htmlToCanvas();
         }
@@ -33,9 +30,6 @@ const ExportButtonView = Backbone.View.extend({
     },
     download: function () {
         const blob = this.model.get("data");
-
-        console.log('exporting');
-        console.log(this.model.get("rawData"));
 
         if (navigator.msSaveBlob) { // IE 10+
             navigator.msSaveBlob(blob, this.model.generateFilename());
