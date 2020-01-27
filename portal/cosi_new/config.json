@@ -612,6 +612,28 @@
                   "id": "14133"
                 }
               ]
+            },
+            {
+              "Titel": "Zentrale Erstaufnahmeeinrichtungen (ZEA) - FHHNET",
+              "Layer": [
+                {
+                  "id": "4460"
+                },
+                {
+                  "id": "4461"
+                }
+              ]
+            },
+            {
+              "Titel": "Öffentlich rechtliche Unterbringung (ÖRU) - FHHNET",
+              "Layer": [
+                {
+                  "id": "3951"
+                },
+                {
+                  "id": "3952"
+                }
+              ]
             }
           ],
           "Layer": [
