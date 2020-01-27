@@ -109,6 +109,16 @@ const general = {
                     ]
                 },
                 {
+                    "layerId": "17042",
+                    "isActive": false,
+                    "isSelected": false,
+                    "name": "Hamburg Aktiv",
+                    "attributeWhiteList": [
+                        "hauptklasse",
+                        "unterklasse"
+                    ]
+                },
+                {
                     "layerId": "1534",
                     "isActive": false,
                     "isSelected": false,
