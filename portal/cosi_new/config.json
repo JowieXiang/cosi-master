@@ -262,6 +262,13 @@
               ]
             },
             {
+              "id": "17042",
+              "isFacility": true,
+              "name": "Hamburg aktiv",
+              "visibility": false,
+              "alwaysOnTop": true
+            },
+            {
               "id": "753",
               "name": "Kindertagesstätten",
               "styleId": "753",
