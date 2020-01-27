@@ -25,13 +25,15 @@ const DashboardView = Backbone.View.extend(/** @lends DashboardView.prototype */
         this.listenTo(this.model, {
             "change:isActive": function (model, isActive) {
                 if (isActive & !this.model.get("infoScreenOpen")) {
-                    if (Radio.request("SelectDistrict", "getSelectedDistricts").length === 0) {
-                        Radio.trigger("Alert", "alert", {
-                            text: "<strong>Warnung: Sie haben noch keine Gebiete ausgewählt.</strong>" +
-                                "<br />Daher werden im Dashboard keine statistischen Daten angezeigt. Sie können dennoch Ergebnisse aus anderen Werkzeugen im Dashboard anzeigen lassen.",
-                            kategorie: "alert-warning",
-                            position: "top-center"
-                        });
+                    if (Radio.request("InfoScreen", "getIsInfoScreen")) {
+                        if (Radio.request("SelectDistrict", "getSelectedDistricts").length === 0) {
+                            Radio.trigger("Alert", "alert", {
+                                text: "<strong>Warnung: Sie haben noch keine Gebiete ausgewählt.</strong>" +
+                                    "<br />Daher werden im Dashboard keine statistischen Daten angezeigt. Sie können dennoch Ergebnisse aus anderen Werkzeugen im Dashboard anzeigen lassen.",
+                                kategorie: "alert-warning",
+                                position: "top-center"
+                            });
+                        }
                     }
                     this.render();
                 }

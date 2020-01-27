@@ -176,6 +176,7 @@ const DashboardTableModel = Tool.extend(/** @lends DashboardTableModel.prototype
         // Update Export Link
         this.get("exportButtonModel").set("rawData", this.flattenTable(this.get("tableView")));
         this.get("exportButtonModel").prepareForExport();
+        console.log(this.get("exportButtonModel"));
 
         this.get("exportFilteredButtonModel").set("rawData", this.flattenTable(this.get("filteredTableView")));
         this.get("exportFilteredButtonModel").prepareForExport();

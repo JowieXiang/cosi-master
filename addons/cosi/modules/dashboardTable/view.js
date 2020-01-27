@@ -41,7 +41,8 @@ const DashboardTableView = Backbone.View.extend(/** @lends DashboardTableView.pr
 
         // workaround for IE
         this.listenTo(Radio.channel("Dashboard"), {
-            "dashboardClose": this.storeEl
+            "dashboardClose": this.storeEl,
+            "dashboardOpen": this.renderExport
         });
     },
     id: "dashboard-table",
@@ -87,8 +88,7 @@ const DashboardTableView = Backbone.View.extend(/** @lends DashboardTableView.pr
             }
 
             this.$el.find(".table").html(this.tableTemplate(attr));
-            this.$el.find("#export-button").html(this.exportButtonView.render().el);
-            this.$el.find("#export-button-filtered").html(this.exportFilteredButtonView.render().el);
+            this.renderExport();
 
             // reset the collapsed columns
             this.model.set("inactiveColumns", []);
@@ -97,6 +97,15 @@ const DashboardTableView = Backbone.View.extend(/** @lends DashboardTableView.pr
         this.delegateEvents();
 
         return this;
+    },
+
+    /**
+     * renders the export button incl. EventListeners
+     * @returns {void}
+     */
+    renderExport () {
+        this.$el.find("#export-button").html(this.exportButtonView.render().$el);
+        this.$el.find("#export-button-filtered").html(this.exportFilteredButtonView.render().$el);
     },
 
     /**
