@@ -41,8 +41,7 @@ const DashboardTableView = Backbone.View.extend(/** @lends DashboardTableView.pr
 
         // workaround for IE
         this.listenTo(Radio.channel("Dashboard"), {
-            "dashboardClose": this.storeEl,
-            "dashboardOpen": this.renderExport
+            "dashboardClose": this.storeEl
         });
     },
     id: "dashboard-table",
@@ -104,8 +103,8 @@ const DashboardTableView = Backbone.View.extend(/** @lends DashboardTableView.pr
      * @returns {void}
      */
     renderExport () {
-        this.$el.find("#export-button").html(this.exportButtonView.render().$el);
-        this.$el.find("#export-button-filtered").html(this.exportFilteredButtonView.render().$el);
+        this.$el.find("#export-button").html(this.exportButtonView.render().el);
+        this.$el.find("#export-button-filtered").html(this.exportFilteredButtonView.render().el);
     },
 
     /**
