@@ -1,7 +1,15 @@
 import Template from "text-loader!./template.html";
-// import JsPDF from "jspdf";
 
-const ExportButtonView = Backbone.View.extend({
+const ExportButtonView = Backbone.View.extend(/** @lends ExportButtonView.prototype */ {
+
+    /**
+     * initializes the ExportButtonView
+     * @extends Backbone.View
+     * @memberof Snippets.ExportButton
+     * @member Template
+     * @constructs
+     * @returns {void}
+     */
     initialize: function () {
         this.listenTo(this.model, {
             "render": this.render,
@@ -11,6 +19,11 @@ const ExportButtonView = Backbone.View.extend({
     model: {},
     className: "download-container",
     template: _.template(Template),
+
+    /**
+     * renders the download button to the parent view
+     * @returns {Backbone.View} returns this
+     */
     render: function () {
         const attrs = this.model.toJSON();
 
@@ -20,6 +33,11 @@ const ExportButtonView = Backbone.View.extend({
 
         return this;
     },
+
+    /**
+     * triggers the download of either the data passed or the html object to print
+     * @returns {void}
+     */
     export: function () {
         if (typeof this.model.get("rawData") === "string") {
             this.model.htmlToCanvas();
@@ -28,6 +46,11 @@ const ExportButtonView = Backbone.View.extend({
             this.download();
         }
     },
+
+    /**
+     * creates a temporary download link and triggers it
+     * @returns {void}
+     */
     download: function () {
         const blob = this.model.get("data");
 

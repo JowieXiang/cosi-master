@@ -833,7 +833,7 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModelV2.prototype */{
             xAttr = graphConfig.xAttr,
             xAxisLabel = graphConfig.xAxisLabel,
             yAxisLabel = graphConfig.yAxisLabel,
-            refColorScale = Radio.request("ColorScale", "getColorScaleByValues", [0, 1], "interpolateRainbow", graphConfig.attrToShowArray.length + 1),
+            refColorScale = Radio.request("ColorScale", "getColorScaleByValues", [0, 1], "interpolateSinebow", graphConfig.attrToShowArray.length + 1),
             attrToShowArray = graphConfig.attrToShowArray,
             flatAttrToShowArray = this.flattenAttrToShowArray(attrToShowArray),
             margin = graphConfig.margin,
@@ -977,7 +977,7 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModelV2.prototype */{
      * @returns {void}
      */
     drawBars: function (svg, dataToAdd, x, y, height, selector, barWidth, xAttr, attrToShowArray, tooltipDiv) {
-        const refColorScale = Radio.request("ColorScale", "getColorScaleByValues", [0, 1], "interpolateRainbow", attrToShowArray.length + 1);
+        const refColorScale = Radio.request("ColorScale", "getColorScaleByValues", [0, 1], "interpolateSinebow", attrToShowArray.length + 1);
 
         svg.append("g")
             .attr("class", "graph-data")
@@ -1329,7 +1329,7 @@ const GraphModelV2 = Backbone.Model.extend(/** @lends GraphModelV2.prototype */{
         var refValues = data.reduce((res, val) => {
                 return res.includes(val[refAttr]) ? res : [...res, val[refAttr]];
             }, []),
-            refColorScale = Radio.request("ColorScale", "getColorScaleByValues", [0, 1], "interpolateRainbow", refValues.length + 1),
+            refColorScale = Radio.request("ColorScale", "getColorScaleByValues", [0, 1], "interpolateSinebow", refValues.length + 1),
             refColors = _.object(refValues.map((val, i) => [val, refColorScale.legend.colors[i]])),
             yAttributeToShow,
             xAttributeToShow,
