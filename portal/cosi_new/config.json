@@ -75,10 +75,6 @@
             "name": "Filter",
             "glyphicon": "glyphicon-filter"
           },
-          "measure": {
-            "name": "Strecke / Fläche messen",
-            "glyphicon": "glyphicon-resize-full"
-          },
           "gfi": {
             "name": "Informationen abfragen",
             "glyphicon": "glyphicon-info-sign",
@@ -88,7 +84,11 @@
           "kmlimport":{
             "name":"KML Import Zeichnungen",
             "glyphicon":"glyphicon-import"
-         },
+          },
+          "measure": {
+            "name": "Strecke / Fläche messen",
+            "glyphicon": "glyphicon-resize-full"
+          },
           "compareDistricts": {
             "name": "Vergleichbare Gebiete ermitteln",
             "glyphicon": "glyphicon glyphicon-random"
@@ -610,6 +610,28 @@
                 },
                 {
                   "id": "14133"
+                }
+              ]
+            },
+            {
+              "Titel": "Zentrale Erstaufnahmeeinrichtungen (ZEA) - FHHNET",
+              "Layer": [
+                {
+                  "id": "4460"
+                },
+                {
+                  "id": "4461"
+                }
+              ]
+            },
+            {
+              "Titel": "Öffentlich rechtliche Unterbringung (ÖRU) - FHHNET",
+              "Layer": [
+                {
+                  "id": "3951"
+                },
+                {
+                  "id": "3952"
                 }
               ]
             }
