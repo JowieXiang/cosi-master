@@ -850,5 +850,23 @@
       0.5
     ],
     "polygonStrokeWidth": 30
+  },
+  {
+    "layerId": "17402",
+    "class": "POINT",
+    "subClass": "CIRCLE",
+    "circleRadius": 6,
+    "circleFillColor": [
+      255,
+      127,
+      0,
+      1
+    ],
+    "circleStrokeColor": [
+      122,
+      122,
+      122,
+      1
+    ]
   }
 ]

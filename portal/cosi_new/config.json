@@ -263,6 +263,7 @@
             },
             {
               "id": "17042",
+              "styleId": "17402",
               "isFacility": true,
               "name": "Hamburg aktiv",
               "visibility": false,
