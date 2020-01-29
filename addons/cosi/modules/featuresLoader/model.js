@@ -79,6 +79,11 @@ const featuresLoader = Backbone.Model.extend(/** @lends featuresLoader.prototype
     checkDistrictScope: function (bbox, scope, districtNameList) {
         // to do - nur einmal laden und dann speichern
         if (scope) {
+            this.set({
+                "statistischeGebiete": [],
+                "stadtteile": [],
+                "bezirke": []
+            })
             const attrMap = this.getDistrictAttrMapping(scope);
 
             // this.set("featureList", []);

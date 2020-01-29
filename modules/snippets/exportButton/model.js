@@ -1,7 +1,7 @@
 import SnippetModel from "../model";
 import html2canvas from "html2canvas";
 
-const ExportButtonModel = SnippetModel.extend({
+const ExportButtonModel = SnippetModel.extend(/** @lends ExportButtonModel.prototype */{
     defaults: {
         tag: "Export",
         rawData: null,
@@ -12,8 +12,11 @@ const ExportButtonModel = SnippetModel.extend({
 
     /**
      * @description creates a downloadable Blob from Objects / ObjectArrays and appends them to a "download"-button
+     * @extends SnippetModel
+     * @memberof Snippets.ExportButton
+     * @constructs
+     * @returns {void}
      */
-
     initialize: function () {
         this.superInitialize();
 
@@ -29,6 +32,11 @@ const ExportButtonModel = SnippetModel.extend({
             "change:rawData": this.prepareForExport
         });
     },
+
+    /**
+     * triggers the conversion of input data depending on the data type
+     * @returns {void}
+     */
     convertRawData: function () {
         const data = this.get("rawData");
 

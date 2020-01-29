@@ -98,9 +98,15 @@ const DashboardTableModel = Tool.extend(/** @lends DashboardTableModel.prototype
 
         this.listenTo(this, {
             "change:tableView": function () {
-                this.set("filteredTableView", this.get("tableView"));
+                if (this.get("tableView").length > 0) {
+                    this.set("filteredTableView", this.get("tableView"));
+                }
             },
-            "change:filteredTableView": this.prepareRendering
+            "change:filteredTableView": function () {
+                if (this.get("filteredTableView").length > 0) {
+                    this.prepareRendering();
+                }
+            }
         });
     },
 
@@ -129,12 +135,20 @@ const DashboardTableModel = Tool.extend(/** @lends DashboardTableModel.prototype
                 newTable[distCol] = {...newTable[distCol], ...Radio.request("Timeline", "createTimelineTable", [properties])[0]};
                 return newTable;
             }
+
             // Fill up Data that might be missing in the dataset
-            // Fix in Data
+            // TODO: Fix in Data
             if (selector !== this.get("sortKey")) {
                 properties[this.get("sortKey")] = properties[selector];
                 properties.notes = "Referenzgebiet";
             }
+
+            // Fill up Data that might be missing in the dataset
+            // TODO: Fix in Data
+            properties.notes = properties.notes || "-";
+            properties.statgebiet = properties.statgebiet || "-";
+            properties.stadtteil = properties.stadtteil || "-";
+            properties.bezirk = properties.bezirk || "-";
 
             return [...newTable, Radio.request("Timeline", "createTimelineTable", [properties])[0]];
         }, []).sort((a, b) => {

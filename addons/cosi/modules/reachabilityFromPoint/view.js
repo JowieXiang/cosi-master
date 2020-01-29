@@ -463,7 +463,10 @@ const ReachabilityFromPointView = Backbone.View.extend(/** @lends ReachabilityFr
                     idSelector = features[0].getProperties().Name_normalisiert ? "Name_normalisiert" : "Einrichtungsnummer";
                 }
                 else if (features[0].getProperties().identnummer) {
-                    idSelector = features[0].getProperties().anlagenname ? "anlagenname" : "identnummer";
+                    idSelector = features[0].getProperties().belegenheit ? "belegenheit" : "identnummer";
+                }
+                else if (features[0].getProperties().hauptklasse) {
+                    idSelector = features[0].getProperties().anbietername ? "anbietername" : "strasse";
                 }
 
                 // inscribe the coordinate to the feature for rendering to the resultView DOM Element

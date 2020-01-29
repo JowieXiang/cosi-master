@@ -254,8 +254,14 @@ const CalculateRatioModel = Tool.extend(/** @lends CalculateRatioModel.prototype
         if (typeof this.getDenominators() !== "undefined") {
             if (this.getDenominators().length > 0) {
                 this.getDenominators().forEach((den) => {
-                    const districtFeature = Radio.request("FeaturesLoader", "getAllFeaturesByAttribute", {category: den})
-                        .filter(feature => feature.getProperties()[selector] === district.getProperties()[selector]);
+
+                    const scope = Radio.request("FeaturesLoader", "getDistrictAttrMapping", Radio.request("SelectDistrict", "getScope")),
+                        districtFeature = Radio.request("FeaturesLoader", "getDistrictsByScope", scope.attribute)
+                            .filter(feature => feature.get("kategorie") === den && feature.get(selector) === district.get(selector));
+                        // districtFeature = Radio.request("FeaturesLoader", "getAllFeaturesByAttribute", {category: den})
+                        //     .filter(feature => feature.getProperties()[selector] === district.getProperties()[selector]);
+
+                    console.log(districtFeature);
 
                     if (districtFeature) {
                         const districtProperties = districtFeature[0].getProperties(),
