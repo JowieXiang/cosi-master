@@ -806,6 +806,156 @@
     ]
   },
   {
+    "layerId": "17042",
+    "class": "POINT",
+    "subClass": "CIRCLE",
+    "circleStrokeColor": [
+      255,
+      46,
+      102,
+      1
+    ],
+    "circleRadius": 7,
+    "circleStrokeWidth": 1.5,
+    "circleFillColor": [
+      255,
+      255,
+      255,
+      0.7
+    ],
+    "styleField": "hauptklasse",
+    "styleFieldValues": [
+      {
+        "styleFieldValue": "Beratung",
+        "circleStrokeColor": [
+          255,
+          46,
+          102,
+          1
+        ],
+        "circleRadius": 7,
+        "circleStrokeWidth": 1.5,
+        "circleFillColor": [
+          255,
+          255,
+          255,
+          0.7
+        ]
+      },
+      {
+        "styleFieldValue": "Familie",
+        "circleStrokeColor": [
+          46,
+          255,
+          102,
+          1
+        ],
+        "circleRadius": 7,
+        "circleStrokeWidth": 1.5,
+        "circleFillColor": [
+          255,
+          255,
+          255,
+          0.7
+        ]
+      },
+      {
+        "styleFieldValue": "Freizeit",
+        "circleStrokeColor": [
+          102,
+          46,
+          255,
+          1
+        ],
+        "circleRadius": 7,
+        "circleStrokeWidth": 1.5,
+        "circleFillColor": [
+          255,
+          255,
+          255,
+          0.7
+        ]
+      },
+      {
+        "styleFieldValue": "Kultur",
+        "circleStrokeColor": [
+          255,
+          150,
+          40,
+          1
+        ],
+        "circleRadius": 7,
+        "circleStrokeWidth": 1.5,
+        "circleFillColor": [
+          255,
+          255,
+          255,
+          0.7
+        ]
+      },
+      {
+        "styleFieldValue": "Religion",
+        "circleStrokeColor": [
+          45,
+          150,
+          255,
+          1
+        ],
+        "circleRadius": 7,
+        "circleStrokeWidth": 1.5,
+        "circleFillColor": [
+          255,
+          255,
+          255,
+          0.7
+        ]
+      },
+      {
+        "styleFieldValue": "Sonstiges",
+        "circleStrokeColor": [
+          45,
+          255,
+          150,
+          1
+        ],
+        "circleRadius": 7,
+        "circleStrokeWidth": 1.5,
+        "circleFillColor": [
+          255,
+          255,
+          255,
+          0.7
+        ]
+      },
+      {
+        "styleFieldValue": "Sport",
+        "circleStrokeColor": [
+          150,
+          255,
+          45,
+          1
+        ]
+      },
+      {
+        "styleFieldValue": "Treffs",
+        "circleStrokeColor": [
+          45,
+          150,
+          255,
+          1
+        ],
+        "circleRadius": 7,
+        "circleStrokeWidth": 1.5,
+        "circleFillColor": [
+          255,
+          255,
+          255,
+          0.7
+        ]
+      }
+    ]
+  },
+  {
     "layerId": "753",
     "class": "POINT",
     "subClass": "CIRCLE",

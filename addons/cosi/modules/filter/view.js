@@ -130,8 +130,12 @@ const FilterView = Backbone.View.extend(/** @lends FilterView.prototype */{
             selector2 = "Einrichtungsnummer";
         }
         else if (features[0].getProperties().identnummer) {
-            selector1 = "anlagenname";
+            selector1 = "belegenheit";
             selector2 = "identnummer";
+        }
+        else if (features[0].getProperties().hauptklasse) {
+            selector1 = "anbietername";
+            selector2 = "strasse";
         }
 
         // inscribe the coordinate to the feature for rendering to the resultView DOM Element
