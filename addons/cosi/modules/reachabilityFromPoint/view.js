@@ -45,8 +45,6 @@ const ReachabilityFromPointView = Backbone.View.extend(/** @lends ReachabilityFr
      * @fires Core#RadioRequestMapGetLayers
      * @fires Core#RadioRequestMapGetMap
      * @fires Core#RadioRequestMapCreateLayerIfNotExists
-     * @fires Core#RadioTriggerMapRegisterListener
-     * @fires Core#RadioTriggerMapUnregisterListener
      * @fires Core#RadioTriggerMapGetOverlayById
      * @fires Searchbar#RadioTriggerSearchbarHit
      * @fires Tools.SelectDistrict#RadioTriggerSelectDistrictRevertBboxGeometry
@@ -59,15 +57,11 @@ const ReachabilityFromPointView = Backbone.View.extend(/** @lends ReachabilityFr
      * @fires Snippets.GraphicalSelect#OnDrawEnd
      */
     initialize: function () {
-
-        this.registerClickListener();
-
         this.listenTo(this.model, {
             "change:isActive": function (model, value) {
                 const mapLayer = Radio.request("Map", "getLayerByName", this.model.get("mapLayerName"));
 
                 if (value) {
-                    this.unregisterClickListener();
                     this.render(model, value);
                     this.createMapLayer(this.model.get("mapLayerName"));
                     if (this.model.get("isochroneFeatures").length > 0) {
@@ -81,7 +75,6 @@ const ReachabilityFromPointView = Backbone.View.extend(/** @lends ReachabilityFr
                 }
                 else {
                     this.unregisterSetCoordListener();
-                    this.registerClickListener();
                     Radio.trigger("SelectDistrict", "revertBboxGeometry");
                     Radio.trigger("Alert", "alert:remove");
                     if (mapLayer.getSource().getFeatures().length === 0) {
@@ -228,20 +221,8 @@ const ReachabilityFromPointView = Backbone.View.extend(/** @lends ReachabilityFr
         else {
             this.inputReminder();
         }
-        this.addSelectDistrictlistener();
     },
-    addSelectDistrictlistener: function () {
-        this.listenTo(Radio.request("ModelList", "getModelByAttributes", {name: "Gebiet auswählen"}), {
-            "change:isActive": function (model, value) {
-                if (value) {
-                    this.unregisterClickListener();
-                }
-                else {
-                    this.registerClickListener();
-                }
-            }
-        });
-    },
+
     /**
      * initializes UI inputs when there is already isochrones on map
      * @returns {void}
@@ -558,22 +539,6 @@ const ReachabilityFromPointView = Backbone.View.extend(/** @lends ReachabilityFr
 
         this.model.set("coordinate", coordinate);
         this.model.set("setBySearch", true);
-    },
-
-    /**
-     * listens to click event and triggers selectIsochrone
-     * @returns {void}
-     */
-    registerClickListener: function () {
-        this.clickListener = Radio.request("Map", "registerListener", "click", this.selectIsochrone.bind(this));
-    },
-
-    /**
-     * unlistens to click event on isochrones
-     * @returns {void}
-     */
-    unregisterClickListener: function () {
-        Radio.trigger("Map", "unregisterListener", this.clickListener);
     },
 
     /**
