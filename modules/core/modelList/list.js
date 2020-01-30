@@ -218,9 +218,6 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
             else if (attrs.typ === "Oblique") {
                 return new ObliqueLayer(attrs, options);
             }
-            else if (attrs.typ === "OSM") {
-                return new OSMLayer(attrs, options);
-            }
         }
         else if (attrs.type === "folder") {
             return new Folder(attrs, options);

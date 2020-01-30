@@ -90,28 +90,6 @@ const LayerView = Backbone.View.extend(/** @lends LayerView.prototype */{
     toggleIsSelected: function () {
         var layerCollection = Radio.request("ModelList", "getCollection").where({type: "layer"});
 
-        let visibleStageCounterpart = Radio.request("ModelList", "getModelByAttributes", {stageId: this.model.get("stageId"), isVisibleInMap: true});
-        if (!visibleStageCounterpart) {
-            visibleStageCounterpart = Radio.request("Cosi", "getSameStageOtherCounterPart", this.model.get("id"));
-        }
-        let currentStage = Radio.request("Cosi", "getCurrentStage");
-
-        if (Config.cosiMode && visibleStageCounterpart) {
-            // if (Config.cosiMode && visibleStageCounterpart.get("isVisibleInMap")) {
-            if (Config.cosiMode && (this.model.get("isVisibleInMap") || visibleStageCounterpart.get("isVisibleInMap"))) {
-                this.model.setIsSelected(false);
-                this.model.setIsVisibleInMap(false);
-                visibleStageCounterpart.setIsVisibleInMap(false);
-                visibleStageCounterpart.setIsSelected(false);
-            } else if(Config.cosiMode && visibleStageCounterpart.get("layerStage") === currentStage) {
-                visibleStageCounterpart.setIsVisibleInMap(true);
-                this.model.toggleIsSelected();
-                this.model.setIsVisibleInMap(false);
-            }
-            this.render();
-            return;
-        }
-
         this.setSettingsVisibility(layerCollection, this.model);
         this.unsetJustAdded();
 

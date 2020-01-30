@@ -4,7 +4,7 @@ import Template from "text-loader!./template.html";
 const SidebarView = Backbone.View.extend(/** @lends SidebarView.prototype */{
     events: {
         "mousedown .drag-bar": "dragStart",
-        "touchstart .drag-bar": "dragStart",
+        "touchstart .drag-bar": "dragStart"
     },
 
     /**

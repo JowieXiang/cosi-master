@@ -133,7 +133,6 @@ const DashboardWidgetHandler = Backbone.Model.extend(/** @lends DashboardWidgetH
                     this.removeId(v.attrs.id);
                     return false;
                 }
-                return true;
             }
             return true;
         }, this));
