@@ -135,6 +135,7 @@ const DashboardWidgetHandler = Backbone.Model.extend(/** @lends DashboardWidgetH
                 }
                 return true;
             }
+            return true;
         }, this));
     },
 
