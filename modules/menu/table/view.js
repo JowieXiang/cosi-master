@@ -70,11 +70,6 @@ const Menu = Backbone.View.extend({
 
         new CloseClickView().render();
 
-        if (Config.cosiMode) {
-            // Special case - the menu is going to be visible on the start of the tool
-            $("#"+this.id).hide();
-        }
-
         return this;
     },
     renderLayerList: function () {

@@ -261,8 +261,6 @@ const CalculateRatioModel = Tool.extend(/** @lends CalculateRatioModel.prototype
                         // districtFeature = Radio.request("FeaturesLoader", "getAllFeaturesByAttribute", {category: den})
                         //     .filter(feature => feature.getProperties()[selector] === district.getProperties()[selector]);
 
-                    console.log(districtFeature);
-
                     if (districtFeature) {
                         const districtProperties = districtFeature[0].getProperties(),
                             field = Radio.request("Timeline", "getLatestFieldFromProperties", districtProperties);

@@ -153,7 +153,7 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
         this.districtSelector = new DistrictSelectorView();
         this.$el.find("#district-selector-container").append(this.districtSelector.render().el);
 
-        this.layerFilterSelector = new LayerFilterSelectorView({ model: new LayerFilterSelectorModel() });
+        this.layerFilterSelector = new LayerFilterSelectorView({model: new LayerFilterSelectorModel()});
         this.$el.find("#layerfilter-selector-container").append(this.layerFilterSelector.render().el);
     },
 
@@ -185,7 +185,7 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
      */
     addFilterModel: function () {
         const layerInfo = this.layerFilterSelector.getSelectedLayer(),
-            layerFilterModel = new LayerFilterModel({ layerInfo: layerInfo });
+            layerFilterModel = new LayerFilterModel({layerInfo: layerInfo});
 
         this.addOneToLayerFilterList(layerFilterModel);
         this.layerFilterCollection.add(layerFilterModel);
@@ -210,7 +210,7 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
      * @return {void}
      */
     renderLayerFilter: function (model) {
-        const layerFilterView = new LayerFilterView({ model: model });
+        const layerFilterView = new LayerFilterView({model: model});
 
         this.$el.find("#layerfilter-container").append(layerFilterView.render().el);
     },
@@ -262,7 +262,7 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
         this.layerFilterCollection.each(function (model) {
             layerFilterList.push(model);
         });
-        this.$el.find("#params").append(this.paramsTemplate({ layerFilterList: layerFilterList }));
+        this.$el.find("#params").append(this.paramsTemplate({layerFilterList: layerFilterList}));
     },
     /**
      * renders compare results
@@ -292,7 +292,7 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
      * @returns {void}
      */
     addOneToLayerFilterList: function (model) {
-        const newItem = { layerId: model.get("layerInfo").layerId, filter: model.get("filter"), districtInfo: model.get("districtInfo") },
+        const newItem = {layerId: model.get("layerInfo").layerId, filter: model.get("filter"), districtInfo: model.get("districtInfo")},
             newList = this.model.get("layerFilterList") === "" ? [] : JSON.parse(this.model.get("layerFilterList"));
 
         newList.push(newItem);
@@ -423,7 +423,7 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
          */
         const mapLayer = Radio.request("Map", "getLayerByName", this.model.get("mapLayerName")),
             scope = Radio.request("SelectDistrict", "getScope"),
-            districtLayer = Radio.request("ModelList", "getModelByAttributes", { "name": scope }),
+            districtLayer = Radio.request("ModelList", "getModelByAttributes", {"name": scope}),
             selector = Radio.request("SelectDistrict", "getDistrictLayer").filter(item => item.name === scope)[0].selector,
             featureCollection = districtLayer.get("layer").getSource().getFeatures(),
             refDistrict = featureCollection.filter(feature => feature.getProperties()[selector] === refDistrictName)[0],
@@ -528,7 +528,7 @@ const CompareDistrictsView = Backbone.View.extend(/** @lends CompareDistrictsVie
      */
     changeDistrictSelection: function () {
         const scope = Radio.request("SelectDistrict", "getScope"),
-            districtLayer = Radio.request("ModelList", "getModelByAttributes", { "name": scope }),
+            districtLayer = Radio.request("ModelList", "getModelByAttributes", {"name": scope}),
             selector = Radio.request("SelectDistrict", "getDistrictLayer").filter(item => item.name === scope)[0].selector,
             featureCollection = districtLayer.get("layer").getSource().getFeatures(),
             selectedFeatures = featureCollection.filter(feature => _.contains(this.model.get("comparableFeaturesNames"), feature.getProperties()[selector]));

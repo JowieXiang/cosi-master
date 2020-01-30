@@ -83,7 +83,7 @@ const featuresLoader = Backbone.Model.extend(/** @lends featuresLoader.prototype
                 "statistischeGebiete": [],
                 "stadtteile": [],
                 "bezirke": []
-            })
+            });
             const attrMap = this.getDistrictAttrMapping(scope);
 
             // this.set("featureList", []);

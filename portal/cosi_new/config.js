@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+
 const Config = {
     ignoredKeys: ["BOUNDEDBY", "SHAPE", "SHAPE_LENGTH", "SHAPE_AREA", "OBJECTID", "GLOBALID", "GEOMETRY", "SHP", "SHP_AREA", "SHP_LENGTH", "GEOM"],
     gfiWindow: "detached",
@@ -49,3 +51,5 @@ const Config = {
     },
     addons: ["cosi", "einwohnerabfrage"]
 };
+
+/* eslint-enable no-unused-vars */

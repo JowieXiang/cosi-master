@@ -4,6 +4,7 @@
  */
 export function addPolyfills () {
     if (!HTMLCanvasElement.prototype.toBlob) {
+        /* eslint-disable consistent-this */
         Object.defineProperty(HTMLCanvasElement.prototype, "toBlob", {
             value: function (callback, type, quality) {
                 var canvas = this;
@@ -21,8 +22,8 @@ export function addPolyfills () {
                 });
             }
         });
+        /* eslint-enable consistent-this */
     }
-
     if (!Array.prototype.flat) {
         // todo - add depth argument
         Object.defineProperty(Array.prototype, "flat", {
@@ -126,3 +127,4 @@ export function addPolyfills () {
     };
 
 }
+
