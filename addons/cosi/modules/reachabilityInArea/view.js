@@ -34,14 +34,11 @@ const ReachabilityInAreaView = Backbone.View.extend(/** @lends ReachabilityInAre
      * @fires Core#RadioRequestMapGetLayerByName
      * @fires Alerting#RadioTriggerAlertAlertRemove
      * @fires Alerting#RadioTriggerAlertAlert
-     * @fires Core#RadioTriggerMapRegisterListener
-     * @fires Core#RadioTriggerMapUnregisterListener
      * @fires Core.ModelList#RadioRequestModelListGetModelsByAttributes
      * @fires Core.ModelList#RadioRequestModelListGetModelByAttributes
      * @fires OpenRouteService#RadioRequestOpenRouteServiceRequestIsochrones
      */
     initialize: function () {
-        this.registerClickListener();
 
         this.listenTo(Radio.channel("ModelList"), {
             "updatedSelectedLayerList": function (models) {
@@ -66,12 +63,10 @@ const ReachabilityInAreaView = Backbone.View.extend(/** @lends ReachabilityInAre
                             kategorie: "alert-warning"
                         });
                     }
-                    this.unregisterClickListener();
                     this.render(model, value);
                     this.createMapLayer(this.model.get("mapLayerName"));
                 }
                 else {
-                    this.registerClickListener();
                     this.clearInput();
                     Radio.trigger("Alert", "alert:remove");
                 }
@@ -216,20 +211,8 @@ const ReachabilityInAreaView = Backbone.View.extend(/** @lends ReachabilityInAre
         else {
             this.inputReminder();
         }
-        this.addSelectDistrictlistener();
     },
-    addSelectDistrictlistener: function () {
-        this.listenTo(Radio.request("ModelList", "getModelByAttributes", {name: "Gebiet auswählen"}), {
-            "change:isActive": function (model, value) {
-                if (value) {
-                    this.unregisterClickListener();
-                }
-                else {
-                    this.registerClickListener();
-                }
-            }
-        });
-    },
+
     /**
      * style isochrone features
      * @param {ol.Feature} features isochone features (polygons)
@@ -401,22 +384,6 @@ const ReachabilityInAreaView = Backbone.View.extend(/** @lends ReachabilityInAre
      */
     toModeSelection: function () {
         Radio.request("ModelList", "getModelByAttributes", {name: "Erreichbarkeitsanalyse"}).set("isActive", true);
-    },
-
-    /**
-     * listens to click event and triggers selectIsochrone
-     * @returns {void}
-     */
-    registerClickListener: function () {
-        this.clickListener = Radio.request("Map", "registerListener", "click", this.selectIsochrone.bind(this));
-    },
-
-    /**
-     * unlistens to click event on isochrones
-     * @returns {void}
-     */
-    unregisterClickListener: function () {
-        Radio.trigger("Map", "unregisterListener", this.clickListener);
     },
 
     /**
