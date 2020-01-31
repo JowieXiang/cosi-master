@@ -165,7 +165,7 @@ const HeatmapLayer = Layer.extend(/** @lends HeatmapLayer.prototype */{
             var cloneFeature = feature.clone(),
                 count;
 
-            if (!_.isUndefined(attribute || value)) {
+            if (attribute !== "" && value !== "") {
                 count = this.countStates(feature, attribute, value);
                 cloneFeature.set("weightForHeatmap", count);
             }
@@ -178,10 +178,14 @@ const HeatmapLayer = Layer.extend(/** @lends HeatmapLayer.prototype */{
             cloneFeatures.push(cloneFeature);
         }, this);
 
+        if (layerSource === undefined) {
+            this.prepareLayerObject();
+            layerSource = this.get("layerSource");
+        }
         layerSource.addFeatures(cloneFeatures);
 
         // normalize weighting
-        if (!_.isUndefined(attribute || value)) {
+        if (attribute !== "" && value !== "") {
             this.normalizeWeight(layerSource.getFeatures());
         }
     },
@@ -217,7 +221,7 @@ const HeatmapLayer = Layer.extend(/** @lends HeatmapLayer.prototype */{
         });
 
         // insert weighting
-        if (!_.isUndefined(attribute || value)) {
+        if (attribute !== "" && value !== "") {
             count = this.countStates(feature, attribute, value);
 
             cloneFeature.set("weightForHeatmap", count);
@@ -233,7 +237,7 @@ const HeatmapLayer = Layer.extend(/** @lends HeatmapLayer.prototype */{
         }
 
         // normalize weighting
-        if (!_.isUndefined(attribute || value)) {
+        if (attribute !== "" && value !== "") {
             this.normalizeWeight(layerSource.getFeatures());
         }
     },

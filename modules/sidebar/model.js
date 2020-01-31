@@ -61,11 +61,13 @@ const SidebarModel = Backbone.Model.extend(/** @lends SidebarModel.prototype */{
      * @returns {void}
      */
     toggle: function (isVisible, width) {
-        if (width !== undefined) {
-            this.setWidth(width);
-        }
-        else {
-            this.setWidth("30%");
+        if (!this.get("isMobile")) {
+            if (width !== undefined) {
+                this.setWidth(width);
+            }
+            else {
+                this.setWidth("30%");
+            }
         }
         this.trigger("resize");
         this.setIsVisible(isVisible);

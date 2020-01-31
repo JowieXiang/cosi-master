@@ -1,4 +1,6 @@
-import Alert from "../modules/alerting/model";
+import Vue from "vue";
+import App from "../src/App.vue";
+import store from "../src/store";
 import RestReaderList from "../modules/restReader/collection";
 import Autostarter from "../modules/core/autostarter";
 import Util from "../modules/core/util";
@@ -91,10 +93,10 @@ function loadApp () {
         utilConfig = {},
         layerInformationModelSettings = {},
         cswParserSettings = {},
-        alertingConfig = Config.alerting ? Config.alerting : {},
         mapMarkerConfig = Config.hasOwnProperty("mapMarker") ? Config.mapMarker : {},
         style = Radio.request("Util", "getUiStyle");
-    /* eslint-disable no-undef */
+        /* eslint-disable no-undef */
+    let app = {};
 
     if (_.has(Config, "uiStyle")) {
         utilConfig.uiStyle = Config.uiStyle.toUpperCase();
@@ -116,8 +118,16 @@ function loadApp () {
         new QuickHelpView(Config.quickHelp);
     }
 
+    Vue.config.productionTip = false;
+    app = new Vue({
+        render: h => h(App),
+        store
+    });
+
+    app.$store.commit("addConfigToStore", Config);
+    app.$mount();
+
     // Core laden
-    new Alert(alertingConfig);
     new Autostarter();
     new Util(utilConfig);
     // Pass null to create an empty Collection with options
@@ -454,7 +464,7 @@ function loadApp () {
                 // .js need to be removed so webpack only searches for .js files
                 const entryPoint = allAddons[addonKey].replace(/\.js$/, "");
 
-                import(/* webpackChunkName: "[request]" */ `../addons/${entryPoint}.js`).then(module => {
+                import(/* webpackChunkName: "[request]" */ "../addons/" + entryPoint + ".js").then(module => {
                     /* eslint-disable new-cap */
                     const addon = new module.default();
 
