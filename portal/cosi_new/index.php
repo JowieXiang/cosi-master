@@ -12,13 +12,13 @@
 			echo '<title>CoSI</title>';
 
 
-			echo '<link rel="stylesheet" href="./css/masterportal.css">';
+			echo '<link rel="stylesheet" href="../mastercode/2_4_3_DEV_2020-01-31__08-24-15/css/masterportal.css">';
 			echo '<link rel="stylesheet" href="https://geofos.fhhnet.stadt.hamburg.de/lgv-config/css/fonts.css">';
 
 			echo '</head>';
 			echo '<body class="touchscreen">';
 			echo '<div class="lgv-container">';
-			echo '<div id="loader"><img src="../../lgv-config/img/ajax-loader.gif"></div>';
+			echo '<div id="loader"><img src="../mastercode/2_4_3_DEV_2020-01-31__08-24-15/img/ajax-loader.gif"></div>';
 
 			echo '<div id="dpidiv" style="height: 1in; left: -100%; position: absolute; top: -100%; width: 1in;"></div>';
 			echo '<div id="popup"></div>';
@@ -42,7 +42,7 @@
 			echo '</nav>';
 				echo '<div id="map"></div>';
 			echo '</div>';
-			echo '<script type="text/javascript" src="./js/masterportal.js"></script>';
+			echo '<script type="text/javascript" src="../mastercode/2_4_3_DEV_2020-01-31__08-24-15/js/masterportal.js"></script>';
 			echo '</body>';
 			echo '</html>';
 		}

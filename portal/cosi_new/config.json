@@ -176,13 +176,13 @@
         "serviceID": "123",
         "from": [
             {
-                "email": "daniel.schulz@hcu-hamburg.de",
+                "email": "cosi-support@hamburg-nord.hamburg.de",
                 "name":"CoSI Hilfe + Bug Report"
             }
         ],
         "to": [
             {
-                "email": "daniel.schulz@hcu-hamburg.de",
+                "email": "cosi-support@hamburg-nord.hamburg.de",
                 "name":"CoSI Hilfe + Bug Report"
             }
         ],
