@@ -13,7 +13,7 @@ import Folder from "./folder/model";
 import Tool from "./tool/model";
 import StaticLink from "./staticlink/model";
 import Legend from "../../legend/model";
-// import Filter from "../../tools/filter/model";
+import Filter from "../../tools/filter/model";
 /**
  * @deprecated in 3.0.0
  */
@@ -248,9 +248,9 @@ const ModelList = Backbone.Collection.extend(/** @lends ModelList.prototype */{
             else if (attrs.id === "legend") {
                 return new Legend(attrs, options);
             }
-            // else if (attrs.id === "filter") {
-            //     return new Filter(attrs, options);
-            // }
+            else if (attrs.id === "filter") {
+                return new Filter(attrs, options);
+            }
             else if (attrs.id === "coord") {
                 return new GetCoord(attrs, options);
             }

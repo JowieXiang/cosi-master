@@ -71,7 +71,7 @@
             "name": "Erreichbarkeitsanalyse",
             "glyphicon": "glyphicon-road"
           },
-          "filter": {
+          "filterCoSI": {
             "name": "Filter",
             "glyphicon": "glyphicon-filter"
           },

@@ -36,7 +36,7 @@ const general = {
     },
     tools = !window.location.pathname.includes("infoscreen.html") ? {
         filter: new Filter({
-            id: "filter",
+            id: "filterCoSI",
             // type: "tool",
             name: "Filter",
             glyphicon: "glyphicon-filter",

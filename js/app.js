@@ -37,7 +37,7 @@ import ParcelSearchView from "../modules/tools/parcelSearch/view";
 import SearchByCoordView from "../modules/tools/searchByCoord/view";
 import LineView from "../modules/tools/pendler/lines/view";
 import AnimationView from "../modules/tools/pendler/animation/view";
-// import FilterView from "../modules/tools/filter/view";
+import FilterView from "../modules/tools/filter/view";
 import SaveSelectionView from "../modules/tools/saveSelection/view";
 import StyleWMSView from "../modules/tools/styleWMS/view";
 import LayerSliderView from "../modules/tools/layerSlider/view";
@@ -192,10 +192,10 @@ function loadApp () {
                 new AnimationView({model: tool});
                 break;
             }
-            // case "filter": {
-            //     new FilterView({model: tool});
-            //     break;
-            // }
+            case "filter": {
+                new FilterView({model: tool});
+                break;
+            }
             case "coord": {
                 new CoordPopupView({model: tool});
                 break;
