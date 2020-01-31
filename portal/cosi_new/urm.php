@@ -15,6 +15,8 @@
 	}
 	elseif (ismemberofgroup('CN=ROL-N-ITB-CoSI-Sprint,OU=Sondergruppen,OU=Groups,OU=N,OU=Bezirke,DC=fhhnet,DC=stadt,DC=hamburg,DC=de') == TRUE){
 		$accessgranted =  true;
+	}elseif (ismemberofgroup('CN=ROL-N-ITB-CoSI-Prod,OU=Sondergruppen,OU=Groups,OU=N,OU=Bezirke,DC=fhhnet,DC=stadt,DC=hamburg,DC=de') == TRUE){
+		$accessgranted =  true;
 	}
 	else {
 		throw new Exception ('Sie besitzen keine Berechtigung, um dieses Portal zu betreten.</br>Bitte wenden Sie sich an Ihren Administrator.');
